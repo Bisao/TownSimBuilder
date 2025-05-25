@@ -49,22 +49,18 @@ const CameraControls = () => {
   const PAN_SENSITIVITY = 0.15;
   
   useEffect(() => {
-    const handleMouseDown = (event: MouseEvent | TouchEvent) => {
+    const handleMouseDown = (event: MouseEvent) => {
       event.preventDefault();
-      const pos = 'touches' in event ? event.touches[0] : event;
-      lastMousePosition.current = { x: pos.clientX, y: pos.clientY };
+      lastMousePosition.current = { x: event.clientX, y: event.clientY };
       
-      if ('button' in event && event.button === 2) { // Mouse right button - Pan
-        isDragging.current = true;
-      } else if ('touches' in event && event.touches.length === 1) { // Single touch - Pan
+      if (event.button === 2) { // Botão direito - Pan
         isDragging.current = true;
       }
     };
 
-    const handleMouseMove = (event: MouseEvent | TouchEvent) => {
-      const pos = 'touches' in event ? event.touches[0] : event;
-      const deltaX = pos.clientX - lastMousePosition.current.x;
-      const deltaY = pos.clientY - lastMousePosition.current.y;
+    const handleMouseMove = (event: MouseEvent) => {
+      const deltaX = event.clientX - lastMousePosition.current.x;
+      const deltaY = event.clientY - lastMousePosition.current.y;
       
       if (isDragging.current) { // Pan
         const direction = new THREE.Vector3()
