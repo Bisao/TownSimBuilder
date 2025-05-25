@@ -148,14 +148,40 @@ export const useNpcStore = create<NPCState>()(
         // Lógica baseada no estado atual do NPC
         switch (npc.state) {
           case "idle": {
-            // Sistema de tomada de decisão baseado em necessidades e estado
-            if (npc.state === "gathering" || npc.state === "moving" || npc.state === "searching") {
-              updatedNPC.needs.energy -= 0.1 * deltaTime;
-              updatedNPC.needs.satisfaction -= 0.05 * deltaTime;
-            } else if (npc.state === "idle") {
-              // Recupera energia e satisfação quando descansando
-              updatedNPC.needs.energy = Math.min(100, updatedNPC.needs.energy + 0.05 * deltaTime);
-              updatedNPC.needs.satisfaction = Math.min(100, updatedNPC.needs.satisfaction + 0.025 * deltaTime);
+            // Inicia busca por recursos imediatamente
+            const resourceType = npc.type === "miner" ? "stone" : npc.type === "lumberjack" ? "wood" : null;
+            
+            if (resourceType && window.naturalResources) {
+              const availableResources = window.naturalResources.filter(r => {
+                return r.type === resourceType && !r.lastCollected;
+              });
+
+              if (availableResources.length > 0) {
+                // Encontra o recurso mais próximo
+                let nearest = availableResources[0];
+                let minDist = Infinity;
+
+                for (const resource of availableResources) {
+                  const dist = Math.hypot(
+                    resource.position[0] - npc.position[0],
+                    resource.position[1] - npc.position[2]
+                  );
+                  if (dist < minDist) {
+                    minDist = dist;
+                    nearest = resource;
+                  }
+                }
+
+                // Define o recurso como alvo e muda para estado de movimento
+                updatedNPC.targetResource = nearest;
+                updatedNPC.targetPosition = [nearest.position[0], 0, nearest.position[1]];
+                updatedNPC.state = "moving";
+                console.log(`NPC ${npc.type} iniciando busca por recurso em [${nearest.position[0]}, ${nearest.position[1]}]`);
+              } else {
+                // Se não encontrar recursos, entra em modo de busca
+                updatedNPC.state = "searching";
+                console.log(`NPC ${npc.type} iniciando modo de busca por recursos`);
+              }
             }
 
             // Decidir próxima ação
