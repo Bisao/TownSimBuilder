@@ -122,18 +122,28 @@ const NpcPanel = ({ npc, onClose }: NpcPanelProps) => {
               <button
                 onClick={() => {
                   if (npc.state === "idle") {
-                    // Encontra a casa do NPC
                     const buildings = useBuildingStore.getState().buildings;
                     const home = buildings.find(b => b.id === npc.homeId);
 
                     if (home) {
-                      // Define posição inicial como a casa
-                      npc.position = [home.position[0], 0, home.position[1]];
-                      npc.state = "moving"; // Começa movendo
-                      npc.workProgress = 0;
-                      // Limpa target anterior
-                      npc.targetResource = null;
-                      npc.targetPosition = null;
+                      const updatedNpc = {
+                        ...npc,
+                        position: [home.position[0], 0, home.position[1]],
+                        state: "moving",
+                        workProgress: 0,
+                        targetResource: null,
+                        targetPosition: null,
+                        needs: {
+                          ...npc.needs,
+                          energy: Math.max(npc.needs.energy, 50), // Garante energia mínima
+                          satisfaction: Math.max(npc.needs.satisfaction, 50) // Garante satisfação mínima
+                        }
+                      };
+
+                      // Atualiza o NPC no store
+                      useNpcStore.setState(state => ({
+                        npcs: state.npcs.map(n => n.id === npc.id ? updatedNpc : n)
+                      }));
                     }
                   }
                 }}

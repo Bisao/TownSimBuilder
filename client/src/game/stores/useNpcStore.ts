@@ -148,9 +148,15 @@ export const useNpcStore = create<NPCState>()(
         // Lógica baseada no estado atual do NPC
         switch (npc.state) {
           case "idle": {
-            // Sistema de tomada de decisão baseado em necessidades
-            updatedNPC.needs.energy -= 0.1 * deltaTime;
-            updatedNPC.needs.satisfaction -= 0.05 * deltaTime;
+            // Sistema de tomada de decisão baseado em necessidades e estado
+            if (npc.state !== "idle") {
+              updatedNPC.needs.energy -= 0.1 * deltaTime;
+              updatedNPC.needs.satisfaction -= 0.05 * deltaTime;
+            } else {
+              // Recupera energia e satisfação quando descansando
+              updatedNPC.needs.energy = Math.min(100, updatedNPC.needs.energy + 0.05 * deltaTime);
+              updatedNPC.needs.satisfaction = Math.min(100, updatedNPC.needs.satisfaction + 0.025 * deltaTime);
+            }
 
             // Decidir próxima ação
             if (updatedNPC.needs.energy < 30) {
