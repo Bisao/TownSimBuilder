@@ -184,7 +184,14 @@ export const useNpcStore = create<NPCState>()(
                   // Depositar recurso no silo
                   const resourceType = npc.type === "lumberjack" ? "wood" : "stone";
                   const resourceStore = useResourceStore.getState();
-                  resourceStore.updateResource(resourceType, 1);
+                  const storageCapacity = resourceStore.getStorageCapacity();
+                  const currentAmount = resourceStore.resources[resourceType] || 0;
+                  
+                  // Verificar se há espaço no armazenamento
+                  if (currentAmount < storageCapacity) {
+                    resourceStore.updateResource(resourceType, 1);
+                    console.log(`Depositando ${resourceType} no silo. Novo total: ${currentAmount + 1}`);
+                  }
                   
                   updatedNPC.hasResource = false;
                   updatedNPC.state = "idle";
