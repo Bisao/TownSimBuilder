@@ -116,7 +116,7 @@ const NpcPanel = ({ npc, onClose }: NpcPanelProps) => {
             </p>
           </div>
 
-          <div>
+          <div className="sticky top-0 z-10 bg-white/95 backdrop-blur-sm py-4 border-b border-gray-200">
             <h3 className="font-semibold mb-2 text-gray-700">Trabalho</h3>
             {npc.type === "miner" && (
               <button
