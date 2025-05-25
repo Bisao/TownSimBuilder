@@ -298,7 +298,13 @@ export const useNpcStore = create<NPCState>()(
             
             if (resourceType && window.naturalResources) {
               const availableResources = window.naturalResources.filter(r => 
-                r.type === resourceType && !r.lastCollected
+                r.type === resourceType && !r.lastCollected &&
+                !get().npcs.some(otherNpc => 
+                  otherNpc.id !== npc.id && 
+                  otherNpc.targetResource &&
+                  otherNpc.targetResource.position[0] === r.position[0] &&
+                  otherNpc.targetResource.position[1] === r.position[1]
+                )
               );
 
               if (availableResources.length > 0) {
@@ -320,6 +326,12 @@ export const useNpcStore = create<NPCState>()(
                 updatedNPC.targetPosition = [nearest.position[0], 0, nearest.position[1]];
                 updatedNPC.state = "moving";
                 console.log(`NPC ${npc.type} encontrou recurso em [${nearest.position[0]}, ${nearest.position[1]}]`);
+              } else {
+                // Se não encontrar recursos, volta para idle
+                updatedNPC.state = "idle";
+                updatedNPC.targetResource = null;
+                updatedNPC.targetPosition = null;
+                console.log(`NPC ${npc.type} não encontrou recursos disponíveis`);
               }
             }
             break;

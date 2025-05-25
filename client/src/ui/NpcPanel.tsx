@@ -123,7 +123,7 @@ const NpcPanel = ({ npc, onClose }: NpcPanelProps) => {
                 onClick={() => {
                   const updatedNpc = {
                     ...npc,
-                    state: "searching",
+                    state: npc.state === "idle" ? "searching" : "idle",
                     workProgress: 0,
                     targetResource: null,
                     targetPosition: null,
@@ -139,7 +139,7 @@ const NpcPanel = ({ npc, onClose }: NpcPanelProps) => {
                   }));
                 }}
                 className={`w-full px-4 py-2 rounded-lg relative overflow-hidden ${
-                  npc.state === "gathering" || npc.state === "searching"
+                  npc.state !== "idle"
                     ? "bg-gray-200 cursor-not-allowed before:absolute before:inset-0 before:bg-gradient-to-r before:from-transparent before:via-white/20 before:to-transparent before:animate-shimmer" 
                     : "bg-blue-500 hover:bg-blue-600"
                 } text-white font-medium transition-colors`}
