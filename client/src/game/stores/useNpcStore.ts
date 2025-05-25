@@ -297,19 +297,24 @@ export const useNpcStore = create<NPCState>()(
             const resourceType = npc.type === "miner" ? "stone" : npc.type === "lumberjack" ? "wood" : null;
             
             if (resourceType && window.naturalResources) {
+              console.log(`NPC ${npc.type} procurando recursos do tipo ${resourceType}`);
               const availableResources = window.naturalResources.filter(r => {
-                // Verifica se o recurso é do tipo correto e não foi coletado
                 const isCorrectType = r.type === resourceType;
                 const isNotCollected = !r.lastCollected;
-                
-                // Verifica se não está sendo usado por outro NPC
                 const isNotTargeted = !get().npcs.some(otherNpc => 
                   otherNpc.id !== npc.id && 
-                  otherNpc.state !== "idle" &&
                   otherNpc.targetResource &&
                   otherNpc.targetResource.position[0] === r.position[0] &&
                   otherNpc.targetResource.position[1] === r.position[1]
                 );
+
+                // Se não encontrar recursos próximos, move para uma posição aleatória
+                if (!isCorrectType || !isNotCollected) {
+                  const randomX = Math.floor(Math.random() * 40);
+                  const randomZ = Math.floor(Math.random() * 40);
+                  updatedNPC.targetPosition = [randomX, 0, randomZ];
+                  console.log(`NPC ${npc.type} movendo para posição aleatória [${randomX}, ${randomZ}]`);
+                }
 
                 return isCorrectType && isNotCollected && isNotTargeted;
               });
