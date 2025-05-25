@@ -3,11 +3,24 @@ import { useAudio } from "../lib/stores/useAudio";
 import { useGameStore } from "../game/stores/useGameStore";
 import BuildingPanel from "./BuildingPanel";
 import ResourcePanel from "./ResourcePanel";
+import NpcPanel from "./NpcPanel";
+import { NPC } from "../game/stores/useNpcStore";
+import { useState, useEffect } from "react";
 
 const GameUI = () => {
   const { backgroundMusic, toggleMute, isMuted } = useAudio();
   const { timeOfDay, dayCount } = useGameStore();
   const [showControls, setShowControls] = useState(false);
+  const [selectedNpc, setSelectedNpc] = useState<NPC | null>(null);
+
+  useEffect(() => {
+    const handleNpcClick = (event: CustomEvent) => {
+      setSelectedNpc(event.detail);
+    };
+
+    window.addEventListener('npcClick', handleNpcClick as EventListener);
+    return () => window.removeEventListener('npcClick', handleNpcClick as EventListener);
+  }, []);
   
   // Play background music
   useEffect(() => {
@@ -95,6 +108,8 @@ const GameUI = () => {
       >
         <i className={`fa-solid ${isMuted ? 'fa-volume-xmark' : 'fa-volume-high'}`}></i>
       </button>
+    {/* NPC Panel */}
+      <NpcPanel npc={selectedNpc} onClose={() => setSelectedNpc(null)} />
     </div>
   );
 };

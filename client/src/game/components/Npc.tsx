@@ -13,6 +13,11 @@ const Npc = ({ npc }: NpcProps) => {
   const ref = useRef<THREE.Mesh>(null);
   const particlesRef = useRef<THREE.Points>(null);
   
+  const handleClick = (event: THREE.Event) => {
+    event.stopPropagation();
+    window.dispatchEvent(new CustomEvent('npcClick', { detail: npc }));
+  };
+  
   const npcType = npcTypes[npc.type];
   if (!npcType) return null;
 
@@ -64,7 +69,7 @@ const Npc = ({ npc }: NpcProps) => {
   
   return (
     <group position={[npc.position[0], 0.5, npc.position[2]]}>
-      <mesh ref={ref} castShadow>
+      <mesh ref={ref} castShadow onClick={handleClick}>
         <boxGeometry args={[0.5, 1, 0.5]} />
         <meshStandardMaterial color={npcType.color} />
       </mesh>
