@@ -67,7 +67,7 @@ const Building = ({ building, onClick }: BuildingProps) => {
   
   // Lidar com interações do mouse
   const handlePointerOver = (e: any) => {
-    e.stopPropagation?.();
+    if (e.stopPropagation) e.stopPropagation();
     if (building.type === "market") {
       setHovered(true);
       document.body.style.cursor = "pointer";
@@ -75,13 +75,13 @@ const Building = ({ building, onClick }: BuildingProps) => {
   };
   
   const handlePointerOut = (e: any) => {
-    e.stopPropagation?.();
+    if (e.stopPropagation) e.stopPropagation();
     setHovered(false);
     document.body.style.cursor = "auto";
   };
   
-  const handleClick = (e: any) => {
-    e.stopPropagation?.();
+  const handlePointerDown = (e: any) => {
+    if (e.stopPropagation) e.stopPropagation();
     if (building.type === "market" && onClick) {
       onClick(building);
     }
@@ -96,7 +96,7 @@ const Building = ({ building, onClick }: BuildingProps) => {
       receiveShadow
       onPointerOver={handlePointerOver}
       onPointerOut={handlePointerOut}
-      onClick={handleClick}
+      onPointerDown={handlePointerDown}
     >
       {buildingType.model.shape === "box" ? (
         <boxGeometry args={[sizeX, buildingType.height, sizeZ]} />
