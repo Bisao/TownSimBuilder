@@ -11,7 +11,17 @@ const PlacementIndicator = () => {
   const { camera, raycaster, scene, gl } = useThree();
   const groundPlane = useRef(new THREE.Plane(new THREE.Vector3(0, 1, 0), 0));
   const indicatorRef = useRef<THREE.Mesh>(null);
+  const gridRef = useRef<THREE.GridHelper>(null);
   const [mousePosition, setMousePosition] = useState<THREE.Vector2>(new THREE.Vector2());
+
+  useFrame(() => {
+    if (gridRef.current) {
+      // Ajusta a escala do grid baseado na distância da câmera ao chão
+      const distance = camera.position.y;
+      const scale = Math.max(1, distance / 10);
+      gridRef.current.scale.set(scale, scale, scale);
+    }
+  });
 
   const {
     selectedBuildingType,

@@ -30,6 +30,7 @@ const Terrain = () => {
       
       {/* Grid lines for building placement */}
       <gridHelper 
+        ref={gridRef}
         args={[GRID_SIZE, GRID_SIZE, "#444", "#444"]} 
         position={[GRID_SIZE/2 - 0.5, 0, GRID_SIZE/2 - 0.5]} 
       />
