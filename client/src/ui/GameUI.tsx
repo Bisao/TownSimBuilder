@@ -7,7 +7,7 @@ import ResourcePanel from "./ResourcePanel";
 import NpcPanel from "./NpcPanel";
 import { NPC } from "../game/stores/useNpcStore";
 import { Building } from "../game/stores/useBuildingStore";
-
+import { useIsMobile } from "../hooks/use-is-mobile";
 const GameUI = () => {
   const { backgroundMusic, toggleMute, isMuted } = useAudio();
   const { timeOfDay, dayCount } = useGameStore();
@@ -15,6 +15,7 @@ const GameUI = () => {
   const [showBuildingPanel, setShowBuildingPanel] = useState(false);
   const [showResourcePanel, setShowResourcePanel] = useState(false);
   const [selectedNpc, setSelectedNpc] = useState<NPC | null>(null);
+  const isMobile = useIsMobile();
 
   useEffect(() => {
     const handleEscKey = (event: KeyboardEvent) => {
