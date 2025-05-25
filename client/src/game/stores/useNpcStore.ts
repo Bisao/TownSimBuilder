@@ -244,9 +244,10 @@ export const useNpcStore = create<NPCState>()(
                   }
                 }
 
-                updatedNPC.targetPosition = [nearestSilo.position[0], 0, nearestSilo.position[1]];
+                // Posiciona próximo ao silo, não exatamente na mesma posição
+                updatedNPC.targetPosition = [nearestSilo.position[0] + 0.5, 0, nearestSilo.position[1] + 0.5];
                 updatedNPC.state = "moving";
-                console.log(`NPC ${npc.type} inventário cheio, indo para silo em [${nearestSilo.position[0]}, ${nearestSilo.position[1]}]`);
+                console.log(`NPC ${npc.type} inventário cheio, indo para silo em [${nearestSilo.position[0]}, ${nearestSilo.position[1]}] - distância: ${minDistance.toFixed(2)}`);
               } else {
                 console.warn(`NPC ${npc.type} não encontrou silos para depositar recursos`);
               }
@@ -427,8 +428,8 @@ export const useNpcStore = create<NPCState>()(
                   const buildings = useBuildingStore.getState().buildings;
                   const silo = buildings.find(b => 
                     b.type === 'silo' && 
-                    Math.abs(b.position[0] - targetX) < 0.5 && 
-                    Math.abs(b.position[1] - targetZ) < 0.5
+                    Math.abs(b.position[0] - targetX) < 1.0 && 
+                    Math.abs(b.position[1] - targetZ) < 1.0
                   );
 
                   if (silo) {
@@ -442,7 +443,7 @@ export const useNpcStore = create<NPCState>()(
                     updatedNPC.inventory = { type: '', amount: 0 };
                     console.log(`NPC ${npc.type} esvaziou inventário no silo`);
                   } else {
-                    console.warn(`NPC ${npc.type} não encontrou silo na posição [${targetX}, ${targetZ}]`);
+                    console.warn(`NPC ${npc.type} não encontrou silo na posição [${targetX}, ${targetZ}]. Silos disponíveis:`, buildings.filter(b => b.type === 'silo').map(s => s.position));
                   }
 
                   updatedNPC.state = "idle";
