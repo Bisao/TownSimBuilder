@@ -1,7 +1,7 @@
 
+import { useRef } from "react";
 import { useFrame } from "@react-three/fiber";
 import { useGameStore } from "../stores/useGameStore";
-import { useRef } from "react";
 import * as THREE from "three";
 
 const DayNightCycle = () => {
@@ -13,25 +13,24 @@ const DayNightCycle = () => {
     if (!lightRef.current || !ambientRef.current) return;
     
     // Calcular posição do sol baseado nos horários realistas
-    // Sol nasce às 6h, pico às 13h, se põe às 19h
     const hours = timeCycle * 24;
     
-    // Mapear horário para ângulo do sol (6h = nascente, 13h = pino, 19h = poente)
+    // Mapear horário para ângulo do sol (6h = nascente, 12h = pino, 18h = poente)
     let sunAngle = 0;
     let sunElevation = 0;
     
-    if (hours >= 6 && hours <= 19) {
-      // Durante o dia (6h-19h): sol visível
-      const dayProgress = (hours - 6) / 13; // 0 a 1 durante o dia (13 horas de sol)
+    if (hours >= 6 && hours <= 18) {
+      // Durante o dia (6h-18h): sol visível
+      const dayProgress = (hours - 6) / 12; // 0 a 1 durante o dia (12 horas de sol)
       sunAngle = dayProgress * Math.PI; // 0 a π (leste para oeste)
       sunElevation = Math.sin(dayProgress * Math.PI) * 0.9; // Parábola do sol
     } else {
       // Durante a noite: sol abaixo do horizonte
       sunElevation = -0.3;
       if (hours < 6) {
-        sunAngle = ((hours + 19) / 11) * Math.PI; // Continua movimento noturno
+        sunAngle = ((hours + 18) / 12) * Math.PI; // Continua movimento noturno
       } else {
-        sunAngle = ((hours - 19) / 11) * Math.PI; // Movimento após pôr do sol
+        sunAngle = ((hours - 18) / 12) * Math.PI; // Movimento após pôr do sol
       }
     }
     
@@ -47,7 +46,6 @@ const DayNightCycle = () => {
     
     // Calcular intensidades baseado na altura do sol
     const sunHeight = Math.max(0, sunElevation);
-    const isDay = sunHeight > 0;
     const sunIntensity = Math.max(0, sunHeight * 2);
     
     // Intensidades mais realistas
@@ -55,8 +53,6 @@ const DayNightCycle = () => {
     let ambientIntensity = 0;
     let lightColor = new THREE.Color(1, 1, 1);
     let ambientColor = new THREE.Color(0.4, 0.4, 0.6);
-    
-    const hours = timeCycle * 24;
     
     if (timeOfDay === "dawn") {
       // Amanhecer (6h-8h) - luz dourada crescente
@@ -79,7 +75,7 @@ const DayNightCycle = () => {
       lightColor = new THREE.Color(1, 0.7 - duskProgress * 0.2, 0.4 - duskProgress * 0.2);
       ambientColor = new THREE.Color(0.6 - duskProgress * 0.4, 0.4 - duskProgress * 0.2, 0.5 + duskProgress * 0.1);
     } else {
-      // Noite (21h-6h) - apenas luz lunar
+      // Noite (19h-6h) - apenas luz lunar
       directionalIntensity = 0.05;
       ambientIntensity = 0.1;
       lightColor = new THREE.Color(0.7, 0.8, 1); // Azul lunar
@@ -115,7 +111,7 @@ const DayNightCycle = () => {
         intensity={1}
         castShadow
       />
-      <ambientLight ref={ambientRef} intensity={0.3} />
+      <ambientLight ref={ambientRef} intensity={0.5} />
     </>
   );
 };
