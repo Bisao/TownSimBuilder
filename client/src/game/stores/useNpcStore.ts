@@ -341,9 +341,29 @@ export const useNpcStore = create<NPCState>()(
               });
 
               if (availableResources.length === 0) {
-                // Se não encontrar recursos, move para uma nova área ainda não explorada
-                let newX = Math.floor(Math.random() * 40);
-                let newZ = Math.floor(Math.random() * 40);
+                // Encontra a casa do NPC
+                const buildings = useBuildingStore.getState().buildings;
+                const home = buildings.find(b => b.id === npc.homeId);
+                
+                if (!home) {
+                  console.warn(`Casa não encontrada para NPC ${npc.id}`);
+                  return;
+                }
+
+                // Define área de exploração ao redor da casa (raio de 5 tiles)
+                const radius = 5;
+                const homeX = home.position[0];
+                const homeZ = home.position[1];
+                
+                // Escolhe uma posição aleatória dentro do raio
+                const angle = Math.random() * 2 * Math.PI;
+                const distance = Math.random() * radius;
+                let newX = Math.floor(homeX + Math.cos(angle) * distance);
+                let newZ = Math.floor(homeZ + Math.sin(angle) * distance);
+                
+                // Garante que as coordenadas estejam dentro dos limites do mapa
+                newX = Math.max(0, Math.min(39, newX));
+                newZ = Math.max(0, Math.min(39, newZ));
                 
                 // Tenta encontrar uma posição não visitada recentemente
                 const visitedKey = (x: number, z: number) => `${Math.floor(x)},${Math.floor(z)}`;
