@@ -62,6 +62,82 @@ const NpcPanel = ({ npc, onClose }: NpcPanelProps) => {
             <p><strong>Recursos Conhecidos:</strong> {npc.memory.knownResources.length}</p>
             <p><strong>Tentativas Falhas:</strong> {npc.memory.failedAttempts}</p>
           </div>
+
+          <div>
+            <h3 className="font-bold mb-2">Trabalho</h3>
+            {npc.type === "miner" && (
+              <button
+                onClick={() => {
+                  if (npc.state === "idle") {
+                    npc.state = "gathering";
+                    npc.workProgress = 0;
+                  }
+                }}
+                className={`px-4 py-2 rounded ${
+                  npc.state === "gathering" 
+                    ? "bg-gray-500 cursor-not-allowed" 
+                    : "bg-blue-500 hover:bg-blue-600"
+                } text-white`}
+                disabled={npc.state === "gathering"}
+              >
+                {npc.state === "gathering" ? "Minerando..." : "Minerar"}
+              </button>
+            )}
+            {npc.type === "lumberjack" && (
+              <button
+                onClick={() => {
+                  if (npc.state === "idle") {
+                    npc.state = "gathering";
+                    npc.workProgress = 0;
+                  }
+                }}
+                className={`px-4 py-2 rounded ${
+                  npc.state === "gathering" 
+                    ? "bg-gray-500 cursor-not-allowed" 
+                    : "bg-green-500 hover:bg-green-600"
+                } text-white`}
+                disabled={npc.state === "gathering"}
+              >
+                {npc.state === "gathering" ? "Cortando..." : "Cortar Madeira"}
+              </button>
+            )}
+            {npc.type === "farmer" && (
+              <button
+                onClick={() => {
+                  if (npc.state === "idle") {
+                    npc.state = "working";
+                    npc.workProgress = 0;
+                  }
+                }}
+                className={`px-4 py-2 rounded ${
+                  npc.state === "working" 
+                    ? "bg-gray-500 cursor-not-allowed" 
+                    : "bg-yellow-500 hover:bg-yellow-600"
+                } text-white`}
+                disabled={npc.state === "working"}
+              >
+                {npc.state === "working" ? "Cultivando..." : "Cultivar"}
+              </button>
+            )}
+            {npc.type === "baker" && (
+              <button
+                onClick={() => {
+                  if (npc.state === "idle") {
+                    npc.state = "working";
+                    npc.workProgress = 0;
+                  }
+                }}
+                className={`px-4 py-2 rounded ${
+                  npc.state === "working" 
+                    ? "bg-gray-500 cursor-not-allowed" 
+                    : "bg-orange-500 hover:bg-orange-600"
+                } text-white`}
+                disabled={npc.state === "working"}
+              >
+                {npc.state === "working" ? "Assando..." : "Assar"}
+              </button>
+            )}
+          </div>
         </div>
       </div>
     </div>
