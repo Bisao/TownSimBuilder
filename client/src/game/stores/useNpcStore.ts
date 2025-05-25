@@ -453,24 +453,11 @@ export const useNpcStore = create<NPCState>()(
                   updatedNPC.state = "gathering";
                   updatedNPC.workProgress = 0;
                   console.log(`NPC ${npc.type} começando a coletar recurso`);
-                } else if (npc.targetBuildingId) {
-                  // Chegou ao local de trabalho
-                  const workBuilding = buildings.find(b => b.id === npc.targetBuildingId);
-                  if (workBuilding) {
-                    updatedNPC.state = "working";
-                    updatedNPC.workProgress = 0;
-                    console.log(`NPC ${npc.type} começando a trabalhar em ${workBuilding.type}`);
-                  } else {
-                    updatedNPC.state = "idle";
-                    updatedNPC.targetBuildingId = null;
-                  }
                 } else if (npc.inventory.amount > 0 && npc.targetBuildingId) {
                   // Verificar se chegou ao silo para depositar recursos
                   const silo = buildings.find(b => 
                     b.id === npc.targetBuildingId && 
-                    b.type === 'silo' && 
-                    Math.abs(b.position[0] - targetX) < 1.0 && 
-                    Math.abs(b.position[1] - targetZ) < 1.0
+                    b.type === 'silo'
                   );
 
                   if (silo) {
@@ -491,9 +478,20 @@ export const useNpcStore = create<NPCState>()(
                     updatedNPC.state = "idle";
                     console.log(`NPC ${npc.type} depositou ${depositedAmount} ${depositedType} e esvaziou inventário no silo`);
                   } else {
-                    console.warn(`NPC ${npc.type} não encontrou silo alvo na posição [${targetX.toFixed(1)}, ${targetZ.toFixed(1)}]`);
+                    console.warn(`NPC ${npc.type} não encontrou silo alvo ID: ${npc.targetBuildingId}`);
                     updatedNPC.targetBuildingId = null;
                     updatedNPC.state = "idle";
+                  }
+                } else if (npc.targetBuildingId) {
+                  // Chegou ao local de trabalho (não silo)
+                  const workBuilding = buildings.find(b => b.id === npc.targetBuildingId);
+                  if (workBuilding && workBuilding.type !== 'silo') {
+                    updatedNPC.state = "working";
+                    updatedNPC.workProgress = 0;
+                    console.log(`NPC ${npc.type} começando a trabalhar em ${workBuilding.type}`);
+                  } else {
+                    updatedNPC.state = "idle";
+                    updatedNPC.targetBuildingId = null;
                   }
                 } else {
                   // Chegou em casa ou outro local para descansar
