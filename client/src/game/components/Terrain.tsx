@@ -1,3 +1,4 @@
+
 import { useTexture } from "@react-three/drei";
 import * as THREE from "three";
 import { useRef } from "react";
@@ -6,6 +7,7 @@ const GRID_SIZE = 50;
 
 const Terrain = () => {
   const meshRef = useRef<THREE.Mesh>(null);
+  const gridRef = useRef<THREE.GridHelper>(null);
   
   // Load grass texture
   const grassTexture = useTexture("/textures/grass.png");
