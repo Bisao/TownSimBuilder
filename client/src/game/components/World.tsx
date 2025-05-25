@@ -30,39 +30,39 @@ const World = () => {
     if (!initializedRef.current) {
       console.log("Initializing game world and resources");
       initResources();
-      
+
       // Criar um mercado inicial em posição aleatória
       const gridSize = 50; // Tamanho do grid
       const marketSize = 3; // Tamanho do mercado
-      
+
       // Garantir que o mercado esteja pelo menos a 5 unidades da borda
       const minPos = 5;
       const maxPos = gridSize - marketSize - minPos;
-      
+
       // Gerar posição aleatória para o mercado
       const marketX = Math.floor(Math.random() * (maxPos - minPos) + minPos);
       const marketZ = Math.floor(Math.random() * (maxPos - minPos) + minPos);
-      
+
       // Criar o mercado inicial (sem custo)
       const success = placeBuilding("market", [marketX, marketZ], 0, true);
-      
+
       if (success) {
         console.log(`Mercado inicial criado em [${marketX}, ${marketZ}]`);
       }
-      
+
       initializedRef.current = true;
     }
   }, []);
-  
+
   // Monitorar novos edifícios de casa de NPC para criar NPCs
   useEffect(() => {
     const farmerHouses = buildings.filter(b => b.type === "farmerHouse");
-    
+
     // Verificar se cada casa de fazendeiro tem um NPC
     for (const house of farmerHouses) {
       // Verificar se já existe um NPC associado a esta casa
       const existingNpc = npcs.find(npc => npc.homeId === house.id);
-      
+
       if (!existingNpc) {
         // Criar um novo fazendeiro para esta casa
         const [posX, posZ] = house.position;
@@ -75,20 +75,20 @@ const World = () => {
   useFrame(() => {
     const now = Date.now();
     const deltaTime = (now - lastUpdateRef.current) / 1000; // Convert to seconds
-    
+
     // Update production every second
     if (now - lastUpdateRef.current >= 1000) {
       updateProduction(now);
       lastUpdateRef.current = now;
     }
-    
+
     // Advance time cycle
     advanceTime(deltaTime);
-    
+
     // Update NPCs
     updateNPCs(deltaTime);
   });
-  
+
   // Lidar com clique em edifícios
   const handleBuildingClick = (building: BuildingType) => {
     if (building.type === "market") {
@@ -96,34 +96,23 @@ const World = () => {
       setShowMarketWindow(true);
     }
   };
-  
+
   // Fechar janela do mercado
   const handleCloseMarket = () => {
     setShowMarketWindow(false);
     setSelectedMarket(null);
   };
 
+  const handleTerrainClick = (e: any) => {
+    console.log("Terrain click", e);
+  }
+
   return (
     <>
-      {/* Environment */}
+      <CameraControls />
       <Sky />
       <DayNightCycle />
-      <ambientLight intensity={0.3} />
-      <directionalLight 
-        position={[10, 10, 5]} 
-        intensity={1} 
-        castShadow 
-        shadow-mapSize={[2048, 2048]}
-        shadow-camera-far={50}
-        shadow-camera-left={-20}
-        shadow-camera-right={20}
-        shadow-camera-top={20}
-        shadow-camera-bottom={-20}
-      />
-      
-      {/* World elements */}
-      <Terrain />
-      
+      <Terrain onTerrainClick={handleTerrainClick} />
       {/* Buildings */}
       {buildings.map((building) => (
         <Building 
@@ -132,20 +121,14 @@ const World = () => {
           onClick={handleBuildingClick}
         />
       ))}
-      
+
       {/* NPCs */}
       {npcs.map((npc) => (
         <Npc key={npc.id} npc={npc} />
       ))}
-      
+
       {/* Building placement indicator */}
       {gameMode === "build" && <PlacementIndicator />}
-      
-      {/* Camera controls */}
-      <CameraControls />
-      
-      {/* Janela do mercado (UI) */}
-      <MarketWindow isOpen={showMarketWindow} onClose={handleCloseMarket} />
     </>
   );
 };

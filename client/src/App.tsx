@@ -1,15 +1,24 @@
-import { Canvas } from "@react-three/fiber";
+import { Canvas } from '@react-three/fiber';
 import { Suspense, useEffect, useState } from "react";
-import { KeyboardControls } from "@react-three/drei";
+import { KeyboardControls } from '@react-three/drei';
 import { useAudio } from "./lib/stores/useAudio";
-import World from "./game/components/World";
-import GameUI from "./ui/GameUI";
+import World from './game/components/World';
+import GameUI from './ui/GameUI';
+import MarketWindow from './ui/MarketWindow';
+import { Controls } from './game/stores/useGameStore';
 import "@fontsource/inter";
-import { Controls } from "./game/stores/useGameStore";
+import { Building } from './game/stores/useBuildingStore';
+
+type BuildingType = {
+  name: string;
+  cost: number;
+  description: string;
+};
 
 function App() {
   const [showCanvas, setShowCanvas] = useState(false);
   const { setBackgroundMusic } = useAudio();
+  const [selectedMarket, setSelectedMarket] = useState<BuildingType | null>(null);
 
   // Define keyboard controls mapping
   const keyboardMap = [
@@ -32,18 +41,18 @@ function App() {
     bgMusic.loop = true;
     bgMusic.volume = 0.3;
     setBackgroundMusic(bgMusic);
-    
+
     // Criar sons de efeitos
     const hitSound = new Audio("/sounds/hit.mp3");
     hitSound.volume = 0.5;
-    
+
     const successSound = new Audio("/sounds/success.mp3");
     successSound.volume = 0.5;
-    
+
     // Set sound effects
     useAudio.getState().setHitSound(hitSound);
     useAudio.getState().setSuccessSound(successSound);
-    
+
     console.log("Sistema de áudio inicializado");
 
     // Show the canvas once everything is loaded
@@ -73,10 +82,16 @@ function App() {
         >
           <color attach="background" args={["#87CEEB"]} />
           <Suspense fallback={null}>
-            <World />
+            <World onMarketSelect={setSelectedMarket} />
           </Suspense>
         </Canvas>
         <GameUI />
+        {selectedMarket && (
+          <MarketWindow
+            selectedBuilding={selectedMarket}
+            onClose={() => setSelectedMarket(null)}
+          />
+        )}
       </KeyboardControls>
     </div>
   );
