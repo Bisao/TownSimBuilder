@@ -88,9 +88,8 @@ export const useGameStore = create<GameState>()(
       // Proporção: 1440/600 = 2.4 minutos de jogo por segundo real
 
       // Converter delta (segundos) para fração do ciclo de jogo
-      // 2.4 minutos de jogo por segundo real = 0.04 horas de jogo por segundo real
-      // 0.04 horas = 0.04/24 = 1/600 do ciclo diário por segundo
-      const cyclePerSecond = 1 / 3600; // 60 minutos por ciclo completo
+      // Ciclo mais lento: 10 minutos (600 segundos) para um dia completo
+      const cyclePerSecond = 1 / 600; // 10 minutos por ciclo completo
       const newTimeCycle = (state.timeCycle + delta * cyclePerSecond) % 1;
 
       // Determine time of day
