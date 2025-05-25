@@ -33,7 +33,24 @@ const World = ({ onMarketSelect }: WorldProps) => {
   const [naturalResources, setNaturalResources] = useState<Array<{
     type: string;
     position: [number, number];
+    lastCollected?: number;
   }>>([]);
+
+  // Função para respawn de recursos
+  useEffect(() => {
+    const respawnInterval = setInterval(() => {
+      setNaturalResources(current => {
+        return current.map(resource => {
+          if (resource.lastCollected && Date.now() - resource.lastCollected >= 300000) { // 5 minutos
+            return { ...resource, lastCollected: undefined };
+          }
+          return resource;
+        });
+      });
+    }, 10000); // Verificar a cada 10 segundos
+
+    return () => clearInterval(respawnInterval);
+  }, []);
 
   // Função para gerar posições aleatórias para recursos naturais
   const generateNaturalResources = () => {
