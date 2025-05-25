@@ -1,0 +1,141 @@
+useNpcStore.ts:445 NPC miner não encontrou silo na posição [18, 3]
+updateNPCs @ useNpcStore.ts:445
+(anonymous) @ World.tsx:212
+render$1 @ chunk-A3GN3WMN.js?v=cc8441ba:17379
+loop @ chunk-A3GN3WMN.js?v=cc8441ba:17401
+requestAnimationFrame
+loop @ chunk-A3GN3WMN.js?v=cc8441ba:17392
+requestAnimationFrame
+loop @ chunk-A3GN3WMN.js?v=cc8441ba:17392
+requestAnimationFrame
+loop @ chunk-A3GN3WMN.js?v=cc8441ba:17392
+requestAnimationFrame
+loop @ chunk-A3GN3WMN.js?v=cc8441ba:17392
+requestAnimationFrame
+loop @ chunk-A3GN3WMN.js?v=cc8441ba:17392
+requestAnimationFrame
+loop @ chunk-A3GN3WMN.js?v=cc8441ba:17392
+requestAnimationFrame
+loop @ chunk-A3GN3WMN.js?v=cc8441ba:17392
+requestAnimationFrame
+loop @ chunk-A3GN3WMN.js?v=cc8441ba:17392
+requestAnimationFrame
+loop @ chunk-A3GN3WMN.js?v=cc8441ba:17392
+requestAnimationFrame
+loop @ chunk-A3GN3WMN.js?v=cc8441ba:17392
+requestAnimationFrame
+loop @ chunk-A3GN3WMN.js?v=cc8441ba:17392
+requestAnimationFrame
+loop @ chunk-A3GN3WMN.js?v=cc8441ba:17392
+requestAnimationFrame
+loop @ chunk-A3GN3WMN.js?v=cc8441ba:17392
+requestAnimationFrame
+loop @ chunk-A3GN3WMN.js?v=cc8441ba:17392
+requestAnimationFrame
+loop @ chunk-A3GN3WMN.js?v=cc8441ba:17392
+requestAnimationFrame
+loop @ chunk-A3GN3WMN.js?v=cc8441ba:17392
+requestAnimationFrame
+loop @ chunk-A3GN3WMN.js?v=cc8441ba:17392
+requestAnimationFrame
+loop @ chunk-A3GN3WMN.js?v=cc8441ba:17392
+requestAnimationFrame
+loop @ chunk-A3GN3WMN.js?v=cc8441ba:17392
+requestAnimationFrame
+loop @ chunk-A3GN3WMN.js?v=cc8441ba:17392
+requestAnimationFrame
+loop @ chunk-A3GN3WMN.js?v=cc8441ba:17392
+requestAnimationFrame
+loop @ chunk-A3GN3WMN.js?v=cc8441ba:17392
+requestAnimationFrame
+loop @ chunk-A3GN3WMN.js?v=cc8441ba:17392
+requestAnimationFrame
+loop @ chunk-A3GN3WMN.js?v=cc8441ba:17392
+requestAnimationFrame
+loop @ chunk-A3GN3WMN.js?v=cc8441ba:17392
+requestAnimationFrame
+loop @ chunk-A3GN3WMN.js?v=cc8441ba:17392
+requestAnimationFrame
+loop @ chunk-A3GN3WMN.js?v=cc8441ba:17392
+requestAnimationFrame
+loop @ chunk-A3GN3WMN.js?v=cc8441ba:17392
+requestAnimationFrame
+loop @ chunk-A3GN3WMN.js?v=cc8441ba:17392
+requestAnimationFrame
+loop @ chunk-A3GN3WMN.js?v=cc8441ba:17392
+requestAnimationFrame
+loop @ chunk-A3GN3WMN.js?v=cc8441ba:17392
+requestAnimationFrame
+loop @ chunk-A3GN3WMN.js?v=cc8441ba:17392
+useNpcStore.ts:581 NPC miner voltando para casa para descansar (energia: 0.0, satisfação: 0.0)
+useNpcStore.ts:417 NPC miner chegou ao destino [18, 3]
+useNpcStore.ts:445 NPC miner não encontrou silo na posição [18, 3]
+updateNPCs @ useNpcStore.ts:445
+(anonymous) @ World.tsx:212
+render$1 @ chunk-A3GN3WMN.js?v=cc8441ba:17379
+loop @ chunk-A3GN3WMN.js?v=cc8441ba:17401
+requestAnimationFrame
+loop @ chunk-A3GN3WMN.js?v=cc8441ba:17392
+requestAnimationFrame
+loop @ chunk-A3GN3WMN.js?v=cc8441ba:17392
+requestAnimationFrame
+loop @ chunk-A3GN3WMN.js?v=cc8441ba:17392
+requestAnimationFrame
+loop @ chunk-A3GN3WMN.js?v=cc8441ba:17392
+requestAnimationFrame
+loop @ chunk-A3GN3WMN.js?v=cc8441ba:17392
+requestAnimationFrame
+loop @ chunk-A3GN3WMN.js?v=cc8441ba:17392
+requestAnimationFrame
+loop @ chunk-A3GN3WMN.js?v=cc8441ba:17392
+requestAnimationFrame
+loop @ chunk-A3GN3WMN.js?v=cc8441ba:17392
+requestAnimationFrame
+loop @ chunk-A3GN3WMN.js?v=cc8441ba:17392
+requestAnimationFrame
+loop @ chunk-A3GN3WMN.js?v=cc8441ba:17392
+requestAnimationFrame
+loop @ chunk-A3GN3WMN.js?v=cc8441ba:17392
+requestAnimationFrame
+loop @ chunk-A3GN3WMN.js?v=cc8441ba:17392
+requestAnimationFrame
+loop @ chunk-A3GN3WMN.js?v=cc8441ba:17392
+requestAnimationFrame
+loop @ chunk-A3GN3WMN.js?v=cc8441ba:17392
+requestAnimationFrame
+loop @ chunk-A3GN3WMN.js?v=cc8441ba:17392
+requestAnimationFrame
+loop @ chunk-A3GN3WMN.js?v=cc8441ba:17392
+requestAnimationFrame
+loop @ chunk-A3GN3WMN.js?v=cc8441ba:17392
+requestAnimationFrame
+loop @ chunk-A3GN3WMN.js?v=cc8441ba:17392
+requestAnimationFrame
+loop @ chunk-A3GN3WMN.js?v=cc8441ba:17392
+requestAnimationFrame
+loop @ chunk-A3GN3WMN.js?v=cc8441ba:17392
+requestAnimationFrame
+loop @ chunk-A3GN3WMN.js?v=cc8441ba:17392
+requestAnimationFrame
+loop @ chunk-A3GN3WMN.js?v=cc8441ba:17392
+requestAnimationFrame
+loop @ chunk-A3GN3WMN.js?v=cc8441ba:17392
+requestAnimationFrame
+loop @ chunk-A3GN3WMN.js?v=cc8441ba:17392
+requestAnimationFrame
+loop @ chunk-A3GN3WMN.js?v=cc8441ba:17392
+requestAnimationFrame
+loop @ chunk-A3GN3WMN.js?v=cc8441ba:17392
+requestAnimationFrame
+loop @ chunk-A3GN3WMN.js?v=cc8441ba:17392
+requestAnimationFrame
+loop @ chunk-A3GN3WMN.js?v=cc8441ba:17392
+requestAnimationFrame
+loop @ chunk-A3GN3WMN.js?v=cc8441ba:17392
+requestAnimationFrame
+loop @ chunk-A3GN3WMN.js?v=cc8441ba:17392
+requestAnimationFrame
+loop @ chunk-A3GN3WMN.js?v=cc8441ba:17392
+requestAnimationFrame
+loop @ chunk-A3GN3WMN.js?v=cc8441ba:17392
+useNpcStore.ts:581 NPC miner voltando para casa para descansar (energia: 0.0, satisfação: 0.0)
