@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { subscribeWithSelector } from "zustand/middleware";
 import { BuildingType, buildingTypes } from "../constants/buildings";
-import { useResourceStore } from "./useResourceStore";
+// Removido import direto para evitar dependência circular
 
 // Building instance in the game world
 export interface Building {
@@ -143,7 +143,9 @@ export const useBuildingStore = create<BuildingState>()(
       return undefined;
     },
     
-    updateProduction: (currentTime) => {
+    updateProduction: async (currentTime) => {
+      // Importação dinâmica para evitar dependência circular
+      const { useResourceStore } = await import('./useResourceStore');
       const resourceStore = useResourceStore.getState();
       const updatedBuildings: Building[] = [];
       let resourcesUpdated = false;

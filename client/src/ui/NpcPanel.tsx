@@ -48,29 +48,40 @@ const NpcPanel = ({ npc, onClose }: NpcPanelProps) => {
   };
 
   const handleWorkClick = () => {
+    console.log(`Iniciando trabalho para NPC ${npc.type} - Estado atual: ${npc.state}`);
+    
     const buildings = useBuildingStore.getState().buildings;
     const home = buildings.find(b => b.id === npc.homeId);
 
-    if (!home) return;
+    if (!home) {
+      console.error(`Casa não encontrada para NPC ${npc.id}`);
+      return;
+    }
 
-    useNpcStore.setState(state => ({
-      npcs: state.npcs.map(n => {
-        if (n.id !== npc.id) return n;
+    // Usar getState e setState separadamente para garantir a atualização
+    const npcStore = useNpcStore.getState();
+    const updatedNpcs = npcStore.npcs.map(n => {
+      if (n.id !== npc.id) return n;
 
-        return {
-          ...n,
-          position: [home.position[0] + 0.5, 0, home.position[1] + 0.5],
-          state: "searching",
-          workProgress: 0,
-          targetResource: null,
-          targetPosition: null,
-          needs: {
-            energy: Math.max(n.needs.energy, 50),
-            satisfaction: Math.max(n.needs.satisfaction, 50)
-          }
-        };
-      })
-    }));
+      console.log(`Atualizando NPC ${n.type}: estado ${n.state} -> idle para buscar recursos`);
+      
+      return {
+        ...n,
+        position: [home.position[0], 0, home.position[1]], // Posição exata da casa
+        state: "idle" as const, // Força para idle para que a lógica de busca de recursos funcione
+        workProgress: 0,
+        targetResource: null,
+        targetPosition: null,
+        targetBuildingId: null,
+        needs: {
+          energy: Math.max(n.needs.energy, 70), // Aumenta energia para trabalhar
+          satisfaction: Math.max(n.needs.satisfaction, 70)
+        }
+      };
+    });
+
+    useNpcStore.setState({ npcs: updatedNpcs });
+    console.log(`Trabalho iniciado para NPC ${npc.type}`);
   };
 
   return (
@@ -181,44 +192,33 @@ const NpcPanel = ({ npc, onClose }: NpcPanelProps) => {
                   handleWorkClick();
                 }}
                 className={`w-full px-4 py-2 rounded-lg pointer-events-auto relative z-[10000] ${
-                  npc.state !== "idle"
+                  npc.state === "gathering" || npc.state === "moving"
                     ? "bg-gray-200 cursor-not-allowed" 
                     : "bg-blue-500 hover:bg-blue-600 text-white"
                 } font-medium transition-colors`}
-                disabled={npc.state !== "idle"}
+                disabled={npc.state === "gathering" || npc.state === "moving"}
               >
                 {npc.state === "gathering" ? "Minerando..." : 
-                 npc.state === "searching" ? "Procurando..." : 
-                 npc.state === "moving" ? "Movendo..." : "Minerar"}
+                 npc.state === "searching" ? "Procurando Pedra..." : 
+                 npc.state === "moving" ? "Movendo..." : "Iniciar Mineração"}
               </button>
             )}
              {npc.type === "lumberjack" && (
               <button
-                onClick={() => {
-                  if (npc.state === "idle") {
-                    // Encontra a casa do NPC
-                    const buildings = useBuildingStore.getState().buildings;
-                    const home = buildings.find(b => b.id === npc.homeId);
-
-                    if (home) {
-                      // Define posição inicial como a casa
-                      npc.position = [home.position[0], 0, home.position[1]];
-                      npc.state = "moving"; // Começa movendo
-                      npc.workProgress = 0;
-                      // Limpa target anterior
-                      npc.targetResource = null;
-                      npc.targetPosition = null;
-                    }
-                  }
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleWorkClick();
                 }}
                 className={`w-full px-4 py-2 rounded-lg ${
-                  npc.state === "gathering" 
+                  npc.state === "gathering" || npc.state === "moving"
                     ? "bg-gray-200 cursor-not-allowed" 
                     : "bg-green-500 hover:bg-green-600"
                 } text-white font-medium transition-colors`}
-                disabled={npc.state === "gathering"}
+                disabled={npc.state === "gathering" || npc.state === "moving"}
               >
-                {npc.state === "gathering" ? "Cortando..." : "Cortar Madeira"}
+                {npc.state === "gathering" ? "Cortando..." : 
+                 npc.state === "searching" ? "Procurando Madeira..." : 
+                 npc.state === "moving" ? "Movendo..." : "Iniciar Corte"}
               </button>
             )}
             {npc.type === "farmer" && (

@@ -73,7 +73,7 @@ const World = ({ onMarketSelect }: WorldProps) => {
       do {
         position = generateRandomPosition();
       } while (usedPositions.has(`${position[0]},${position[1]}`));
-      
+
       usedPositions.add(`${position[0]},${position[1]}`);
       resources.push({ type: 'wood', position });
     }
@@ -84,7 +84,7 @@ const World = ({ onMarketSelect }: WorldProps) => {
       do {
         position = generateRandomPosition();
       } while (usedPositions.has(`${position[0]},${position[1]}`));
-      
+
       usedPositions.add(`${position[0]},${position[1]}`);
       resources.push({ type: 'stone', position });
     }
@@ -143,7 +143,7 @@ const World = ({ onMarketSelect }: WorldProps) => {
         const npcType = house.type === "farmerHouse" ? "farmer" :
                        house.type === "lumberjackHouse" ? "lumberjack" :
                        "miner";
-        
+
         const [posX, posZ] = house.position;
         spawnNPC(npcType, house.id, [posX + 0.5, 0, posZ + 0.5]);
       }

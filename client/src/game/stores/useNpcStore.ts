@@ -148,6 +148,8 @@ export const useNpcStore = create<NPCState>()(
         // Lógica baseada no estado atual do NPC
         switch (npc.state) {
           case "idle": {
+            console.log(`NPC ${npc.type} em estado idle, verificando ações possíveis`);
+            
             // Verifica se precisa descansar primeiro
             if (updatedNPC.needs.energy < 30) {
               const home = buildings.find(b => b.id === npc.homeId);
@@ -161,60 +163,70 @@ export const useNpcStore = create<NPCState>()(
 
             // Verifica se tem espaço no inventário para coletar
             const hasSpaceInInventory = updatedNPC.inventory.amount < 5;
+            console.log(`NPC ${npc.type} tem espaço no inventário: ${hasSpaceInInventory} (${updatedNPC.inventory.amount}/5)`);
             
             if (hasSpaceInInventory) {
               // Procura por recursos para coletar
               const resourceType = npc.type === "miner" ? "stone" : npc.type === "lumberjack" ? "wood" : null;
               
-              if (resourceType && window.naturalResources) {
-                console.log(`NPC ${npc.type} procurando recursos do tipo ${resourceType}. Total disponível: ${window.naturalResources.length}`);
+              if (resourceType) {
+                console.log(`NPC ${npc.type} procurando recursos do tipo ${resourceType}`);
+                console.log(`window.naturalResources disponível: ${!!window.naturalResources}`);
                 
-                // Filtra recursos disponíveis
-                const availableResources = window.naturalResources.filter(r => {
-                  const isCorrectType = r.type === resourceType;
-                  const isNotCollected = !r.lastCollected;
+                if (window.naturalResources) {
+                  console.log(`Total de recursos naturais: ${window.naturalResources.length}`);
                   
-                  // Verifica se não está sendo alvo de outro NPC
-                  const isNotTargeted = !get().npcs.some(
-                    other => other.id !== npc.id && 
-                    other.targetResource?.position[0] === r.position[0] &&
-                    other.targetResource?.position[1] === r.position[1]
-                  );
-                  
-                  return isCorrectType && isNotCollected && isNotTargeted;
-                });
-
-                console.log(`NPC ${npc.type} encontrou ${availableResources.length} recursos disponíveis`);
-
-                if (availableResources.length > 0) {
-                  // Encontra o recurso mais próximo
-                  let nearest = availableResources[0];
-                  let minDist = Infinity;
-
-                  for (const resource of availableResources) {
-                    const dist = Math.hypot(
-                      resource.position[0] - npc.position[0],
-                      resource.position[1] - npc.position[2]
+                  // Filtra recursos disponíveis
+                  const availableResources = window.naturalResources.filter(r => {
+                    const isCorrectType = r.type === resourceType;
+                    const isNotCollected = !r.lastCollected;
+                    
+                    // Verifica se não está sendo alvo de outro NPC
+                    const isNotTargeted = !get().npcs.some(
+                      other => other.id !== npc.id && 
+                      other.targetResource?.position[0] === r.position[0] &&
+                      other.targetResource?.position[1] === r.position[1]
                     );
-                    if (dist < minDist) {
-                      minDist = dist;
-                      nearest = resource;
-                    }
-                  }
+                    
+                    return isCorrectType && isNotCollected && isNotTargeted;
+                  });
 
-                  // Define o recurso como alvo e muda para estado de movimento
-                  updatedNPC.targetResource = nearest;
-                  updatedNPC.targetPosition = [nearest.position[0], 0, nearest.position[1]];
-                  updatedNPC.state = "moving";
-                  console.log(`NPC ${npc.type} indo para recurso em [${nearest.position[0]}, ${nearest.position[1]}] - distância: ${minDist.toFixed(2)}`);
+                  console.log(`NPC ${npc.type} encontrou ${availableResources.length} recursos disponíveis do tipo ${resourceType}`);
+
+                  if (availableResources.length > 0) {
+                    // Encontra o recurso mais próximo
+                    let nearest = availableResources[0];
+                    let minDist = Infinity;
+
+                    for (const resource of availableResources) {
+                      const dist = Math.hypot(
+                        resource.position[0] - npc.position[0],
+                        resource.position[1] - npc.position[2]
+                      );
+                      if (dist < minDist) {
+                        minDist = dist;
+                        nearest = resource;
+                      }
+                    }
+
+                    // Define o recurso como alvo e muda para estado de movimento
+                    updatedNPC.targetResource = nearest;
+                    updatedNPC.targetPosition = [nearest.position[0], 0, nearest.position[1]];
+                    updatedNPC.state = "moving";
+                    console.log(`NPC ${npc.type} indo para recurso ${resourceType} em [${nearest.position[0]}, ${nearest.position[1]}] - distância: ${minDist.toFixed(2)}`);
+                  } else {
+                    // Se não encontrar recursos, entra em modo de busca
+                    updatedNPC.state = "searching";
+                    console.log(`NPC ${npc.type} não encontrou recursos ${resourceType}, entrando em modo de busca`);
+                  }
                 } else {
-                  // Se não encontrar recursos, entra em modo de busca
+                  console.warn(`window.naturalResources não está disponível para NPC ${npc.type}`);
                   updatedNPC.state = "searching";
-                  console.log(`NPC ${npc.type} não encontrou recursos, entrando em modo de busca`);
                 }
               }
             } else {
               // Inventário cheio - procura silo para depositar
+              console.log(`NPC ${npc.type} inventário cheio, procurando silo`);
               const silos = buildings.filter(b => b.type === 'silo');
               
               if (silos.length > 0) {
@@ -235,6 +247,8 @@ export const useNpcStore = create<NPCState>()(
                 updatedNPC.targetPosition = [nearestSilo.position[0], 0, nearestSilo.position[1]];
                 updatedNPC.state = "moving";
                 console.log(`NPC ${npc.type} inventário cheio, indo para silo em [${nearestSilo.position[0]}, ${nearestSilo.position[1]}]`);
+              } else {
+                console.warn(`NPC ${npc.type} não encontrou silos para depositar recursos`);
               }
             }
             break;
@@ -408,10 +422,17 @@ export const useNpcStore = create<NPCState>()(
                   );
                   
                   if (silo) {
-                    const resourceStore = useResourceStore.getState();
-                    resourceStore.updateResource(updatedNPC.inventory.type, updatedNPC.inventory.amount);
-                    console.log(`NPC ${npc.type} depositou ${updatedNPC.inventory.amount} ${updatedNPC.inventory.type} no silo`);
+                    // Importar dinamicamente o store para evitar dependência circular
+                    import('./useResourceStore').then(({ useResourceStore }) => {
+                      const resourceStore = useResourceStore.getState();
+                      resourceStore.updateResource(updatedNPC.inventory.type, updatedNPC.inventory.amount);
+                      console.log(`NPC ${npc.type} depositou ${updatedNPC.inventory.amount} ${updatedNPC.inventory.type} no silo`);
+                    });
+                    
                     updatedNPC.inventory = { type: '', amount: 0 };
+                    console.log(`NPC ${npc.type} esvaziou inventário no silo`);
+                  } else {
+                    console.warn(`NPC ${npc.type} não encontrou silo na posição [${targetGridX}, ${targetGridZ}]`);
                   }
                   
                   updatedNPC.state = "idle";
