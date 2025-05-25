@@ -5,7 +5,6 @@ import BuildingPanel from "./BuildingPanel";
 import ResourcePanel from "./ResourcePanel";
 import NpcPanel from "./NpcPanel";
 import { NPC } from "../game/stores/useNpcStore";
-import { useState, useEffect } from "react";
 
 const GameUI = () => {
   const { backgroundMusic, toggleMute, isMuted } = useAudio();
