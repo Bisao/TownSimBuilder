@@ -31,6 +31,18 @@ export const buildingTypes: Record<string, BuildingType> = {
       shape: "box",
     },
   },
+  farmerHouse: {
+    id: "farmerHouse",
+    name: "Casa do Fazendeiro",
+    description: "Moradia para fazendeiros que trabalham nas fazendas",
+    size: [2, 2],
+    height: 2,
+    cost: { wood: 15, stone: 5 },
+    model: {
+      color: "#A0522D",
+      shape: "box",
+    },
+  },
   farm: {
     id: "farm",
     name: "Fazenda",

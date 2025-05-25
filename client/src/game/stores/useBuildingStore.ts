@@ -146,6 +146,9 @@ export const useBuildingStore = create<BuildingState>()(
       const updatedBuildings: Building[] = [];
       let resourcesUpdated = false;
       
+      // Importar useNpcStore aqui para evitar dependências circulares
+      const { npcs } = require("./useNpcStore").useNpcStore.getState();
+      
       for (const building of get().buildings) {
         const buildingType = buildingTypes[building.type];
         if (!buildingType || !buildingType.produces) {
@@ -172,6 +175,15 @@ export const useBuildingStore = create<BuildingState>()(
           }
           
           if (canProduce) {
+            // Verificar se há NPCs trabalhando neste edifício
+            const workingNpcs = npcs.filter(
+              (npc: any) => npc.targetBuildingId === building.id && npc.state === "working"
+            );
+            
+            // Calcular bônus de produção baseado no número de NPCs
+            // Cada NPC adiciona 50% à produção
+            const productionMultiplier = 1 + workingNpcs.length * 0.5;
+            
             // Consume required resources
             if (buildingType.requires) {
               for (const [reqResource, reqAmount] of Object.entries(buildingType.requires)) {
@@ -180,9 +192,15 @@ export const useBuildingStore = create<BuildingState>()(
               }
             }
             
-            // Add produced resource
-            resourceStore.updateResource(resourceType, amount);
+            // Add produced resource com bônus de NPCs
+            const adjustedAmount = Math.floor(amount * productionMultiplier);
+            resourceStore.updateResource(resourceType, adjustedAmount);
             resourcesUpdated = true;
+            
+            // Log para mostrar o bônus de produção
+            if (workingNpcs.length > 0) {
+              console.log(`${building.type} produziu ${adjustedAmount} de ${resourceType} com bônus de ${workingNpcs.length} NPCs`);
+            }
             
             // Update last produced time
             updatedBuildings.push({

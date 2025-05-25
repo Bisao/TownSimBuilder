@@ -26,13 +26,11 @@ const GameUI = () => {
   
   // Convert time of day to formatted time
   const getTimeString = () => {
-    switch (timeOfDay) {
-      case "dawn": return "06:00";
-      case "day": return "12:00";
-      case "dusk": return "18:00";
-      case "night": return "00:00";
-      default: return "12:00";
-    }
+    const timeCycle = useGameStore.getState().timeCycle;
+    // Converter o ciclo (0-1) para horas (0-24)
+    const hours = Math.floor(timeCycle * 24);
+    const minutes = Math.floor((timeCycle * 24 * 60) % 60);
+    return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
   };
 
   // Traduzir o período do dia
