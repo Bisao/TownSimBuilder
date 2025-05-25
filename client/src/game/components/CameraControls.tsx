@@ -38,6 +38,55 @@ const CameraControls = () => {
   }, []);
 
   // Handler de zoom com scroll do mouse
+  // Estado para controlar se o botão direito está pressionado
+  const isDragging = useRef(false);
+  const lastMousePosition = useRef({ x: 0, y: 0 });
+
+  useEffect(() => {
+    const handleMouseDown = (event: MouseEvent) => {
+      if (event.button === 2) { // Botão direito
+        event.preventDefault();
+        isDragging.current = true;
+        lastMousePosition.current = { x: event.clientX, y: event.clientY };
+      }
+    };
+
+    const handleMouseMove = (event: MouseEvent) => {
+      if (isDragging.current) {
+        const deltaX = event.clientX - lastMousePosition.current.x;
+        const deltaY = event.clientY - lastMousePosition.current.y;
+        
+        // Atualizar posição do alvo
+        targetRef.current.x += deltaX * 0.1;
+        targetRef.current.z += deltaY * 0.1;
+        
+        lastMousePosition.current = { x: event.clientX, y: event.clientY };
+      }
+    };
+
+    const handleMouseUp = () => {
+      isDragging.current = false;
+    };
+
+    const handleContextMenu = (event: Event) => {
+      event.preventDefault();
+    };
+
+    // Adicionar event listeners
+    const domElement = gl.domElement;
+    domElement.addEventListener('mousedown', handleMouseDown);
+    domElement.addEventListener('mousemove', handleMouseMove);
+    domElement.addEventListener('mouseup', handleMouseUp);
+    domElement.addEventListener('contextmenu', handleContextMenu);
+
+    return () => {
+      domElement.removeEventListener('mousedown', handleMouseDown);
+      domElement.removeEventListener('mousemove', handleMouseMove);
+      domElement.removeEventListener('mouseup', handleMouseUp);
+      domElement.removeEventListener('contextmenu', handleContextMenu);
+    };
+  }, [gl]);
+
   useEffect(() => {
     const handleZoom = (event: WheelEvent) => {
       event.preventDefault();
