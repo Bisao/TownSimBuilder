@@ -473,9 +473,9 @@ export const useNpcStore = create<NPCState>()(
               // Progresso do trabalho
               updatedNPC.workProgress += deltaTime * 0.2; // 5 segundos para completar
 
-              // Reduz estamina e satisfação durante o trabalho (mais lento)
-              updatedNPC.needs.energy = Math.max(0, updatedNPC.needs.energy - deltaTime * 2); // 2 pontos por segundo
-              updatedNPC.needs.satisfaction = Math.max(0, updatedNPC.needs.satisfaction - deltaTime * 1); // 1 ponto por segundo
+              // Reduz estamina e satisfação durante o trabalho (consumo para 90 minutos)
+              updatedNPC.needs.energy = Math.max(0, updatedNPC.needs.energy - deltaTime * 0.018); // ~0.018 pontos por segundo (90 min)
+              updatedNPC.needs.satisfaction = Math.max(0, updatedNPC.needs.satisfaction - deltaTime * 0.009); // ~0.009 pontos por segundo (90 min)
 
               if (updatedNPC.workProgress >= 1) {
                 // Trabalho concluído - aumenta a produção do edifício
@@ -518,9 +518,9 @@ export const useNpcStore = create<NPCState>()(
               // Progresso da coleta - mais rápido, 1 segundo para coletar
               updatedNPC.workProgress += deltaTime * 1.0;
 
-              // Reduz estamina e satisfação durante o trabalho (mais lento)
-              updatedNPC.needs.energy = Math.max(0, updatedNPC.needs.energy - deltaTime * 2); // 2 pontos por segundo
-              updatedNPC.needs.satisfaction = Math.max(0, updatedNPC.needs.satisfaction - deltaTime * 1); // 1 ponto por segundo
+              // Reduz estamina e satisfação durante a coleta (consumo para 90 minutos)
+              updatedNPC.needs.energy = Math.max(0, updatedNPC.needs.energy - deltaTime * 0.018); // ~0.018 pontos por segundo (90 min)
+              updatedNPC.needs.satisfaction = Math.max(0, updatedNPC.needs.satisfaction - deltaTime * 0.009); // ~0.009 pontos por segundo (90 min)
 
               if (updatedNPC.workProgress >= 1) {
                 // Coletar recurso
