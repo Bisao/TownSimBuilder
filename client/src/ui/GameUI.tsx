@@ -10,39 +10,6 @@ import { Building } from "../game/stores/useBuildingStore";
 
 const GameUI = () => {
   const { backgroundMusic, toggleMute, isMuted } = useAudio();
-  const [selectedNpc, setSelectedNpc] = useState<NPC | null>(null);
-  
-  useEffect(() => {
-    const handleNpcHouseClick = (e: CustomEvent<Building>) => {
-      const house = e.detail;
-      const npc = useNpcStore.getState().npcs.find(n => n.homeId === house.id);
-      if (npc) {
-        setSelectedNpc(npc);
-      }
-    };
-
-    window.addEventListener('npcHouseClick', handleNpcHouseClick as EventListener);
-    return () => window.removeEventListener('npcHouseClick', handleNpcHouseClick as EventListener);
-  }, []);
-
-  return (
-    <>
-      <ResourcePanel />
-      <BuildingPanel />
-      {selectedNpc && (
-        <NpcPanel 
-          npc={selectedNpc} 
-          onClose={() => setSelectedNpc(null)} 
-        />
-      )}
-    </>
-  );
-};
-
-export default GameUI;
-
-const GameUI = () => {
-  const { backgroundMusic, toggleMute, isMuted } = useAudio();
   const { timeOfDay, dayCount } = useGameStore();
   const [showControls, setShowControls] = useState(false);
   const [selectedNpc, setSelectedNpc] = useState<NPC | null>(null);
@@ -52,10 +19,23 @@ const GameUI = () => {
       setSelectedNpc(event.detail);
     };
 
+    const handleNpcHouseClick = (e: CustomEvent<Building>) => {
+      const house = e.detail;
+      const npc = useNpcStore.getState().npcs.find(n => n.homeId === house.id);
+      if (npc) {
+        setSelectedNpc(npc);
+      }
+    };
+
     window.addEventListener('npcClick', handleNpcClick as EventListener);
-    return () => window.removeEventListener('npcClick', handleNpcClick as EventListener);
+    window.addEventListener('npcHouseClick', handleNpcHouseClick as EventListener);
+
+    return () => {
+      window.removeEventListener('npcClick', handleNpcClick as EventListener);
+      window.removeEventListener('npcHouseClick', handleNpcHouseClick as EventListener);
+    };
   }, []);
-  
+
   // Play background music
   useEffect(() => {
     if (backgroundMusic) {
@@ -63,24 +43,22 @@ const GameUI = () => {
         console.log("Background music autoplay prevented:", error);
       });
     }
-    
+
     return () => {
       if (backgroundMusic) {
         backgroundMusic.pause();
       }
     };
   }, [backgroundMusic]);
-  
+
   // Convert time of day to formatted time
   const getTimeString = () => {
     const timeCycle = useGameStore.getState().timeCycle;
-    // Converter o ciclo (0-1) para horas (0-24)
     const hours = Math.floor(timeCycle * 24);
     const minutes = Math.floor((timeCycle * 24 * 60) % 60);
     return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
   };
 
-  // Traduzir o período do dia
   const getTimeOfDayName = () => {
     switch (timeOfDay) {
       case "dawn": return "amanhecer";
@@ -90,24 +68,17 @@ const GameUI = () => {
       default: return "dia";
     }
   };
-  
+
   return (
     <div className="absolute inset-0 pointer-events-none">
-      {/* Resource Panel */}
       <ResourcePanel />
-      
-      {/* Building Panel */}
       <div className="pointer-events-auto">
         <BuildingPanel />
       </div>
-      
-      {/* Time display */}
       <div className="absolute top-4 right-4 bg-black/80 rounded-lg p-2 text-white">
         <div>Dia {dayCount}</div>
         <div>{getTimeString()} ({getTimeOfDayName()})</div>
       </div>
-      
-      {/* Controls button and panel */}
       <div className="absolute bottom-4 right-4 pointer-events-auto">
         <button 
           className="bg-black/80 text-white p-2 rounded-full"
@@ -115,7 +86,6 @@ const GameUI = () => {
         >
           <i className="fa-solid fa-keyboard"></i>
         </button>
-        
         {showControls && (
           <div className="absolute bottom-12 right-0 bg-black/80 rounded-lg p-3 text-white w-64">
             <h3 className="font-bold mb-2">Controles</h3>
@@ -134,16 +104,15 @@ const GameUI = () => {
           </div>
         )}
       </div>
-      
-      {/* Sound toggle */}
       <button 
         onClick={toggleMute}
         className="absolute top-4 right-32 bg-black/80 p-2 rounded-lg text-white pointer-events-auto"
       >
         <i className={`fa-solid ${isMuted ? 'fa-volume-xmark' : 'fa-volume-high'}`}></i>
       </button>
-    {/* NPC Panel */}
-      <NpcPanel npc={selectedNpc} onClose={() => setSelectedNpc(null)} />
+      {selectedNpc && (
+        <NpcPanel npc={selectedNpc} onClose={() => setSelectedNpc(null)} />
+      )}
     </div>
   );
 };
