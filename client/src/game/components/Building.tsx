@@ -1,3 +1,4 @@
+
 import { useRef, useMemo, useState } from "react";
 import { useFrame, useThree } from "@react-three/fiber";
 import { buildingTypes } from "../constants/buildings";
@@ -15,12 +16,6 @@ const Building = ({ building, onClick }: BuildingProps) => {
   const lastProducedRef = useRef<number>(building.lastProduced);
   const [hovered, setHovered] = useState(false);
   const { camera } = useThree();
-
-  const handleClick = () => {
-    if (onClick) {
-      onClick(building);
-    }
-  };
 
   // Get building type definition
   const buildingType = buildingTypes[building.type];
@@ -73,7 +68,7 @@ const Building = ({ building, onClick }: BuildingProps) => {
 
   // Lidar com interações do mouse
   const handlePointerOver = (e: any) => {
-    if (e.stopPropagation) e.stopPropagation();
+    e.stopPropagation();
     if (building.type === "market") {
       setHovered(true);
       document.body.style.cursor = "pointer";
@@ -81,13 +76,13 @@ const Building = ({ building, onClick }: BuildingProps) => {
   };
 
   const handlePointerOut = (e: any) => {
-    if (e.stopPropagation) e.stopPropagation();
+    e.stopPropagation();
     setHovered(false);
     document.body.style.cursor = "auto";
   };
 
   const handlePointerDown = (e: any) => {
-    if (e.stopPropagation) e.stopPropagation();
+    e.stopPropagation();
     if (building.type === "market" && onClick) {
       onClick(building);
     }
@@ -103,7 +98,6 @@ const Building = ({ building, onClick }: BuildingProps) => {
       onPointerOver={handlePointerOver}
       onPointerOut={handlePointerOut}
       onPointerDown={handlePointerDown}
-      onClick={handleClick}
     >
       {buildingType.model.shape === "box" ? (
         <boxGeometry args={[sizeX, buildingType.height, sizeZ]} />
