@@ -147,7 +147,7 @@ export const useNpcStore = create<NPCState>()(
 
         // Lógica baseada no estado atual do NPC
         switch (npc.state) {
-          case "idle":
+          case "idle": {
             // Sistema de tomada de decisão baseado em necessidades
             updatedNPC.needs.energy -= 0.1 * deltaTime;
             updatedNPC.needs.satisfaction -= 0.05 * deltaTime;
@@ -173,6 +173,9 @@ export const useNpcStore = create<NPCState>()(
                 updatedNPC.memory.failedAttempts = 0;
                 console.log(`NPC ${npc.type} explorando nova área em [${newArea[0]}, ${newArea[1]}]`);
               }
+            }
+            break;
+          }
 
             // Todos os NPCs procuram recursos se tiverem espaço no inventário
             if ((npc.type === "lumberjack" || npc.type === "miner") && hasSpaceInInventory) {
