@@ -104,16 +104,20 @@ export const useNpcStore = create<NPCState>()(
               return isMatchingType && !r.lastCollected;
             });
 
-            // Lenhadores e mineradores procuram recursos apenas se houver silo, espaço no inventário e recursos disponíveis
-            if ((npc.type === "lumberjack" || npc.type === "miner") && hasSilo && hasSpaceInInventory) {
+            // Lenhadores e mineradores procuram recursos apenas se houver espaço no inventário
+            if ((npc.type === "lumberjack" || npc.type === "miner") && hasSpaceInInventory) {
               const resourceType = npc.type === "lumberjack" ? "wood" : "stone";
 
               // Buscar recurso mais próximo do grid
               const resources = window.naturalResources?.filter(r => {
                 const isCorrectType = r.type === resourceType;
                 const isNotCollected = !r.lastCollected;
-                console.log(`Recurso encontrado - Tipo: ${r.type}, Posição: [${r.position}], Coletado: ${r.lastCollected}`);
-                return isCorrectType && isNotCollected;
+                const isNearHome = Math.hypot(
+                  r.position[0] - npc.position[0],
+                  r.position[1] - npc.position[2]
+                ) < 15; // Busca recursos em um raio de 15 unidades
+                console.log(`Recurso encontrado - Tipo: ${r.type}, Posição: [${r.position}], Distância: ${isNearHome}`);
+                return isCorrectType && isNotCollected && isNearHome;
               }) || [];
 
               let nearestResource = null;
