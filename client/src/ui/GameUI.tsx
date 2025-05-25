@@ -81,7 +81,7 @@ const GameUI = () => {
 
   import { useIsMobile } from "../hooks/use-is-mobile";
   const isMobile = useIsMobile();
-  
+
   return (
     <div className="absolute inset-0 pointer-events-none">
       <div className={`absolute ${isMobile ? 'bottom-4' : 'top-4'} left-4 flex gap-2 pointer-events-auto`}>
