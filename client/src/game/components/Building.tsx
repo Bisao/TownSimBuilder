@@ -15,39 +15,45 @@ const Building = ({ building, onClick }: BuildingProps) => {
   const lastProducedRef = useRef<number>(building.lastProduced);
   const [hovered, setHovered] = useState(false);
   const { camera } = useThree();
-  
+
+  const handleClick = () => {
+    if (onClick) {
+      onClick(building);
+    }
+  };
+
   // Get building type definition
   const buildingType = buildingTypes[building.type];
   if (!buildingType) return null;
-  
+
   // Load texture
   const woodTexture = useTexture("/textures/wood.jpg");
-  
+
   // Calculate position (centered on grid cell)
   const [posX, posZ] = building.position;
   const [sizeX, sizeZ] = buildingType.size;
-  
+
   // Center position based on building size
   const position = useMemo(() => [
     posX + sizeX / 2 - 0.5,
     buildingType.height / 2,
     posZ + sizeZ / 2 - 0.5
   ], [posX, posZ, sizeX, sizeZ, buildingType.height]);
-  
+
   // Production animation
   useFrame(() => {
     if (!ref.current) return;
-    
+
     if (buildingType.produces) {
       const now = Date.now();
       const timeSinceLastProduction = now - lastProducedRef.current;
       const productionInterval = buildingType.produces.interval * 1000;
-      
+
       // If production happened, update the reference
       if (building.lastProduced !== lastProducedRef.current) {
         lastProducedRef.current = building.lastProduced;
       }
-      
+
       // Pulse effect when producing
       if (timeSinceLastProduction > productionInterval * 0.9) {
         const scale = 1 + Math.sin(now * 0.01) * 0.05;
@@ -56,7 +62,7 @@ const Building = ({ building, onClick }: BuildingProps) => {
         ref.current.scale.set(1, 1, 1);
       }
     }
-    
+
     // Efeito de destaque quando o mouse está sobre o edifício
     if (hovered) {
       // Efeito de pulso suave ao passar o mouse
@@ -64,7 +70,7 @@ const Building = ({ building, onClick }: BuildingProps) => {
       ref.current.scale.set(pulseFactor, pulseFactor, pulseFactor);
     }
   });
-  
+
   // Lidar com interações do mouse
   const handlePointerOver = (e: any) => {
     if (e.stopPropagation) e.stopPropagation();
@@ -73,20 +79,20 @@ const Building = ({ building, onClick }: BuildingProps) => {
       document.body.style.cursor = "pointer";
     }
   };
-  
+
   const handlePointerOut = (e: any) => {
     if (e.stopPropagation) e.stopPropagation();
     setHovered(false);
     document.body.style.cursor = "auto";
   };
-  
+
   const handlePointerDown = (e: any) => {
     if (e.stopPropagation) e.stopPropagation();
     if (building.type === "market" && onClick) {
       onClick(building);
     }
   };
-  
+
   return (
     <mesh
       ref={ref}
@@ -97,13 +103,14 @@ const Building = ({ building, onClick }: BuildingProps) => {
       onPointerOver={handlePointerOver}
       onPointerOut={handlePointerOut}
       onPointerDown={handlePointerDown}
+      onClick={handleClick}
     >
       {buildingType.model.shape === "box" ? (
         <boxGeometry args={[sizeX, buildingType.height, sizeZ]} />
       ) : (
-        <cylinderGeometry args={[sizeX/2, sizeX/2, buildingType.height, 16]} />
+        <cylinderGeometry args={[sizeX / 2, sizeX / 2, buildingType.height, 16]} />
       )}
-      <meshStandardMaterial 
+      <meshStandardMaterial
         map={woodTexture}
         color={buildingType.model.color}
         emissive={hovered ? new THREE.Color(0x555555) : undefined}
