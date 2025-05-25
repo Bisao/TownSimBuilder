@@ -310,11 +310,7 @@ export const useNpcStore = create<NPCState>()(
                 };
                 const resourceType = resourceMapping[npc.type];
 
-                // Atualiza o inventário do NPC com verificação de grid
-                const resourceMapping = {
-                  "lumberjack": "wood",
-                  "miner": "stone"
-                };
+                // Usa o resourceMapping já definido anteriormente
                 const expectedResourceType = resourceMapping[npc.type];
                 
                 if (updatedNPC.inventory.type === '' || updatedNPC.inventory.type === expectedResourceType) {
