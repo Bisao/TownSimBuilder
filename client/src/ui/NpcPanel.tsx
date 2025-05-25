@@ -1,6 +1,8 @@
+import React from "react";
 import { NPC, useNpcStore } from "../game/stores/useNpcStore";
 import { npcTypes } from "../game/constants/npcs";
 import { useBuildingStore } from "../game/stores/useBuildingStore";
+import { useDraggable } from "../hooks/useDraggable";
 
 interface NpcPanelProps {
   npc: NPC | null;
@@ -47,6 +49,10 @@ const NpcPanel = ({ npc, onClose }: NpcPanelProps) => {
     searching: "Procurando"
   };
 
+  const { dragRef, position, isDragging, handleMouseDown } = useDraggable({
+    initialPosition: { x: window.innerWidth / 2 - 192, y: window.innerHeight / 2 - 200 }
+  });
+
   const handleWorkClick = () => {
     console.log(`Iniciando trabalho para NPC ${npc.type} - Estado atual: ${npc.state}`);
 
@@ -92,7 +98,17 @@ const NpcPanel = ({ npc, onClose }: NpcPanelProps) => {
         e.stopPropagation();
       }}
     >
-      <div className="bg-white rounded-xl p-6 w-96 max-h-[90vh] overflow-y-auto relative">
+      <div 
+        className="bg-white rounded-xl p-6 w-96 max-h-[90vh] overflow-y-auto relative"
+        style={{
+          position: 'absolute',
+          left: `${position.x}px`,
+          top: `${position.y}px`,
+          cursor: isDragging ? 'grabbing' : 'grab',
+        }}
+        ref={dragRef}
+        onMouseDown={handleMouseDown}
+      >
         <div className="flex justify-between items-center mb-6">
             <div className="flex items-center gap-3">
               <div className={`w-10 h-10 rounded-full flex items-center justify-center ${

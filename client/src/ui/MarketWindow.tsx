@@ -3,6 +3,7 @@ import { marketCategories, marketItems } from "../game/constants/market";
 import { useResourceStore } from "../game/stores/useResourceStore";
 import { useAudio } from "../lib/stores/useAudio";
 import { cn } from "../lib/utils";
+import { useDraggable } from "../hooks/useDraggable";
 
 interface MarketWindowProps {
   isOpen: boolean;
@@ -12,6 +13,9 @@ interface MarketWindowProps {
 const MarketWindow = ({ isOpen, onClose }: MarketWindowProps) => {
   const [activeCategory, setActiveCategory] = useState("seeds");
   const { resources, updateResource } = useResourceStore();
+  const { dragRef, position, isDragging, handleMouseDown } = useDraggable({
+    initialPosition: { x: window.innerWidth / 2 - 384, y: window.innerHeight / 2 - 300 }
+  });
   
   // Filtrar itens pela categoria selecionada
   const filteredItems = Object.values(marketItems).filter(
@@ -43,13 +47,31 @@ const MarketWindow = ({ isOpen, onClose }: MarketWindowProps) => {
   if (!isOpen) return null;
   
   return (
-    <div className="fixed inset-0 flex items-center justify-center z-50 bg-black/50 pointer-events-auto">
-      <div className="bg-gray-800 text-white rounded-lg w-full max-w-3xl p-4 max-h-[80vh] overflow-auto">
-        <div className="flex justify-between items-center mb-4">
+    <div 
+      className="fixed inset-0 z-50 bg-black/50 pointer-events-auto"
+      onClick={(e) => {
+        if (e.target === e.currentTarget) onClose();
+        e.stopPropagation();
+      }}
+    >
+      <div 
+        ref={dragRef}
+        className={`bg-gray-800 text-white rounded-lg w-full max-w-3xl p-4 max-h-[80vh] overflow-auto absolute shadow-2xl ${isDragging ? 'cursor-grabbing' : ''}`}
+        style={{
+          left: `${position.x}px`,
+          top: `${position.y}px`,
+        }}
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div 
+          className="flex justify-between items-center mb-4 cursor-grab active:cursor-grabbing"
+          onMouseDown={handleMouseDown}
+        >
           <h2 className="text-2xl font-bold">Mercado</h2>
           <button 
             onClick={onClose}
             className="text-gray-400 hover:text-white text-xl"
+            onMouseDown={(e) => e.stopPropagation()}
           >
             &times;
           </button>
