@@ -257,6 +257,36 @@ export const useNpcStore = create<NPCState>()(
 
           case "gathering":
             if (npc.targetResource) {
+              // Verifica se o inventário está cheio antes de coletar
+              if (updatedNPC.inventory.amount >= 5) {
+                // Procura o silo mais próximo
+                const buildings = useBuildingStore.getState().buildings;
+                const silos = buildings.filter(b => b.type === 'silo');
+                
+                if (silos.length > 0) {
+                  // Encontra o silo mais próximo
+                  let nearestSilo = silos[0];
+                  let minDistance = Infinity;
+                  
+                  for (const silo of silos) {
+                    const distance = Math.hypot(
+                      silo.position[0] - npc.position[0],
+                      silo.position[1] - npc.position[2]
+                    );
+                    if (distance < minDistance) {
+                      minDistance = distance;
+                      nearestSilo = silo;
+                    }
+                  }
+                  
+                  // Ir até o silo
+                  updatedNPC.targetPosition = [nearestSilo.position[0] + 0.5, 0, nearestSilo.position[1] + 0.5];
+                  updatedNPC.state = "moving";
+                  updatedNPC.workProgress = 0;
+                  return;
+                }
+              }
+
               updatedNPC.workProgress += deltaTime * 0.2; // 5 segundos para coletar
 
               if (updatedNPC.workProgress >= 1) {
@@ -288,23 +318,29 @@ export const useNpcStore = create<NPCState>()(
                   }
                 }
 
-                // Se o inventário estiver cheio, procurar silo mais próximo, senão continua coletando
-                if (updatedNPC.inventory.amount >= 5) {
-                  const buildings = useBuildingStore.getState().buildings;
-                  const silo = buildings.find(b => b.type === 'silo');
+                // Verifica se chegou em um silo para depositar recursos
+                const buildings = useBuildingStore.getState().buildings;
+                const nearestSilo = buildings.find(b => 
+                  b.type === 'silo' && 
+                  Math.hypot(
+                    b.position[0] - npc.position[0],
+                    b.position[1] - npc.position[2]
+                  ) < 1
+                );
 
-                  if (silo) {
-                    // Ir até o silo para depositar recursos
-                    updatedNPC.targetPosition = [silo.position[0] + 0.5, 0, silo.position[1] + 0.5];
-                    updatedNPC.state = "moving";
-                  } else {
-                    // Se não houver silo, volta ao estado idle
-                    updatedNPC.targetResource = null;
-                    updatedNPC.workProgress = 0;
-                    updatedNPC.state = "idle";
-                  }
+                if (nearestSilo && updatedNPC.inventory.amount > 0) {
+                  // Deposita recursos no silo
+                  const resourceStore = useResourceStore.getState();
+                  resourceStore.updateResource(updatedNPC.inventory.type, updatedNPC.inventory.amount);
+                  console.log(`${npc.type} depositou ${updatedNPC.inventory.amount} ${updatedNPC.inventory.type} no silo`);
+                  
+                  // Limpa o inventário
+                  updatedNPC.inventory = { type: '', amount: 0 };
+                  updatedNPC.targetResource = null;
+                  updatedNPC.workProgress = 0;
+                  updatedNPC.state = "idle";
                 } else {
-                  // Continua coletando
+                  // Continua coletando se não estiver cheio
                   updatedNPC.targetResource = null;
                   updatedNPC.workProgress = 0;
                   updatedNPC.state = "idle";
