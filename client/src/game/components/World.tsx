@@ -26,8 +26,17 @@ const World = ({ onMarketSelect }: WorldProps) => {
   const { npcs, updateNPCs, spawnNPC } = useNpcStore();
   const lastUpdateRef = useRef(Date.now());
   const [showMarketWindow, setShowMarketWindow] = useState(false);
-  const [selectedMarket, setSelectedMarket] = useState<BuildingType | null>(null);
+  const [selectedBuilding, setSelectedBuilding] = useState<BuildingType | null>(null);
   const initializedRef = useRef(false);
+
+  const handleBuildingClick = (building: BuildingType) => {
+    if (building.type === "market") {
+      onMarketSelect?.(building);
+    } else if (building.type === "silo") {
+      // Adicionar lógica do silo aqui se necessário
+      console.log("Silo clicked:", building);
+    }
+  };
 
   // Initialize resources and create initial market when the game starts
   useEffect(() => {
