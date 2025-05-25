@@ -16,6 +16,7 @@ interface NPC {
   state: "idle" | "moving" | "working" | "gathering";
   workProgress: number;
   lastResourceTime: number;
+  hasResource?: boolean; // Indicate if NPC is carrying a resource
 }
 
 interface NPCState {
@@ -90,32 +91,32 @@ export const useNpcStore = create<NPCState>()(
           case "idle":
             // Verificar se existe silo antes de procurar recursos
             const hasSilo = useBuildingStore.getState().buildings.some(b => b.type === 'silo');
-            
+
             // Verificar se existem recursos disponíveis para coleta
             const hasAvailableResources = window.naturalResources?.some(r => {
               const isMatchingType = (npc.type === "lumberjack" && r.type === "wood") || 
                                    (npc.type === "miner" && r.type === "stone");
               return isMatchingType && !r.lastCollected;
             });
-            
+
             // Lenhadores e mineradores procuram recursos apenas se houver silo e recursos disponíveis
             if ((npc.type === "lumberjack" || npc.type === "miner") && hasSilo && hasAvailableResources) {
               const resourceType = npc.type === "lumberjack" ? "wood" : "stone";
-              
+
               // Buscar recurso mais próximo do grid
               const resources = window.naturalResources?.filter(r => 
                 r.type === resourceType && !r.lastCollected
               ) || [];
-              
+
               let nearestResource = null;
               let minDistance = Infinity;
-              
+
               for (const resource of resources) {
                 const distance = Math.hypot(
                   resource.position[0] - npc.position[0],
                   resource.position[1] - npc.position[2]
                 );
-                
+
                 if (distance < minDistance) {
                   minDistance = distance;
                   nearestResource = resource;
@@ -174,7 +175,12 @@ export const useNpcStore = create<NPCState>()(
                 // Mover em direção ao alvo
                 const newX = npc.position[0] + direction.x * npcSpeed * deltaTime;
                 const newZ = npc.position[2] + direction.z * npcSpeed * deltaTime;
-                updatedNPC.position = [newX, 0, newZ];
+
+                // Limitar movimento ao grid (assumindo grid 40x40)
+                const clampedX = Math.max(0, Math.min(newX, 39));
+                const clampedZ = Math.max(0, Math.min(newZ, 39));
+
+                updatedNPC.position = [clampedX, 0, clampedZ];
               } else {
                 // Chegou ao destino
                 updatedNPC.position = [...npc.targetPosition];
@@ -186,13 +192,13 @@ export const useNpcStore = create<NPCState>()(
                   const resourceStore = useResourceStore.getState();
                   const storageCapacity = resourceStore.getStorageCapacity();
                   const currentAmount = resourceStore.resources[resourceType] || 0;
-                  
+
                   // Verificar se há espaço no armazenamento
                   if (currentAmount < storageCapacity) {
                     resourceStore.updateResource(resourceType, 1);
                     console.log(`Depositando ${resourceType} no silo. Novo total: ${currentAmount + 1}`);
                   }
-                  
+
                   updatedNPC.hasResource = false;
                   updatedNPC.state = "idle";
                 } else if (npc.targetResource) {
@@ -254,14 +260,14 @@ export const useNpcStore = create<NPCState>()(
                 const resourceStore = useResourceStore.getState();
                 resourceStore.updateResource(resourceType, 1);
 
-                // Marcar recurso como coletado
+                // Remove the resource from the naturalResources array
                 if (window.naturalResources) {
                   const resourceIndex = window.naturalResources.findIndex(
-                    r => r.position[0] === npc.targetResource?.position[0] && 
+                    r => r.position[0] === npc.targetResource?.position[0] &&
                          r.position[1] === npc.targetResource?.position[1]
                   );
                   if (resourceIndex !== -1) {
-                    window.naturalResources[resourceIndex].lastCollected = Date.now();
+                    window.naturalResources.splice(resourceIndex, 1); // Remove the resource
                   }
                 }
 
