@@ -141,6 +141,30 @@ export const buildingTypes: Record<string, BuildingType> = {
       shape: "box",
     },
   },
+  lumberjackHouse: {
+    id: "lumberjackHouse",
+    name: "Casa do Lenhador",
+    description: "Moradia para lenhadores que cortam árvores",
+    size: [1, 1],
+    height: 2,
+    cost: { wood: 15, stone: 10 },
+    model: {
+      color: "#8B4513",
+      shape: "box",
+    },
+  },
+  minerHouse: {
+    id: "minerHouse",
+    name: "Casa do Minerador",
+    description: "Moradia para mineradores que extraem pedras",
+    size: [1, 1],
+    height: 2,
+    cost: { wood: 15, stone: 10 },
+    model: {
+      color: "#696969",
+      shape: "box",
+    },
+  },
   silo: {
     id: "silo",
     name: "Silo",
