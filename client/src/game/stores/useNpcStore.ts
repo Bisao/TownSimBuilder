@@ -509,20 +509,6 @@ export const useNpcStore = create<NPCState>()(
                   } else {
                     updatedNPC.state = "idle";
                   }
-                } else {
-                  // Chegou em casa para descansar
-                  const home = buildings.find(b => 
-                    b.id === npc.homeId && 
-                    Math.abs(b.position[0] - targetX) < 1.0 && 
-                    Math.abs(b.position[1] - targetZ) < 1.0
-                  );
-                  
-                  if (home && (updatedNPC.needs.energy < 80 || updatedNPC.needs.satisfaction < 60)) {
-                    updatedNPC.state = "resting";
-                    console.log(`NPC ${npc.type} chegou em casa e começou a descansar`);
-                  } else {
-                    updatedNPC.state = "idle";
-                  }
                 }
               } else {
                 // Movimento suave interpolado
