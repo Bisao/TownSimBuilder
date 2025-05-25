@@ -23,7 +23,7 @@ export const buildingTypes: Record<string, BuildingType> = {
     id: "house",
     name: "Casa",
     description: "Moradia básica para seus cidadãos",
-    size: [2, 2],
+    size: [1, 1],
     height: 2,
     cost: { wood: 10 },
     model: {
@@ -35,7 +35,7 @@ export const buildingTypes: Record<string, BuildingType> = {
     id: "farmerHouse",
     name: "Casa do Fazendeiro",
     description: "Moradia para fazendeiros que trabalham nas fazendas",
-    size: [2, 2],
+    size: [1, 1],
     height: 2,
     cost: { wood: 15, stone: 5 },
     model: {
@@ -47,7 +47,7 @@ export const buildingTypes: Record<string, BuildingType> = {
     id: "farm",
     name: "Fazenda",
     description: "Produz trigo ao longo do tempo",
-    size: [3, 3],
+    size: [1, 1],
     height: 0.5,
     cost: { wood: 5 },
     produces: {
@@ -64,7 +64,7 @@ export const buildingTypes: Record<string, BuildingType> = {
     id: "lumberMill",
     name: "Serraria",
     description: "Produz madeira das árvores",
-    size: [3, 2],
+    size: [1, 1],
     height: 2.5,
     cost: { wood: 15 },
     produces: {
@@ -98,7 +98,7 @@ export const buildingTypes: Record<string, BuildingType> = {
     id: "bakery",
     name: "Padaria",
     description: "Produz pão a partir do trigo",
-    size: [2, 2],
+    size: [1, 1],
     height: 2,
     cost: { wood: 20, stone: 10 },
     produces: {
@@ -116,7 +116,7 @@ export const buildingTypes: Record<string, BuildingType> = {
     id: "stoneMine",
     name: "Mina de Pedra",
     description: "Extrai recursos de pedra",
-    size: [2, 3],
+    size: [1, 1],
     height: 1.5,
     cost: { wood: 15 },
     produces: {
@@ -132,8 +132,8 @@ export const buildingTypes: Record<string, BuildingType> = {
   market: {
     id: "market",
     name: "Mercado",
-    description: "Vende mercadorias por moedas",
-    size: [3, 3],
+    description: "Compre sementes, ferramentas e insumos",
+    size: [1, 1],
     height: 2,
     cost: { wood: 25, stone: 15 },
     model: {

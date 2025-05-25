@@ -1,5 +1,5 @@
-import { useRef, useMemo } from "react";
-import { useFrame } from "@react-three/fiber";
+import { useRef, useMemo, useState } from "react";
+import { useFrame, useThree } from "@react-three/fiber";
 import { buildingTypes } from "../constants/buildings";
 import { Building as BuildingType } from "../stores/useBuildingStore";
 import * as THREE from "three";
@@ -7,11 +7,14 @@ import { useTexture } from "@react-three/drei";
 
 interface BuildingProps {
   building: BuildingType;
+  onClick?: (building: BuildingType) => void;
 }
 
-const Building = ({ building }: BuildingProps) => {
+const Building = ({ building, onClick }: BuildingProps) => {
   const ref = useRef<THREE.Mesh>(null);
   const lastProducedRef = useRef<number>(building.lastProduced);
+  const [hovered, setHovered] = useState(false);
+  const { camera } = useThree();
   
   // Get building type definition
   const buildingType = buildingTypes[building.type];
@@ -53,7 +56,36 @@ const Building = ({ building }: BuildingProps) => {
         ref.current.scale.set(1, 1, 1);
       }
     }
+    
+    // Efeito de destaque quando o mouse está sobre o edifício
+    if (hovered) {
+      // Efeito de pulso suave ao passar o mouse
+      const pulseFactor = 1 + Math.sin(Date.now() * 0.005) * 0.05;
+      ref.current.scale.set(pulseFactor, pulseFactor, pulseFactor);
+    }
   });
+  
+  // Lidar com interações do mouse
+  const handlePointerOver = (e: any) => {
+    e.stopPropagation?.();
+    if (building.type === "market") {
+      setHovered(true);
+      document.body.style.cursor = "pointer";
+    }
+  };
+  
+  const handlePointerOut = (e: any) => {
+    e.stopPropagation?.();
+    setHovered(false);
+    document.body.style.cursor = "auto";
+  };
+  
+  const handleClick = (e: any) => {
+    e.stopPropagation?.();
+    if (building.type === "market" && onClick) {
+      onClick(building);
+    }
+  };
   
   return (
     <mesh
@@ -62,6 +94,9 @@ const Building = ({ building }: BuildingProps) => {
       rotation={[0, building.rotation, 0]}
       castShadow
       receiveShadow
+      onPointerOver={handlePointerOver}
+      onPointerOut={handlePointerOut}
+      onClick={handleClick}
     >
       {buildingType.model.shape === "box" ? (
         <boxGeometry args={[sizeX, buildingType.height, sizeZ]} />
@@ -70,7 +105,8 @@ const Building = ({ building }: BuildingProps) => {
       )}
       <meshStandardMaterial 
         map={woodTexture}
-        color={buildingType.model.color} 
+        color={buildingType.model.color}
+        emissive={hovered ? new THREE.Color(0x555555) : undefined}
       />
     </mesh>
   );

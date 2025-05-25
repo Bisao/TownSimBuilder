@@ -31,6 +31,9 @@ const CameraControls = () => {
   // Adicionar event listener para o scroll do mouse
   useEffect(() => {
     const handleWheel = (event: WheelEvent) => {
+      // Prevenir o comportamento padrão de scroll da página
+      event.preventDefault();
+      
       // Determinar a direção do scroll (positivo para zoom out, negativo para zoom in)
       const direction = Math.sign(event.deltaY);
       
@@ -55,6 +58,10 @@ const CameraControls = () => {
       // Atualizar a posição da câmera
       currentPosition.copy(currentTarget).add(cameraOffset);
       
+      // Atualizar a câmera imediatamente
+      camera.position.copy(currentPosition);
+      camera.lookAt(currentTarget);
+      
       // Registrar o zoom no console
       if (direction > 0) {
         console.log("Zooming out (scroll)");
@@ -65,13 +72,13 @@ const CameraControls = () => {
     
     // Adicionar o event listener ao canvas do Three.js
     const domElement = gl.domElement;
-    domElement.addEventListener('wheel', handleWheel);
+    domElement.addEventListener('wheel', handleWheel, { passive: false });
     
     // Limpar o event listener quando o componente for desmontado
     return () => {
       domElement.removeEventListener('wheel', handleWheel);
     };
-  }, [gl]);
+  }, [gl, camera]);
   
   // Get keyboard controls
   const forward = useKeyboardControls<Controls>((state) => state.forward);

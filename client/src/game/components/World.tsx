@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useFrame } from "@react-three/fiber";
 import Terrain from "./Terrain";
 import Building from "./Building";
@@ -12,18 +12,46 @@ import { useNpcStore } from "../stores/useNpcStore";
 import { workplaceMapping } from "../constants/npcs";
 import { Sky } from "./Sky";
 import DayNightCycle from "./DayNightCycle";
+import MarketWindow from "../../ui/MarketWindow";
+import { Building as BuildingType } from "../stores/useBuildingStore";
 
 const World = () => {
   const { initResources } = useResourceStore();
-  const { buildings, updateProduction } = useBuildingStore();
+  const { buildings, updateProduction, placeBuilding } = useBuildingStore();
   const { gameMode, advanceTime } = useGameStore();
   const { npcs, updateNPCs, spawnNPC } = useNpcStore();
   const lastUpdateRef = useRef(Date.now());
+  const [showMarketWindow, setShowMarketWindow] = useState(false);
+  const [selectedMarket, setSelectedMarket] = useState<BuildingType | null>(null);
+  const initializedRef = useRef(false);
 
-  // Initialize resources when the game starts
+  // Initialize resources and create initial market when the game starts
   useEffect(() => {
-    console.log("Initializing game world and resources");
-    initResources();
+    if (!initializedRef.current) {
+      console.log("Initializing game world and resources");
+      initResources();
+      
+      // Criar um mercado inicial em posição aleatória
+      const gridSize = 50; // Tamanho do grid
+      const marketSize = 3; // Tamanho do mercado
+      
+      // Garantir que o mercado esteja pelo menos a 5 unidades da borda
+      const minPos = 5;
+      const maxPos = gridSize - marketSize - minPos;
+      
+      // Gerar posição aleatória para o mercado
+      const marketX = Math.floor(Math.random() * (maxPos - minPos) + minPos);
+      const marketZ = Math.floor(Math.random() * (maxPos - minPos) + minPos);
+      
+      // Criar o mercado inicial (sem custo)
+      const success = placeBuilding("market", [marketX, marketZ], 0);
+      
+      if (success) {
+        console.log(`Mercado inicial criado em [${marketX}, ${marketZ}]`);
+      }
+      
+      initializedRef.current = true;
+    }
   }, []);
   
   // Monitorar novos edifícios de casa de NPC para criar NPCs
@@ -60,6 +88,20 @@ const World = () => {
     // Update NPCs
     updateNPCs(deltaTime);
   });
+  
+  // Lidar com clique em edifícios
+  const handleBuildingClick = (building: BuildingType) => {
+    if (building.type === "market") {
+      setSelectedMarket(building);
+      setShowMarketWindow(true);
+    }
+  };
+  
+  // Fechar janela do mercado
+  const handleCloseMarket = () => {
+    setShowMarketWindow(false);
+    setSelectedMarket(null);
+  };
 
   return (
     <>
@@ -84,7 +126,11 @@ const World = () => {
       
       {/* Buildings */}
       {buildings.map((building) => (
-        <Building key={building.id} building={building} />
+        <Building 
+          key={building.id} 
+          building={building} 
+          onClick={handleBuildingClick}
+        />
       ))}
       
       {/* NPCs */}
@@ -97,6 +143,9 @@ const World = () => {
       
       {/* Camera controls */}
       <CameraControls />
+      
+      {/* Janela do mercado (UI) */}
+      <MarketWindow isOpen={showMarketWindow} onClose={handleCloseMarket} />
     </>
   );
 };
