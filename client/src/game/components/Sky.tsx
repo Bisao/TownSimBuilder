@@ -114,7 +114,7 @@ export const Sky = () => {
 
     // Posição da lua (oposta ao sol)
     const moonAngle = sunAngle + Math.PI;
-    const moonElevation = -sunElevation;
+    const moonElevation = hours >= 21 || hours <= 6 ? Math.abs(sunElevation) : -0.5;
     const moonX = Math.cos(moonAngle) * sunDistance;
     const moonY = Math.max(moonElevation * sunDistance, -50);
     const moonZ = Math.sin(moonAngle) * sunDistance;
@@ -132,13 +132,6 @@ export const Sky = () => {
       }
     }
 
-    // Posição da lua (oposta ao sol, visível das 21h às 6h)
-    const moonAngle = sunAngle + Math.PI;
-    const moonElevation = hours >= 21 || hours <= 6 ? Math.abs(sunElevation) : -0.5;
-    const moonX = Math.cos(moonAngle) * sunDistance;
-    const moonY = Math.max(moonElevation * sunDistance, -50);
-    const moonZ = Math.sin(moonAngle) * sunDistance;
-
     if (moonRef.current) {
       moonRef.current.position.set(moonX, moonY, moonZ);
       // Lua visível das 21h às 6h
@@ -148,8 +141,6 @@ export const Sky = () => {
       const moonIntensity = Math.max(0, moonElevation);
       if (moonRef.current.material instanceof THREE.MeshBasicMaterial) {
         moonRef.current.material.opacity = moonIntensity * 0.6 + 0.3;
-      }icMaterial) {
-        moonRef.current.material.opacity = moonIntensity * 0.8; // Lua menos brilhante
       }
     }
   });
