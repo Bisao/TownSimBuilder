@@ -292,6 +292,38 @@ export const useNpcStore = create<NPCState>()(
             }
             break;
 
+          case "searching":
+            // Procura recursos quando está no estado searching
+            const resourceType = npc.type === "miner" ? "stone" : npc.type === "lumberjack" ? "wood" : null;
+            
+            if (resourceType && window.naturalResources) {
+              const availableResources = window.naturalResources.filter(r => 
+                r.type === resourceType && !r.lastCollected
+              );
+
+              if (availableResources.length > 0) {
+                let nearest = availableResources[0];
+                let minDist = Infinity;
+
+                for (const resource of availableResources) {
+                  const dist = Math.hypot(
+                    resource.position[0] - npc.position[0],
+                    resource.position[1] - npc.position[2]
+                  );
+                  if (dist < minDist) {
+                    minDist = dist;
+                    nearest = resource;
+                  }
+                }
+
+                updatedNPC.targetResource = nearest;
+                updatedNPC.targetPosition = [nearest.position[0], 0, nearest.position[1]];
+                updatedNPC.state = "moving";
+                console.log(`NPC ${npc.type} encontrou recurso em [${nearest.position[0]}, ${nearest.position[1]}]`);
+              }
+            }
+            break;
+
           case "moving":
             if (npc.targetPosition) {
               // Calcular direção e distância para o alvo
