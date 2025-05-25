@@ -121,22 +121,31 @@ const NpcPanel = ({ npc, onClose }: NpcPanelProps) => {
             {npc.type === "miner" && (
               <button
                 onClick={() => {
-                  const updatedNpc = {
-                    ...npc,
-                    state: npc.state === "idle" ? "searching" : "idle",
-                    workProgress: 0,
-                    targetResource: null,
-                    targetPosition: null,
-                    needs: {
-                      ...npc.needs,
-                      energy: Math.max(npc.needs.energy, 50),
-                      satisfaction: Math.max(npc.needs.satisfaction, 50)
-                    }
-                  };
+                  if (npc.state === "idle") {
+                    // Encontra a casa do NPC
+                    const buildings = useBuildingStore.getState().buildings;
+                    const home = buildings.find(b => b.id === npc.homeId);
 
-                  useNpcStore.setState(state => ({
-                    npcs: state.npcs.map(n => n.id === npc.id ? updatedNpc : n)
-                  }));
+                    if (home) {
+                      const updatedNpc = {
+                        ...npc,
+                        position: [home.position[0], 0, home.position[1]],
+                        state: "searching",
+                        workProgress: 0,
+                        targetResource: null,
+                        targetPosition: null,
+                        needs: {
+                          ...npc.needs,
+                          energy: Math.max(npc.needs.energy, 50),
+                          satisfaction: Math.max(npc.needs.satisfaction, 50)
+                        }
+                      };
+
+                      useNpcStore.setState(state => ({
+                        npcs: state.npcs.map(n => n.id === npc.id ? updatedNpc : n)
+                      }));
+                    }
+                  }
                 }}
                 className={`w-full px-4 py-2 rounded-lg relative overflow-hidden ${
                   npc.state !== "idle"
