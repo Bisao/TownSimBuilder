@@ -268,14 +268,15 @@ export const useNpcStore = create<NPCState>()(
                   }
                 }
 
-                updatedNPC.targetPosition = [nearestSilo.position[0], 0, nearestSilo.position[1]];
+                // Ir para o centro do silo para melhor detecção
+                updatedNPC.targetPosition = [nearestSilo.position[0] + 0.5, 0, nearestSilo.position[1] + 0.5];
                 updatedNPC.targetBuildingId = nearestSilo.id;
                 updatedNPC.targetResource = null;
                 updatedNPC.state = "moving";
-                console.log(`NPC ${npc.type} inventário cheio, indo para silo em [${nearestSilo.position[0]}, ${nearestSilo.position[1]}] - distância: ${minDistance.toFixed(2)}`);
+                console.log(`NPC ${npc.type} inventário cheio (${updatedNPC.inventory.amount} ${updatedNPC.inventory.type}), indo para silo ID:${nearestSilo.id} em [${nearestSilo.position[0]}, ${nearestSilo.position[1]}] - distância: ${minDistance.toFixed(2)}`);
               } else {
                 console.warn(`NPC ${npc.type} não encontrou silos para depositar recursos`);
-                // Se não encontrar silo, continua trabalhando mas não pega mais recursos
+                // Se não encontrar silo, fica parado
                 updatedNPC.state = "idle";
               }
             }
@@ -463,33 +464,52 @@ export const useNpcStore = create<NPCState>()(
                     updatedNPC.state = "idle";
                     updatedNPC.targetBuildingId = null;
                   }
-                } else if (npc.inventory.amount > 0 && npc.targetBuildingId) {
-                  // Chegou ao silo com inventário - depositar
-                  const silo = buildings.find(b => 
-                    b.id === npc.targetBuildingId && 
-                    b.type === 'silo' && 
-                    Math.abs(b.position[0] - targetX) < 1.0 && 
-                    Math.abs(b.position[1] - targetZ) < 1.0
-                  );
+                } else {
+                  // Verificar se chegou ao silo para depositar recursos
+                  if (npc.inventory.amount > 0 && npc.targetBuildingId) {
+                    const silo = buildings.find(b => 
+                      b.id === npc.targetBuildingId && 
+                      b.type === 'silo' && 
+                      Math.abs(b.position[0] - targetX) < 1.0 && 
+                      Math.abs(b.position[1] - targetZ) < 1.0
+                    );
 
-                  if (silo) {
-                    // Importar dinamicamente o store para evitar dependência circular
-                    import('./useResourceStore').then(({ useResourceStore }) => {
-                      const resourceStore = useResourceStore.getState();
-                      resourceStore.updateResource(updatedNPC.inventory.type, updatedNPC.inventory.amount);
-                      console.log(`NPC ${npc.type} depositou ${updatedNPC.inventory.amount} ${updatedNPC.inventory.type} no silo`);
-                    });
+                    if (silo) {
+                      // Depositar recursos no silo
+                      const depositedAmount = updatedNPC.inventory.amount;
+                      const depositedType = updatedNPC.inventory.type;
+                      
+                      // Importar dinamicamente o store para evitar dependência circular
+                      import('./useResourceStore').then(({ useResourceStore }) => {
+                        const resourceStore = useResourceStore.getState();
+                        resourceStore.updateResource(depositedType, depositedAmount);
+                        console.log(`NPC ${npc.type} depositou ${depositedAmount} ${depositedType} no silo (recursos atualizados)`);
+                      });
 
-                    const depositedAmount = updatedNPC.inventory.amount;
-                    const depositedType = updatedNPC.inventory.type;
-                    updatedNPC.inventory = { type: '', amount: 0 };
-                    updatedNPC.targetBuildingId = null;
-                    console.log(`NPC ${npc.type} depositou ${depositedAmount} ${depositedType} e esvaziou inventário no silo`);
-                    updatedNPC.state = "idle";
+                      // Limpar inventário e alvo
+                      updatedNPC.inventory = { type: '', amount: 0 };
+                      updatedNPC.targetBuildingId = null;
+                      updatedNPC.state = "idle";
+                      console.log(`NPC ${npc.type} depositou ${depositedAmount} ${depositedType} e esvaziou inventário no silo`);
+                    } else {
+                      console.warn(`NPC ${npc.type} não encontrou silo alvo na posição [${targetX.toFixed(1)}, ${targetZ.toFixed(1)}]`);
+                      updatedNPC.targetBuildingId = null;
+                      updatedNPC.state = "idle";
+                    }
                   } else {
-                    console.warn(`NPC ${npc.type} não encontrou silo alvo na posição [${targetX.toFixed(1)}, ${targetZ.toFixed(1)}]`);
-                    updatedNPC.targetBuildingId = null;
-                    updatedNPC.state = "idle";
+                    // Chegou em casa ou outro local para descansar
+                    const home = buildings.find(b => 
+                      b.id === npc.homeId && 
+                      Math.abs(b.position[0] - targetX) < 1.0 && 
+                      Math.abs(b.position[1] - targetZ) < 1.0
+                    );
+                    
+                    if (home && (updatedNPC.needs.energy < 80 || updatedNPC.needs.satisfaction < 60)) {
+                      updatedNPC.state = "resting";
+                      console.log(`NPC ${npc.type} chegou em casa e começou a descansar`);
+                    } else {
+                      updatedNPC.state = "idle";
+                    }
                   }
                 } else {
                   // Chegou em casa para descansar
