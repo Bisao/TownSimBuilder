@@ -93,38 +93,36 @@ export const useNpcStore = create<NPCState>()(
         // Lógica baseada no estado atual do NPC
         switch (npc.state) {
           case "idle":
-            // Verificar se existe silo e se o inventário não está cheio
-            const hasSilo = useBuildingStore.getState().buildings.some(b => b.type === 'silo');
+            // Verificar se o inventário não está cheio
             const hasSpaceInInventory = updatedNPC.inventory.amount < 5;
-
-            // Verificar se existem recursos disponíveis para coleta
-            const hasAvailableResources = window.naturalResources?.some(r => {
-              const isMatchingType = (npc.type === "lumberjack" && r.type === "wood") || 
-                                   (npc.type === "miner" && r.type === "stone");
-              return isMatchingType && !r.lastCollected;
-            });
 
             // Todos os NPCs procuram recursos se tiverem espaço no inventário
             if ((npc.type === "lumberjack" || npc.type === "miner") && hasSpaceInInventory) {
-              // Definir tipo de recurso baseado no tipo do NPC
               const resourceMapping = {
                 "lumberjack": "wood",
                 "miner": "stone"
               };
               const resourceType = resourceMapping[npc.type];
 
-              // Buscar recurso mais próximo do grid
+              // Buscar recurso mais próximo no grid
               const resources = window.naturalResources?.filter(r => {
+                // Verifica tipo e status do recurso
                 const isCorrectType = r.type === resourceType;
                 const isNotCollected = !r.lastCollected;
-                const distance = Math.hypot(
-                  r.position[0] - npc.position[0],
-                  r.position[1] - npc.position[2]
-                );
-                const isNearHome = distance < 15; // Busca recursos em um raio de 15 unidades
                 
-                console.log(`NPC ${npc.type} procurando - Recurso: ${r.type}, Posição: [${r.position}], Distância: ${distance.toFixed(2)}`);
-                return isCorrectType && isNotCollected && isNearHome;
+                // Calcula distância Manhattan no grid
+                const dx = Math.abs(r.position[0] - Math.floor(npc.position[0]));
+                const dz = Math.abs(r.position[1] - Math.floor(npc.position[2]));
+                const gridDistance = dx + dz;
+                
+                // Busca recursos em um raio de 10 unidades do grid
+                const isInRange = gridDistance <= 10;
+                
+                if (isCorrectType && isNotCollected && isInRange) {
+                  console.log(`NPC ${npc.type} encontrou recurso em [${r.position}] - Distância: ${gridDistance}`);
+                }
+                
+                return isCorrectType && isNotCollected && isInRange;
               }) || [];
 
               let nearestResource = null;
@@ -191,14 +189,14 @@ export const useNpcStore = create<NPCState>()(
               const distance = currentPos.distanceTo(targetPos);
               const npcSpeed = npcTypes[npc.type]?.speed || 0.5;
 
-              if (distance > 0.2) {
-                // Mover em direção ao alvo
+              if (distance > 0.1) {
+                // Mover em direção ao alvo seguindo o grid
                 const newX = npc.position[0] + direction.x * npcSpeed * deltaTime;
                 const newZ = npc.position[2] + direction.z * npcSpeed * deltaTime;
 
-                // Limitar movimento ao grid (assumindo grid 40x40)
-                const clampedX = Math.max(0, Math.min(newX, 39));
-                const clampedZ = Math.max(0, Math.min(newZ, 39));
+                // Limitar movimento ao grid (40x40) e arredondar para posições do grid
+                const clampedX = Math.max(0, Math.min(Math.round(newX * 2) / 2, 39));
+                const clampedZ = Math.max(0, Math.min(Math.round(newZ * 2) / 2, 39));
 
                 updatedNPC.position = [clampedX, 0, clampedZ];
               } else {
