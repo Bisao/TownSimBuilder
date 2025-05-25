@@ -10,7 +10,11 @@ interface NpcProps {
 }
 
 const Npc = ({ npc }: NpcProps) => {
-  const ref = useRef<THREE.Mesh>(null);
+  const bodyRef = useRef<THREE.Group>(null);
+  const leftLegRef = useRef<THREE.Mesh>(null);
+  const rightLegRef = useRef<THREE.Mesh>(null);
+  const leftArmRef = useRef<THREE.Mesh>(null);
+  const rightArmRef = useRef<THREE.Mesh>(null);
   const particlesRef = useRef<THREE.Points>(null);
   
   const handleClick = (event: THREE.Event) => {
@@ -37,43 +41,90 @@ const Npc = ({ npc }: NpcProps) => {
   }, []);
   
   useFrame(({ clock }) => {
-    if (!ref.current || !particlesRef.current) return;
+    if (!bodyRef.current || !particlesRef.current) return;
     
     const time = clock.getElapsedTime();
     
-    // Efeitos baseados no estado
-    if (npc.state === "working" || npc.state === "gathering") {
-      // Pulsação do NPC
-      const pulseScale = 1 + Math.sin(time * 8) * 0.1;
-      ref.current.scale.set(pulseScale, pulseScale, pulseScale);
+    // Animação do corpo ao andar
+    if (npc.state === "moving") {
+      // Movimento de balanço do corpo
+      bodyRef.current.position.y = 0.5 + Math.sin(time * 5) * 0.05;
       
-      // Animação das partículas
+      // Movimento das pernas
+      if (leftLegRef.current && rightLegRef.current) {
+        leftLegRef.current.rotation.x = Math.sin(time * 5) * 0.5;
+        rightLegRef.current.rotation.x = -Math.sin(time * 5) * 0.5;
+      }
+      
+      // Movimento dos braços
+      if (leftArmRef.current && rightArmRef.current) {
+        leftArmRef.current.rotation.x = -Math.sin(time * 5) * 0.5;
+        rightArmRef.current.rotation.x = Math.sin(time * 5) * 0.5;
+      }
+    } else if (npc.state === "working" || npc.state === "gathering") {
+      // Animação de trabalho
+      if (leftArmRef.current && rightArmRef.current) {
+        leftArmRef.current.rotation.x = Math.sin(time * 3) * 0.3;
+        rightArmRef.current.rotation.x = Math.sin(time * 3) * 0.3;
+      }
+      
+      // Partículas de trabalho
       particlesRef.current.visible = true;
       particlesRef.current.rotation.y = time * 2;
-      particlesRef.current.position.y = Math.sin(time * 4) * 0.1;
-      
-      // Cor das partículas pulsando
       const material = particlesRef.current.material as THREE.PointsMaterial;
       material.size = 0.1 + Math.sin(time * 4) * 0.05;
     } else {
-      // Estado normal
-      ref.current.scale.set(1, 1, 1);
+      // Estado parado
+      if (bodyRef.current) {
+        bodyRef.current.position.y = 0.5 + Math.sin(time * 2) * 0.02;
+      }
       if (particlesRef.current) {
         particlesRef.current.visible = false;
       }
     }
-    
-    // Flutuação suave
-    ref.current.position.y = 0.5 + Math.sin(time * 2) * 0.05;
   });
   
   return (
-    <group position={[npc.position[0], 0.5, npc.position[2]]}>
-      <mesh ref={ref} castShadow onClick={handleClick}>
-        <boxGeometry args={[0.5, 1, 0.5]} />
-        <meshStandardMaterial color={npcType.color} />
-      </mesh>
+    <group position={[npc.position[0], 0, npc.position[2]]} onClick={handleClick}>
+      <group ref={bodyRef}>
+        {/* Cabeça */}
+        <mesh position={[0, 0.8, 0]}>
+          <sphereGeometry args={[0.15, 16, 16]} />
+          <meshStandardMaterial color={npcType.color} />
+        </mesh>
+        
+        {/* Corpo */}
+        <mesh position={[0, 0.4, 0]}>
+          <boxGeometry args={[0.3, 0.5, 0.2]} />
+          <meshStandardMaterial color={npcType.color} />
+        </mesh>
+        
+        {/* Braço Esquerdo */}
+        <mesh ref={leftArmRef} position={[-0.2, 0.5, 0]}>
+          <boxGeometry args={[0.1, 0.4, 0.1]} />
+          <meshStandardMaterial color={npcType.color} />
+        </mesh>
+        
+        {/* Braço Direito */}
+        <mesh ref={rightArmRef} position={[0.2, 0.5, 0]}>
+          <boxGeometry args={[0.1, 0.4, 0.1]} />
+          <meshStandardMaterial color={npcType.color} />
+        </mesh>
+        
+        {/* Perna Esquerda */}
+        <mesh ref={leftLegRef} position={[-0.1, 0.1, 0]}>
+          <boxGeometry args={[0.1, 0.4, 0.1]} />
+          <meshStandardMaterial color={npcType.color} />
+        </mesh>
+        
+        {/* Perna Direita */}
+        <mesh ref={rightLegRef} position={[0.1, 0.1, 0]}>
+          <boxGeometry args={[0.1, 0.4, 0.1]} />
+          <meshStandardMaterial color={npcType.color} />
+        </mesh>
+      </group>
       
+      {/* Partículas de efeito */}
       <points ref={particlesRef}>
         <primitive object={particles} />
         <pointsMaterial
