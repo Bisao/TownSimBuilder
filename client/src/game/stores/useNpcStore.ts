@@ -91,8 +91,15 @@ export const useNpcStore = create<NPCState>()(
             // Verificar se existe silo antes de procurar recursos
             const hasSilo = useBuildingStore.getState().buildings.some(b => b.type === 'silo');
             
-            // Lenhadores e mineradores procuram recursos apenas se houver silo
-            if ((npc.type === "lumberjack" || npc.type === "miner") && hasSilo) {
+            // Verificar se existem recursos disponíveis para coleta
+            const hasAvailableResources = window.naturalResources?.some(r => {
+              const isMatchingType = (npc.type === "lumberjack" && r.type === "wood") || 
+                                   (npc.type === "miner" && r.type === "stone");
+              return isMatchingType && !r.lastCollected;
+            });
+            
+            // Lenhadores e mineradores procuram recursos apenas se houver silo e recursos disponíveis
+            if ((npc.type === "lumberjack" || npc.type === "miner") && hasSilo && hasAvailableResources) {
               const resourceType = npc.type === "lumberjack" ? "wood" : "stone";
               
               // Buscar recurso mais próximo do grid
