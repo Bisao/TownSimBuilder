@@ -275,9 +275,13 @@ export const useNpcStore = create<NPCState>()(
                   const resourceIndex = window.naturalResources.findIndex(
                     r => r.position[0] === npc.targetResource?.position[0] &&
                          r.position[1] === npc.targetResource?.position[1] &&
+                         !r.lastCollected &&
                          ((npc.type === "lumberjack" && r.type === "wood") ||
                           (npc.type === "miner" && r.type === "stone"))
                   );
+
+                  // Debug log
+                  console.log(`Tentando coletar recurso. NPC: ${npc.type}, Posição: [${npc.targetResource?.position}]`);
                   if (resourceIndex !== -1) {
                     window.naturalResources.splice(resourceIndex, 1);
                     console.log(`Recurso removido em [${npc.targetResource.position}]`);
