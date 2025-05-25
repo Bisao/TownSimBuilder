@@ -28,6 +28,50 @@ const World = ({ onMarketSelect }: WorldProps) => {
   const [showMarketWindow, setShowMarketWindow] = useState(false);
   const [selectedMarket, setSelectedMarket] = useState<BuildingType | null>(null);
   const initializedRef = useRef(false);
+  const [naturalResources, setNaturalResources] = useState<Array<{
+    type: string;
+    position: [number, number];
+  }>>([]);
+
+  // Função para gerar posições aleatórias para recursos naturais
+  const generateNaturalResources = () => {
+    const gridSize = 50;
+    const numTrees = 20;
+    const numStones = 15;
+    const usedPositions = new Set<string>();
+    const resources = [];
+
+    // Função auxiliar para gerar posição aleatória
+    const generateRandomPosition = (): [number, number] => {
+      const x = Math.floor(Math.random() * (gridSize - 2)) + 1;
+      const z = Math.floor(Math.random() * (gridSize - 2)) + 1;
+      return [x, z];
+    };
+
+    // Gerar árvores
+    for (let i = 0; i < numTrees; i++) {
+      let position: [number, number];
+      do {
+        position = generateRandomPosition();
+      } while (usedPositions.has(`${position[0]},${position[1]}`));
+      
+      usedPositions.add(`${position[0]},${position[1]}`);
+      resources.push({ type: 'wood', position });
+    }
+
+    // Gerar pedras
+    for (let i = 0; i < numStones; i++) {
+      let position: [number, number];
+      do {
+        position = generateRandomPosition();
+      } while (usedPositions.has(`${position[0]},${position[1]}`));
+      
+      usedPositions.add(`${position[0]},${position[1]}`);
+      resources.push({ type: 'stone', position });
+    }
+
+    return resources;
+  };
 
   // Initialize resources and create initial market when the game starts
   useEffect(() => {
@@ -53,6 +97,10 @@ const World = ({ onMarketSelect }: WorldProps) => {
       if (success) {
         console.log(`Mercado inicial criado em [${marketX}, ${marketZ}]`);
       }
+
+      // Gerar recursos naturais
+      const resources = generateNaturalResources();
+      setNaturalResources(resources);
 
       initializedRef.current = true;
     }
@@ -122,6 +170,17 @@ const World = ({ onMarketSelect }: WorldProps) => {
       {/* NPCs */}
       {npcs.map((npc) => (
         <Npc key={npc.id} npc={npc} />
+      ))}
+
+      {/* Natural Resources */}
+      {naturalResources.map((resource, index) => (
+        <Resource
+          key={`${resource.type}-${index}`}
+          type={resource.type}
+          position={[resource.position[0], 0, resource.position[1]]}
+          color={resourceTypes[resource.type].color}
+          scale={0.8}
+        />
       ))}
 
       {/* Building placement indicator */}
