@@ -188,15 +188,20 @@ export const useNpcStore = create<NPCState>()(
               const npcSpeed = npcTypes[npc.type]?.speed || 0.5;
 
               if (distance > 0.1) {
-                // Mover em direção ao alvo 
-                const newX = npc.position[0] + direction.x * npcSpeed * deltaTime;
-                const newZ = npc.position[2] + direction.z * npcSpeed * deltaTime;
+                // Calcular próxima coordenada do grid
+                const currentGridX = Math.round(npc.position[0]);
+                const currentGridZ = Math.round(npc.position[2]);
+                
+                // Determinar próxima coordenada baseada na direção
+                const nextGridX = direction.x > 0 ? Math.min(currentGridX + 1, 39) : 
+                                direction.x < 0 ? Math.max(currentGridX - 1, 0) : 
+                                currentGridX;
+                                
+                const nextGridZ = direction.z > 0 ? Math.min(currentGridZ + 1, 39) : 
+                                direction.z < 0 ? Math.max(currentGridZ - 1, 0) : 
+                                currentGridZ;
 
-                // Limitar movimento ao grid (40x40)
-                const clampedX = Math.max(0, Math.min(newX, 39));
-                const clampedZ = Math.max(0, Math.min(newZ, 39));
-
-                updatedNPC.position = [clampedX, 0, clampedZ];
+                updatedNPC.position = [nextGridX, 0, nextGridZ];
                 
                 // Debug do movimento
                 console.log(`NPC ${npc.type} movendo de [${npc.position[0]}, ${npc.position[2]}] para [${clampedX}, ${clampedZ}]`);
