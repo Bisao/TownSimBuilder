@@ -1,0 +1,318 @@
+https://116d1ebf-78bc-4677-9c87-63ecb9fd32eb-00-3q5ewuty7nl11.riker.replit.dev/src/ui/MarketWindow.tsx:23:25)
+    at World (https://116d1ebf-78bc-4677-9c87-63ecb9fd32eb-00-3q5ewuty7nl11.riker.replit.dev/src/game/components/World.tsx:34:29)
+    at Suspense
+    at Suspense
+    at ErrorBoundary (https://116d1ebf-78bc-4677-9c87-63ecb9fd32eb-00-3q5ewuty7nl11.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-A3GN3WMN.js?v=efebaede:16490:5)
+    at FiberProvider (https://116d1ebf-78bc-4677-9c87-63ecb9fd32eb-00-3q5ewuty7nl11.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-A3GN3WMN.js?v=efebaede:18170:21)
+    at Provider (https://116d1ebf-78bc-4677-9c87-63ecb9fd32eb-00-3q5ewuty7nl11.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-A3GN3WMN.js?v=efebaede:17779:3)
+
+React will try to recreate this component tree from scratch using the error boundary you provided, ErrorBoundary.
+console.error @ chunk-A3GN3WMN.js?v=efebaede:18167
+logCapturedError @ chunk-A3GN3WMN.js?v=efebaede:7765
+callback @ chunk-A3GN3WMN.js?v=efebaede:7811
+callCallback @ chunk-A3GN3WMN.js?v=efebaede:3716
+commitUpdateQueue @ chunk-A3GN3WMN.js?v=efebaede:3733
+commitLayoutEffectOnFiber @ chunk-A3GN3WMN.js?v=efebaede:11066
+commitLayoutMountEffects_complete @ chunk-A3GN3WMN.js?v=efebaede:12040
+commitLayoutEffects_begin @ chunk-A3GN3WMN.js?v=efebaede:12029
+commitLayoutEffects @ chunk-A3GN3WMN.js?v=efebaede:11980
+commitRootImpl @ chunk-A3GN3WMN.js?v=efebaede:13818
+commitRoot @ chunk-A3GN3WMN.js?v=efebaede:13743
+performSyncWorkOnRoot @ chunk-A3GN3WMN.js?v=efebaede:13332
+flushSyncCallbacks @ chunk-A3GN3WMN.js?v=efebaede:2766
+workLoop @ chunk-A3GN3WMN.js?v=efebaede:274
+flushWork @ chunk-A3GN3WMN.js?v=efebaede:253
+performWorkUntilDeadline @ chunk-A3GN3WMN.js?v=efebaede:461
+chunk-A3GN3WMN.js?v=efebaede:18167 The above error occurred in the <p> component:
+
+    at p
+    at div
+    at div
+    at div
+    at div
+    at MarketWindow (https://116d1ebf-78bc-4677-9c87-63ecb9fd32eb-00-3q5ewuty7nl11.riker.replit.dev/src/ui/MarketWindow.tsx:23:25)
+    at World (https://116d1ebf-78bc-4677-9c87-63ecb9fd32eb-00-3q5ewuty7nl11.riker.replit.dev/src/game/components/World.tsx:34:29)
+    at Suspense
+    at Suspense
+    at ErrorBoundary (https://116d1ebf-78bc-4677-9c87-63ecb9fd32eb-00-3q5ewuty7nl11.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-A3GN3WMN.js?v=efebaede:16490:5)
+    at FiberProvider (https://116d1ebf-78bc-4677-9c87-63ecb9fd32eb-00-3q5ewuty7nl11.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-A3GN3WMN.js?v=efebaede:18170:21)
+    at Provider (https://116d1ebf-78bc-4677-9c87-63ecb9fd32eb-00-3q5ewuty7nl11.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-A3GN3WMN.js?v=efebaede:17779:3)
+
+React will try to recreate this component tree from scratch using the error boundary you provided, ErrorBoundary.
+console.error @ chunk-A3GN3WMN.js?v=efebaede:18167
+logCapturedError @ chunk-A3GN3WMN.js?v=efebaede:7765
+callback @ chunk-A3GN3WMN.js?v=efebaede:7811
+callCallback @ chunk-A3GN3WMN.js?v=efebaede:3716
+commitUpdateQueue @ chunk-A3GN3WMN.js?v=efebaede:3733
+commitLayoutEffectOnFiber @ chunk-A3GN3WMN.js?v=efebaede:11066
+commitLayoutMountEffects_complete @ chunk-A3GN3WMN.js?v=efebaede:12040
+commitLayoutEffects_begin @ chunk-A3GN3WMN.js?v=efebaede:12029
+commitLayoutEffects @ chunk-A3GN3WMN.js?v=efebaede:11980
+commitRootImpl @ chunk-A3GN3WMN.js?v=efebaede:13818
+commitRoot @ chunk-A3GN3WMN.js?v=efebaede:13743
+performSyncWorkOnRoot @ chunk-A3GN3WMN.js?v=efebaede:13332
+flushSyncCallbacks @ chunk-A3GN3WMN.js?v=efebaede:2766
+workLoop @ chunk-A3GN3WMN.js?v=efebaede:274
+flushWork @ chunk-A3GN3WMN.js?v=efebaede:253
+performWorkUntilDeadline @ chunk-A3GN3WMN.js?v=efebaede:461
+chunk-A3GN3WMN.js?v=efebaede:18167 The above error occurred in the <button> component:
+
+    at button
+    at div
+    at div
+    at div
+    at div
+    at MarketWindow (https://116d1ebf-78bc-4677-9c87-63ecb9fd32eb-00-3q5ewuty7nl11.riker.replit.dev/src/ui/MarketWindow.tsx:23:25)
+    at World (https://116d1ebf-78bc-4677-9c87-63ecb9fd32eb-00-3q5ewuty7nl11.riker.replit.dev/src/game/components/World.tsx:34:29)
+    at Suspense
+    at Suspense
+    at ErrorBoundary (https://116d1ebf-78bc-4677-9c87-63ecb9fd32eb-00-3q5ewuty7nl11.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-A3GN3WMN.js?v=efebaede:16490:5)
+    at FiberProvider (https://116d1ebf-78bc-4677-9c87-63ecb9fd32eb-00-3q5ewuty7nl11.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-A3GN3WMN.js?v=efebaede:18170:21)
+    at Provider (https://116d1ebf-78bc-4677-9c87-63ecb9fd32eb-00-3q5ewuty7nl11.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-A3GN3WMN.js?v=efebaede:17779:3)
+
+React will try to recreate this component tree from scratch using the error boundary you provided, ErrorBoundary.
+console.error @ chunk-A3GN3WMN.js?v=efebaede:18167
+logCapturedError @ chunk-A3GN3WMN.js?v=efebaede:7765
+callback @ chunk-A3GN3WMN.js?v=efebaede:7811
+callCallback @ chunk-A3GN3WMN.js?v=efebaede:3716
+commitUpdateQueue @ chunk-A3GN3WMN.js?v=efebaede:3733
+commitLayoutEffectOnFiber @ chunk-A3GN3WMN.js?v=efebaede:11066
+commitLayoutMountEffects_complete @ chunk-A3GN3WMN.js?v=efebaede:12040
+commitLayoutEffects_begin @ chunk-A3GN3WMN.js?v=efebaede:12029
+commitLayoutEffects @ chunk-A3GN3WMN.js?v=efebaede:11980
+commitRootImpl @ chunk-A3GN3WMN.js?v=efebaede:13818
+commitRoot @ chunk-A3GN3WMN.js?v=efebaede:13743
+performSyncWorkOnRoot @ chunk-A3GN3WMN.js?v=efebaede:13332
+flushSyncCallbacks @ chunk-A3GN3WMN.js?v=efebaede:2766
+workLoop @ chunk-A3GN3WMN.js?v=efebaede:274
+flushWork @ chunk-A3GN3WMN.js?v=efebaede:253
+performWorkUntilDeadline @ chunk-A3GN3WMN.js?v=efebaede:461
+chunk-A3GN3WMN.js?v=efebaede:18167 The above error occurred in the <span> component:
+
+    at span
+    at div
+    at div
+    at div
+    at div
+    at div
+    at div
+    at MarketWindow (https://116d1ebf-78bc-4677-9c87-63ecb9fd32eb-00-3q5ewuty7nl11.riker.replit.dev/src/ui/MarketWindow.tsx:23:25)
+    at World (https://116d1ebf-78bc-4677-9c87-63ecb9fd32eb-00-3q5ewuty7nl11.riker.replit.dev/src/game/components/World.tsx:34:29)
+    at Suspense
+    at Suspense
+    at ErrorBoundary (https://116d1ebf-78bc-4677-9c87-63ecb9fd32eb-00-3q5ewuty7nl11.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-A3GN3WMN.js?v=efebaede:16490:5)
+    at FiberProvider (https://116d1ebf-78bc-4677-9c87-63ecb9fd32eb-00-3q5ewuty7nl11.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-A3GN3WMN.js?v=efebaede:18170:21)
+    at Provider (https://116d1ebf-78bc-4677-9c87-63ecb9fd32eb-00-3q5ewuty7nl11.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-A3GN3WMN.js?v=efebaede:17779:3)
+
+React will try to recreate this component tree from scratch using the error boundary you provided, ErrorBoundary.
+console.error @ chunk-A3GN3WMN.js?v=efebaede:18167
+logCapturedError @ chunk-A3GN3WMN.js?v=efebaede:7765
+callback @ chunk-A3GN3WMN.js?v=efebaede:7811
+callCallback @ chunk-A3GN3WMN.js?v=efebaede:3716
+commitUpdateQueue @ chunk-A3GN3WMN.js?v=efebaede:3733
+commitLayoutEffectOnFiber @ chunk-A3GN3WMN.js?v=efebaede:11066
+commitLayoutMountEffects_complete @ chunk-A3GN3WMN.js?v=efebaede:12040
+commitLayoutEffects_begin @ chunk-A3GN3WMN.js?v=efebaede:12029
+commitLayoutEffects @ chunk-A3GN3WMN.js?v=efebaede:11980
+commitRootImpl @ chunk-A3GN3WMN.js?v=efebaede:13818
+commitRoot @ chunk-A3GN3WMN.js?v=efebaede:13743
+performSyncWorkOnRoot @ chunk-A3GN3WMN.js?v=efebaede:13332
+flushSyncCallbacks @ chunk-A3GN3WMN.js?v=efebaede:2766
+workLoop @ chunk-A3GN3WMN.js?v=efebaede:274
+flushWork @ chunk-A3GN3WMN.js?v=efebaede:253
+performWorkUntilDeadline @ chunk-A3GN3WMN.js?v=efebaede:461
+chunk-A3GN3WMN.js?v=efebaede:18167 The above error occurred in the <h3> component:
+
+    at h3
+    at div
+    at div
+    at div
+    at div
+    at div
+    at div
+    at MarketWindow (https://116d1ebf-78bc-4677-9c87-63ecb9fd32eb-00-3q5ewuty7nl11.riker.replit.dev/src/ui/MarketWindow.tsx:23:25)
+    at World (https://116d1ebf-78bc-4677-9c87-63ecb9fd32eb-00-3q5ewuty7nl11.riker.replit.dev/src/game/components/World.tsx:34:29)
+    at Suspense
+    at Suspense
+    at ErrorBoundary (https://116d1ebf-78bc-4677-9c87-63ecb9fd32eb-00-3q5ewuty7nl11.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-A3GN3WMN.js?v=efebaede:16490:5)
+    at FiberProvider (https://116d1ebf-78bc-4677-9c87-63ecb9fd32eb-00-3q5ewuty7nl11.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-A3GN3WMN.js?v=efebaede:18170:21)
+    at Provider (https://116d1ebf-78bc-4677-9c87-63ecb9fd32eb-00-3q5ewuty7nl11.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-A3GN3WMN.js?v=efebaede:17779:3)
+
+React will try to recreate this component tree from scratch using the error boundary you provided, ErrorBoundary.
+console.error @ chunk-A3GN3WMN.js?v=efebaede:18167
+logCapturedError @ chunk-A3GN3WMN.js?v=efebaede:7765
+callback @ chunk-A3GN3WMN.js?v=efebaede:7811
+callCallback @ chunk-A3GN3WMN.js?v=efebaede:3716
+commitUpdateQueue @ chunk-A3GN3WMN.js?v=efebaede:3733
+commitLayoutEffectOnFiber @ chunk-A3GN3WMN.js?v=efebaede:11066
+commitLayoutMountEffects_complete @ chunk-A3GN3WMN.js?v=efebaede:12040
+commitLayoutEffects_begin @ chunk-A3GN3WMN.js?v=efebaede:12029
+commitLayoutEffects @ chunk-A3GN3WMN.js?v=efebaede:11980
+commitRootImpl @ chunk-A3GN3WMN.js?v=efebaede:13818
+commitRoot @ chunk-A3GN3WMN.js?v=efebaede:13743
+performSyncWorkOnRoot @ chunk-A3GN3WMN.js?v=efebaede:13332
+flushSyncCallbacks @ chunk-A3GN3WMN.js?v=efebaede:2766
+workLoop @ chunk-A3GN3WMN.js?v=efebaede:274
+flushWork @ chunk-A3GN3WMN.js?v=efebaede:253
+performWorkUntilDeadline @ chunk-A3GN3WMN.js?v=efebaede:461
+chunk-A3GN3WMN.js?v=efebaede:18167 The above error occurred in the <span> component:
+
+    at span
+    at p
+    at div
+    at div
+    at div
+    at div
+    at div
+    at div
+    at MarketWindow (https://116d1ebf-78bc-4677-9c87-63ecb9fd32eb-00-3q5ewuty7nl11.riker.replit.dev/src/ui/MarketWindow.tsx:23:25)
+    at World (https://116d1ebf-78bc-4677-9c87-63ecb9fd32eb-00-3q5ewuty7nl11.riker.replit.dev/src/game/components/World.tsx:34:29)
+    at Suspense
+    at Suspense
+    at ErrorBoundary (https://116d1ebf-78bc-4677-9c87-63ecb9fd32eb-00-3q5ewuty7nl11.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-A3GN3WMN.js?v=efebaede:16490:5)
+    at FiberProvider (https://116d1ebf-78bc-4677-9c87-63ecb9fd32eb-00-3q5ewuty7nl11.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-A3GN3WMN.js?v=efebaede:18170:21)
+    at Provider (https://116d1ebf-78bc-4677-9c87-63ecb9fd32eb-00-3q5ewuty7nl11.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-A3GN3WMN.js?v=efebaede:17779:3)
+
+React will try to recreate this component tree from scratch using the error boundary you provided, ErrorBoundary.
+console.error @ chunk-A3GN3WMN.js?v=efebaede:18167
+logCapturedError @ chunk-A3GN3WMN.js?v=efebaede:7765
+callback @ chunk-A3GN3WMN.js?v=efebaede:7811
+callCallback @ chunk-A3GN3WMN.js?v=efebaede:3716
+commitUpdateQueue @ chunk-A3GN3WMN.js?v=efebaede:3733
+commitLayoutEffectOnFiber @ chunk-A3GN3WMN.js?v=efebaede:11066
+commitLayoutMountEffects_complete @ chunk-A3GN3WMN.js?v=efebaede:12040
+commitLayoutEffects_begin @ chunk-A3GN3WMN.js?v=efebaede:12029
+commitLayoutEffects @ chunk-A3GN3WMN.js?v=efebaede:11980
+commitRootImpl @ chunk-A3GN3WMN.js?v=efebaede:13818
+commitRoot @ chunk-A3GN3WMN.js?v=efebaede:13743
+performSyncWorkOnRoot @ chunk-A3GN3WMN.js?v=efebaede:13332
+flushSyncCallbacks @ chunk-A3GN3WMN.js?v=efebaede:2766
+workLoop @ chunk-A3GN3WMN.js?v=efebaede:274
+flushWork @ chunk-A3GN3WMN.js?v=efebaede:253
+performWorkUntilDeadline @ chunk-A3GN3WMN.js?v=efebaede:461
+chunk-A3GN3WMN.js?v=efebaede:18167 The above error occurred in the <p> component:
+
+    at p
+    at div
+    at div
+    at div
+    at div
+    at MarketWindow (https://116d1ebf-78bc-4677-9c87-63ecb9fd32eb-00-3q5ewuty7nl11.riker.replit.dev/src/ui/MarketWindow.tsx:23:25)
+    at World (https://116d1ebf-78bc-4677-9c87-63ecb9fd32eb-00-3q5ewuty7nl11.riker.replit.dev/src/game/components/World.tsx:34:29)
+    at Suspense
+    at Suspense
+    at ErrorBoundary (https://116d1ebf-78bc-4677-9c87-63ecb9fd32eb-00-3q5ewuty7nl11.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-A3GN3WMN.js?v=efebaede:16490:5)
+    at FiberProvider (https://116d1ebf-78bc-4677-9c87-63ecb9fd32eb-00-3q5ewuty7nl11.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-A3GN3WMN.js?v=efebaede:18170:21)
+    at Provider (https://116d1ebf-78bc-4677-9c87-63ecb9fd32eb-00-3q5ewuty7nl11.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-A3GN3WMN.js?v=efebaede:17779:3)
+
+React will try to recreate this component tree from scratch using the error boundary you provided, ErrorBoundary.
+console.error @ chunk-A3GN3WMN.js?v=efebaede:18167
+logCapturedError @ chunk-A3GN3WMN.js?v=efebaede:7765
+callback @ chunk-A3GN3WMN.js?v=efebaede:7811
+callCallback @ chunk-A3GN3WMN.js?v=efebaede:3716
+commitUpdateQueue @ chunk-A3GN3WMN.js?v=efebaede:3733
+commitLayoutEffectOnFiber @ chunk-A3GN3WMN.js?v=efebaede:11066
+commitLayoutMountEffects_complete @ chunk-A3GN3WMN.js?v=efebaede:12040
+commitLayoutEffects_begin @ chunk-A3GN3WMN.js?v=efebaede:12029
+commitLayoutEffects @ chunk-A3GN3WMN.js?v=efebaede:11980
+commitRootImpl @ chunk-A3GN3WMN.js?v=efebaede:13818
+commitRoot @ chunk-A3GN3WMN.js?v=efebaede:13743
+performSyncWorkOnRoot @ chunk-A3GN3WMN.js?v=efebaede:13332
+flushSyncCallbacks @ chunk-A3GN3WMN.js?v=efebaede:2766
+workLoop @ chunk-A3GN3WMN.js?v=efebaede:274
+flushWork @ chunk-A3GN3WMN.js?v=efebaede:253
+performWorkUntilDeadline @ chunk-A3GN3WMN.js?v=efebaede:461
+chunk-A3GN3WMN.js?v=efebaede:18167 The above error occurred in the <button> component:
+
+    at button
+    at div
+    at div
+    at div
+    at div
+    at MarketWindow (https://116d1ebf-78bc-4677-9c87-63ecb9fd32eb-00-3q5ewuty7nl11.riker.replit.dev/src/ui/MarketWindow.tsx:23:25)
+    at World (https://116d1ebf-78bc-4677-9c87-63ecb9fd32eb-00-3q5ewuty7nl11.riker.replit.dev/src/game/components/World.tsx:34:29)
+    at Suspense
+    at Suspense
+    at ErrorBoundary (https://116d1ebf-78bc-4677-9c87-63ecb9fd32eb-00-3q5ewuty7nl11.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-A3GN3WMN.js?v=efebaede:16490:5)
+    at FiberProvider (https://116d1ebf-78bc-4677-9c87-63ecb9fd32eb-00-3q5ewuty7nl11.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-A3GN3WMN.js?v=efebaede:18170:21)
+    at Provider (https://116d1ebf-78bc-4677-9c87-63ecb9fd32eb-00-3q5ewuty7nl11.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-A3GN3WMN.js?v=efebaede:17779:3)
+
+React will try to recreate this component tree from scratch using the error boundary you provided, ErrorBoundary.
+console.error @ chunk-A3GN3WMN.js?v=efebaede:18167
+logCapturedError @ chunk-A3GN3WMN.js?v=efebaede:7765
+callback @ chunk-A3GN3WMN.js?v=efebaede:7811
+callCallback @ chunk-A3GN3WMN.js?v=efebaede:3716
+commitUpdateQueue @ chunk-A3GN3WMN.js?v=efebaede:3733
+commitLayoutEffectOnFiber @ chunk-A3GN3WMN.js?v=efebaede:11066
+commitLayoutMountEffects_complete @ chunk-A3GN3WMN.js?v=efebaede:12040
+commitLayoutEffects_begin @ chunk-A3GN3WMN.js?v=efebaede:12029
+commitLayoutEffects @ chunk-A3GN3WMN.js?v=efebaede:11980
+commitRootImpl @ chunk-A3GN3WMN.js?v=efebaede:13818
+commitRoot @ chunk-A3GN3WMN.js?v=efebaede:13743
+performSyncWorkOnRoot @ chunk-A3GN3WMN.js?v=efebaede:13332
+flushSyncCallbacks @ chunk-A3GN3WMN.js?v=efebaede:2766
+workLoop @ chunk-A3GN3WMN.js?v=efebaede:274
+flushWork @ chunk-A3GN3WMN.js?v=efebaede:253
+performWorkUntilDeadline @ chunk-A3GN3WMN.js?v=efebaede:461
+2chunk-A3GN3WMN.js?v=efebaede:16205 Uncaught Error: R3F: Button is not part of the THREE namespace! Did you forget to extend? See: https://docs.pmnd.rs/react-three-fiber/api/objects#using-3rd-party-objects-declaratively
+    at createInstance (chunk-A3GN3WMN.js?v=efebaede:16205:15)
+    at completeWork (chunk-A3GN3WMN.js?v=efebaede:8414:34)
+    at completeUnitOfWork (chunk-A3GN3WMN.js?v=efebaede:13690:24)
+    at performUnitOfWork (chunk-A3GN3WMN.js?v=efebaede:13672:13)
+    at workLoopSync (chunk-A3GN3WMN.js?v=efebaede:13604:13)
+    at renderRootSync (chunk-A3GN3WMN.js?v=efebaede:13583:15)
+    at recoverFromConcurrentError (chunk-A3GN3WMN.js?v=efebaede:13173:28)
+    at performSyncWorkOnRoot (chunk-A3GN3WMN.js?v=efebaede:13316:28)
+    at flushSyncCallbacks (chunk-A3GN3WMN.js?v=efebaede:2766:30)
+    at workLoop (chunk-A3GN3WMN.js?v=efebaede:274:42)
+createInstance @ chunk-A3GN3WMN.js?v=efebaede:16205
+completeWork @ chunk-A3GN3WMN.js?v=efebaede:8414
+completeUnitOfWork @ chunk-A3GN3WMN.js?v=efebaede:13690
+performUnitOfWork @ chunk-A3GN3WMN.js?v=efebaede:13672
+workLoopSync @ chunk-A3GN3WMN.js?v=efebaede:13604
+renderRootSync @ chunk-A3GN3WMN.js?v=efebaede:13583
+recoverFromConcurrentError @ chunk-A3GN3WMN.js?v=efebaede:13173
+performSyncWorkOnRoot @ chunk-A3GN3WMN.js?v=efebaede:13316
+flushSyncCallbacks @ chunk-A3GN3WMN.js?v=efebaede:2766
+workLoop @ chunk-A3GN3WMN.js?v=efebaede:274
+flushWork @ chunk-A3GN3WMN.js?v=efebaede:253
+performWorkUntilDeadline @ chunk-A3GN3WMN.js?v=efebaede:461
+chunk-A3GN3WMN.js?v=efebaede:18167 The above error occurred in the <ForwardRef(Canvas)> component:
+
+    at Canvas (https://116d1ebf-78bc-4677-9c87-63ecb9fd32eb-00-3q5ewuty7nl11.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-A3GN3WMN.js?v=efebaede:18236:3)
+    at FiberProvider (https://116d1ebf-78bc-4677-9c87-63ecb9fd32eb-00-3q5ewuty7nl11.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-A3GN3WMN.js?v=efebaede:18170:21)
+    at CanvasWrapper
+    at KeyboardControls (https://116d1ebf-78bc-4677-9c87-63ecb9fd32eb-00-3q5ewuty7nl11.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@react-three_drei.js?v=83f27852:9151:8)
+    at div
+    at App (https://116d1ebf-78bc-4677-9c87-63ecb9fd32eb-00-3q5ewuty7nl11.riker.replit.dev/src/App.tsx?v=C7NZ7XAhERgDxIUFcBCtJ:28:39)
+    at QueryClientProvider (https://116d1ebf-78bc-4677-9c87-63ecb9fd32eb-00-3q5ewuty7nl11.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=dc4076e7:2805:3)
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+console.error @ chunk-A3GN3WMN.js?v=efebaede:18167
+logCapturedError @ chunk-WERSD76P.js?v=efebaede:14032
+update.callback @ chunk-WERSD76P.js?v=efebaede:14052
+callCallback @ chunk-WERSD76P.js?v=efebaede:11248
+commitUpdateQueue @ chunk-WERSD76P.js?v=efebaede:11265
+commitLayoutEffectOnFiber @ chunk-WERSD76P.js?v=efebaede:17093
+commitLayoutMountEffects_complete @ chunk-WERSD76P.js?v=efebaede:17980
+commitLayoutEffects_begin @ chunk-WERSD76P.js?v=efebaede:17969
+commitLayoutEffects @ chunk-WERSD76P.js?v=efebaede:17920
+commitRootImpl @ chunk-WERSD76P.js?v=efebaede:19353
+commitRoot @ chunk-WERSD76P.js?v=efebaede:19277
+finishConcurrentRender @ chunk-WERSD76P.js?v=efebaede:18760
+performConcurrentWorkOnRoot @ chunk-WERSD76P.js?v=efebaede:18718
+workLoop @ chunk-WERSD76P.js?v=efebaede:197
+flushWork @ chunk-WERSD76P.js?v=efebaede:176
+performWorkUntilDeadline @ chunk-WERSD76P.js?v=efebaede:384
+chunk-WERSD76P.js?v=efebaede:19413 Uncaught Error: R3F: Button is not part of the THREE namespace! Did you forget to extend? See: https://docs.pmnd.rs/react-three-fiber/api/objects#using-3rd-party-objects-declaratively
+    at createInstance (chunk-A3GN3WMN.js?v=efebaede:16205:15)
+    at completeWork (chunk-A3GN3WMN.js?v=efebaede:8414:34)
+    at completeUnitOfWork (chunk-A3GN3WMN.js?v=efebaede:13690:24)
+    at performUnitOfWork (chunk-A3GN3WMN.js?v=efebaede:13672:13)
+    at workLoopSync (chunk-A3GN3WMN.js?v=efebaede:13604:13)
+    at renderRootSync (chunk-A3GN3WMN.js?v=efebaede:13583:15)
+    at recoverFromConcurrentError (chunk-A3GN3WMN.js?v=efebaede:13173:28)
+    at performSyncWorkOnRoot (chunk-A3GN3WMN.js?v=efebaede:13316:28)
+    at flushSyncCallbacks (chunk-A3GN3WMN.js?v=efebaede:2766:30)
+    at workLoop (chunk-A3GN3WMN.js?v=efebaede:274:42)
