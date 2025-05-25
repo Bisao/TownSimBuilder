@@ -16,7 +16,10 @@ interface NPC {
   state: "idle" | "moving" | "working" | "gathering";
   workProgress: number;
   lastResourceTime: number;
-  hasResource?: boolean; // Indicate if NPC is carrying a resource
+  inventory: {
+    type: string;
+    amount: number;
+  };
 }
 
 interface NPCState {
@@ -62,6 +65,7 @@ export const useNpcStore = create<NPCState>()(
         state: "idle",
         workProgress: 0,
         lastResourceTime: 0,
+        inventory: { type: '', amount: 0 },
       };
 
       set((state) => ({
@@ -186,7 +190,7 @@ export const useNpcStore = create<NPCState>()(
                 updatedNPC.position = [...npc.targetPosition];
                 updatedNPC.targetPosition = null;
 
-                if (npc.hasResource) {
+                if (npc.inventory.amount >= 5) {
                   // Depositar recurso no silo
                   const resourceType = npc.type === "lumberjack" ? "wood" : "stone";
                   const resourceStore = useResourceStore.getState();
@@ -195,11 +199,11 @@ export const useNpcStore = create<NPCState>()(
 
                   // Verificar se há espaço no armazenamento
                   if (currentAmount < storageCapacity) {
-                    resourceStore.updateResource(resourceType, 1);
-                    console.log(`Depositando ${resourceType} no silo. Novo total: ${currentAmount + 1}`);
+                    resourceStore.updateResource(resourceType, npc.inventory.amount);
+                    console.log(`Depositando ${resourceType} no silo. Novo total: ${currentAmount + npc.inventory.amount}`);
+                    updatedNPC.inventory = { type: '', amount: 0 }; // Limpa o inventário após depositar
                   }
 
-                  updatedNPC.hasResource = false;
                   updatedNPC.state = "idle";
                 } else if (npc.targetResource) {
                   // Começar a coletar o recurso
@@ -257,8 +261,12 @@ export const useNpcStore = create<NPCState>()(
               if (updatedNPC.workProgress >= 1) {
                 // Recurso coletado
                 const resourceType = npc.type === "lumberjack" ? "wood" : "stone";
-                const resourceStore = useResourceStore.getState();
-                resourceStore.updateResource(resourceType, 1);
+
+                // Atualiza o inventário do NPC
+                if (updatedNPC.inventory.type === '' || updatedNPC.inventory.type === resourceType) {
+                  updatedNPC.inventory.type = resourceType;
+                  updatedNPC.inventory.amount += 1;
+                }
 
                 // Remove the resource from the naturalResources array
                 if (window.naturalResources) {
@@ -271,17 +279,23 @@ export const useNpcStore = create<NPCState>()(
                   }
                 }
 
-                // Procurar silo mais próximo
-                const buildings = useBuildingStore.getState().buildings;
-                const silo = buildings.find(b => b.type === 'silo');
+                // Se o inventário estiver cheio, procurar silo mais próximo, senão continua coletando
+                if (updatedNPC.inventory.amount >= 5) {
+                  const buildings = useBuildingStore.getState().buildings;
+                  const silo = buildings.find(b => b.type === 'silo');
 
-                if (silo) {
-                  // Ir até o silo para depositar recursos
-                  updatedNPC.targetPosition = [silo.position[0] + 0.5, 0, silo.position[1] + 0.5];
-                  updatedNPC.state = "moving";
-                  updatedNPC.hasResource = true;
+                  if (silo) {
+                    // Ir até o silo para depositar recursos
+                    updatedNPC.targetPosition = [silo.position[0] + 0.5, 0, silo.position[1] + 0.5];
+                    updatedNPC.state = "moving";
+                  } else {
+                    // Se não houver silo, volta ao estado idle
+                    updatedNPC.targetResource = null;
+                    updatedNPC.workProgress = 0;
+                    updatedNPC.state = "idle";
+                  }
                 } else {
-                  // Se não houver silo, volta ao estado idle
+                  // Continua coletando
                   updatedNPC.targetResource = null;
                   updatedNPC.workProgress = 0;
                   updatedNPC.state = "idle";
