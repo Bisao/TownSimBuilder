@@ -337,9 +337,8 @@ export const useNpcStore = create<NPCState>()(
                 }
                 
                 console.log(`NPC ${npc.type} explorando nova área em [${newX}, ${newZ}]`);
-                return false;
+                updatedNPC.state = "moving";
               }
-              });
 
               if (availableResources.length > 0) {
                 let nearest = availableResources[0];
