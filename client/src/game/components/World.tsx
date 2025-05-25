@@ -3,6 +3,8 @@ import { useFrame } from "@react-three/fiber";
 import Terrain from "./Terrain";
 import Building from "./Building";
 import Npc from "./Npc";
+import Resource from "./Resource";
+import { resourceTypes } from "../constants/resources";
 import CameraControls from "./CameraControls";
 import PlacementIndicator from "./PlacementIndicator";
 import { useBuildingStore } from "../stores/useBuildingStore";
