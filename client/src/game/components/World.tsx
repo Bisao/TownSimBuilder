@@ -127,17 +127,25 @@ const World = ({ onMarketSelect }: WorldProps) => {
 
   // Monitorar novos edifícios de casa de NPC para criar NPCs
   useEffect(() => {
-    const farmerHouses = buildings.filter(b => b.type === "farmerHouse");
+    const workerHouses = buildings.filter(b => 
+      b.type === "farmerHouse" || 
+      b.type === "lumberjackHouse" || 
+      b.type === "minerHouse"
+    );
 
-    // Verificar se cada casa de fazendeiro tem um NPC
-    for (const house of farmerHouses) {
+    // Verificar se cada casa tem um NPC
+    for (const house of workerHouses) {
       // Verificar se já existe um NPC associado a esta casa
       const existingNpc = npcs.find(npc => npc.homeId === house.id);
 
       if (!existingNpc) {
-        // Criar um novo fazendeiro para esta casa
+        // Criar um novo NPC baseado no tipo da casa
+        const npcType = house.type === "farmerHouse" ? "farmer" :
+                       house.type === "lumberjackHouse" ? "lumberjack" :
+                       "miner";
+        
         const [posX, posZ] = house.position;
-        spawnNPC("farmer", house.id, [posX + 0.5, 0, posZ + 0.5]);
+        spawnNPC(npcType, house.id, [posX + 0.5, 0, posZ + 0.5]);
       }
     }
   }, [buildings, npcs]);
