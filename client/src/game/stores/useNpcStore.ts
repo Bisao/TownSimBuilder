@@ -272,22 +272,22 @@ export const useNpcStore = create<NPCState>()(
             if (npc.targetResource) {
               // Verifica se o inventário está cheio antes de coletar
               if (updatedNPC.inventory.amount >= 5) {
-                // Procura o silo mais próximo
+                // Procura o silo mais próximo usando distância Manhattan (grid)
                 const buildings = useBuildingStore.getState().buildings;
                 const silos = buildings.filter(b => b.type === 'silo');
                 
                 if (silos.length > 0) {
-                  // Encontra o silo mais próximo
+                  // Encontra o silo mais próximo usando lógica de grid
                   let nearestSilo = silos[0];
-                  let minDistance = Infinity;
+                  let minGridDistance = Infinity;
                   
                   for (const silo of silos) {
-                    const distance = Math.hypot(
-                      silo.position[0] - npc.position[0],
-                      silo.position[1] - npc.position[2]
-                    );
-                    if (distance < minDistance) {
-                      minDistance = distance;
+                    const dx = Math.abs(Math.floor(silo.position[0]) - Math.floor(npc.position[0]));
+                    const dz = Math.abs(Math.floor(silo.position[1]) - Math.floor(npc.position[2]));
+                    const gridDistance = dx + dz;
+                    
+                    if (gridDistance < minGridDistance) {
+                      minGridDistance = gridDistance;
                       nearestSilo = silo;
                     }
                   }
@@ -310,28 +310,35 @@ export const useNpcStore = create<NPCState>()(
                 };
                 const resourceType = resourceMapping[npc.type];
 
-                // Atualiza o inventário do NPC
-                if (updatedNPC.inventory.type === '' || updatedNPC.inventory.type === resourceType) {
-                  updatedNPC.inventory.type = resourceType;
+                // Atualiza o inventário do NPC com verificação de grid
+                const resourceMapping = {
+                  "lumberjack": "wood",
+                  "miner": "stone"
+                };
+                const expectedResourceType = resourceMapping[npc.type];
+                
+                if (updatedNPC.inventory.type === '' || updatedNPC.inventory.type === expectedResourceType) {
+                  updatedNPC.inventory.type = expectedResourceType;
                   updatedNPC.inventory.amount += 1;
-                  console.log(`${npc.type} coletou ${resourceType}. Inventário: ${updatedNPC.inventory.amount}/${5}`);
+                  console.log(`${npc.type} coletou ${expectedResourceType} na posição [${Math.floor(npc.position[0])}, ${Math.floor(npc.position[2])}]. Inventário: ${updatedNPC.inventory.amount}/${5}`);
                 }
 
-                // Remove o recurso do array naturalResources
+                // Remove o recurso do array naturalResources com verificação de grid
                 if (window.naturalResources) {
-                  const resourceIndex = window.naturalResources.findIndex(
-                    r => r.position[0] === npc.targetResource?.position[0] &&
-                         r.position[1] === npc.targetResource?.position[1] &&
-                         !r.lastCollected &&
-                         ((npc.type === "lumberjack" && r.type === "wood") ||
-                          (npc.type === "miner" && r.type === "stone"))
-                  );
+                  const resourceIndex = window.naturalResources.findIndex(r => {
+                    const isCorrectType = (npc.type === "lumberjack" && r.type === "wood") ||
+                                       (npc.type === "miner" && r.type === "stone");
+                    const isInSameGridCell = 
+                      Math.floor(r.position[0]) === Math.floor(npc.position[0]) &&
+                      Math.floor(r.position[1]) === Math.floor(npc.position[2]);
+                    const isNotCollected = !r.lastCollected;
+                    
+                    return isCorrectType && isInSameGridCell && isNotCollected;
+                  });
 
-                  // Debug log
-                  console.log(`Tentando coletar recurso. NPC: ${npc.type}, Posição: [${npc.targetResource?.position}]`);
                   if (resourceIndex !== -1) {
                     window.naturalResources.splice(resourceIndex, 1);
-                    console.log(`Recurso removido em [${npc.targetResource.position}]`);
+                    console.log(`Recurso removido na posição [${Math.floor(npc.position[0])}, ${Math.floor(npc.position[2])}]`);
                   }
                 }
 
