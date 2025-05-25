@@ -19,7 +19,7 @@ const DayNightCycle = () => {
     const horizontalPosition = Math.cos(angle) * radius;
     
     // Atualizar posição do sol
-    lightRef.current.position.set(horizontalPosition, height, 0);
+    lightRef.current.position.set(horizontalPosition, height, horizontalPosition);
     
     // Ajustar intensidade baseado no período
     let directionalIntensity = 0;
@@ -27,20 +27,20 @@ const DayNightCycle = () => {
     
     switch(timeOfDay) {
       case "day":
-        directionalIntensity = 1;
-        ambientIntensity = 0.6;
+        directionalIntensity = 1.5;
+        ambientIntensity = 0.8;
         break;
       case "dawn":
-        directionalIntensity = 0.6;
-        ambientIntensity = 0.4;
+        directionalIntensity = 1.2;
+        ambientIntensity = 0.6;
         break;
       case "dusk":
-        directionalIntensity = 0.4;
-        ambientIntensity = 0.3;
+        directionalIntensity = 0.8;
+        ambientIntensity = 0.4;
         break;
       case "night":
-        directionalIntensity = 0.1;
-        ambientIntensity = 0.2;
+        directionalIntensity = 0.2;
+        ambientIntensity = 0.3;
         break;
     }
     
