@@ -187,27 +187,47 @@ export const useNpcStore = create<NPCState>()(
                 });
 
                 if (availableResources.length > 0) {
-                  // Encontra o recurso mais próximo
-                  let nearest = availableResources[0];
-                  let minDist = Infinity;
+                  // Prioriza recursos mais próximos mas evita super concentração
+                  let bestResource = null;
+                  let bestScore = -1;
 
                   for (const resource of availableResources) {
                     const dist = Math.hypot(
                       resource.position[0] - npc.position[0],
                       resource.position[1] - npc.position[2]
                     );
-                    if (dist < minDist) {
-                      minDist = dist;
-                      nearest = resource;
+
+                    // Conta quantos NPCs estão próximos a este recurso
+                    const nearbyNpcs = get().npcs.filter(otherNpc => 
+                      otherNpc.id !== npc.id &&
+                      Math.hypot(
+                        resource.position[0] - otherNpc.position[0],
+                        resource.position[1] - otherNpc.position[2]
+                      ) < 3
+                    ).length;
+
+                    // Score baseado na distância e densidade de NPCs
+                    const score = (100 / (dist + 1)) * (1 / (nearbyNpcs + 1));
+
+                    if (score > bestScore) {
+                      bestScore = score;
+                      bestResource = resource;
                     }
                   }
 
-                  // Define o recurso como alvo e muda para estado de movimento
-                  updatedNPC.targetResource = nearest;
-                  updatedNPC.targetPosition = [nearest.position[0], 0, nearest.position[1]];
-                  updatedNPC.targetBuildingId = null;
-                  updatedNPC.state = "moving";
-                  console.log(`NPC ${npc.type} indo para recurso ${resourceType} em [${nearest.position[0]}, ${nearest.position[1]}] - distância: ${minDist.toFixed(2)}`);
+                  if (bestResource) {
+                    // Define o recurso como alvo e muda para estado de movimento
+                    updatedNPC.targetResource = bestResource;
+                    updatedNPC.targetPosition = [bestResource.position[0], 0, bestResource.position[1]];
+                    updatedNPC.targetBuildingId = null;
+                    updatedNPC.state = "moving";
+                    
+                    const distance = Math.hypot(
+                      bestResource.position[0] - npc.position[0],
+                      bestResource.position[1] - npc.position[2]
+                    );
+                    console.log(`NPC ${npc.type} indo para recurso ${resourceType} em [${bestResource.position[0]}, ${bestResource.position[1]}] - distância: ${distance.toFixed(2)}`);
+                  }
                 } else {
                   // Se não encontrar recursos, entra em modo de busca
                   updatedNPC.state = "searching";
@@ -553,22 +573,41 @@ export const useNpcStore = create<NPCState>()(
                 break;
               }
 
-              // Verifica se ainda está próximo ao recurso
+              // Verifica se o recurso ainda existe e não foi coletado
+              if (window.naturalResources && npc.targetResource) {
+                const resourceExists = window.naturalResources.find(r => 
+                  r.position[0] === npc.targetResource.position[0] &&
+                  r.position[1] === npc.targetResource.position[1] &&
+                  r.type === npc.targetResource.type &&
+                  !r.lastCollected
+                );
+
+                if (!resourceExists) {
+                  console.log(`NPC ${npc.type} recurso não existe mais ou foi coletado por outro NPC`);
+                  updatedNPC.targetResource = null;
+                  updatedNPC.workProgress = 0;
+                  updatedNPC.state = "idle";
+                  break;
+                }
+              }
+
+              // Verifica distância ao recurso (mais tolerante)
               const distanceToResource = Math.hypot(
                 npc.targetResource.position[0] - npc.position[0],
                 npc.targetResource.position[1] - npc.position[2]
               );
 
-              if (distanceToResource > 1.0) {
-                console.log(`NPC ${npc.type} muito longe do recurso, reposicionando`);
+              // Se estiver muito longe, move para mais perto mas não reseta progresso se já começou
+              if (distanceToResource > 1.5) {
+                console.log(`NPC ${npc.type} muito longe do recurso (${distanceToResource.toFixed(2)}), reposicionando`);
                 updatedNPC.targetPosition = [npc.targetResource.position[0], 0, npc.targetResource.position[1]];
                 updatedNPC.state = "moving";
-                updatedNPC.workProgress = 0;
+                // Não reseta workProgress se já estava coletando
                 break;
               }
 
-              // Progresso da coleta - 2 segundos para coletar
-              updatedNPC.workProgress += deltaTime * 0.5;
+              // Progresso da coleta - 1.5 segundos para coletar (mais rápido)
+              updatedNPC.workProgress += deltaTime * 0.67;
 
               // Reduz estamina e satisfação durante a coleta (ajustado para 90 minutos)
               updatedNPC.needs.energy = Math.max(0, updatedNPC.needs.energy - deltaTime * 0.0185);
@@ -581,9 +620,9 @@ export const useNpcStore = create<NPCState>()(
                 if (updatedNPC.inventory.type === '' || updatedNPC.inventory.type === resourceType) {
                   updatedNPC.inventory.type = resourceType;
                   updatedNPC.inventory.amount += 1;
-                  console.log(`${npc.type} coletou ${resourceType}. Inventário: ${updatedNPC.inventory.amount}/5`);
+                  console.log(`${npc.type} coletou ${resourceType}. Inventário: ${updatedNPC.inventory.amount}/5 em ${updatedNPC.workProgress.toFixed(2)}s`);
 
-                  // Marca o recurso como coletado em vez de removê-lo
+                  // Marca o recurso como coletado
                   if (window.naturalResources && npc.targetResource) {
                     const resourceIndex = window.naturalResources.findIndex(r => 
                       r.position[0] === npc.targetResource.position[0] &&
@@ -597,7 +636,7 @@ export const useNpcStore = create<NPCState>()(
                     }
                   }
 
-                  // Limpa o alvo e volta para idle para procurar mais recursos ou ir ao silo
+                  // Limpa o alvo e volta para idle imediatamente
                   updatedNPC.targetResource = null;
                   updatedNPC.workProgress = 0;
                   updatedNPC.state = "idle";
