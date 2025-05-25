@@ -188,32 +188,60 @@ export const useNpcStore = create<NPCState>()(
               const npcSpeed = npcTypes[npc.type]?.speed || 0.5;
 
               if (distance > 0.1) {
-                // Calcular próxima coordenada do grid
+                // Validar posição alvo
+                if (!npc.targetPosition) {
+                  updatedNPC.state = "idle";
+                  console.warn(`NPC ${npc.id} sem posição alvo válida`);
+                  break;
+                }
+
+                // Calcular coordenadas do grid
                 const targetGridX = Math.round(npc.targetPosition[0]);
                 const targetGridZ = Math.round(npc.targetPosition[2]);
                 const currentGridX = Math.round(npc.position[0]);
                 const currentGridZ = Math.round(npc.position[2]);
 
-                // Mover apenas se não estiver na coordenada alvo
-                if (currentGridX !== targetGridX || currentGridZ !== targetGridZ) {
-                  // Determinar próxima coordenada com base na diferença até o alvo
-                  const nextGridX = currentGridX + Math.sign(targetGridX - currentGridX);
-                  const nextGridZ = currentGridZ + Math.sign(targetGridZ - currentGridZ);
-
-                  // Garantir que está dentro dos limites
-                  const clampedX = Math.max(0, Math.min(nextGridX, 39));
-                  const clampedZ = Math.max(0, Math.min(nextGridZ, 39));
-
-                  updatedNPC.position = [clampedX, 0, clampedZ];
-                } else {
-                  // Se já está na coordenada alvo, chegou ao destino
+                // Verificar se já chegou ao destino
+                if (currentGridX === targetGridX && currentGridZ === targetGridZ) {
                   updatedNPC.position = [...npc.targetPosition];
                   updatedNPC.targetPosition = null;
                   updatedNPC.state = "idle";
+                  console.log(`NPC ${npc.type} chegou ao destino [${currentGridX}, ${currentGridZ}]`);
+                  break;
                 }
 
-                // Debug do movimento
-                console.log(`NPC ${npc.type} movendo de [${npc.position[0]}, ${npc.position[2]}] para [${updatedNPC.position[0]}, ${updatedNPC.position[2]}]`);
+                // Calcular próximo movimento
+                const dx = Math.sign(targetGridX - currentGridX);
+                const dz = Math.sign(targetGridZ - currentGridZ);
+
+                // Decidir movimento prioritário (evitar movimento diagonal)
+                let nextGridX = currentGridX;
+                let nextGridZ = currentGridZ;
+
+                if (dx !== 0) {
+                  nextGridX = currentGridX + dx;
+                } else if (dz !== 0) {
+                  nextGridZ = currentGridZ + dz;
+                }
+
+                // Validar limites do mapa
+                const clampedX = Math.max(0, Math.min(nextGridX, 39));
+                const clampedZ = Math.max(0, Math.min(nextGridZ, 39));
+
+                // Verificar colisões com outros NPCs
+                const hasCollision = get().npcs.some(otherNpc => 
+                  otherNpc.id !== npc.id && 
+                  Math.round(otherNpc.position[0]) === clampedX && 
+                  Math.round(otherNpc.position[2]) === clampedZ
+                );
+
+                if (!hasCollision) {
+                  // Atualizar posição se não houver colisão
+                  updatedNPC.position = [clampedX, 0, clampedZ];
+                  console.log(`NPC ${npc.type} movendo de [${currentGridX}, ${currentGridZ}] para [${clampedX}, ${clampedZ}]`);
+                } else {
+                  console.log(`NPC ${npc.type} aguardando - colisão detectada em [${clampedX}, ${clampedZ}]`);
+                }
               } else {
                 // Chegou ao destino
                 updatedNPC.position = [...npc.targetPosition];
