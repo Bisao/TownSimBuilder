@@ -79,9 +79,11 @@ const GameUI = () => {
     }
   };
 
+  const isMobile = useIsMobile();
+  
   return (
     <div className="absolute inset-0 pointer-events-none">
-      <div className="absolute top-4 left-4 flex gap-2 pointer-events-auto">
+      <div className={`absolute ${isMobile ? 'bottom-4' : 'top-4'} left-4 flex gap-2 pointer-events-auto`}>
         <button
           onClick={() => setShowBuildingPanel(!showBuildingPanel)}
           className="bg-black/80 text-white p-2 rounded-lg"

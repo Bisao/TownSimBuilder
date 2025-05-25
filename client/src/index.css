@@ -16,6 +16,29 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Mobile optimizations */
+@media (max-width: 768px) {
+  .timer-container {
+    padding: 1rem;
+  }
+  
+  .timer-button {
+    min-height: 44px; /* Better touch targets */
+    min-width: 44px;
+  }
+
+  .timer-input {
+    font-size: 16px; /* Prevent zoom on iOS */
+  }
+}
+
+/* Disable pull-to-refresh */
+html, body {
+  overscroll-behavior-y: contain;
+  touch-action: none;
+  -webkit-overflow-scrolling: touch;
+}
+
 @layer base {
   * {
     @apply border-border;
