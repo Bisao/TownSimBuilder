@@ -105,6 +105,10 @@ export const useNpcStore = create<NPCState>()(
               const resourceType = resourceMapping[npc.type];
 
               // Buscar recurso mais próximo no grid
+              // Pega o tipo de NPC para definir raio de trabalho
+              const npcConfig = npcTypes[npc.type];
+              const workRadius = npcConfig?.workRadius || 10;
+              
               const resources = window.naturalResources?.filter(r => {
                 // Verifica tipo e status do recurso
                 const isCorrectType = r.type === resourceType;
@@ -115,14 +119,21 @@ export const useNpcStore = create<NPCState>()(
                 const dz = Math.abs(r.position[1] - Math.floor(npc.position[2]));
                 const gridDistance = dx + dz;
                 
-                // Busca recursos em um raio de 10 unidades do grid
-                const isInRange = gridDistance <= 10;
+                // Verifica se está dentro do raio de trabalho do NPC
+                const isInWorkRange = gridDistance <= workRadius;
                 
-                if (isCorrectType && isNotCollected && isInRange) {
+                // Verifica se não está sendo coletado por outro NPC
+                const isNotTargeted = !get().npcs.some(
+                  other => other.id !== npc.id && 
+                  other.targetResource?.position[0] === r.position[0] &&
+                  other.targetResource?.position[1] === r.position[1]
+                );
+                
+                if (isCorrectType && isNotCollected && isInWorkRange && isNotTargeted) {
                   console.log(`NPC ${npc.type} encontrou recurso em [${r.position}] - Distância: ${gridDistance}`);
                 }
                 
-                return isCorrectType && isNotCollected && isInRange;
+                return isCorrectType && isNotCollected && isInWorkRange && isNotTargeted;
               }) || [];
 
               let nearestResource = null;
@@ -338,27 +349,47 @@ export const useNpcStore = create<NPCState>()(
                   }
                 }
 
-                // Verifica se chegou em um silo para depositar recursos
+                // Procura o silo mais próximo usando distância Manhattan
                 const buildings = useBuildingStore.getState().buildings;
-                const nearestSilo = buildings.find(b => 
-                  b.type === 'silo' && 
-                  Math.hypot(
-                    b.position[0] - npc.position[0],
-                    b.position[1] - npc.position[2]
-                  ) < 1
-                );
-
-                if (nearestSilo && updatedNPC.inventory.amount > 0) {
-                  // Deposita recursos no silo
-                  const resourceStore = useResourceStore.getState();
-                  resourceStore.updateResource(updatedNPC.inventory.type, updatedNPC.inventory.amount);
-                  console.log(`${npc.type} depositou ${updatedNPC.inventory.amount} ${updatedNPC.inventory.type} no silo`);
+                const silos = buildings.filter(b => b.type === 'silo');
+                
+                if (silos.length > 0) {
+                  let nearestSilo = null;
+                  let minDistance = Infinity;
                   
-                  // Limpa o inventário
-                  updatedNPC.inventory = { type: '', amount: 0 };
-                  updatedNPC.targetResource = null;
-                  updatedNPC.workProgress = 0;
-                  updatedNPC.state = "idle";
+                  for (const silo of silos) {
+                    const dx = Math.abs(silo.position[0] - Math.floor(npc.position[0]));
+                    const dz = Math.abs(silo.position[1] - Math.floor(npc.position[2]));
+                    const gridDistance = dx + dz;
+                    
+                    if (gridDistance < minDistance) {
+                      minDistance = gridDistance;
+                      nearestSilo = silo;
+                    }
+                  }
+
+                  if (nearestSilo && minDistance < 1 && updatedNPC.inventory.amount > 0) {
+                    // Deposita recursos no silo
+                    const resourceStore = useResourceStore.getState();
+                    const storageCapacity = resourceStore.getStorageCapacity();
+                    const currentAmount = resourceStore.resources[updatedNPC.inventory.type] || 0;
+                    
+                    // Verifica capacidade do silo
+                    if (currentAmount < storageCapacity) {
+                      resourceStore.updateResource(updatedNPC.inventory.type, updatedNPC.inventory.amount);
+                      console.log(`${npc.type} depositou ${updatedNPC.inventory.amount} ${updatedNPC.inventory.type} no silo. Total: ${currentAmount + updatedNPC.inventory.amount}`);
+                      
+                      // Limpa o inventário
+                      updatedNPC.inventory = { type: '', amount: 0 };
+                      updatedNPC.targetResource = null;
+                      updatedNPC.workProgress = 0;
+                      updatedNPC.state = "idle";
+                    } else {
+                      console.log(`Silo cheio para ${updatedNPC.inventory.type}`);
+                      // Procura outro silo
+                      updatedNPC.state = "moving";
+                    }
+                  }
                 } else {
                   // Continua coletando se não estiver cheio
                   updatedNPC.targetResource = null;
