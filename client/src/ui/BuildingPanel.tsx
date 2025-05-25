@@ -1,5 +1,6 @@
 import { useGameStore } from "../game/stores/useGameStore";
 import { buildingTypes } from "../game/constants/buildings";
+import { resourceTypes } from "../game/constants/resources";
 import { useResourceStore } from "../game/stores/useResourceStore";
 import { cn } from "../lib/utils";
 
@@ -9,15 +10,15 @@ const BuildingPanel = () => {
   
   const handleSelectBuilding = (type: string) => {
     if (selectedBuildingType === type) {
-      // If already selected, deselect it
+      // Se já estiver selecionado, desmarque-o
       selectBuilding(null);
     } else {
-      // Otherwise, select the building
+      // Caso contrário, selecione o edifício
       selectBuilding(type);
     }
   };
   
-  // Check if player has enough resources for a building
+  // Verifica se o jogador tem recursos suficientes para um edifício
   const canAfford = (type: string) => {
     const buildingType = buildingTypes[type];
     if (!buildingType) return false;
@@ -33,7 +34,7 @@ const BuildingPanel = () => {
 
   return (
     <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-black/80 rounded-lg p-2">
-      <h2 className="text-white text-center font-bold mb-2">Buildings</h2>
+      <h2 className="text-white text-center font-bold mb-2">Edifícios</h2>
       <div className="flex gap-2 flex-wrap justify-center">
         {Object.values(buildingTypes).map((building) => (
           <div
@@ -48,7 +49,7 @@ const BuildingPanel = () => {
             )}
             onClick={() => canAfford(building.id) && handleSelectBuilding(building.id)}
             title={`${building.name}: ${building.description}\n${Object.entries(building.cost)
-              .map(([res, amt]) => `${res}: ${amt}`)
+              .map(([res, amt]) => `${resourceTypes[res]?.name || res}: ${amt}`)
               .join(", ")}`}
           >
             <div 

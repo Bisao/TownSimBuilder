@@ -1,17 +1,17 @@
-// Building definitions for the game
+// Definições de edifícios para o jogo
 export interface BuildingType {
   id: string;
   name: string;
   description: string;
-  size: [number, number]; // Width and length in grid units
-  height: number; // Height for rendering
-  cost: Record<string, number>; // Resources required to build
+  size: [number, number]; // Largura e comprimento em unidades de grade
+  height: number; // Altura para renderização
+  cost: Record<string, number>; // Recursos necessários para construir
   produces?: {
     resourceType: string;
     amount: number;
-    interval: number; // In seconds
+    interval: number; // Em segundos
   };
-  requires?: Record<string, number>; // Resources required for production
+  requires?: Record<string, number>; // Recursos necessários para produção
   model: {
     color: string;
     shape: "box" | "cylinder";
@@ -21,8 +21,8 @@ export interface BuildingType {
 export const buildingTypes: Record<string, BuildingType> = {
   house: {
     id: "house",
-    name: "House",
-    description: "Basic dwelling for your citizens",
+    name: "Casa",
+    description: "Moradia básica para seus cidadãos",
     size: [2, 2],
     height: 2,
     cost: { wood: 10 },
@@ -33,8 +33,8 @@ export const buildingTypes: Record<string, BuildingType> = {
   },
   farm: {
     id: "farm",
-    name: "Farm",
-    description: "Produces wheat over time",
+    name: "Fazenda",
+    description: "Produz trigo ao longo do tempo",
     size: [3, 3],
     height: 0.5,
     cost: { wood: 5 },
@@ -50,8 +50,8 @@ export const buildingTypes: Record<string, BuildingType> = {
   },
   lumberMill: {
     id: "lumberMill",
-    name: "Lumber Mill",
-    description: "Produces wood from trees",
+    name: "Serraria",
+    description: "Produz madeira das árvores",
     size: [3, 2],
     height: 2.5,
     cost: { wood: 15 },
@@ -67,8 +67,8 @@ export const buildingTypes: Record<string, BuildingType> = {
   },
   waterWell: {
     id: "waterWell",
-    name: "Water Well",
-    description: "Provides water for production",
+    name: "Poço de Água",
+    description: "Fornece água para produção",
     size: [1, 1],
     height: 1.5,
     cost: { wood: 5, stone: 10 },
@@ -84,8 +84,8 @@ export const buildingTypes: Record<string, BuildingType> = {
   },
   bakery: {
     id: "bakery",
-    name: "Bakery",
-    description: "Produces bread from wheat",
+    name: "Padaria",
+    description: "Produz pão a partir do trigo",
     size: [2, 2],
     height: 2,
     cost: { wood: 20, stone: 10 },
@@ -102,8 +102,8 @@ export const buildingTypes: Record<string, BuildingType> = {
   },
   stoneMine: {
     id: "stoneMine",
-    name: "Stone Mine",
-    description: "Extracts stone resources",
+    name: "Mina de Pedra",
+    description: "Extrai recursos de pedra",
     size: [2, 3],
     height: 1.5,
     cost: { wood: 15 },
@@ -119,8 +119,8 @@ export const buildingTypes: Record<string, BuildingType> = {
   },
   market: {
     id: "market",
-    name: "Market",
-    description: "Sells goods for coins",
+    name: "Mercado",
+    description: "Vende mercadorias por moedas",
     size: [3, 3],
     height: 2,
     cost: { wood: 25, stone: 15 },

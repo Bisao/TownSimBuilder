@@ -34,6 +34,17 @@ const GameUI = () => {
       default: return "12:00";
     }
   };
+
+  // Traduzir o período do dia
+  const getTimeOfDayName = () => {
+    switch (timeOfDay) {
+      case "dawn": return "amanhecer";
+      case "day": return "dia";
+      case "dusk": return "entardecer";
+      case "night": return "noite";
+      default: return "dia";
+    }
+  };
   
   return (
     <div className="absolute inset-0 pointer-events-none">
@@ -47,8 +58,8 @@ const GameUI = () => {
       
       {/* Time display */}
       <div className="absolute top-4 right-4 bg-black/80 rounded-lg p-2 text-white">
-        <div>Day {dayCount}</div>
-        <div>{getTimeString()} ({timeOfDay})</div>
+        <div>Dia {dayCount}</div>
+        <div>{getTimeString()} ({getTimeOfDayName()})</div>
       </div>
       
       {/* Controls button and panel */}
@@ -62,17 +73,17 @@ const GameUI = () => {
         
         {showControls && (
           <div className="absolute bottom-12 right-0 bg-black/80 rounded-lg p-3 text-white w-64">
-            <h3 className="font-bold mb-2">Controls</h3>
+            <h3 className="font-bold mb-2">Controles</h3>
             <div className="grid grid-cols-2 gap-1 text-sm">
-              <div>Move Camera:</div>
-              <div>W,A,S,D / Arrows</div>
-              <div>Rotate Camera:</div>
+              <div>Mover Câmera:</div>
+              <div>W,A,S,D / Setas</div>
+              <div>Girar Câmera:</div>
               <div>Q, E</div>
               <div>Zoom:</div>
               <div>+, -</div>
-              <div>Place Building:</div>
-              <div>Space</div>
-              <div>Cancel:</div>
+              <div>Colocar Edifício:</div>
+              <div>Espaço</div>
+              <div>Cancelar:</div>
               <div>Esc</div>
             </div>
           </div>

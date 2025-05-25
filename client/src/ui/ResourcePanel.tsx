@@ -6,7 +6,7 @@ const ResourcePanel = () => {
   
   return (
     <div className="absolute top-4 left-4 bg-black/80 rounded-lg p-2">
-      <h2 className="text-white text-center font-bold mb-2">Resources</h2>
+      <h2 className="text-white text-center font-bold mb-2">Recursos</h2>
       <div className="grid grid-cols-2 gap-2">
         {Object.values(resourceTypes).map((resource) => (
           <div 

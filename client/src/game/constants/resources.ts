@@ -1,4 +1,4 @@
-// Resource definitions for the game
+// Definições de recursos para o jogo
 export interface ResourceType {
   id: string;
   name: string;
@@ -6,14 +6,14 @@ export interface ResourceType {
   color: string;
   initialAmount: number;
   maxAmount: number;
-  icon: string; // Font Awesome icon class
+  icon: string; // Classe do ícone Font Awesome
 }
 
 export const resourceTypes: Record<string, ResourceType> = {
   wood: {
     id: "wood",
-    name: "Wood",
-    description: "Basic building material",
+    name: "Madeira",
+    description: "Material básico de construção",
     color: "#8B4513",
     initialAmount: 20,
     maxAmount: 100,
@@ -21,8 +21,8 @@ export const resourceTypes: Record<string, ResourceType> = {
   },
   stone: {
     id: "stone",
-    name: "Stone",
-    description: "Hard building material",
+    name: "Pedra",
+    description: "Material de construção resistente",
     color: "#708090",
     initialAmount: 5,
     maxAmount: 100,
@@ -30,8 +30,8 @@ export const resourceTypes: Record<string, ResourceType> = {
   },
   wheat: {
     id: "wheat",
-    name: "Wheat",
-    description: "Basic food crop",
+    name: "Trigo",
+    description: "Cultura alimentar básica",
     color: "#DAA520",
     initialAmount: 0,
     maxAmount: 50,
@@ -39,8 +39,8 @@ export const resourceTypes: Record<string, ResourceType> = {
   },
   water: {
     id: "water",
-    name: "Water",
-    description: "Essential for life and production",
+    name: "Água",
+    description: "Essencial para vida e produção",
     color: "#4682B4",
     initialAmount: 10,
     maxAmount: 50,
@@ -48,8 +48,8 @@ export const resourceTypes: Record<string, ResourceType> = {
   },
   bread: {
     id: "bread",
-    name: "Bread",
-    description: "Food made from wheat",
+    name: "Pão",
+    description: "Alimento feito de trigo",
     color: "#D2691E",
     initialAmount: 0,
     maxAmount: 30,
@@ -57,8 +57,8 @@ export const resourceTypes: Record<string, ResourceType> = {
   },
   coins: {
     id: "coins",
-    name: "Coins",
-    description: "Currency used for trade",
+    name: "Moedas",
+    description: "Moeda usada para comércio",
     color: "#FFD700",
     initialAmount: 50,
     maxAmount: 999,
