@@ -5,6 +5,51 @@ import { useBuildingStore } from "./useBuildingStore";
 import * as THREE from "three";
 
 // Interface para um NPC no jogo
+interface NPCNeeds {
+  energy: number;
+  satisfaction: number;
+}
+
+interface NPCMemory {
+  lastVisitedPositions: Array<[number, number]>;
+
+// Funções auxiliares para IA
+function findUnexploredArea(visitedPositions: Array<[number, number]>): [number, number] {
+  const gridSize = 40;
+  let attempts = 0;
+  let newPosition: [number, number];
+
+  do {
+    newPosition = [
+      Math.floor(Math.random() * gridSize),
+      Math.floor(Math.random() * gridSize)
+    ];
+    attempts++;
+  } while (
+    visitedPositions.some(pos => 
+      Math.abs(pos[0] - newPosition[0]) < 5 && 
+      Math.abs(pos[1] - newPosition[1]) < 5
+    ) && 
+    attempts < 10
+  );
+
+  return newPosition;
+}
+
+function calculatePathRisk(start: [number, number], end: [number, number], npcs: NPC[]): number {
+  const distance = Math.hypot(end[0] - start[0], end[1] - start[1]);
+  const npcDensity = npcs.filter(npc => 
+    Math.abs(npc.position[0] - start[0]) < 5 && 
+    Math.abs(npc.position[2] - start[1]) < 5
+  ).length;
+
+  return distance * (1 + npcDensity * 0.2);
+}
+
+  knownResources: Array<{ type: string; position: [number, number] }>;
+  failedAttempts: number;
+}
+
 interface NPC {
   id: string;
   type: string;
@@ -13,13 +58,15 @@ interface NPC {
   targetPosition: [number, number, number] | null;
   targetBuildingId: string | null;
   targetResource: { type: string; position: [number, number] } | null;
-  state: "idle" | "moving" | "working" | "gathering";
+  state: "idle" | "moving" | "working" | "gathering" | "resting" | "searching";
   workProgress: number;
   lastResourceTime: number;
   inventory: {
     type: string;
     amount: number;
   };
+  needs: NPCNeeds;
+  memory: NPCMemory;
 }
 
 interface NPCState {
@@ -66,6 +113,15 @@ export const useNpcStore = create<NPCState>()(
         workProgress: 0,
         lastResourceTime: 0,
         inventory: { type: '', amount: 0 },
+        needs: {
+          energy: 100,
+          satisfaction: 100
+        },
+        memory: {
+          lastVisitedPositions: [],
+          knownResources: [],
+          failedAttempts: 0
+        }
       };
 
       set((state) => ({
@@ -93,8 +149,31 @@ export const useNpcStore = create<NPCState>()(
         // Lógica baseada no estado atual do NPC
         switch (npc.state) {
           case "idle":
-            // Verificar se o inventário não está cheio
-            const hasSpaceInInventory = updatedNPC.inventory.amount < 5;
+            // Sistema de tomada de decisão baseado em necessidades
+            updatedNPC.needs.energy -= 0.1 * deltaTime;
+            updatedNPC.needs.satisfaction -= 0.05 * deltaTime;
+
+            // Decidir próxima ação
+            if (updatedNPC.needs.energy < 30) {
+              // Precisa descansar
+              const home = buildings.find(b => b.id === npc.homeId);
+              if (home) {
+                updatedNPC.targetPosition = [home.position[0] + 0.5, 0, home.position[1] + 0.5];
+                updatedNPC.state = "moving";
+                console.log(`NPC ${npc.type} está cansado e voltando para casa`);
+              }
+            } else {
+              const hasSpaceInInventory = updatedNPC.inventory.amount < 5;
+              const shouldSearchNewArea = updatedNPC.memory.failedAttempts > 3;
+
+              if (shouldSearchNewArea) {
+                // Explorar nova área
+                const newArea = findUnexploredArea(updatedNPC.memory.lastVisitedPositions);
+                updatedNPC.targetPosition = [newArea[0], 0, newArea[1]];
+                updatedNPC.state = "searching";
+                updatedNPC.memory.failedAttempts = 0;
+                console.log(`NPC ${npc.type} explorando nova área em [${newArea[0]}, ${newArea[1]}]`);
+              }
 
             // Todos os NPCs procuram recursos se tiverem espaço no inventário
             if ((npc.type === "lumberjack" || npc.type === "miner") && hasSpaceInInventory) {
