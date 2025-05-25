@@ -16,9 +16,9 @@ const PlacementIndicator = () => {
 
   useFrame(() => {
     if (gridRef.current) {
-      // Ajusta a escala do grid baseado na distância da câmera ao chão
+      // Ajusta a escala do grid inversamente proporcional à distância da câmera
       const distance = camera.position.y;
-      const scale = Math.max(1, distance / 10);
+      const scale = Math.max(0.5, 50 / distance); // Quanto mais longe, menor o grid
       gridRef.current.scale.set(scale, scale, scale);
     }
   });
