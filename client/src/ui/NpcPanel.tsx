@@ -1,6 +1,7 @@
 import { NPC } from "../game/stores/useNpcStore";
 import { npcTypes } from "../game/constants/npcs";
 import { useBuildingStore } from "../game/stores/useBuildingStore";
+import { useNpcStore } from "../game/stores/useNpcStore";
 
 interface NpcPanelProps {
   npc: NPC | null;
@@ -182,10 +183,22 @@ const NpcPanel = ({ npc, onClose }: NpcPanelProps) => {
             {npc.type === "farmer" && (
               <button
                 onClick={() => {
-                  if (npc.state === "idle") {
-                    npc.state = "working";
-                    npc.workProgress = 0;
-                  }
+                  const updatedNpc = {
+                    ...npc,
+                    state: npc.state === "idle" ? "searching" : "idle",
+                    workProgress: 0,
+                    targetResource: null,
+                    targetPosition: null,
+                    needs: {
+                      ...npc.needs,
+                      energy: Math.max(npc.needs.energy, 50),
+                      satisfaction: Math.max(npc.needs.satisfaction, 50)
+                    }
+                  };
+
+                  useNpcStore.setState(state => ({
+                    npcs: state.npcs.map(n => n.id === npc.id ? updatedNpc : n)
+                  }));
                 }}
                 className={`w-full px-4 py-2 rounded-lg ${
                   npc.state === "working" 
@@ -200,10 +213,22 @@ const NpcPanel = ({ npc, onClose }: NpcPanelProps) => {
             {npc.type === "baker" && (
               <button
                 onClick={() => {
-                  if (npc.state === "idle") {
-                    npc.state = "working";
-                    npc.workProgress = 0;
-                  }
+                   const updatedNpc = {
+                    ...npc,
+                    state: npc.state === "idle" ? "searching" : "idle",
+                    workProgress: 0,
+                    targetResource: null,
+                    targetPosition: null,
+                    needs: {
+                      ...npc.needs,
+                      energy: Math.max(npc.needs.energy, 50),
+                      satisfaction: Math.max(npc.needs.satisfaction, 50)
+                    }
+                  };
+
+                  useNpcStore.setState(state => ({
+                    npcs: state.npcs.map(n => n.id === npc.id ? updatedNpc : n)
+                  }));
                 }}
                 className={`w-full px-4 py-2 rounded-lg ${
                   npc.state === "working" 
