@@ -102,13 +102,6 @@ const World = ({ onMarketSelect }: WorldProps) => {
     updateNPCs(deltaTime);
   });
 
-  // Lidar com clique em edifícios
-  const handleBuildingClick = (building: BuildingType) => {
-    if (building.type === "market") {
-      onMarketSelect?.(building);
-    }
-  };
-
   const handleTerrainClick = (e: any) => {
     console.log("Terrain click", e);
   }
