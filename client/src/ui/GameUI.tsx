@@ -15,6 +15,13 @@ const GameUI = () => {
   const [selectedNpc, setSelectedNpc] = useState<NPC | null>(null);
 
   useEffect(() => {
+    const handleEscKey = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setSelectedNpc(null);
+      }
+    };
+
+    window.addEventListener('keydown', handleEscKey);
     const handleNpcClick = (event: CustomEvent) => {
       setSelectedNpc(event.detail);
     };
@@ -31,6 +38,7 @@ const GameUI = () => {
     window.addEventListener('npcHouseClick', handleNpcHouseClick as EventListener);
 
     return () => {
+      window.removeEventListener('keydown', handleEscKey);
       window.removeEventListener('npcClick', handleNpcClick as EventListener);
       window.removeEventListener('npcHouseClick', handleNpcHouseClick as EventListener);
     };
