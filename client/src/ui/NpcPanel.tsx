@@ -22,7 +22,7 @@ const NpcPanel = ({ npc, onClose }: NpcPanelProps) => {
 
   return (
     <div 
-      className="fixed inset-0 flex items-center justify-center bg-black/50 z-50"
+      className="fixed inset-0 flex items-center justify-center bg-black/50 z-[9999]"
       onWheel={(e) => e.stopPropagation()}
     >
       <div className="bg-white/95 backdrop-blur-sm rounded-xl p-6 w-96 max-h-[90vh] overflow-y-auto shadow-xl border border-gray-200">
