@@ -26,33 +26,34 @@ export const Sky = () => {
     night: new THREE.Color("#0F0F23"), // Azul escuro
   }), []);
 
-  // Função para interpolar cores baseado no timeCycle
+  // Função para interpolar cores baseado nos horários realistas
   const getCurrentSkyColor = () => {
     const colors = skyColors;
-    const cycle = timeCycle;
+    const hours = timeCycle * 24;
     
     let color1, color2, factor;
     
-    if (cycle < 0.25) {
-      // Noite para amanhecer
-      color1 = colors.night;
-      color2 = colors.dawn;
-      factor = cycle / 0.25;
-    } else if (cycle < 0.5) {
-      // Amanhecer para dia
+    if (hours >= 0 && hours < 6) {
+      // Noite (0h-6h)
+      return colors.night;
+    } else if (hours >= 6 && hours < 12) {
+      // Amanhecer (6h-12h)
       color1 = colors.dawn;
       color2 = colors.day;
-      factor = (cycle - 0.25) / 0.25;
-    } else if (cycle < 0.75) {
-      // Dia para entardecer
+      factor = (hours - 6) / 6;
+    } else if (hours >= 12 && hours < 18) {
+      // Dia (12h-18h)
+      return colors.day;
+    } else if (hours >= 18 && hours < 21) {
+      // Entardecer (18h-21h)
       color1 = colors.day;
       color2 = colors.dusk;
-      factor = (cycle - 0.5) / 0.25;
+      factor = (hours - 18) / 3;
     } else {
-      // Entardecer para noite
+      // Noite (21h-24h)
       color1 = colors.dusk;
       color2 = colors.night;
-      factor = (cycle - 0.75) / 0.25;
+      factor = (hours - 21) / 3;
     }
     
     return new THREE.Color().lerpColors(color1, color2, factor);
@@ -60,35 +61,52 @@ export const Sky = () => {
 
   const getCurrentFogColor = () => {
     const colors = fogColors;
-    const cycle = timeCycle;
+    const hours = timeCycle * 24;
     
     let color1, color2, factor;
     
-    if (cycle < 0.25) {
-      color1 = colors.night;
-      color2 = colors.dawn;
-      factor = cycle / 0.25;
-    } else if (cycle < 0.5) {
+    if (hours >= 0 && hours < 6) {
+      // Noite (0h-6h)
+      return colors.night;
+    } else if (hours >= 6 && hours < 12) {
+      // Amanhecer (6h-12h)
       color1 = colors.dawn;
       color2 = colors.day;
-      factor = (cycle - 0.25) / 0.25;
-    } else if (cycle < 0.75) {
+      factor = (hours - 6) / 6;
+    } else if (hours >= 12 && hours < 18) {
+      // Dia (12h-18h)
+      return colors.day;
+    } else if (hours >= 18 && hours < 21) {
+      // Entardecer (18h-21h)
       color1 = colors.day;
       color2 = colors.dusk;
-      factor = (cycle - 0.5) / 0.25;
+      factor = (hours - 18) / 3;
     } else {
+      // Noite (21h-24h)
       color1 = colors.dusk;
       color2 = colors.night;
-      factor = (cycle - 0.75) / 0.25;
+      factor = (hours - 21) / 3;
     }
     
     return new THREE.Color().lerpColors(color1, color2, factor);
   };
 
   useFrame(() => {
-    // Calcular posição do sol e da lua
-    const sunAngle = (timeCycle - 0.25) * Math.PI * 2;
-    const sunElevation = Math.sin((timeCycle - 0.25) * Math.PI * 2) * 0.8;
+    // Calcular posição do sol baseado nos horários realistas
+    const hours = timeCycle * 24;
+    
+    let sunAngle = 0;
+    let sunElevation = 0;
+    
+    if (hours >= 6 && hours <= 18) {
+      // Durante o dia (6h-18h): sol visível
+      const dayProgress = (hours - 6) / 12; // 0 a 1 durante o dia
+      sunAngle = dayProgress * Math.PI; // 0 a π (leste para oeste)
+      sunElevation = Math.sin(dayProgress * Math.PI) * 0.9; // Parábola do sol
+    } else {
+      // Durante a noite: sol abaixo do horizonte
+      sunElevation = -0.3;
+    }
     
     const sunDistance = 400;
     const sunX = Math.cos(sunAngle) * sunDistance;
@@ -105,24 +123,33 @@ export const Sky = () => {
     // Atualizar posições
     if (sunRef.current) {
       sunRef.current.position.set(sunX, sunY, sunZ);
-      // Sol só visível durante o dia
-      sunRef.current.visible = sunElevation > -0.1;
+      // Sol visível das 6h às 18h
+      sunRef.current.visible = hours >= 6 && hours <= 18;
       
       // Intensidade do brilho do sol baseada na altura
-      const sunIntensity = Math.max(0, sunElevation + 0.1);
+      const sunIntensity = Math.max(0, sunElevation);
       if (sunRef.current.material instanceof THREE.MeshBasicMaterial) {
-        sunRef.current.material.opacity = sunIntensity;
+        sunRef.current.material.opacity = sunIntensity * 0.8 + 0.2;
       }
     }
     
+    // Posição da lua (oposta ao sol, visível das 21h às 6h)
+    const moonAngle = sunAngle + Math.PI;
+    const moonElevation = hours >= 21 || hours <= 6 ? Math.abs(sunElevation) : -0.5;
+    const moonX = Math.cos(moonAngle) * sunDistance;
+    const moonY = Math.max(moonElevation * sunDistance, -50);
+    const moonZ = Math.sin(moonAngle) * sunDistance;
+    
     if (moonRef.current) {
       moonRef.current.position.set(moonX, moonY, moonZ);
-      // Lua só visível durante a noite
-      moonRef.current.visible = moonElevation > -0.1;
+      // Lua visível das 21h às 6h
+      moonRef.current.visible = hours >= 21 || hours <= 6;
       
       // Intensidade do brilho da lua
-      const moonIntensity = Math.max(0, moonElevation + 0.1);
+      const moonIntensity = Math.max(0, moonElevation);
       if (moonRef.current.material instanceof THREE.MeshBasicMaterial) {
+        moonRef.current.material.opacity = moonIntensity * 0.6 + 0.3;
+      }icMaterial) {
         moonRef.current.material.opacity = moonIntensity * 0.8; // Lua menos brilhante
       }
     }

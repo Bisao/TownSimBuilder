@@ -92,12 +92,15 @@ export const useGameStore = create<GameState>()(
       const cyclePerSecond = 1 / 7200; // 120 minutos por ciclo completo
       const newTimeCycle = (state.timeCycle + delta * cyclePerSecond) % 1;
 
-      // Determine time of day
+      // Determine time of day based on realistic hours
+      // 6h (0.25) = amanhecer, 12h (0.5) = meio-dia, 18h (0.75) = entardecer, 21h (0.875) = noite
       let timeOfDay: TimeOfDay = state.timeOfDay;
-      if (newTimeCycle < 0.25) timeOfDay = "dawn";
-      else if (newTimeCycle < 0.5) timeOfDay = "day";
-      else if (newTimeCycle < 0.75) timeOfDay = "dusk";
-      else timeOfDay = "night";
+      const hours = newTimeCycle * 24;
+      
+      if (hours >= 6 && hours < 12) timeOfDay = "dawn"; // 6h-12h: amanhecer
+      else if (hours >= 12 && hours < 18) timeOfDay = "day"; // 12h-18h: dia
+      else if (hours >= 18 && hours < 21) timeOfDay = "dusk"; // 18h-21h: entardecer  
+      else timeOfDay = "night"; // 21h-6h: noite
 
       // Increment day count when cycling from night to dawn
       const newDayCount = 
