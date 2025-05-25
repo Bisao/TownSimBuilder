@@ -8,11 +8,23 @@ const GRID_SIZE = 50;
 const Terrain = () => {
   const meshRef = useRef<THREE.Mesh>(null);
   const gridRef = useRef<THREE.GridHelper>(null);
+  const { camera } = useThree();
   
   // Load grass texture
   const grassTexture = useTexture("/textures/grass.png");
   grassTexture.wrapS = grassTexture.wrapT = THREE.RepeatWrapping;
   grassTexture.repeat.set(GRID_SIZE/2, GRID_SIZE/2);
+
+  useFrame(() => {
+    if (gridRef.current) {
+      const distanceToCamera = camera.position.y;
+      // Ajusta a opacidade do grid baseado na distância
+      const opacity = Math.min(1, Math.max(0.2, 20 / distanceToCamera));
+      if (gridRef.current.material instanceof THREE.Material) {
+        gridRef.current.material.opacity = opacity;
+      }
+    }
+  });
   
   return (
     <group>
@@ -33,9 +45,11 @@ const Terrain = () => {
       {/* Grid lines for building placement */}
       <gridHelper 
         ref={gridRef}
-        args={[GRID_SIZE, GRID_SIZE, "#444", "#444"]} 
-        position={[GRID_SIZE/2 - 0.5, 0, GRID_SIZE/2 - 0.5]} 
-      />
+        args={[GRID_SIZE, GRID_SIZE, "#000", "#444"]} 
+        position={[GRID_SIZE/2 - 0.5, 0, GRID_SIZE/2 - 0.5]}
+      >
+        <meshBasicMaterial transparent opacity={0.5} />
+      </gridHelper>
     </group>
   );
 };
