@@ -121,24 +121,22 @@ const NpcPanel = ({ npc, onClose }: NpcPanelProps) => {
             {npc.type === "miner" && (
               <button
                 onClick={() => {
-                  if (npc.state === "idle") {
-                    const updatedNpc = {
-                      ...npc,
-                      state: "searching",
-                      workProgress: 0,
-                      targetResource: null,
-                      targetPosition: null,
-                      needs: {
-                        ...npc.needs,
-                        energy: Math.max(npc.needs.energy, 50),
-                        satisfaction: Math.max(npc.needs.satisfaction, 50)
-                      }
-                    };
+                  const updatedNpc = {
+                    ...npc,
+                    state: "searching",
+                    workProgress: 0,
+                    targetResource: null,
+                    targetPosition: null,
+                    needs: {
+                      ...npc.needs,
+                      energy: Math.max(npc.needs.energy, 50),
+                      satisfaction: Math.max(npc.needs.satisfaction, 50)
+                    }
+                  };
 
-                    useNpcStore.setState(state => ({
-                      npcs: state.npcs.map(n => n.id === npc.id ? updatedNpc : n)
-                    }));
-                  }
+                  useNpcStore.setState(state => ({
+                    npcs: state.npcs.map(n => n.id === npc.id ? updatedNpc : n)
+                  }));
                 }}
                 className={`w-full px-4 py-2 rounded-lg relative overflow-hidden ${
                   npc.state === "gathering" || npc.state === "searching"
