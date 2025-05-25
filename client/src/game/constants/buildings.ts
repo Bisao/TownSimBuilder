@@ -141,20 +141,4 @@ export const buildingTypes: Record<string, BuildingType> = {
       shape: "box",
     },
   },
-  silo: {
-    id: "silo",
-    name: "Silo",
-    description: "Armazena sementes e colheitas",
-    size: [1, 1],
-    height: 3,
-    cost: { wood: 20, stone: 20 },
-    model: {
-      color: "#CD853F",
-      shape: "cylinder",
-    },
-    storage: {
-      maxCapacity: 100,
-      accepts: ["seeds", "wheat"]
-    }
-  },
 };
