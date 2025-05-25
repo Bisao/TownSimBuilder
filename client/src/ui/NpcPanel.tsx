@@ -24,8 +24,12 @@ const NpcPanel = ({ npc, onClose }: NpcPanelProps) => {
     <div 
       className="fixed inset-0 flex items-center justify-center bg-black/50 z-[9999]"
       onWheel={(e) => e.stopPropagation()}
+      onClick={(e) => e.stopPropagation()}
     >
-      <div className="bg-white/95 backdrop-blur-sm rounded-xl p-6 w-96 max-h-[90vh] overflow-y-auto shadow-xl border border-gray-200">
+      <div 
+        className="bg-white/95 backdrop-blur-sm rounded-xl p-6 w-96 max-h-[90vh] overflow-y-auto shadow-xl border border-gray-200 relative"
+        onClick={(e) => e.stopPropagation()}
+      >
         <div className="flex justify-between items-center mb-6">
           <div className="flex items-center gap-3">
             <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
