@@ -149,7 +149,7 @@ export const useNpcStore = create<NPCState>()(
         switch (npc.state) {
           case "idle": {
             // Sistema de tomada de decisão baseado em necessidades e estado
-            if (npc.state === "gathering" || npc.state === "moving") {
+            if (npc.state === "gathering" || npc.state === "moving" || npc.state === "searching") {
               updatedNPC.needs.energy -= 0.1 * deltaTime;
               updatedNPC.needs.satisfaction -= 0.05 * deltaTime;
             } else if (npc.state === "idle") {
@@ -297,15 +297,22 @@ export const useNpcStore = create<NPCState>()(
             const resourceType = npc.type === "miner" ? "stone" : npc.type === "lumberjack" ? "wood" : null;
             
             if (resourceType && window.naturalResources) {
-              const availableResources = window.naturalResources.filter(r => 
-                r.type === resourceType && !r.lastCollected &&
-                !get().npcs.some(otherNpc => 
+              const availableResources = window.naturalResources.filter(r => {
+                // Verifica se o recurso é do tipo correto e não foi coletado
+                const isCorrectType = r.type === resourceType;
+                const isNotCollected = !r.lastCollected;
+                
+                // Verifica se não está sendo usado por outro NPC
+                const isNotTargeted = !get().npcs.some(otherNpc => 
                   otherNpc.id !== npc.id && 
+                  otherNpc.state !== "idle" &&
                   otherNpc.targetResource &&
                   otherNpc.targetResource.position[0] === r.position[0] &&
                   otherNpc.targetResource.position[1] === r.position[1]
-                )
-              );
+                );
+
+                return isCorrectType && isNotCollected && isNotTargeted;
+              });
 
               if (availableResources.length > 0) {
                 let nearest = availableResources[0];

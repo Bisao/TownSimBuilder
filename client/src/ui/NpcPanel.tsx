@@ -143,9 +143,11 @@ const NpcPanel = ({ npc, onClose }: NpcPanelProps) => {
                     ? "bg-gray-200 cursor-not-allowed before:absolute before:inset-0 before:bg-gradient-to-r before:from-transparent before:via-white/20 before:to-transparent before:animate-shimmer" 
                     : "bg-blue-500 hover:bg-blue-600"
                 } text-white font-medium transition-colors`}
-                disabled={npc.state === "gathering" || npc.state === "searching"}
+                disabled={npc.state !== "idle"}
               >
-                {npc.state === "gathering" ? "Minerando..." : "Minerar"}
+                {npc.state === "gathering" ? "Minerando..." : 
+                 npc.state === "searching" ? "Procurando..." : 
+                 npc.state === "moving" ? "Movendo..." : "Minerar"}
               </button>
             )}
             {npc.type === "lumberjack" && (
