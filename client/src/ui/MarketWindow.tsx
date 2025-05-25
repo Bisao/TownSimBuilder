@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { marketCategories, marketItems } from "../game/constants/market";
 import { useResourceStore } from "../game/stores/useResourceStore";
+import { useAudio } from "../lib/stores/useAudio";
 import { cn } from "../lib/utils";
 
 interface MarketWindowProps {
@@ -18,6 +19,8 @@ const MarketWindow = ({ isOpen, onClose }: MarketWindowProps) => {
   );
   
   // Função para comprar um item
+  const { playSuccess } = useAudio();
+  
   const buyItem = (itemId: string) => {
     const item = marketItems[itemId];
     if (!item) return;
@@ -26,6 +29,9 @@ const MarketWindow = ({ isOpen, onClose }: MarketWindowProps) => {
     if ((resources.coins || 0) >= item.price) {
       // Deduzir o preço
       updateResource("coins", -item.price);
+      
+      // Tocar som de sucesso
+      playSuccess();
       
       // Adicionar o item ao inventário (por enquanto, apenas mostra um alerta)
       alert(`Você comprou: ${item.name}`);

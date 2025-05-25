@@ -32,6 +32,19 @@ function App() {
     bgMusic.loop = true;
     bgMusic.volume = 0.3;
     setBackgroundMusic(bgMusic);
+    
+    // Criar sons de efeitos
+    const hitSound = new Audio("/sounds/hit.mp3");
+    hitSound.volume = 0.5;
+    
+    const successSound = new Audio("/sounds/success.mp3");
+    successSound.volume = 0.5;
+    
+    // Set sound effects
+    useAudio.getState().setHitSound(hitSound);
+    useAudio.getState().setSuccessSound(successSound);
+    
+    console.log("Sistema de áudio inicializado");
 
     // Show the canvas once everything is loaded
     setShowCanvas(true);
