@@ -311,15 +311,34 @@ export const useNpcStore = create<NPCState>()(
                 const isNotCollected = !r.lastCollected;
                 const isNotTargeted = !targetedResources.has(`${r.position[0]},${r.position[1]}`);
 
-                // Se não encontrar recursos próximos, move para uma posição aleatória
-                if (!isCorrectType || !isNotCollected) {
-                  const randomX = Math.floor(Math.random() * 40);
-                  const randomZ = Math.floor(Math.random() * 40);
-                  updatedNPC.targetPosition = [randomX, 0, randomZ];
-                  console.log(`NPC ${npc.type} movendo para posição aleatória [${randomX}, ${randomZ}]`);
+                return isCorrectType && isNotCollected && isNotTargeted;
+              });
+
+              if (availableResources.length === 0) {
+                // Se não encontrar recursos, move para uma nova área ainda não explorada
+                let newX = Math.floor(Math.random() * 40);
+                let newZ = Math.floor(Math.random() * 40);
+                
+                // Tenta encontrar uma posição não visitada recentemente
+                const visitedKey = (x: number, z: number) => `${Math.floor(x)},${Math.floor(z)}`;
+                const recentPositions = new Set(updatedNPC.memory.lastVisitedPositions.map(p => visitedKey(p[0], p[1])));
+                
+                let attempts = 0;
+                while (recentPositions.has(visitedKey(newX, newZ)) && attempts < 10) {
+                  newX = Math.floor(Math.random() * 40);
+                  newZ = Math.floor(Math.random() * 40);
+                  attempts++;
                 }
 
-                return isCorrectType && isNotCollected && isNotTargeted;
+                updatedNPC.targetPosition = [newX, 0, newZ];
+                updatedNPC.memory.lastVisitedPositions.push([newX, newZ]);
+                if (updatedNPC.memory.lastVisitedPositions.length > 5) {
+                  updatedNPC.memory.lastVisitedPositions.shift();
+                }
+                
+                console.log(`NPC ${npc.type} explorando nova área em [${newX}, ${newZ}]`);
+                return false;
+              }
               });
 
               if (availableResources.length > 0) {
