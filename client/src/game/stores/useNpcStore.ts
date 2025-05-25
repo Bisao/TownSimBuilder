@@ -221,7 +221,7 @@ export const useNpcStore = create<NPCState>()(
                     updatedNPC.targetPosition = [bestResource.position[0], 0, bestResource.position[1]];
                     updatedNPC.targetBuildingId = null;
                     updatedNPC.state = "moving";
-                    
+
                     const distance = Math.hypot(
                       bestResource.position[0] - npc.position[0],
                       bestResource.position[1] - npc.position[2]
@@ -282,85 +282,6 @@ export const useNpcStore = create<NPCState>()(
             }
             break;
           }
-
-            // Todos os NPCs procuram recursos se tiverem espaço no inventário
-            if ((npc.type === "lumberjack" || npc.type === "miner") && hasSpaceInInventory) {
-              const resourceMapping = {
-                "lumberjack": "wood",
-                "miner": "stone"
-              };
-              const resourceType = resourceMapping[npc.type];
-
-              // Buscar recurso mais próximo no grid
-              // Pega o tipo de NPC para definir raio de trabalho
-              const npcConfig = npcTypes[npc.type];
-              // Busca todos os recursos do tipo correto em todo o grid
-              const resources = window.naturalResources?.filter(r => {
-                // Verifica tipo e status do recurso
-                const isCorrectType = r.type === resourceType;
-                const isNotCollected = !r.lastCollected;
-
-                // Verifica se não está sendo coletado por outro NPC
-                const isNotTargeted = !get().npcs.some(
-                  other => other.id !== npc.id && 
-                  other.targetResource?.position[0] === r.position[0] &&
-                  other.targetResource?.position[1] === r.position[1]
-                );
-
-                return isCorrectType && isNotCollected && isNotTargeted;
-              }) || [];
-
-              let nearestResource = null;
-              let minDistance = Infinity;
-
-              for (const resource of resources) {
-                const distance = Math.hypot(
-                  resource.position[0] - npc.position[0],
-                  resource.position[1] - npc.position[2]
-                );
-
-                if (distance < minDistance) {
-                  minDistance = distance;
-                  nearestResource = resource;
-                }
-              }
-
-              if (nearestResource) {
-                console.log(`NPC ${npc.type} encontrou recurso em [${nearestResource.position}]`);
-                updatedNPC.targetResource = nearestResource;
-                updatedNPC.targetPosition = [nearestResource.position[0], 0, nearestResource.position[1]];
-                updatedNPC.state = "moving";
-              } else {
-                // Se não encontrar recurso, move-se aleatoriamente
-                if (Math.random() < 0.01) {
-                  const randomX = npc.position[0] + (Math.random() * 10 - 5);
-                  const randomZ = npc.position[2] + (Math.random() * 10 - 5);
-                  updatedNPC.targetPosition = [randomX, 0, randomZ];
-                  updatedNPC.state = "moving";
-                }
-              }
-            } else if (!npc.targetBuildingId) {
-              const workplace = get().findWorkplace(npc.id);
-              if (workplace) {
-                const workplaceBuilding = buildings.find(b => b.id === workplace);
-                if (workplaceBuilding) {
-                  // Encontrar posição do edifício alvo
-                  const [bx, bz] = workplaceBuilding.position;
-                  updatedNPC.targetPosition = [bx + 0.5, 0, bz + 0.5];
-                  updatedNPC.targetBuildingId = workplace;
-                  updatedNPC.state = "moving";
-                }
-              } else {
-                // Se não encontrar trabalho, mova-se aleatoriamente
-                if (Math.random() < 0.01) { // 1% de chance por frame
-                  const randomX = npc.position[0] + (Math.random() * 10 - 5);
-                  const randomZ = npc.position[2] + (Math.random() * 10 - 5);
-                  updatedNPC.targetPosition = [randomX, 0, randomZ];
-                  updatedNPC.state = "moving";
-                }
-              }
-            }
-            break;
 
           case "searching":
             // Explora o mapa procurando por recursos
@@ -464,7 +385,7 @@ export const useNpcStore = create<NPCState>()(
                     // Depositar recursos no silo
                     const depositedAmount = updatedNPC.inventory.amount;
                     const depositedType = updatedNPC.inventory.type;
-                    
+
                     // Importar dinamicamente o store para evitar dependência circular
                     import('./useResourceStore').then(({ useResourceStore }) => {
                       const resourceStore = useResourceStore.getState();
@@ -500,7 +421,7 @@ export const useNpcStore = create<NPCState>()(
                     Math.abs(b.position[0] - targetX) < 1.0 && 
                     Math.abs(b.position[1] - targetZ) < 1.0
                   );
-                  
+
                   if (home && (updatedNPC.needs.energy < 80 || updatedNPC.needs.satisfaction < 60)) {
                     updatedNPC.state = "resting";
                     console.log(`NPC ${npc.type} chegou em casa e começou a descansar`);
