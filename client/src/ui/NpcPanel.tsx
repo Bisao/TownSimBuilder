@@ -20,16 +20,41 @@ const NpcPanel = ({ npc, onClose }: NpcPanelProps) => {
     searching: "Procurando"
   };
 
+  const handleWorkClick = () => {
+    if (npc.state === "idle") {
+      const buildings = useBuildingStore.getState().buildings;
+      const home = buildings.find(b => b.id === npc.homeId);
+
+      if (home) {
+        const updatedNpc = {
+          ...npc,
+          position: [home.position[0], 0, home.position[1]],
+          state: "searching",
+          workProgress: 0,
+          targetResource: null,
+          targetPosition: null,
+          needs: {
+            ...npc.needs,
+            energy: Math.max(npc.needs.energy, 50),
+            satisfaction: Math.max(npc.needs.satisfaction, 50)
+          }
+        };
+
+        useNpcStore.setState(state => ({
+          npcs: state.npcs.map(n => n.id === npc.id ? updatedNpc : n)
+        }));
+      }
+    }
+  };
+
   return (
     <div 
-      className="fixed inset-0 flex items-center justify-center bg-black/50 z-[9999]"
-      onWheel={(e) => e.stopPropagation()}
-      onClick={(e) => e.stopPropagation()}
+      className="fixed inset-0 bg-black/50 flex items-center justify-center z-50"
+      onClick={(e) => {
+        if (e.target === e.currentTarget) onClose();
+      }}
     >
-      <div 
-        className="bg-white/95 backdrop-blur-sm rounded-xl p-6 w-96 max-h-[90vh] overflow-y-auto shadow-xl border border-gray-200 relative"
-        onClick={(e) => e.stopPropagation()}
-      >
+      <div className="bg-white rounded-xl p-6 w-96 max-h-[90vh] overflow-y-auto relative">
         <div className="flex justify-between items-center mb-6">
           <div className="flex items-center gap-3">
             <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
@@ -50,14 +75,14 @@ const NpcPanel = ({ npc, onClose }: NpcPanelProps) => {
             <h2 className="text-xl font-bold">{npcType?.name || npc.type}</h2>
           </div>
           <button 
-            onClick={onClose} 
+            onClick={onClose}
             className="text-gray-500 hover:text-gray-700 transition-colors"
           >
             <i className="fa-solid fa-times"></i>
           </button>
         </div>
 
-        <div className="space-y-6">
+        <div className="space-y-4">
           <div className="bg-gray-50 p-4 rounded-lg">
             <h3 className="font-semibold mb-2 text-gray-700">Status</h3>
             <div className="grid grid-cols-2 gap-2">
@@ -120,42 +145,16 @@ const NpcPanel = ({ npc, onClose }: NpcPanelProps) => {
             </p>
           </div>
 
-          <div className="sticky top-0 z-10 bg-white/95 backdrop-blur-sm py-4 border-b border-gray-200">
+          <div className="bg-gray-50 p-4 rounded-lg">
             <h3 className="font-semibold mb-2 text-gray-700">Trabalho</h3>
             {npc.type === "miner" && (
               <button
-                onClick={() => {
-                  if (npc.state === "idle") {
-                    // Encontra a casa do NPC
-                    const buildings = useBuildingStore.getState().buildings;
-                    const home = buildings.find(b => b.id === npc.homeId);
-
-                    if (home) {
-                      const updatedNpc = {
-                        ...npc,
-                        position: [home.position[0], 0, home.position[1]],
-                        state: "searching",
-                        workProgress: 0,
-                        targetResource: null,
-                        targetPosition: null,
-                        needs: {
-                          ...npc.needs,
-                          energy: Math.max(npc.needs.energy, 50),
-                          satisfaction: Math.max(npc.needs.satisfaction, 50)
-                        }
-                      };
-
-                      useNpcStore.setState(state => ({
-                        npcs: state.npcs.map(n => n.id === npc.id ? updatedNpc : n)
-                      }));
-                    }
-                  }
-                }}
-                className={`w-full px-4 py-2 rounded-lg relative overflow-hidden ${
+                onClick={handleWorkClick}
+                className={`w-full px-4 py-2 rounded-lg ${
                   npc.state !== "idle"
-                    ? "bg-gray-200 cursor-not-allowed before:absolute before:inset-0 before:bg-gradient-to-r before:from-transparent before:via-white/20 before:to-transparent before:animate-shimmer" 
-                    : "bg-blue-500 hover:bg-blue-600"
-                } text-white font-medium transition-colors`}
+                    ? "bg-gray-200 cursor-not-allowed" 
+                    : "bg-blue-500 hover:bg-blue-600 text-white"
+                } font-medium transition-colors`}
                 disabled={npc.state !== "idle"}
               >
                 {npc.state === "gathering" ? "Minerando..." : 
@@ -163,7 +162,7 @@ const NpcPanel = ({ npc, onClose }: NpcPanelProps) => {
                  npc.state === "moving" ? "Movendo..." : "Minerar"}
               </button>
             )}
-            {npc.type === "lumberjack" && (
+             {npc.type === "lumberjack" && (
               <button
                 onClick={() => {
                   if (npc.state === "idle") {
