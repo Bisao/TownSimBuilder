@@ -91,7 +91,26 @@ export const useNpcStore = create<NPCState>()(
             // Lenhadores e mineradores procuram recursos
             if (npc.type === "lumberjack" || npc.type === "miner") {
               const resourceType = npc.type === "lumberjack" ? "wood" : "stone";
-              const nearestResource = findNearestResource(npc.position, resourceType);
+              
+              // Buscar recurso mais próximo do grid
+              const resources = window.naturalResources?.filter(r => 
+                r.type === resourceType && !r.lastCollected
+              ) || [];
+              
+              let nearestResource = null;
+              let minDistance = Infinity;
+              
+              for (const resource of resources) {
+                const distance = Math.hypot(
+                  resource.position[0] - npc.position[0],
+                  resource.position[1] - npc.position[2]
+                );
+                
+                if (distance < minDistance) {
+                  minDistance = distance;
+                  nearestResource = resource;
+                }
+              }
 
               if (nearestResource) {
                 updatedNPC.targetResource = nearestResource;
@@ -151,8 +170,11 @@ export const useNpcStore = create<NPCState>()(
                 updatedNPC.position = [...npc.targetPosition];
                 updatedNPC.targetPosition = null;
 
-                // Se o destino era um local de trabalho, começa a trabalhar
-                if (npc.targetBuildingId) {
+                if (npc.targetResource) {
+                  // Começar a coletar o recurso
+                  updatedNPC.state = "gathering";
+                  updatedNPC.workProgress = 0;
+                } else if (npc.targetBuildingId) {
                   updatedNPC.state = "working";
                   updatedNPC.workProgress = 0;
                 } else {
@@ -191,6 +213,37 @@ export const useNpcStore = create<NPCState>()(
                   // Continuar trabalhando
                   updatedNPC.workProgress = 0;
                 }
+              }
+            } else {
+              updatedNPC.state = "idle";
+            }
+            break;
+
+          case "gathering":
+            if (npc.targetResource) {
+              updatedNPC.workProgress += deltaTime * 0.2; // 5 segundos para coletar
+
+              if (updatedNPC.workProgress >= 1) {
+                // Recurso coletado
+                const resourceType = npc.type === "lumberjack" ? "wood" : "stone";
+                const resourceStore = useResourceStore.getState();
+                resourceStore.updateResource(resourceType, 1);
+
+                // Marcar recurso como coletado
+                if (window.naturalResources) {
+                  const resourceIndex = window.naturalResources.findIndex(
+                    r => r.position[0] === npc.targetResource?.position[0] && 
+                         r.position[1] === npc.targetResource?.position[1]
+                  );
+                  if (resourceIndex !== -1) {
+                    window.naturalResources[resourceIndex].lastCollected = Date.now();
+                  }
+                }
+
+                // Resetar estado
+                updatedNPC.targetResource = null;
+                updatedNPC.workProgress = 0;
+                updatedNPC.state = "idle";
               }
             } else {
               updatedNPC.state = "idle";
