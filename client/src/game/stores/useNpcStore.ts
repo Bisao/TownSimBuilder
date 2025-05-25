@@ -49,11 +49,7 @@ function calculatePathRisk(start: [number, number], end: [number, number], npcs:
   return distance * (1 + npcDensity * 0.2);
 }
 
-  knownResources: Array<{ type: string; position: [number, number] }>;
-  failedAttempts: number;
-}
-
-interface NPC {
+  interface NPC {
   id: string;
   type: string;
   homeId: string;
