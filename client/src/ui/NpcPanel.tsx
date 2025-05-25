@@ -1,4 +1,4 @@
-import { NPC } from "../game/stores/useNpcStore";
+import { NPC, useNpcStore } from "../game/stores/useNpcStore";
 import { npcTypes } from "../game/constants/npcs";
 import { useBuildingStore } from "../game/stores/useBuildingStore";
 
