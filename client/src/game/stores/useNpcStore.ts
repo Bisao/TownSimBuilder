@@ -298,15 +298,18 @@ export const useNpcStore = create<NPCState>()(
             
             if (resourceType && window.naturalResources) {
               console.log(`NPC ${npc.type} procurando recursos do tipo ${resourceType}`);
+              // Criar cache de recursos alvo
+              const targetedResources = new Set();
+              get().npcs.forEach(otherNpc => {
+                if (otherNpc.id !== npc.id && otherNpc.targetResource) {
+                  targetedResources.add(`${otherNpc.targetResource.position[0]},${otherNpc.targetResource.position[1]}`);
+                }
+              });
+
               const availableResources = window.naturalResources.filter(r => {
                 const isCorrectType = r.type === resourceType;
                 const isNotCollected = !r.lastCollected;
-                const isNotTargeted = !get().npcs.some(otherNpc => 
-                  otherNpc.id !== npc.id && 
-                  otherNpc.targetResource &&
-                  otherNpc.targetResource.position[0] === r.position[0] &&
-                  otherNpc.targetResource.position[1] === r.position[1]
-                );
+                const isNotTargeted = !targetedResources.has(`${r.position[0]},${r.position[1]}`);
 
                 // Se não encontrar recursos próximos, move para uma posição aleatória
                 if (!isCorrectType || !isNotCollected) {
@@ -402,16 +405,20 @@ export const useNpcStore = create<NPCState>()(
                 const clampedZ = Math.max(0, Math.min(nextGridZ, 39));
 
                 // Verificar colisões com outros NPCs
-                const hasCollision = get().npcs.some(otherNpc => 
-                  otherNpc.id !== npc.id && 
-                  Math.round(otherNpc.position[0]) === clampedX && 
-                  Math.round(otherNpc.position[2]) === clampedZ
-                );
+                // Usar Map para otimizar verificação de colisão
+                const npcPositions = new Map();
+                get().npcs.forEach(otherNpc => {
+                  if (otherNpc.id !== npc.id) {
+                    const key = `${Math.round(otherNpc.position[0])},${Math.round(otherNpc.position[2])}`;
+                    npcPositions.set(key, true);
+                  }
+                });
+                const hasCollision = npcPositions.has(`${clampedX},${clampedZ}`);
 
                 if (!hasCollision) {
                   // Atualizar posição se não houver colisão
                   updatedNPC.position = [clampedX, 0, clampedZ];
-                  console.log(`NPC ${npc.type} movendo de [${currentGridX}, ${currentGridZ}] para [${clampedX}, ${clampedZ}]`);
+                  // Remove log desnecessário
                 } else {
                   console.log(`NPC ${npc.type} aguardando - colisão detectada em [${clampedX}, ${clampedZ}]`);
                 }
