@@ -10,6 +10,18 @@ const Terrain = () => {
   const meshRef = useRef<THREE.Mesh>(null);
   const gridRef = useRef<THREE.GridHelper>(null);
   const { camera } = useThree();
+  const [isGridVisible, setIsGridVisible] = useState(true);
+
+  useEffect(() => {
+    const handleKeyPress = (event: KeyboardEvent) => {
+      if (event.code === 'KeyG') {
+        setIsGridVisible(prev => !prev);
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyPress);
+    return () => window.removeEventListener('keydown', handleKeyPress);
+  }, []);
   
   // Load grass texture
   const grassTexture = useTexture("/textures/grass.png");
@@ -48,6 +60,7 @@ const Terrain = () => {
         ref={gridRef}
         args={[GRID_SIZE, GRID_SIZE, "#000", "#444"]} 
         position={[GRID_SIZE/2 - 0.5, 0, GRID_SIZE/2 - 0.5]}
+        visible={isGridVisible}
       >
         <meshBasicMaterial transparent opacity={0.5} />
       </gridHelper>

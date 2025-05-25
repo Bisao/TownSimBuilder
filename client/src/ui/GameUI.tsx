@@ -118,6 +118,13 @@ const GameUI = () => {
       >
         <i className={`fa-solid ${isMuted ? 'fa-volume-xmark' : 'fa-volume-high'}`}></i>
       </button>
+      <button 
+        onClick={() => window.dispatchEvent(new KeyboardEvent('keydown', { code: 'KeyG' }))}
+        className="absolute top-4 right-48 bg-black/80 p-2 rounded-lg text-white pointer-events-auto"
+        title="Alternar Grid (G)"
+      >
+        <i className="fa-solid fa-grid-2"></i>
+      </button>
       {selectedNpc && (
         <NpcPanel npc={selectedNpc} onClose={() => setSelectedNpc(null)} />
       )}
