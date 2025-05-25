@@ -19,7 +19,7 @@ export interface NPC {
 interface NPCState {
   npcs: NPC[];
   npcIdCounter: number;
-  
+
   // Métodos
   spawnNPC: (type: string, homeId: string, position: [number, number, number]) => string;
   removeNPC: (id: string) => void;
@@ -31,12 +31,12 @@ export const useNpcStore = create<NPCState>()(
   subscribeWithSelector((set, get) => ({
     npcs: [],
     npcIdCounter: 0,
-    
+
     spawnNPC: (type, homeId, position) => {
       if (!npcTypes[type]) return "";
-      
+
       const id = `npc_${get().npcIdCounter}`;
-      
+
       const newNPC: NPC = {
         id,
         type,
@@ -47,22 +47,22 @@ export const useNpcStore = create<NPCState>()(
         state: "idle",
         workProgress: 0,
       };
-      
+
       set((state) => ({
         npcs: [...state.npcs, newNPC],
         npcIdCounter: state.npcIdCounter + 1,
       }));
-      
+
       console.log(`NPC ${type} criado em ${position}`);
       return id;
     },
-    
+
     removeNPC: (id) => {
       set((state) => ({
         npcs: state.npcs.filter((npc) => npc.id !== id),
       }));
     },
-    
+
     updateNPCs: (deltaTime) => {
     const buildings = useBuildingStore.getState().buildings;
     const resourceStore = useResourceStore.getState();
@@ -116,10 +116,10 @@ export const useNpcStore = create<NPCState>()(
   },
       const buildings = useBuildingStore.getState().buildings;
       const updatedNPCs: NPC[] = [];
-      
+
       for (const npc of get().npcs) {
         let updatedNPC = { ...npc };
-        
+
         // Lógica baseada no estado atual do NPC
         switch (npc.state) {
           case "idle":
@@ -146,7 +146,7 @@ export const useNpcStore = create<NPCState>()(
               }
             }
             break;
-            
+
           case "moving":
             if (npc.targetPosition) {
               // Calcular direção e distância para o alvo
@@ -155,10 +155,10 @@ export const useNpcStore = create<NPCState>()(
               const direction = new THREE.Vector3()
                 .subVectors(targetPos, currentPos)
                 .normalize();
-              
+
               const distance = currentPos.distanceTo(targetPos);
               const npcSpeed = npcTypes[npc.type]?.speed || 0.5;
-              
+
               if (distance > 0.2) {
                 // Mover em direção ao alvo
                 const newX = npc.position[0] + direction.x * npcSpeed * deltaTime;
@@ -168,7 +168,7 @@ export const useNpcStore = create<NPCState>()(
                 // Chegou ao destino
                 updatedNPC.position = [...npc.targetPosition];
                 updatedNPC.targetPosition = null;
-                
+
                 // Se o destino era um local de trabalho, começa a trabalhar
                 if (npc.targetBuildingId) {
                   updatedNPC.state = "working";
@@ -181,19 +181,19 @@ export const useNpcStore = create<NPCState>()(
               updatedNPC.state = "idle";
             }
             break;
-            
+
           case "working":
             if (npc.targetBuildingId) {
               // Progresso do trabalho
               updatedNPC.workProgress += deltaTime * 0.1; // 10 segundos para completar
-              
+
               if (updatedNPC.workProgress >= 1) {
                 // Trabalho concluído - aumenta a produção do edifício
                 // Código para melhorar a produção será implementado aqui
-                
+
                 // Voltar para casa ou procurar outro trabalho
                 updatedNPC.workProgress = 0;
-                
+
                 // 50% de chance de voltar para casa ou continuar trabalhando
                 if (Math.random() < 0.5) {
                   const home = buildings.find(b => b.id === npc.homeId);
@@ -215,44 +215,44 @@ export const useNpcStore = create<NPCState>()(
             }
             break;
         }
-        
+
         updatedNPCs.push(updatedNPC);
       }
-      
+
       if (updatedNPCs.some((npc, i) => npc.position !== get().npcs[i].position || npc.state !== get().npcs[i].state)) {
         set({ npcs: updatedNPCs });
       }
     },
-    
+
     findWorkplace: (npcId) => {
       const npc = get().npcs.find(n => n.id === npcId);
       if (!npc) return null;
-      
+
       const buildings = useBuildingStore.getState().buildings;
       const npcType = npcTypes[npc.type];
-      
+
       // Encontrar o tipo de edifício adequado para este NPC
       const workplaceType = Object.entries(workplaceMapping).find(([_, npcTypeId]) => npcTypeId === npc.type)?.[0];
       if (!workplaceType) return null;
-      
+
       // Encontrar edifícios do tipo correto dentro do raio de trabalho
       const possibleWorkplaces = buildings.filter(building => {
         if (building.type !== workplaceType) return false;
-        
+
         // Verificar se está dentro do raio de trabalho
         const [bx, bz] = building.position;
         const buildingPos = new THREE.Vector3(bx, 0, bz);
         const npcPos = new THREE.Vector3(...npc.position);
         const distance = buildingPos.distanceTo(npcPos);
-        
+
         return distance <= npcType.workRadius;
       });
-      
+
       // Escolher o mais próximo ou aleatório
       if (possibleWorkplaces.length > 0) {
         return possibleWorkplaces[0].id;
       }
-      
+
       return null;
     },
   }))
