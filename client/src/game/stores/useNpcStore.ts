@@ -204,7 +204,7 @@ export const useNpcStore = create<NPCState>()(
                 updatedNPC.position = [nextGridX, 0, nextGridZ];
                 
                 // Debug do movimento
-                console.log(`NPC ${npc.type} movendo de [${npc.position[0]}, ${npc.position[2]}] para [${clampedX}, ${clampedZ}]`);
+                console.log(`NPC ${npc.type} movendo de [${npc.position[0]}, ${npc.position[2]}] para [${nextGridX}, ${nextGridZ}]`);
               } else {
                 // Chegou ao destino
                 updatedNPC.position = [...npc.targetPosition];
