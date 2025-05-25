@@ -38,34 +38,63 @@ const CameraControls = () => {
   }, []);
 
   // Handler de zoom com scroll do mouse
-  // Estado para controlar se o botão direito está pressionado
+  // Estados para controle da câmera
   const isDragging = useRef(false);
+  const isRotating = useRef(false);
   const lastMousePosition = useRef({ x: 0, y: 0 });
-
+  const cameraAngle = useRef(0);
+  
+  // Configurações de sensibilidade
+  const MOUSE_SENSITIVITY = 0.003;
+  const PAN_SENSITIVITY = 0.15;
+  
   useEffect(() => {
     const handleMouseDown = (event: MouseEvent) => {
-      if (event.button === 2) { // Botão direito
-        event.preventDefault();
+      event.preventDefault();
+      lastMousePosition.current = { x: event.clientX, y: event.clientY };
+      
+      if (event.button === 2) { // Botão direito - Pan
         isDragging.current = true;
-        lastMousePosition.current = { x: event.clientX, y: event.clientY };
+      } else if (event.button === 0) { // Botão esquerdo - Rotação
+        isRotating.current = true;
       }
     };
 
     const handleMouseMove = (event: MouseEvent) => {
-      if (isDragging.current) {
-        const deltaX = event.clientX - lastMousePosition.current.x;
-        const deltaY = event.clientY - lastMousePosition.current.y;
+      const deltaX = event.clientX - lastMousePosition.current.x;
+      const deltaY = event.clientY - lastMousePosition.current.y;
+      
+      if (isDragging.current) { // Pan
+        const direction = new THREE.Vector3()
+          .subVectors(positionRef.current, targetRef.current)
+          .normalize();
+        const right = new THREE.Vector3().crossVectors(direction, new THREE.Vector3(0, 1, 0));
+        const forward = new THREE.Vector3().crossVectors(right, new THREE.Vector3(0, 1, 0));
         
-        // Atualizar posição do alvo
-        targetRef.current.x += deltaX * 0.1;
-        targetRef.current.z += deltaY * 0.1;
+        targetRef.current.add(right.multiplyScalar(-deltaX * PAN_SENSITIVITY));
+        targetRef.current.add(forward.multiplyScalar(-deltaY * PAN_SENSITIVITY));
+      } 
+      
+      if (isRotating.current) { // Rotação
+        cameraAngle.current -= deltaX * MOUSE_SENSITIVITY;
         
-        lastMousePosition.current = { x: event.clientX, y: event.clientY };
+        const distance = positionRef.current.distanceTo(targetRef.current);
+        const height = positionRef.current.y - targetRef.current.y;
+        
+        positionRef.current.x = targetRef.current.x + Math.sin(cameraAngle.current) * distance;
+        positionRef.current.z = targetRef.current.z + Math.cos(cameraAngle.current) * distance;
+        positionRef.current.y = targetRef.current.y + height;
+        
+        camera.position.copy(positionRef.current);
+        camera.lookAt(targetRef.current);
       }
+      
+      lastMousePosition.current = { x: event.clientX, y: event.clientY };
     };
 
     const handleMouseUp = () => {
       isDragging.current = false;
+      isRotating.current = false;
     };
 
     const handleContextMenu = (event: Event) => {
@@ -78,14 +107,16 @@ const CameraControls = () => {
     domElement.addEventListener('mousemove', handleMouseMove);
     domElement.addEventListener('mouseup', handleMouseUp);
     domElement.addEventListener('contextmenu', handleContextMenu);
+    domElement.addEventListener('mouseleave', handleMouseUp);
 
     return () => {
       domElement.removeEventListener('mousedown', handleMouseDown);
       domElement.removeEventListener('mousemove', handleMouseMove);
       domElement.removeEventListener('mouseup', handleMouseUp);
       domElement.removeEventListener('contextmenu', handleContextMenu);
+      domElement.removeEventListener('mouseleave', handleMouseUp);
     };
-  }, [gl]);
+  }, [gl, camera]);
 
   useEffect(() => {
     const handleZoom = (event: WheelEvent) => {
