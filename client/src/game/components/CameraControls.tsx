@@ -55,8 +55,6 @@ const CameraControls = () => {
       
       if (event.button === 2) { // Botão direito - Pan
         isDragging.current = true;
-      } else if (event.button === 0) { // Botão esquerdo - Rotação
-        isRotating.current = true;
       }
     };
 
@@ -73,20 +71,6 @@ const CameraControls = () => {
         
         targetRef.current.add(right.multiplyScalar(-deltaX * PAN_SENSITIVITY));
         targetRef.current.add(forward.multiplyScalar(-deltaY * PAN_SENSITIVITY));
-      } 
-      
-      if (isRotating.current) { // Rotação
-        cameraAngle.current -= deltaX * MOUSE_SENSITIVITY;
-        
-        const distance = positionRef.current.distanceTo(targetRef.current);
-        const height = positionRef.current.y - targetRef.current.y;
-        
-        positionRef.current.x = targetRef.current.x + Math.sin(cameraAngle.current) * distance;
-        positionRef.current.z = targetRef.current.z + Math.cos(cameraAngle.current) * distance;
-        positionRef.current.y = targetRef.current.y + height;
-        
-        camera.position.copy(positionRef.current);
-        camera.lookAt(targetRef.current);
       }
       
       lastMousePosition.current = { x: event.clientX, y: event.clientY };
