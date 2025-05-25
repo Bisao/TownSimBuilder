@@ -83,7 +83,7 @@ const Building = ({ building, onClick }: BuildingProps) => {
 
   const handlePointerDown = (e: any) => {
     e.stopPropagation();
-    if (building.type === "market" && onClick) {
+    if (onClick) {
       onClick(building);
     }
   };

@@ -30,8 +30,8 @@ const World = ({ onMarketSelect }: WorldProps) => {
   const initializedRef = useRef(false);
 
   const handleBuildingClick = (building: BuildingType) => {
-    if (building.type === "market") {
-      onMarketSelect?.(building);
+    if (building.type === "market" && onMarketSelect) {
+      onMarketSelect(building);
     } else if (building.type === "silo") {
       // Adicionar lógica do silo aqui se necessário
       console.log("Silo clicked:", building);
