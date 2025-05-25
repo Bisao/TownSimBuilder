@@ -14,12 +14,12 @@ const NpcPanel = ({ npc, onClose }: NpcPanelProps) => {
   if (npc.state === "idle") {
     const buildings = useBuildingStore.getState().buildings;
     const home = buildings.find(b => b.id === npc.homeId);
-    
+
     if (home) {
       useNpcStore.setState(state => ({
         npcs: state.npcs.map(n => {
           if (n.id !== npc.id) return n;
-          
+
           return {
             ...n,
             position: [home.position[0] + 0.5, 0, home.position[1] + 0.5],
@@ -48,17 +48,15 @@ const NpcPanel = ({ npc, onClose }: NpcPanelProps) => {
   };
 
   const handleWorkClick = () => {
-    if (!npc || npc.state !== "idle") return;
-    
     const buildings = useBuildingStore.getState().buildings;
     const home = buildings.find(b => b.id === npc.homeId);
-    
+
     if (!home) return;
 
     useNpcStore.setState(state => ({
       npcs: state.npcs.map(n => {
         if (n.id !== npc.id) return n;
-        
+
         return {
           ...n,
           position: [home.position[0] + 0.5, 0, home.position[1] + 0.5],
