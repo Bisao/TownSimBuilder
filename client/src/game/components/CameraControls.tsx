@@ -35,7 +35,7 @@ const CameraControls = () => {
       event.preventDefault();
       
       // Determinar a direção do scroll (negativo para zoom out, positivo para zoom in)
-      const direction = -Math.sign(event.deltaY);
+      const direction = Math.sign(event.deltaY);
       
       // Obter as posições atuais
       const currentPosition = positionRef.current;

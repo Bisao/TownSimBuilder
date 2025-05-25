@@ -64,6 +64,56 @@ export const useNpcStore = create<NPCState>()(
     },
     
     updateNPCs: (deltaTime) => {
+    const buildings = useBuildingStore.getState().buildings;
+    const resourceStore = useResourceStore.getState();
+
+    set((state) => {
+      const updatedNpcs = state.npcs.map(npc => {
+        if (npc.type === "farmer") {
+          // Encontrar silo mais próximo
+          const silo = buildings.find(b => b.type === "silo");
+          // Encontrar fazenda disponível
+          const availableFarm = buildings.find(b => b.type === "farm" && !b.isOccupied);
+
+          switch (npc.state) {
+            case "idle":
+              if (silo && availableFarm && resourceStore.resources.seeds > 0) {
+                return {
+                  ...npc,
+                  state: "going_to_silo",
+                  targetBuildingId: silo.id
+                };
+              }
+              break;
+            case "going_to_silo":
+              // Se chegou ao silo, pegar sementes e ir para fazenda
+              if (npc.position[0] === silo?.position[0] && npc.position[2] === silo?.position[1]) {
+                resourceStore.updateResource("seeds", -1);
+                return {
+                  ...npc,
+                  state: "planting",
+                  targetBuildingId: availableFarm?.id
+                };
+              }
+              break;
+            case "planting":
+              // Lógica de plantio
+              if (npc.position[0] === availableFarm?.position[0] && npc.position[2] === availableFarm?.position[1]) {
+                return {
+                  ...npc,
+                  state: "returning_home",
+                  targetBuildingId: npc.homeId
+                };
+              }
+              break;
+          }
+        }
+        return npc;
+      });
+
+      return { ...state, npcs: updatedNpcs };
+    });
+  },
       const buildings = useBuildingStore.getState().buildings;
       const updatedNPCs: NPC[] = [];
       
