@@ -30,7 +30,7 @@ export const useBuildingStore = create<BuildingState>()(
     buildings: [],
     buildingIdCounter: 0,
     
-    placeBuilding: (type, position, rotation) => {
+    placeBuilding: (type, position, rotation, freeOfCharge = false) => {
       const resourceStore = useResourceStore.getState();
       const buildingType = buildingTypes[type];
       
@@ -39,16 +39,18 @@ export const useBuildingStore = create<BuildingState>()(
         return false;
       }
       
-      // Check if player has enough resources
-      for (const [resourceType, amount] of Object.entries(buildingType.cost)) {
-        if (resourceStore.resources[resourceType] < amount) {
-          return false;
+      // Check if player has enough resources (skip if freeOfCharge is true)
+      if (!freeOfCharge) {
+        for (const [resourceType, amount] of Object.entries(buildingType.cost)) {
+          if (resourceStore.resources[resourceType] < amount) {
+            return false;
+          }
         }
-      }
-      
-      // Deduct resources
-      for (const [resourceType, amount] of Object.entries(buildingType.cost)) {
-        resourceStore.updateResource(resourceType, -amount);
+        
+        // Deduct resources
+        for (const [resourceType, amount] of Object.entries(buildingType.cost)) {
+          resourceStore.updateResource(resourceType, -amount);
+        }
       }
       
       // Add the building

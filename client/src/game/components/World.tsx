@@ -44,7 +44,7 @@ const World = () => {
       const marketZ = Math.floor(Math.random() * (maxPos - minPos) + minPos);
       
       // Criar o mercado inicial (sem custo)
-      const success = placeBuilding("market", [marketX, marketZ], 0);
+      const success = placeBuilding("market", [marketX, marketZ], 0, true);
       
       if (success) {
         console.log(`Mercado inicial criado em [${marketX}, ${marketZ}]`);

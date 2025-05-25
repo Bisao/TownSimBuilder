@@ -5,6 +5,7 @@ interface AudioState {
   hitSound: HTMLAudioElement | null;
   successSound: HTMLAudioElement | null;
   isMuted: boolean;
+  isInitialized: boolean;
   
   // Setter functions
   setBackgroundMusic: (music: HTMLAudioElement) => void;
@@ -15,6 +16,7 @@ interface AudioState {
   toggleMute: () => void;
   playHit: () => void;
   playSuccess: () => void;
+  initAudio: () => void;
 }
 
 export const useAudio = create<AudioState>((set, get) => ({
@@ -22,6 +24,35 @@ export const useAudio = create<AudioState>((set, get) => ({
   hitSound: null,
   successSound: null,
   isMuted: true, // Start muted by default
+  isInitialized: false,
+  
+  initAudio: () => {
+    // Verificar se já foi inicializado
+    if (get().isInitialized) return;
+    
+    console.log("Inicializando sistema de áudio");
+    
+    // Criar elementos de áudio
+    const hitSound = new Audio("/sounds/hit.mp3");
+    hitSound.volume = 0.3;
+    
+    const successSound = new Audio("/sounds/success.mp3");
+    successSound.volume = 0.3;
+    
+    // Para o futuro, quando adicionarmos música de fundo
+    // const backgroundMusic = new Audio("/sounds/background.mp3");
+    // backgroundMusic.loop = true;
+    // backgroundMusic.volume = 0.2;
+    
+    set({
+      hitSound,
+      successSound,
+      // backgroundMusic,
+      isInitialized: true
+    });
+    
+    console.log("Sistema de áudio inicializado");
+  },
   
   setBackgroundMusic: (music) => set({ backgroundMusic: music }),
   setHitSound: (sound) => set({ hitSound: sound }),
@@ -35,39 +66,39 @@ export const useAudio = create<AudioState>((set, get) => ({
     set({ isMuted: newMutedState });
     
     // Log the change
-    console.log(`Sound ${newMutedState ? 'muted' : 'unmuted'}`);
+    console.log(`Som ${newMutedState ? 'desativado' : 'ativado'}`);
   },
   
   playHit: () => {
-    const { hitSound, isMuted } = get();
+    const { hitSound, isMuted, isInitialized } = get();
+    
+    // Se o áudio não foi inicializado ou está mutado, não reproduza
+    if (!isInitialized || isMuted) {
+      return;
+    }
+    
     if (hitSound) {
-      // If sound is muted, don't play anything
-      if (isMuted) {
-        console.log("Hit sound skipped (muted)");
-        return;
-      }
-      
       // Clone the sound to allow overlapping playback
       const soundClone = hitSound.cloneNode() as HTMLAudioElement;
       soundClone.volume = 0.3;
       soundClone.play().catch(error => {
-        console.log("Hit sound play prevented:", error);
+        console.log("Erro ao reproduzir som:", error);
       });
     }
   },
   
   playSuccess: () => {
-    const { successSound, isMuted } = get();
+    const { successSound, isMuted, isInitialized } = get();
+    
+    // Se o áudio não foi inicializado ou está mutado, não reproduza
+    if (!isInitialized || isMuted) {
+      return;
+    }
+    
     if (successSound) {
-      // If sound is muted, don't play anything
-      if (isMuted) {
-        console.log("Success sound skipped (muted)");
-        return;
-      }
-      
       successSound.currentTime = 0;
       successSound.play().catch(error => {
-        console.log("Success sound play prevented:", error);
+        console.log("Erro ao reproduzir som de sucesso:", error);
       });
     }
   }
