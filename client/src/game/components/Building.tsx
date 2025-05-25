@@ -84,6 +84,9 @@ const Building = ({ building, onClick }: BuildingProps) => {
     e.stopPropagation();
     if (building.type === "market" && onClick) {
       onClick(building);
+    } else if (building.type.includes("House")) {
+      // Encontrar o NPC associado a esta casa
+      const npc = window.dispatchEvent(new CustomEvent('npcHouseClick', { detail: building }));
     }
   };
 
