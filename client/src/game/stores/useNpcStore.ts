@@ -93,8 +93,9 @@ export const useNpcStore = create<NPCState>()(
         // Lógica baseada no estado atual do NPC
         switch (npc.state) {
           case "idle":
-            // Verificar se existe silo antes de procurar recursos
+            // Verificar se existe silo e se o inventário não está cheio
             const hasSilo = useBuildingStore.getState().buildings.some(b => b.type === 'silo');
+            const hasSpaceInInventory = updatedNPC.inventory.amount < 5;
 
             // Verificar se existem recursos disponíveis para coleta
             const hasAvailableResources = window.naturalResources?.some(r => {
@@ -103,8 +104,8 @@ export const useNpcStore = create<NPCState>()(
               return isMatchingType && !r.lastCollected;
             });
 
-            // Lenhadores e mineradores procuram recursos apenas se houver silo e recursos disponíveis
-            if ((npc.type === "lumberjack" || npc.type === "miner") && hasSilo && hasAvailableResources) {
+            // Lenhadores e mineradores procuram recursos apenas se houver silo, espaço no inventário e recursos disponíveis
+            if ((npc.type === "lumberjack" || npc.type === "miner") && hasSilo && hasAvailableResources && hasSpaceInInventory) {
               const resourceType = npc.type === "lumberjack" ? "wood" : "stone";
 
               // Buscar recurso mais próximo do grid
@@ -266,16 +267,20 @@ export const useNpcStore = create<NPCState>()(
                 if (updatedNPC.inventory.type === '' || updatedNPC.inventory.type === resourceType) {
                   updatedNPC.inventory.type = resourceType;
                   updatedNPC.inventory.amount += 1;
+                  console.log(`${npc.type} coletou ${resourceType}. Inventário: ${updatedNPC.inventory.amount}`);
                 }
 
-                // Remove the resource from the naturalResources array
+                // Remove o recurso do array naturalResources
                 if (window.naturalResources) {
                   const resourceIndex = window.naturalResources.findIndex(
                     r => r.position[0] === npc.targetResource?.position[0] &&
-                         r.position[1] === npc.targetResource?.position[1]
+                         r.position[1] === npc.targetResource?.position[1] &&
+                         ((npc.type === "lumberjack" && r.type === "wood") ||
+                          (npc.type === "miner" && r.type === "stone"))
                   );
                   if (resourceIndex !== -1) {
-                    window.naturalResources.splice(resourceIndex, 1); // Remove the resource
+                    window.naturalResources.splice(resourceIndex, 1);
+                    console.log(`Recurso removido em [${npc.targetResource.position}]`);
                   }
                 }
 
