@@ -12,6 +12,9 @@ interface NPCNeeds {
 
 interface NPCMemory {
   lastVisitedPositions: Array<[number, number]>;
+  knownResources: Array<{ type: string; position: [number, number] }>;
+  failedAttempts: number;
+}
 
 // Funções auxiliares para IA
 function findUnexploredArea(visitedPositions: Array<[number, number]>): [number, number] {
