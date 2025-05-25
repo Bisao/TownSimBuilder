@@ -392,19 +392,29 @@ export const useNpcStore = create<NPCState>()(
 
           case "moving":
             if (npc.targetPosition) {
-              const targetGridX = Math.round(npc.targetPosition[0]);
-              const targetGridZ = Math.round(npc.targetPosition[2]);
-              const currentGridX = Math.round(npc.position[0]);
-              const currentGridZ = Math.round(npc.position[2]);
+              const targetX = npc.targetPosition[0];
+              const targetZ = npc.targetPosition[2];
+              const currentX = npc.position[0];
+              const currentZ = npc.position[2];
 
-              console.log(`NPC ${npc.type} movendo de [${currentGridX}, ${currentGridZ}] para [${targetGridX}, ${targetGridZ}]`);
+              // Velocidade de movimento mais natural (2 células por segundo)
+              const moveSpeed = 2.0 * deltaTime;
+              
+              // Calcula direção
+              const dx = targetX - currentX;
+              const dz = targetZ - currentZ;
+              const distance = Math.sqrt(dx * dx + dz * dz);
 
-              // Verificar se já chegou ao destino
-              if (currentGridX === targetGridX && currentGridZ === targetGridZ) {
-                updatedNPC.position = [targetGridX, 0, targetGridZ];
+              // Reduz estamina ao se mover
+              updatedNPC.needs.energy = Math.max(0, updatedNPC.needs.energy - deltaTime * 3); // 3 pontos por segundo
+              updatedNPC.needs.satisfaction = Math.max(0, updatedNPC.needs.satisfaction - deltaTime * 1); // 1 ponto por segundo
+
+              // Verificar se já chegou ao destino (tolerância de 0.1)
+              if (distance < 0.1) {
+                updatedNPC.position = [targetX, 0, targetZ];
                 updatedNPC.targetPosition = null;
 
-                console.log(`NPC ${npc.type} chegou ao destino [${targetGridX}, ${targetGridZ}]`);
+                console.log(`NPC ${npc.type} chegou ao destino [${targetX}, ${targetZ}]`);
 
                 // Verificar o que fazer no destino
                 if (npc.targetResource) {
@@ -417,8 +427,8 @@ export const useNpcStore = create<NPCState>()(
                   const buildings = useBuildingStore.getState().buildings;
                   const silo = buildings.find(b => 
                     b.type === 'silo' && 
-                    Math.round(b.position[0]) === targetGridX && 
-                    Math.round(b.position[1]) === targetGridZ
+                    Math.abs(b.position[0] - targetX) < 0.5 && 
+                    Math.abs(b.position[1] - targetZ) < 0.5
                   );
 
                   if (silo) {
@@ -432,7 +442,7 @@ export const useNpcStore = create<NPCState>()(
                     updatedNPC.inventory = { type: '', amount: 0 };
                     console.log(`NPC ${npc.type} esvaziou inventário no silo`);
                   } else {
-                    console.warn(`NPC ${npc.type} não encontrou silo na posição [${targetGridX}, ${targetGridZ}]`);
+                    console.warn(`NPC ${npc.type} não encontrou silo na posição [${targetX}, ${targetZ}]`);
                   }
 
                   updatedNPC.state = "idle";
@@ -440,35 +450,18 @@ export const useNpcStore = create<NPCState>()(
                   updatedNPC.state = "idle";
                 }
               } else {
-                // Calcular próximo movimento
-                const dx = Math.sign(targetGridX - currentGridX);
-                const dz = Math.sign(targetGridZ - currentGridZ);
-
-                // Movimento prioritário (primeiro X, depois Z)
-                let nextGridX = currentGridX;
-                let nextGridZ = currentGridZ;
-
-                if (dx !== 0) {
-                  nextGridX = currentGridX + dx;
-                } else if (dz !== 0) {
-                  nextGridZ = currentGridZ + dz;
-                }
+                // Movimento suave interpolado
+                const dirX = dx / distance;
+                const dirZ = dz / distance;
+                
+                const newX = currentX + dirX * moveSpeed;
+                const newZ = currentZ + dirZ * moveSpeed;
 
                 // Validar limites do mapa
-                nextGridX = Math.max(0, Math.min(nextGridX, 39));
-                nextGridZ = Math.max(0, Math.min(nextGridZ, 39));
+                const clampedX = Math.max(0, Math.min(newX, 39));
+                const clampedZ = Math.max(0, Math.min(newZ, 39));
 
-                // Verificar colisões com outros NPCs
-                const hasCollision = get().npcs.some(otherNpc =>
-                  otherNpc.id !== npc.id &&
-                  Math.round(otherNpc.position[0]) === nextGridX &&
-                  Math.round(otherNpc.position[2]) === nextGridZ
-                );
-
-                if (!hasCollision) {
-                  updatedNPC.position = [nextGridX, 0, nextGridZ];
-                  console.log(`NPC ${npc.type} moveu para [${nextGridX}, ${nextGridZ}]`);
-                }
+                updatedNPC.position = [clampedX, 0, clampedZ];
               }
             } else {
               updatedNPC.state = "idle";
@@ -478,7 +471,11 @@ export const useNpcStore = create<NPCState>()(
           case "working":
             if (npc.targetBuildingId) {
               // Progresso do trabalho
-              updatedNPC.workProgress += deltaTime * 0.1; // 10 segundos para completar
+              updatedNPC.workProgress += deltaTime * 0.2; // 5 segundos para completar
+
+              // Reduz estamina e satisfação durante o trabalho
+              updatedNPC.needs.energy = Math.max(0, updatedNPC.needs.energy - deltaTime * 8); // 8 pontos por segundo
+              updatedNPC.needs.satisfaction = Math.max(0, updatedNPC.needs.satisfaction - deltaTime * 3); // 3 pontos por segundo
 
               if (updatedNPC.workProgress >= 1) {
                 // Trabalho concluído - aumenta a produção do edifício
@@ -518,8 +515,12 @@ export const useNpcStore = create<NPCState>()(
                 break;
               }
 
-              // Progresso da coleta
-              updatedNPC.workProgress += deltaTime * 0.5; // 2 segundos para coletar
+              // Progresso da coleta - mais rápido, 1 segundo para coletar
+              updatedNPC.workProgress += deltaTime * 1.0;
+
+              // Reduz estamina e satisfação durante o trabalho
+              updatedNPC.needs.energy = Math.max(0, updatedNPC.needs.energy - deltaTime * 5); // 5 pontos por segundo
+              updatedNPC.needs.satisfaction = Math.max(0, updatedNPC.needs.satisfaction - deltaTime * 2); // 2 pontos por segundo
 
               if (updatedNPC.workProgress >= 1) {
                 // Coletar recurso
@@ -554,6 +555,41 @@ export const useNpcStore = create<NPCState>()(
               updatedNPC.state = "idle";
             }
             break;
+
+          case "resting":
+            // Regenera energia e satisfação quando em casa
+            updatedNPC.needs.energy = Math.min(100, updatedNPC.needs.energy + deltaTime * 15); // 15 pontos por segundo
+            updatedNPC.needs.satisfaction = Math.min(100, updatedNPC.needs.satisfaction + deltaTime * 10); // 10 pontos por segundo
+
+            // Descansa até recuperar energia suficiente
+            if (updatedNPC.needs.energy >= 80 && updatedNPC.needs.satisfaction >= 60) {
+              updatedNPC.state = "idle";
+              console.log(`NPC ${npc.type} descansou e voltou ao trabalho`);
+            }
+            break;
+        }
+
+        // Verifica se precisa voltar para casa para descansar
+        if (updatedNPC.state !== "resting" && updatedNPC.state !== "moving" && 
+            (updatedNPC.needs.energy < 20 || updatedNPC.needs.satisfaction < 20)) {
+          const home = buildings.find(b => b.id === npc.homeId);
+          if (home) {
+            updatedNPC.targetPosition = [home.position[0], 0, home.position[1]];
+            updatedNPC.state = "moving";
+            updatedNPC.targetResource = null;
+            updatedNPC.targetBuildingId = null;
+            console.log(`NPC ${npc.type} voltando para casa para descansar (energia: ${updatedNPC.needs.energy.toFixed(1)}, satisfação: ${updatedNPC.needs.satisfaction.toFixed(1)})`);
+          }
+        }
+
+        // Se chegou em casa, entra em modo de descanso
+        if (updatedNPC.state === "idle" && buildings.find(b => 
+          b.id === npc.homeId && 
+          Math.abs(b.position[0] - updatedNPC.position[0]) < 0.5 && 
+          Math.abs(b.position[1] - updatedNPC.position[2]) < 0.5
+        ) && (updatedNPC.needs.energy < 80 || updatedNPC.needs.satisfaction < 60)) {
+          updatedNPC.state = "resting";
+          console.log(`NPC ${npc.type} começou a descansar em casa`);
         }
 
         updatedNPCs.push(updatedNPC);

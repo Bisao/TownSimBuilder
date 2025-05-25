@@ -73,6 +73,18 @@ const Npc = ({ npc }: NpcProps) => {
       particlesRef.current.rotation.y = time * 2;
       const material = particlesRef.current.material as THREE.PointsMaterial;
       material.size = 0.1 + Math.sin(time * 4) * 0.05;
+    } else if (npc.state === "resting") {
+      // Animação de descanso - movimento suave
+      if (bodyRef.current) {
+        bodyRef.current.position.y = 0.3 + Math.sin(time * 1) * 0.05; // Mais baixo e lento
+      }
+      if (leftArmRef.current && rightArmRef.current) {
+        leftArmRef.current.rotation.x = Math.sin(time * 0.5) * 0.1;
+        rightArmRef.current.rotation.x = Math.sin(time * 0.5) * 0.1;
+      }
+      if (particlesRef.current) {
+        particlesRef.current.visible = false;
+      }
     } else {
       // Estado parado
       if (bodyRef.current) {
