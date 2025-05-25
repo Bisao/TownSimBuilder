@@ -86,12 +86,10 @@ function App() {
           </Suspense>
         </Canvas>
         <GameUI />
-        {selectedMarket && (
-          <MarketWindow
-            selectedBuilding={selectedMarket}
-            onClose={() => setSelectedMarket(null)}
-          />
-        )}
+        <MarketWindow
+          isOpen={selectedMarket !== null}
+          onClose={() => setSelectedMarket(null)}
+        />
       </KeyboardControls>
     </div>
   );

@@ -92,15 +92,8 @@ const World = () => {
   // Lidar com clique em edifícios
   const handleBuildingClick = (building: BuildingType) => {
     if (building.type === "market") {
-      setSelectedMarket(building);
-      setShowMarketWindow(true);
+      onMarketSelect?.(building);
     }
-  };
-
-  // Fechar janela do mercado
-  const handleCloseMarket = () => {
-    setShowMarketWindow(false);
-    setSelectedMarket(null);
   };
 
   const handleTerrainClick = (e: any) => {
