@@ -15,7 +15,11 @@ import DayNightCycle from "./DayNightCycle";
 import MarketWindow from "../../ui/MarketWindow";
 import { Building as BuildingType } from "../stores/useBuildingStore";
 
-const World = () => {
+interface WorldProps {
+  onMarketSelect?: (building: BuildingType) => void;
+}
+
+const World = ({ onMarketSelect }: WorldProps) => {
   const { initResources } = useResourceStore();
   const { buildings, updateProduction, placeBuilding } = useBuildingStore();
   const { gameMode, advanceTime } = useGameStore();

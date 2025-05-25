@@ -82,7 +82,7 @@ function App() {
         >
           <color attach="background" args={["#87CEEB"]} />
           <Suspense fallback={null}>
-            <World onMarketSelect={setSelectedMarket} />
+            <World onMarketSelect={(building) => setSelectedMarket(building)} />
           </Suspense>
         </Canvas>
         <GameUI />
