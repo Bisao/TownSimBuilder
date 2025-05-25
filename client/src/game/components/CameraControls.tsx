@@ -189,11 +189,11 @@ const CameraControls = () => {
       moveDirection.z -= Math.cos(currentRotation) * MOVE_SPEED;
     }
     if (leftward) {
-      moveDirection.x -= Math.cos(currentRotation) * MOVE_SPEED;
-      moveDirection.z -= Math.sin(currentRotation) * MOVE_SPEED;
+      moveDirection.x += Math.cos(currentRotation) * MOVE_SPEED;
+      moveDirection.z += Math.sin(currentRotation) * MOVE_SPEED;
     }
     if (rightward) {
-      moveDirection.x += Math.cos(currentRotation) * MOVE_SPEED;
+      moveDirection.x -= Math.cos(currentRotation) * MOVE_SPEED;
       moveDirection.z += Math.sin(currentRotation) * MOVE_SPEED;
     }
 
