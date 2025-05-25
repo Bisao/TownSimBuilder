@@ -141,4 +141,16 @@ export const buildingTypes: Record<string, BuildingType> = {
       shape: "box",
     },
   },
+  silo: {
+    id: "silo",
+    name: "Silo",
+    description: "Aumenta a capacidade de armazenamento de recursos",
+    size: [1, 1],
+    height: 3,
+    cost: { wood: 20, stone: 30 },
+    model: {
+      color: "#CD853F",
+      shape: "cylinder",
+    },
+  },
 };
