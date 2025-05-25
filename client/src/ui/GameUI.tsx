@@ -80,7 +80,7 @@ const GameUI = () => {
               <div>Girar Câmera:</div>
               <div>Q, E</div>
               <div>Zoom:</div>
-              <div>+, -</div>
+              <div>+, -, [ ]</div>
               <div>Colocar Edifício:</div>
               <div>Espaço</div>
               <div>Cancelar:</div>
