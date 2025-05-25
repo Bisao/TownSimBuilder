@@ -79,8 +79,8 @@ const GameUI = () => {
     }
   };
 
-  const isMobile = useIsMobile();
   import { useIsMobile } from "../hooks/use-is-mobile";
+  const isMobile = useIsMobile();
   
   return (
     <div className="absolute inset-0 pointer-events-none">
