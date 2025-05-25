@@ -82,14 +82,14 @@ export const useGameStore = create<GameState>()(
     updateCameraRotation: (rotation) => set({ cameraRotation: rotation }),
 
     advanceTime: (delta) => set((state) => {
-      // Cálculo para 24 horas de jogo = 10 minutos de tempo real
+      // Cálculo para 24 horas de jogo = 20 minutos de tempo real
       // 24 horas = 1440 minutos de jogo
-      // 10 minutos = 600 segundos de tempo real
-      // Proporção: 1440/600 = 2.4 minutos de jogo por segundo real
+      // 20 minutos = 1200 segundos de tempo real
+      // Proporção: 1440/1200 = 1.2 minutos de jogo por segundo real
 
       // Converter delta (segundos) para fração do ciclo de jogo
-      // Ciclo mais lento: 10 minutos (600 segundos) para um dia completo
-      const cyclePerSecond = 1 / 600; // 10 minutos por ciclo completo
+      // Ciclo mais lento: 20 minutos (1200 segundos) para um dia completo
+      const cyclePerSecond = 1 / 1200; // 20 minutos por ciclo completo
       const newTimeCycle = (state.timeCycle + delta * cyclePerSecond) % 1;
 
       // Determine time of day

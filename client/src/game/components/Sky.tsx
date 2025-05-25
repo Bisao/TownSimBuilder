@@ -1,11 +1,14 @@
 
 import { useTexture } from "@react-three/drei";
 import { useGameStore } from "../stores/useGameStore";
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import * as THREE from "three";
+import { useFrame } from "@react-three/fiber";
 
 export const Sky = () => {
   const { timeOfDay, timeCycle } = useGameStore();
+  const sunRef = useRef<THREE.Mesh>(null);
+  const moonRef = useRef<THREE.Mesh>(null);
   
   const skyTexture = useTexture("/textures/sky.png");
   
@@ -82,6 +85,49 @@ export const Sky = () => {
     return new THREE.Color().lerpColors(color1, color2, factor);
   };
 
+  useFrame(() => {
+    // Calcular posição do sol e da lua
+    const sunAngle = (timeCycle - 0.25) * Math.PI * 2;
+    const sunElevation = Math.sin((timeCycle - 0.25) * Math.PI * 2) * 0.8;
+    
+    const sunDistance = 400;
+    const sunX = Math.cos(sunAngle) * sunDistance;
+    const sunY = Math.max(sunElevation * sunDistance, -50);
+    const sunZ = Math.sin(sunAngle) * sunDistance;
+    
+    // Posição da lua (oposta ao sol)
+    const moonAngle = sunAngle + Math.PI;
+    const moonElevation = -sunElevation;
+    const moonX = Math.cos(moonAngle) * sunDistance;
+    const moonY = Math.max(moonElevation * sunDistance, -50);
+    const moonZ = Math.sin(moonAngle) * sunDistance;
+    
+    // Atualizar posições
+    if (sunRef.current) {
+      sunRef.current.position.set(sunX, sunY, sunZ);
+      // Sol só visível durante o dia
+      sunRef.current.visible = sunElevation > -0.1;
+      
+      // Intensidade do brilho do sol baseada na altura
+      const sunIntensity = Math.max(0, sunElevation + 0.1);
+      if (sunRef.current.material instanceof THREE.MeshBasicMaterial) {
+        sunRef.current.material.opacity = sunIntensity;
+      }
+    }
+    
+    if (moonRef.current) {
+      moonRef.current.position.set(moonX, moonY, moonZ);
+      // Lua só visível durante a noite
+      moonRef.current.visible = moonElevation > -0.1;
+      
+      // Intensidade do brilho da lua
+      const moonIntensity = Math.max(0, moonElevation + 0.1);
+      if (moonRef.current.material instanceof THREE.MeshBasicMaterial) {
+        moonRef.current.material.opacity = moonIntensity * 0.8; // Lua menos brilhante
+      }
+    }
+  });
+
   useEffect(() => {
     const skyColor = getCurrentSkyColor();
     const fogColor = getCurrentFogColor();
@@ -98,14 +144,55 @@ export const Sky = () => {
   }, [timeCycle, skyTexture]);
 
   return (
-    <mesh position={[0, 0, 0]}>
-      <sphereGeometry args={[800, 32, 32]} />
-      <meshBasicMaterial
-        map={skyTexture}
-        color={getCurrentSkyColor()}
-        side={THREE.BackSide}
-        fog={false}
-      />
-    </mesh>
+    <>
+      {/* Céu */}
+      <mesh position={[0, 0, 0]}>
+        <sphereGeometry args={[800, 32, 32]} />
+        <meshBasicMaterial
+          map={skyTexture}
+          color={getCurrentSkyColor()}
+          side={THREE.BackSide}
+          fog={false}
+        />
+      </mesh>
+      
+      {/* Sol */}
+      <mesh ref={sunRef} position={[0, 100, 0]}>
+        <sphereGeometry args={[15, 16, 16]} />
+        <meshBasicMaterial
+          color="#FFD700"
+          transparent
+          opacity={1}
+        />
+        {/* Halo do sol */}
+        <mesh scale={[2, 2, 2]}>
+          <sphereGeometry args={[15, 16, 16]} />
+          <meshBasicMaterial
+            color="#FFFF99"
+            transparent
+            opacity={0.3}
+          />
+        </mesh>
+      </mesh>
+      
+      {/* Lua */}
+      <mesh ref={moonRef} position={[0, 100, 0]}>
+        <sphereGeometry args={[12, 16, 16]} />
+        <meshBasicMaterial
+          color="#F0F0F0"
+          transparent
+          opacity={0.8}
+        />
+        {/* Halo da lua */}
+        <mesh scale={[1.5, 1.5, 1.5]}>
+          <sphereGeometry args={[12, 16, 16]} />
+          <meshBasicMaterial
+            color="#E6E6FA"
+            transparent
+            opacity={0.2}
+          />
+        </mesh>
+      </mesh>
+    </>
   );
 };
