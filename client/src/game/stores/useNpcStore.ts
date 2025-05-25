@@ -112,14 +112,14 @@ export const useNpcStore = create<NPCState>()(
                 // Verifica tipo e status do recurso
                 const isCorrectType = r.type === resourceType;
                 const isNotCollected = !r.lastCollected;
-                
+
                 // Verifica se não está sendo coletado por outro NPC
                 const isNotTargeted = !get().npcs.some(
                   other => other.id !== npc.id && 
                   other.targetResource?.position[0] === r.position[0] &&
                   other.targetResource?.position[1] === r.position[1]
                 );
-                
+
                 return isCorrectType && isNotCollected && isNotTargeted;
               }) || [];
 
@@ -193,17 +193,17 @@ export const useNpcStore = create<NPCState>()(
                 const targetGridZ = Math.round(npc.targetPosition[2]);
                 const currentGridX = Math.round(npc.position[0]);
                 const currentGridZ = Math.round(npc.position[2]);
-                
+
                 // Mover apenas se não estiver na coordenada alvo
                 if (currentGridX !== targetGridX || currentGridZ !== targetGridZ) {
                   // Determinar próxima coordenada com base na diferença até o alvo
                   const nextGridX = currentGridX + Math.sign(targetGridX - currentGridX);
                   const nextGridZ = currentGridZ + Math.sign(targetGridZ - currentGridZ);
-                  
+
                   // Garantir que está dentro dos limites
                   const clampedX = Math.max(0, Math.min(nextGridX, 39));
                   const clampedZ = Math.max(0, Math.min(nextGridZ, 39));
-                  
+
                   updatedNPC.position = [clampedX, 0, clampedZ];
                 } else {
                   // Se já está na coordenada alvo, chegou ao destino
@@ -211,9 +211,9 @@ export const useNpcStore = create<NPCState>()(
                   updatedNPC.targetPosition = null;
                   updatedNPC.state = "idle";
                 }
-                
+
                 // Debug do movimento
-                console.log(`NPC ${npc.type} movendo de [${npc.position[0]}, ${npc.position[2]}] para [${clampedX}, ${clampedZ}]`);
+                console.log(`NPC ${npc.type} movendo de [${npc.position[0]}, ${npc.position[2]}] para [${updatedNPC.position[0]}, ${updatedNPC.position[2]}]`);
               } else {
                 // Chegou ao destino
                 updatedNPC.position = [...npc.targetPosition];
@@ -290,23 +290,23 @@ export const useNpcStore = create<NPCState>()(
                 // Procura o silo mais próximo usando distância Manhattan (grid)
                 const buildings = useBuildingStore.getState().buildings;
                 const silos = buildings.filter(b => b.type === 'silo');
-                
+
                 if (silos.length > 0) {
                   // Encontra o silo mais próximo usando lógica de grid
                   let nearestSilo = silos[0];
                   let minGridDistance = Infinity;
-                  
+
                   for (const silo of silos) {
                     const dx = Math.abs(Math.floor(silo.position[0]) - Math.floor(npc.position[0]));
                     const dz = Math.abs(Math.floor(silo.position[1]) - Math.floor(npc.position[2]));
                     const gridDistance = dx + dz;
-                    
+
                     if (gridDistance < minGridDistance) {
                       minGridDistance = gridDistance;
                       nearestSilo = silo;
                     }
                   }
-                  
+
                   // Ir até o silo
                   updatedNPC.targetPosition = [nearestSilo.position[0] + 0.5, 0, nearestSilo.position[1] + 0.5];
                   updatedNPC.state = "moving";
@@ -327,7 +327,7 @@ export const useNpcStore = create<NPCState>()(
 
                 // Usa o resourceMapping já definido anteriormente
                 const expectedResourceType = resourceMapping[npc.type];
-                
+
                 if (updatedNPC.inventory.type === '' || updatedNPC.inventory.type === expectedResourceType) {
                   updatedNPC.inventory.type = expectedResourceType;
                   updatedNPC.inventory.amount += 1;
@@ -343,7 +343,7 @@ export const useNpcStore = create<NPCState>()(
                       Math.floor(r.position[0]) === Math.floor(npc.position[0]) &&
                       Math.floor(r.position[1]) === Math.floor(npc.position[2]);
                     const isNotCollected = !r.lastCollected;
-                    
+
                     return isCorrectType && isInSameGridCell && isNotCollected;
                   });
 
@@ -356,16 +356,16 @@ export const useNpcStore = create<NPCState>()(
                 // Procura o silo mais próximo usando distância Manhattan
                 const buildings = useBuildingStore.getState().buildings;
                 const silos = buildings.filter(b => b.type === 'silo');
-                
+
                 if (silos.length > 0) {
                   let nearestSilo = null;
                   let minDistance = Infinity;
-                  
+
                   for (const silo of silos) {
                     const dx = Math.abs(silo.position[0] - Math.floor(npc.position[0]));
                     const dz = Math.abs(silo.position[1] - Math.floor(npc.position[2]));
                     const gridDistance = dx + dz;
-                    
+
                     if (gridDistance < minDistance) {
                       minDistance = gridDistance;
                       nearestSilo = silo;
@@ -377,12 +377,12 @@ export const useNpcStore = create<NPCState>()(
                     const resourceStore = useResourceStore.getState();
                     const storageCapacity = resourceStore.getStorageCapacity();
                     const currentAmount = resourceStore.resources[updatedNPC.inventory.type] || 0;
-                    
+
                     // Verifica capacidade do silo
                     if (currentAmount < storageCapacity) {
                       resourceStore.updateResource(updatedNPC.inventory.type, updatedNPC.inventory.amount);
                       console.log(`${npc.type} depositou ${updatedNPC.inventory.amount} ${updatedNPC.inventory.type} no silo. Total: ${currentAmount + updatedNPC.inventory.amount}`);
-                      
+
                       // Limpa o inventário
                       updatedNPC.inventory = { type: '', amount: 0 };
                       updatedNPC.targetResource = null;
