@@ -229,7 +229,7 @@ export const useNpcStore = create<NPCState>()(
               }
             } else {
               // Inventário cheio - procura silo para depositar
-              console.log(`NPC ${npc.type} inventário cheio, procurando silo`);
+              console.log(`NPC ${npc.type} inventário cheio (${updatedNPC.inventory.amount}/5), procurando silo`);
               const silos = buildings.filter(b => b.type === 'silo');
 
               if (silos.length > 0) {
@@ -237,23 +237,26 @@ export const useNpcStore = create<NPCState>()(
                 let minDistance = Infinity;
 
                 for (const silo of silos) {
-                  const dx = Math.abs(silo.position[0] - npc.position[0]);
-                  const dz = Math.abs(silo.position[1] - npc.position[2]);
-                  const gridDistance = dx + dz;
+                  const distance = Math.hypot(
+                    silo.position[0] - npc.position[0],
+                    silo.position[1] - npc.position[2]
+                  );
 
-                  if (gridDistance < minDistance) {
-                    minDistance = gridDistance;
+                  if (distance < minDistance) {
+                    minDistance = distance;
                     nearestSilo = silo;
                   }
                 }
 
                 updatedNPC.targetPosition = [nearestSilo.position[0], 0, nearestSilo.position[1]];
-                updatedNPC.targetBuildingId = null;
+                updatedNPC.targetBuildingId = nearestSilo.id;
                 updatedNPC.targetResource = null;
                 updatedNPC.state = "moving";
-                console.log(`NPC ${npc.type} inventário cheio, indo para silo em [${nearestSilo.position[0]}, ${nearestSilo.position[1]}]`);
+                console.log(`NPC ${npc.type} inventário cheio, indo para silo em [${nearestSilo.position[0]}, ${nearestSilo.position[1]}] - distância: ${minDistance.toFixed(2)}`);
               } else {
                 console.warn(`NPC ${npc.type} não encontrou silos para depositar recursos`);
+                // Se não encontrar silo, continua trabalhando mas não pega mais recursos
+                updatedNPC.state = "idle";
               }
             }
             break;
@@ -440,12 +443,13 @@ export const useNpcStore = create<NPCState>()(
                     updatedNPC.state = "idle";
                     updatedNPC.targetBuildingId = null;
                   }
-                } else if (npc.inventory.amount > 0) {
+                } else if (npc.inventory.amount > 0 && npc.targetBuildingId) {
                   // Chegou ao silo com inventário - depositar
                   const silo = buildings.find(b => 
+                    b.id === npc.targetBuildingId && 
                     b.type === 'silo' && 
-                    Math.abs(b.position[0] - targetX) < 1.5 && 
-                    Math.abs(b.position[1] - targetZ) < 1.5
+                    Math.abs(b.position[0] - targetX) < 1.0 && 
+                    Math.abs(b.position[1] - targetZ) < 1.0
                   );
 
                   if (silo) {
@@ -456,11 +460,15 @@ export const useNpcStore = create<NPCState>()(
                       console.log(`NPC ${npc.type} depositou ${updatedNPC.inventory.amount} ${updatedNPC.inventory.type} no silo`);
                     });
 
+                    const depositedAmount = updatedNPC.inventory.amount;
+                    const depositedType = updatedNPC.inventory.type;
                     updatedNPC.inventory = { type: '', amount: 0 };
-                    console.log(`NPC ${npc.type} esvaziou inventário no silo`);
+                    updatedNPC.targetBuildingId = null;
+                    console.log(`NPC ${npc.type} depositou ${depositedAmount} ${depositedType} e esvaziou inventário no silo`);
                     updatedNPC.state = "idle";
                   } else {
-                    console.warn(`NPC ${npc.type} não encontrou silo na posição [${targetX.toFixed(1)}, ${targetZ.toFixed(1)}]`);
+                    console.warn(`NPC ${npc.type} não encontrou silo alvo na posição [${targetX.toFixed(1)}, ${targetZ.toFixed(1)}]`);
+                    updatedNPC.targetBuildingId = null;
                     updatedNPC.state = "idle";
                   }
                 } else {

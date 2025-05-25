@@ -49,7 +49,7 @@ const NpcPanel = ({ npc, onClose }: NpcPanelProps) => {
 
   const handleWorkClick = () => {
     console.log(`Iniciando trabalho para NPC ${npc.type} - Estado atual: ${npc.state}`);
-    
+
     const buildings = useBuildingStore.getState().buildings;
     const home = buildings.find(b => b.id === npc.homeId);
 
@@ -64,7 +64,7 @@ const NpcPanel = ({ npc, onClose }: NpcPanelProps) => {
       if (n.id !== npc.id) return n;
 
       console.log(`Atualizando NPC ${n.type}: estado ${n.state} -> idle para buscar recursos`);
-      
+
       return {
         ...n,
         position: [home.position[0], 0, home.position[1]], // Posição exata da casa
@@ -94,31 +94,49 @@ const NpcPanel = ({ npc, onClose }: NpcPanelProps) => {
     >
       <div className="bg-white rounded-xl p-6 w-96 max-h-[90vh] overflow-y-auto relative">
         <div className="flex justify-between items-center mb-6">
-          <div className="flex items-center gap-3">
-            <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
-              npc.type === "miner" ? "bg-blue-100" :
-              npc.type === "lumberjack" ? "bg-green-100" :
-              npc.type === "farmer" ? "bg-yellow-100" : "bg-orange-100"
-            }`}>
-              <i className={`fa-solid ${
-                npc.type === "miner" ? "fa-helmet-safety" :
-                npc.type === "lumberjack" ? "fa-tree" :
-                npc.type === "farmer" ? "fa-wheat-awn" : "fa-bread-slice"
-              } text-xl ${
-                npc.type === "miner" ? "text-blue-600" :
-                npc.type === "lumberjack" ? "text-green-600" :
-                npc.type === "farmer" ? "text-yellow-600" : "text-orange-600"
-              }`}></i>
+            <div className="flex items-center gap-3">
+              <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
+                npc.type === "miner" ? "bg-blue-100" :
+                npc.type === "lumberjack" ? "bg-green-100" :
+                npc.type === "farmer" ? "bg-yellow-100" : "bg-orange-100"
+              }`}>
+                <i className={`fa-solid ${
+                  npc.type === "miner" ? "fa-helmet-safety" :
+                  npc.type === "lumberjack" ? "fa-tree" :
+                  npc.type === "farmer" ? "fa-wheat-awn" : "fa-bread-slice"
+                } text-xl ${
+                  npc.type === "miner" ? "text-blue-600" :
+                  npc.type === "lumberjack" ? "text-green-600" :
+                  npc.type === "farmer" ? "text-yellow-600" : "text-orange-600"
+                }`}></i>
+              </div>
+              <h2 className="text-xl font-bold">{npcType?.name || npc.type}</h2>
             </div>
-            <h2 className="text-xl font-bold">{npcType?.name || npc.type}</h2>
+            <div className="flex gap-2">
+              <button 
+                onClick={(e) => {
+                  e.stopPropagation();
+                  // Disparar evento para focar a câmera no NPC
+                  window.dispatchEvent(new CustomEvent('focusOnNpc', { 
+                    detail: { 
+                      position: npc.position,
+                      npcId: npc.id 
+                    } 
+                  }));
+                }}
+                className="text-blue-500 hover:text-blue-700 transition-colors p-2 rounded-lg hover:bg-blue-50"
+                title="Focar câmera no NPC"
+              >
+                👁️
+              </button>
+              <button 
+                onClick={onClose}
+                className="text-gray-500 hover:text-gray-700 transition-colors"
+              >
+                <i className="fa-solid fa-times"></i>
+              </button>
+            </div>
           </div>
-          <button 
-            onClick={onClose}
-            className="text-gray-500 hover:text-gray-700 transition-colors"
-          >
-            <i className="fa-solid fa-times"></i>
-          </button>
-        </div>
 
         <div className="space-y-4">
           <div className="bg-gray-50 p-4 rounded-lg">

@@ -35,7 +35,46 @@ const CameraControls = () => {
       position: cameraPosition,
       target: cameraTarget,
     });
-  }, []);
+
+    // Listener para focar na câmera quando NPC for selecionado
+    const handleFocusOnNpc = (event: CustomEvent) => {
+      const { position } = event.detail;
+      const npcX = position[0];
+      const npcZ = position[2];
+
+      // Define nova posição da câmera (mais próxima)
+      const newTarget = new THREE.Vector3(npcX, 0, npcZ);
+      const distance = 8; // Distância da câmera ao NPC
+      const height = 6; // Altura da câmera
+      const angle = Math.PI / 4; // Ângulo de 45 graus
+
+      const newCameraPosition = new THREE.Vector3(
+        npcX - distance * Math.cos(angle),
+        height,
+        npcZ - distance * Math.sin(angle)
+      );
+
+      // Atualizar referências
+      targetRef.current.copy(newTarget);
+      positionRef.current.copy(newCameraPosition);
+
+      // Atualizar câmera imediatamente
+      camera.position.copy(newCameraPosition);
+      camera.lookAt(newTarget);
+
+      // Atualizar store
+      updateCameraTarget([newTarget.x, newTarget.y, newTarget.z]);
+      updateCameraPosition([newCameraPosition.x, newCameraPosition.y, newCameraPosition.z]);
+
+      console.log(`Câmera focada no NPC na posição [${npcX}, ${npcZ}]`);
+    };
+
+    window.addEventListener('focusOnNpc', handleFocusOnNpc as EventListener);
+
+    return () => {
+      window.removeEventListener('focusOnNpc', handleFocusOnNpc as EventListener);
+    };
+  }, [camera, updateCameraPosition, updateCameraTarget]);
 
   // Handler de zoom com scroll do mouse
   // Estados para controle da câmera
