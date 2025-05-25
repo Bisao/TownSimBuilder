@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { subscribeWithSelector } from "zustand/middleware";
 import { resourceTypes } from "../constants/resources";
-import { useBuildingStore } from "./useBuildingStore";
+
 
 interface ResourceState {
   resources: Record<string, number>;
@@ -10,7 +10,7 @@ interface ResourceState {
   initResources: () => void;
   updateResource: (type: string, amount: number) => boolean;
   hasEnoughResources: (requirements: Record<string, number>) => boolean;
-  getStorageCapacity: () => number;
+  getStorageCapacity: () => Promise<number>;
 }
 
 const BASE_STORAGE_CAPACITY = 100;
@@ -64,7 +64,9 @@ export const useResourceStore = create<ResourceState>()(
       return true;
     },
 
-    getStorageCapacity: () => {
+    getStorageCapacity: async () => {
+      // Importação dinâmica para evitar dependência circular
+      const { useBuildingStore } = await import('./useBuildingStore');
       const buildings = useBuildingStore.getState().buildings;
       const siloCount = buildings.filter(b => b.type === 'silo').length;
       return BASE_STORAGE_CAPACITY + (siloCount * SILO_STORAGE_BONUS);

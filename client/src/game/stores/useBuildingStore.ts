@@ -1,7 +1,6 @@
 import { create } from "zustand";
 import { subscribeWithSelector } from "zustand/middleware";
 import { BuildingType, buildingTypes } from "../constants/buildings";
-// Removido import direto para evitar dependência circular
 
 // Building instance in the game world
 export interface Building {
@@ -17,7 +16,7 @@ interface BuildingState {
   buildingIdCounter: number;
   
   // Methods
-  placeBuilding: (type: string, position: [number, number], rotation: number) => boolean;
+  placeBuilding: (type: string, position: [number, number], rotation: number, freeOfCharge?: boolean) => Promise<boolean>;
   removeBuilding: (id: string) => void;
   canPlaceBuilding: (type: string, position: [number, number]) => boolean;
   getOverlappingPositions: (type: string, position: [number, number]) => [number, number][];
@@ -30,7 +29,9 @@ export const useBuildingStore = create<BuildingState>()(
     buildings: [],
     buildingIdCounter: 0,
     
-    placeBuilding: (type, position, rotation, freeOfCharge = false) => {
+    placeBuilding: async (type, position, rotation, freeOfCharge = false) => {
+      // Importação dinâmica para evitar dependência circular
+      const { useResourceStore } = await import('./useResourceStore');
       const resourceStore = useResourceStore.getState();
       const buildingType = buildingTypes[type];
       
