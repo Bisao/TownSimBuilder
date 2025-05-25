@@ -107,20 +107,20 @@ export const useNpcStore = create<NPCState>()(
               // Buscar recurso mais próximo no grid
               // Pega o tipo de NPC para definir raio de trabalho
               const npcConfig = npcTypes[npc.type];
-              const workRadius = npcConfig?.workRadius || 10;
+              const workRadius = npcConfig?.workRadius || 15; // Aumentado raio de trabalho
               
               const resources = window.naturalResources?.filter(r => {
                 // Verifica tipo e status do recurso
                 const isCorrectType = r.type === resourceType;
                 const isNotCollected = !r.lastCollected;
                 
-                // Calcula distância Manhattan no grid
-                const dx = Math.abs(r.position[0] - Math.floor(npc.position[0]));
-                const dz = Math.abs(r.position[1] - Math.floor(npc.position[2]));
-                const gridDistance = dx + dz;
+                // Calcula distância Euclidiana para ser mais preciso
+                const dx = r.position[0] - npc.position[0];
+                const dz = r.position[1] - npc.position[2];
+                const distance = Math.sqrt(dx * dx + dz * dz);
                 
                 // Verifica se está dentro do raio de trabalho do NPC
-                const isInWorkRange = gridDistance <= workRadius;
+                const isInWorkRange = distance <= workRadius;
                 
                 // Verifica se não está sendo coletado por outro NPC
                 const isNotTargeted = !get().npcs.some(
