@@ -88,8 +88,11 @@ export const useNpcStore = create<NPCState>()(
         // Lógica baseada no estado atual do NPC
         switch (npc.state) {
           case "idle":
-            // Lenhadores e mineradores procuram recursos
-            if (npc.type === "lumberjack" || npc.type === "miner") {
+            // Verificar se existe silo antes de procurar recursos
+            const hasSilo = useBuildingStore.getState().buildings.some(b => b.type === 'silo');
+            
+            // Lenhadores e mineradores procuram recursos apenas se houver silo
+            if ((npc.type === "lumberjack" || npc.type === "miner") && hasSilo) {
               const resourceType = npc.type === "lumberjack" ? "wood" : "stone";
               
               // Buscar recurso mais próximo do grid
@@ -170,7 +173,15 @@ export const useNpcStore = create<NPCState>()(
                 updatedNPC.position = [...npc.targetPosition];
                 updatedNPC.targetPosition = null;
 
-                if (npc.targetResource) {
+                if (npc.hasResource) {
+                  // Depositar recurso no silo
+                  const resourceType = npc.type === "lumberjack" ? "wood" : "stone";
+                  const resourceStore = useResourceStore.getState();
+                  resourceStore.updateResource(resourceType, 1);
+                  
+                  updatedNPC.hasResource = false;
+                  updatedNPC.state = "idle";
+                } else if (npc.targetResource) {
                   // Começar a coletar o recurso
                   updatedNPC.state = "gathering";
                   updatedNPC.workProgress = 0;
@@ -240,10 +251,21 @@ export const useNpcStore = create<NPCState>()(
                   }
                 }
 
-                // Resetar estado
-                updatedNPC.targetResource = null;
-                updatedNPC.workProgress = 0;
-                updatedNPC.state = "idle";
+                // Procurar silo mais próximo
+                const buildings = useBuildingStore.getState().buildings;
+                const silo = buildings.find(b => b.type === 'silo');
+
+                if (silo) {
+                  // Ir até o silo para depositar recursos
+                  updatedNPC.targetPosition = [silo.position[0] + 0.5, 0, silo.position[1] + 0.5];
+                  updatedNPC.state = "moving";
+                  updatedNPC.hasResource = true;
+                } else {
+                  // Se não houver silo, volta ao estado idle
+                  updatedNPC.targetResource = null;
+                  updatedNPC.workProgress = 0;
+                  updatedNPC.state = "idle";
+                }
               }
             } else {
               updatedNPC.state = "idle";
