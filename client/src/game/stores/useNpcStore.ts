@@ -149,10 +149,10 @@ export const useNpcStore = create<NPCState>()(
         switch (npc.state) {
           case "idle": {
             // Sistema de tomada de decisão baseado em necessidades e estado
-            if (npc.state !== "idle") {
+            if (npc.state === "gathering" || npc.state === "moving") {
               updatedNPC.needs.energy -= 0.1 * deltaTime;
               updatedNPC.needs.satisfaction -= 0.05 * deltaTime;
-            } else {
+            } else if (npc.state === "idle") {
               // Recupera energia e satisfação quando descansando
               updatedNPC.needs.energy = Math.min(100, updatedNPC.needs.energy + 0.05 * deltaTime);
               updatedNPC.needs.satisfaction = Math.min(100, updatedNPC.needs.satisfaction + 0.025 * deltaTime);
@@ -170,7 +170,7 @@ export const useNpcStore = create<NPCState>()(
             } else if (updatedNPC.state === "moving" && !updatedNPC.targetResource) {
               // Procura recursos próximos quando está em movimento sem alvo
               const resourceType = npc.type === "miner" ? "stone" : npc.type === "lumberjack" ? "wood" : null;
-              
+
               if (resourceType && window.naturalResources) {
                 const availableResources = window.naturalResources.filter(r => 
                   r.type === resourceType && !r.lastCollected
@@ -180,7 +180,7 @@ export const useNpcStore = create<NPCState>()(
                   // Encontra o recurso mais próximo
                   let nearest = availableResources[0];
                   let minDist = Infinity;
-                  
+
                   for (const resource of availableResources) {
                     const dist = Math.hypot(
                       resource.position[0] - npc.position[0],

@@ -122,29 +122,22 @@ const NpcPanel = ({ npc, onClose }: NpcPanelProps) => {
               <button
                 onClick={() => {
                   if (npc.state === "idle") {
-                    const buildings = useBuildingStore.getState().buildings;
-                    const home = buildings.find(b => b.id === npc.homeId);
+                    const updatedNpc = {
+                      ...npc,
+                      state: "searching",
+                      workProgress: 0,
+                      targetResource: null,
+                      targetPosition: null,
+                      needs: {
+                        ...npc.needs,
+                        energy: Math.max(npc.needs.energy, 50),
+                        satisfaction: Math.max(npc.needs.satisfaction, 50)
+                      }
+                    };
 
-                    if (home) {
-                      const updatedNpc = {
-                        ...npc,
-                        position: [home.position[0], 0, home.position[1]],
-                        state: "moving",
-                        workProgress: 0,
-                        targetResource: null,
-                        targetPosition: null,
-                        needs: {
-                          ...npc.needs,
-                          energy: Math.max(npc.needs.energy, 50), // Garante energia mínima
-                          satisfaction: Math.max(npc.needs.satisfaction, 50) // Garante satisfação mínima
-                        }
-                      };
-
-                      // Atualiza o NPC no store
-                      useNpcStore.setState(state => ({
-                        npcs: state.npcs.map(n => n.id === npc.id ? updatedNpc : n)
-                      }));
-                    }
+                    useNpcStore.setState(state => ({
+                      npcs: state.npcs.map(n => n.id === npc.id ? updatedNpc : n)
+                    }));
                   }
                 }}
                 className={`w-full px-4 py-2 rounded-lg ${
