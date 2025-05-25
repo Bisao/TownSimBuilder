@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { subscribeWithSelector } from "zustand/middleware";
 import { resourceTypes } from "../constants/resources";
-import { useBuildingStore } from "./building";
+import { useBuildingStore } from "./useBuildingStore";
 
 interface ResourceState {
   resources: Record<string, number>;
