@@ -104,19 +104,26 @@ export const useNpcStore = create<NPCState>()(
               return isMatchingType && !r.lastCollected;
             });
 
-            // Lenhadores e mineradores procuram recursos apenas se houver espaço no inventário
+            // Todos os NPCs procuram recursos se tiverem espaço no inventário
             if ((npc.type === "lumberjack" || npc.type === "miner") && hasSpaceInInventory) {
-              const resourceType = npc.type === "lumberjack" ? "wood" : "stone";
+              // Definir tipo de recurso baseado no tipo do NPC
+              const resourceMapping = {
+                "lumberjack": "wood",
+                "miner": "stone"
+              };
+              const resourceType = resourceMapping[npc.type];
 
               // Buscar recurso mais próximo do grid
               const resources = window.naturalResources?.filter(r => {
                 const isCorrectType = r.type === resourceType;
                 const isNotCollected = !r.lastCollected;
-                const isNearHome = Math.hypot(
+                const distance = Math.hypot(
                   r.position[0] - npc.position[0],
                   r.position[1] - npc.position[2]
-                ) < 15; // Busca recursos em um raio de 15 unidades
-                console.log(`Recurso encontrado - Tipo: ${r.type}, Posição: [${r.position}], Distância: ${isNearHome}`);
+                );
+                const isNearHome = distance < 15; // Busca recursos em um raio de 15 unidades
+                
+                console.log(`NPC ${npc.type} procurando - Recurso: ${r.type}, Posição: [${r.position}], Distância: ${distance.toFixed(2)}`);
                 return isCorrectType && isNotCollected && isNearHome;
               }) || [];
 
@@ -298,14 +305,18 @@ export const useNpcStore = create<NPCState>()(
               updatedNPC.workProgress += deltaTime * 0.2; // 5 segundos para coletar
 
               if (updatedNPC.workProgress >= 1) {
-                // Recurso coletado
-                const resourceType = npc.type === "lumberjack" ? "wood" : "stone";
+                // Definir tipo de recurso baseado no tipo do NPC
+                const resourceMapping = {
+                  "lumberjack": "wood",
+                  "miner": "stone"
+                };
+                const resourceType = resourceMapping[npc.type];
 
                 // Atualiza o inventário do NPC
                 if (updatedNPC.inventory.type === '' || updatedNPC.inventory.type === resourceType) {
                   updatedNPC.inventory.type = resourceType;
                   updatedNPC.inventory.amount += 1;
-                  console.log(`${npc.type} coletou ${resourceType}. Inventário: ${updatedNPC.inventory.amount}`);
+                  console.log(`${npc.type} coletou ${resourceType}. Inventário: ${updatedNPC.inventory.amount}/${5}`);
                 }
 
                 // Remove o recurso do array naturalResources
