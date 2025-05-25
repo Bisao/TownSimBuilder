@@ -68,7 +68,8 @@ const MarketWindow = ({ isOpen, onClose }: MarketWindowProps) => {
               )}
               onClick={() => setActiveCategory(category.id)}
             >
-              <i className={category.icon}></i>
+              {/* Substituir ícones FontAwesome por texto simples */}
+              <span className="text-sm">{category.name.charAt(0)}</span>
               {category.name}
             </button>
           ))}
@@ -76,7 +77,7 @@ const MarketWindow = ({ isOpen, onClose }: MarketWindowProps) => {
         
         {/* Exibição das moedas */}
         <div className="flex items-center gap-2 mb-4 text-yellow-400">
-          <i className="fa-solid fa-coins text-xl"></i>
+          <span>💰</span>
           <span className="font-bold">{resources.coins || 0}</span>
         </div>
         
@@ -92,7 +93,8 @@ const MarketWindow = ({ isOpen, onClose }: MarketWindowProps) => {
                   className="w-10 h-10 rounded-full flex items-center justify-center"
                   style={{ backgroundColor: item.color }}
                 >
-                  <i className={`${item.icon} text-lg`}></i>
+                  {/* Substituir ícones FontAwesome por emoji ou texto */}
+                  <span>🔖</span>
                 </div>
                 <div>
                   <h3 className="font-bold">{item.name}</h3>

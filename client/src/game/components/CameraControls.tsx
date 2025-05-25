@@ -37,9 +37,11 @@ const CameraControls = () => {
       // Determinar a direção do scroll (positivo para zoom out, negativo para zoom in)
       const direction = Math.sign(event.deltaY);
       
-      // Calcular a distância atual entre a câmera e o alvo
+      // Obter as posições atuais
       const currentPosition = positionRef.current;
       const currentTarget = targetRef.current;
+      
+      // Calcular a distância atual entre a câmera e o alvo
       const distance = currentPosition.distanceTo(currentTarget);
       
       // Calcular a nova distância com base na direção do scroll
@@ -48,15 +50,18 @@ const CameraControls = () => {
         Math.min(maxDistance, distance + direction * scrollZoomSpeed)
       );
       
-      // Calcular a nova posição da câmera mantendo a mesma direção
-      const cameraOffset = new THREE.Vector3(
-        Math.sin(rotationRef.current) * newDistance,
-        newDistance * 0.8, // Fator de altura
-        Math.cos(rotationRef.current) * newDistance
-      );
+      // Calcular a direção da câmera para o alvo
+      const directionVector = new THREE.Vector3()
+        .subVectors(currentPosition, currentTarget)
+        .normalize();
       
-      // Atualizar a posição da câmera
-      currentPosition.copy(currentTarget).add(cameraOffset);
+      // Calcular a nova posição com base na nova distância
+      const newPosition = new THREE.Vector3()
+        .copy(currentTarget)
+        .add(directionVector.multiplyScalar(newDistance));
+      
+      // Atualizar a posição da câmera mantendo a mesma altura proporcional
+      currentPosition.copy(newPosition);
       
       // Atualizar a câmera imediatamente
       camera.position.copy(currentPosition);
