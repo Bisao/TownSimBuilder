@@ -62,8 +62,8 @@ const CameraControls = () => {
         .copy(targetRef.current)
         .add(direction.multiplyScalar(newDistance));
 
-      // Atualizar posição com suavização
-      positionRef.current.lerp(newPosition, 0.5);
+      // Atualizar posição sem suavização
+      positionRef.current.copy(newPosition);
       camera.position.copy(positionRef.current);
       camera.lookAt(targetRef.current);
 
