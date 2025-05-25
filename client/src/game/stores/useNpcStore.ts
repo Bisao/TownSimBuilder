@@ -189,19 +189,28 @@ export const useNpcStore = create<NPCState>()(
 
               if (distance > 0.1) {
                 // Calcular próxima coordenada do grid
+                const targetGridX = Math.round(npc.targetPosition[0]);
+                const targetGridZ = Math.round(npc.targetPosition[2]);
                 const currentGridX = Math.round(npc.position[0]);
                 const currentGridZ = Math.round(npc.position[2]);
                 
-                // Determinar próxima coordenada baseada na direção
-                const nextGridX = direction.x > 0 ? Math.min(currentGridX + 1, 39) : 
-                                direction.x < 0 ? Math.max(currentGridX - 1, 0) : 
-                                currentGridX;
-                                
-                const nextGridZ = direction.z > 0 ? Math.min(currentGridZ + 1, 39) : 
-                                direction.z < 0 ? Math.max(currentGridZ - 1, 0) : 
-                                currentGridZ;
-
-                updatedNPC.position = [nextGridX, 0, nextGridZ];
+                // Mover apenas se não estiver na coordenada alvo
+                if (currentGridX !== targetGridX || currentGridZ !== targetGridZ) {
+                  // Determinar próxima coordenada com base na diferença até o alvo
+                  const nextGridX = currentGridX + Math.sign(targetGridX - currentGridX);
+                  const nextGridZ = currentGridZ + Math.sign(targetGridZ - currentGridZ);
+                  
+                  // Garantir que está dentro dos limites
+                  const clampedX = Math.max(0, Math.min(nextGridX, 39));
+                  const clampedZ = Math.max(0, Math.min(nextGridZ, 39));
+                  
+                  updatedNPC.position = [clampedX, 0, clampedZ];
+                } else {
+                  // Se já está na coordenada alvo, chegou ao destino
+                  updatedNPC.position = [...npc.targetPosition];
+                  updatedNPC.targetPosition = null;
+                  updatedNPC.state = "idle";
+                }
                 
                 // Debug do movimento
                 console.log(`NPC ${npc.type} movendo de [${npc.position[0]}, ${npc.position[2]}] para [${nextGridX}, ${nextGridZ}]`);
