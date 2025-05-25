@@ -30,7 +30,7 @@ const Building = ({ building, onClick }: BuildingProps) => {
   // Center position based on building size
   const position = useMemo(() => [
     posX + sizeX / 2 - 0.5,
-    buildingType.height / 2,
+    buildingType.height / 2 - 0.1,
     posZ + sizeZ / 2 - 0.5
   ], [posX, posZ, sizeX, sizeZ, buildingType.height]);
 

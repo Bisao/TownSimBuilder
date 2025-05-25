@@ -85,7 +85,7 @@ const Npc = ({ npc }: NpcProps) => {
   });
   
   return (
-    <group position={[npc.position[0], 0, npc.position[2]]} onClick={handleClick}>
+    <group position={[npc.position[0], 0.01, npc.position[2]]} onClick={handleClick}>
       <group ref={bodyRef}>
         {/* Cabeça */}
         <mesh position={[0, 0.8, 0]}>

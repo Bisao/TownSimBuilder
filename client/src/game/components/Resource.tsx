@@ -17,7 +17,7 @@ const Resource = ({ type, position, color, scale = 1 }: ResourceProps) => {
     if (!ref.current) return;
     
     // Floating animation
-    ref.current.position.y = position[1] + Math.sin(clock.getElapsedTime() * 2) * 0.1;
+    ref.current.position.y = 0.5 + Math.sin(clock.getElapsedTime() * 2) * 0.1;
     
     // Slow rotation
     ref.current.rotation.y = clock.getElapsedTime() * 0.5;
