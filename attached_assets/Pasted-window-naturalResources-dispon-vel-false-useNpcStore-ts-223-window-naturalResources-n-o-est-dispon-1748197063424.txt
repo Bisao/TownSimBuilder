@@ -1,0 +1,75 @@
+window.naturalResources disponível: false
+useNpcStore.ts:223 window.naturalResources não está disponível para NPC miner
+updateNPCs @ useNpcStore.ts:223
+(anonymous) @ World.tsx:168
+render$1 @ chunk-A3GN3WMN.js?v=cc8441ba:17379
+loop @ chunk-A3GN3WMN.js?v=cc8441ba:17401
+requestAnimationFrame
+loop @ chunk-A3GN3WMN.js?v=cc8441ba:17392
+requestAnimationFrame
+loop @ chunk-A3GN3WMN.js?v=cc8441ba:17392
+requestAnimationFrame
+loop @ chunk-A3GN3WMN.js?v=cc8441ba:17392
+requestAnimationFrame
+loop @ chunk-A3GN3WMN.js?v=cc8441ba:17392
+requestAnimationFrame
+loop @ chunk-A3GN3WMN.js?v=cc8441ba:17392
+requestAnimationFrame
+loop @ chunk-A3GN3WMN.js?v=cc8441ba:17392
+requestAnimationFrame
+loop @ chunk-A3GN3WMN.js?v=cc8441ba:17392
+requestAnimationFrame
+loop @ chunk-A3GN3WMN.js?v=cc8441ba:17392
+requestAnimationFrame
+loop @ chunk-A3GN3WMN.js?v=cc8441ba:17392
+requestAnimationFrame
+loop @ chunk-A3GN3WMN.js?v=cc8441ba:17392
+requestAnimationFrame
+loop @ chunk-A3GN3WMN.js?v=cc8441ba:17392
+requestAnimationFrame
+loop @ chunk-A3GN3WMN.js?v=cc8441ba:17392
+requestAnimationFrame
+loop @ chunk-A3GN3WMN.js?v=cc8441ba:17392
+requestAnimationFrame
+loop @ chunk-A3GN3WMN.js?v=cc8441ba:17392
+requestAnimationFrame
+loop @ chunk-A3GN3WMN.js?v=cc8441ba:17392
+requestAnimationFrame
+loop @ chunk-A3GN3WMN.js?v=cc8441ba:17392
+requestAnimationFrame
+loop @ chunk-A3GN3WMN.js?v=cc8441ba:17392
+requestAnimationFrame
+loop @ chunk-A3GN3WMN.js?v=cc8441ba:17392
+requestAnimationFrame
+loop @ chunk-A3GN3WMN.js?v=cc8441ba:17392
+requestAnimationFrame
+loop @ chunk-A3GN3WMN.js?v=cc8441ba:17392
+requestAnimationFrame
+loop @ chunk-A3GN3WMN.js?v=cc8441ba:17392
+requestAnimationFrame
+loop @ chunk-A3GN3WMN.js?v=cc8441ba:17392
+requestAnimationFrame
+loop @ chunk-A3GN3WMN.js?v=cc8441ba:17392
+requestAnimationFrame
+loop @ chunk-A3GN3WMN.js?v=cc8441ba:17392
+requestAnimationFrame
+loop @ chunk-A3GN3WMN.js?v=cc8441ba:17392
+requestAnimationFrame
+loop @ chunk-A3GN3WMN.js?v=cc8441ba:17392
+requestAnimationFrame
+loop @ chunk-A3GN3WMN.js?v=cc8441ba:17392
+requestAnimationFrame
+loop @ chunk-A3GN3WMN.js?v=cc8441ba:17392
+requestAnimationFrame
+loop @ chunk-A3GN3WMN.js?v=cc8441ba:17392
+requestAnimationFrame
+loop @ chunk-A3GN3WMN.js?v=cc8441ba:17392
+requestAnimationFrame
+loop @ chunk-A3GN3WMN.js?v=cc8441ba:17392
+requestAnimationFrame
+loop @ chunk-A3GN3WMN.js?v=cc8441ba:17392
+useNpcStore.ts:151 NPC miner em estado idle, verificando ações possíveis
+useNpcStore.ts:166 NPC miner tem espaço no inventário: true (0/5)
+useNpcStore.ts:173 NPC miner procurando recursos do tipo stone
+useNpcStore.ts:174 window.naturalResources disponível: false
+useNpcStore.ts:223 window.naturalResources não está disponível para NPC miner
