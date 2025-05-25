@@ -1,11 +1,11 @@
 import { useThree, useFrame } from "@react-three/fiber";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useKeyboardControls } from "@react-three/drei";
 import * as THREE from "three";
 import { Controls, useGameStore } from "../stores/useGameStore";
 
 const CameraControls = () => {
-  const { camera } = useThree();
+  const { camera, gl } = useThree();
   const {
     cameraPosition,
     cameraTarget,
@@ -24,8 +24,54 @@ const CameraControls = () => {
   const moveSpeed = 0.5;
   const rotateSpeed = 0.05;
   const zoomSpeed = 0.5;
+  const scrollZoomSpeed = 1.0; // Velocidade do zoom com scroll
   const minDistance = 5;
   const maxDistance = 50;
+  
+  // Adicionar event listener para o scroll do mouse
+  useEffect(() => {
+    const handleWheel = (event: WheelEvent) => {
+      // Determinar a direção do scroll (positivo para zoom out, negativo para zoom in)
+      const direction = Math.sign(event.deltaY);
+      
+      // Calcular a distância atual entre a câmera e o alvo
+      const currentPosition = positionRef.current;
+      const currentTarget = targetRef.current;
+      const distance = currentPosition.distanceTo(currentTarget);
+      
+      // Calcular a nova distância com base na direção do scroll
+      const newDistance = Math.max(
+        minDistance, 
+        Math.min(maxDistance, distance + direction * scrollZoomSpeed)
+      );
+      
+      // Calcular a nova posição da câmera mantendo a mesma direção
+      const cameraOffset = new THREE.Vector3(
+        Math.sin(rotationRef.current) * newDistance,
+        newDistance * 0.8, // Fator de altura
+        Math.cos(rotationRef.current) * newDistance
+      );
+      
+      // Atualizar a posição da câmera
+      currentPosition.copy(currentTarget).add(cameraOffset);
+      
+      // Registrar o zoom no console
+      if (direction > 0) {
+        console.log("Zooming out (scroll)");
+      } else {
+        console.log("Zooming in (scroll)");
+      }
+    };
+    
+    // Adicionar o event listener ao canvas do Three.js
+    const domElement = gl.domElement;
+    domElement.addEventListener('wheel', handleWheel);
+    
+    // Limpar o event listener quando o componente for desmontado
+    return () => {
+      domElement.removeEventListener('wheel', handleWheel);
+    };
+  }, [gl]);
   
   // Get keyboard controls
   const forward = useKeyboardControls<Controls>((state) => state.forward);

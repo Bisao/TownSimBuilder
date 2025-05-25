@@ -1,4 +1,4 @@
-import { useRef, useMemo } from "react";
+import { useRef, useMemo, useState, useEffect } from "react";
 import { useFrame, useThree } from "@react-three/fiber";
 import * as THREE from "three";
 import { buildingTypes } from "../constants/buildings";
@@ -11,6 +11,7 @@ const PlacementIndicator = () => {
   const { camera, raycaster, scene, gl } = useThree();
   const groundPlane = useRef(new THREE.Plane(new THREE.Vector3(0, 1, 0), 0));
   const indicatorRef = useRef<THREE.Mesh>(null);
+  const [mousePosition, setMousePosition] = useState<THREE.Vector2>(new THREE.Vector2());
   
   const {
     selectedBuildingType,
@@ -45,11 +46,57 @@ const PlacementIndicator = () => {
     };
   }, [buildingType]);
   
+  // Adicionar event listeners para rastrear a posição do mouse
+  useEffect(() => {
+    const handleMouseMove = (event: MouseEvent) => {
+      const rect = gl.domElement.getBoundingClientRect();
+      const x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+      const y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+      
+      setMousePosition(new THREE.Vector2(x, y));
+    };
+    
+    const handleClick = (event: MouseEvent) => {
+      // Clicar para colocar o edifício quando no modo de construção
+      if (selectedBuildingType && placementValid && placementPosition) {
+        const success = placeBuilding(
+          selectedBuildingType,
+          placementPosition,
+          0 // Sem rotação por enquanto
+        );
+        
+        if (success) {
+          console.log(`Building ${selectedBuildingType} placed at ${placementPosition}`);
+          // Manter o modo de construção para continuar colocando edifícios
+          // selectBuilding(null); // Removido para manter o modo de construção
+        }
+      }
+    };
+    
+    // Adicionar os event listeners
+    gl.domElement.addEventListener('mousemove', handleMouseMove);
+    gl.domElement.addEventListener('click', handleClick);
+    
+    // Limpar os event listeners quando o componente for desmontado
+    return () => {
+      gl.domElement.removeEventListener('mousemove', handleMouseMove);
+      gl.domElement.removeEventListener('click', handleClick);
+    };
+  }, [gl, selectedBuildingType, placementValid, placementPosition, placeBuilding]);
+  
   // Update placement indicator on each frame
   useFrame(() => {
     if (!selectedBuildingType || !indicatorRef.current || !buildingType) return;
     
-    // Handle keyboard input
+    // Handle keyboard input for cancelar (Esc)
+    if (cancelKey && !keyState.current.cancelPressed) {
+      keyState.current.cancelPressed = true;
+      selectBuilding(null);
+    } else if (!cancelKey && keyState.current.cancelPressed) {
+      keyState.current.cancelPressed = false;
+    }
+    
+    // Handle keyboard input for colocar (Space)
     if (placeKey && !keyState.current.placePressed) {
       keyState.current.placePressed = true;
       
@@ -63,28 +110,16 @@ const PlacementIndicator = () => {
         
         if (success) {
           console.log(`Building ${selectedBuildingType} placed at ${placementPosition}`);
-          // Exit build mode after successful placement
-          selectBuilding(null);
+          // Não sair do modo de construção para permitir colocar vários edifícios
+          // selectBuilding(null);
         }
       }
     } else if (!placeKey && keyState.current.placePressed) {
       keyState.current.placePressed = false;
     }
     
-    // Handle cancel key
-    if (cancelKey && !keyState.current.cancelPressed) {
-      keyState.current.cancelPressed = true;
-      selectBuilding(null);
-    } else if (!cancelKey && keyState.current.cancelPressed) {
-      keyState.current.cancelPressed = false;
-    }
-    
     // Update placement position based on mouse position
-    const mouse = new THREE.Vector2();
-    mouse.x = (gl.domElement.width / 2) / gl.domElement.width * 2 - 1;
-    mouse.y = -(gl.domElement.height / 2) / gl.domElement.height * 2 + 1;
-    
-    raycaster.setFromCamera(mouse, camera);
+    raycaster.setFromCamera(mousePosition, camera);
     
     // Find intersection with ground plane
     const intersectionPoint = new THREE.Vector3();
@@ -128,9 +163,13 @@ const PlacementIndicator = () => {
       castShadow={false}
       receiveShadow={false}
     >
-      <boxGeometry args={[sizeX, buildingData.height, sizeZ]} />
+      {buildingType.model.shape === "box" ? (
+        <boxGeometry args={[sizeX, buildingData.height, sizeZ]} />
+      ) : (
+        <cylinderGeometry args={[sizeX/2, sizeX/2, buildingData.height, 16]} />
+      )}
       <meshStandardMaterial 
-        color="#00ff00" 
+        color={buildingType.model.color}
         transparent={true} 
         opacity={0.5} 
       />
