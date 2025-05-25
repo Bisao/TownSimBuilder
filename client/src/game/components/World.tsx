@@ -58,39 +58,75 @@ const World = ({ onMarketSelect }: WorldProps) => {
     const numTrees = 20;
     const numStones = 15;
     const usedPositions = new Set<string>();
-    const resources = [];
-
-    // Função auxiliar para gerar posição aleatória
-    const generateRandomPosition = (): [number, number] => {
-      const x = Math.floor(Math.random() * (gridSize - 2)) + 1;
-      const z = Math.floor(Math.random() * (gridSize - 2)) + 1;
-      return [x, z];
-    };
+    const resources: Array<{
+      type: string;
+      position: [number, number];
+      lastCollected?: number;
+    }> = [];
 
     // Gerar árvores
     for (let i = 0; i < numTrees; i++) {
       let position: [number, number];
-      do {
-        position = generateRandomPosition();
-      } while (usedPositions.has(`${position[0]},${position[1]}`));
+      let positionKey: string;
 
-      usedPositions.add(`${position[0]},${position[1]}`);
-      resources.push({ type: 'wood', position });
+      do {
+        position = [
+          Math.floor(Math.random() * gridSize),
+          Math.floor(Math.random() * gridSize)
+        ];
+        positionKey = `${position[0]},${position[1]}`;
+      } while (usedPositions.has(positionKey));
+
+      usedPositions.add(positionKey);
+      resources.push({
+        type: 'wood',
+        position
+      });
     }
 
     // Gerar pedras
     for (let i = 0; i < numStones; i++) {
       let position: [number, number];
-      do {
-        position = generateRandomPosition();
-      } while (usedPositions.has(`${position[0]},${position[1]}`));
+      let positionKey: string;
 
-      usedPositions.add(`${position[0]},${position[1]}`);
-      resources.push({ type: 'stone', position });
+      do {
+        position = [
+          Math.floor(Math.random() * gridSize),
+          Math.floor(Math.random() * gridSize)
+        ];
+        positionKey = `${position[0]},${position[1]}`;
+      } while (usedPositions.has(positionKey));
+
+      usedPositions.add(positionKey);
+      resources.push({
+        type: 'stone',
+        position
+      });
     }
 
     return resources;
   };
+
+  // Função para coletar recurso natural
+  const collectNaturalResource = (position: [number, number]) => {
+    setNaturalResources(current => {
+      return current.map(resource => {
+        if (resource.position[0] === position[0] && resource.position[1] === position[1]) {
+          return { ...resource, lastCollected: Date.now() };
+        }
+        return resource;
+      });
+    });
+  };
+
+  // Expose collectNaturalResource to window for NPC access
+  useEffect(() => {
+    (window as any).collectNaturalResource = collectNaturalResource;
+    return () => {
+      delete (window as any).collectNaturalResource;
+    };
+  }, []);
+
 
   // Initialize resources and create initial market when the game starts
   useEffect(() => {
@@ -124,6 +160,14 @@ const World = ({ onMarketSelect }: WorldProps) => {
       initializedRef.current = true;
     }
   }, []);
+
+   // Expose naturalResources to window for NPC access
+   useEffect(() => {
+    (window as any).naturalResources = naturalResources;
+    return () => {
+      delete (window as any).naturalResources;
+    };
+  }, [naturalResources]);
 
   // Monitorar novos edifícios de casa de NPC para criar NPCs
   useEffect(() => {
