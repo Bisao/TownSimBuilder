@@ -1,0 +1,48 @@
+[vite] connecting...
+[vite] connected.
+Sistema de áudio inicializado
+Camera initialized: 
+Object {position: Array(3), target: Array(3)}
+Initializing game world and resources
+useResourceStore is not defined
+The above error occurred in the <World> component:
+
+    at World (https://0c750422-608c-4f34-92fc-57c65fb13089-00-3z1c6z1kbqh.kirk.replit.dev/src/game/components/World.tsx:33:18)
+    at Suspense
+    at Suspense
+    at ErrorBoundary (https://0c750422-608c-4f34-92fc-57c65fb13089-00-3z1c6z1kbqh.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-A3GN3WMN.js?v=cc8441ba:16490:5)
+    at FiberProvider (https://0c750422-608c-4f34-92fc-57c65fb13089-00-3z1c6z1kbqh.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-A3GN3WMN.js?v=cc8441ba:18170:21)
+    at Provider (https://0c750422-608c-4f34-92fc-57c65fb13089-00-3z1c6z1kbqh.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-A3GN3WMN.js?v=cc8441ba:17779:3)
+
+React will try to recreate this component tree from scratch using the error boundary you provided, ErrorBoundary.
+useResourceStore is not defined
+useResourceStore is not defined
+The above error occurred in the <ForwardRef(Canvas)> component:
+
+    at Canvas (https://0c750422-608c-4f34-92fc-57c65fb13089-00-3z1c6z1kbqh.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-A3GN3WMN.js?v=cc8441ba:18236:3)
+    at FiberProvider (https://0c750422-608c-4f34-92fc-57c65fb13089-00-3z1c6z1kbqh.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-A3GN3WMN.js?v=cc8441ba:18170:21)
+    at CanvasWrapper
+    at KeyboardControls (https://0c750422-608c-4f34-92fc-57c65fb13089-00-3z1c6z1kbqh.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@react-three_drei.js?v=cc8441ba:9151:8)
+    at div
+    at App (https://0c750422-608c-4f34-92fc-57c65fb13089-00-3z1c6z1kbqh.kirk.replit.dev/src/App.tsx?v=PSGtbk29bIVp7HJjSGiJK:29:39)
+    at QueryClientProvider (https://0c750422-608c-4f34-92fc-57c65fb13089-00-3z1c6z1kbqh.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=cc8441ba:2805:3)
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+
+at Canvas (https://0c750422-608c-4f34-92fc-57c65fb13089-00-3z1c6z1kbqh.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-A3GN3WMN.js?v=cc8441ba:18236:3)
+at FiberProvider (https://0c750422-608c-4f34-92fc-57c65fb13089-00-3z1c6z1kbqh.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-A3GN3WMN.js?v=cc8441ba:18170:21)
+at CanvasWrapper
+at KeyboardControls (https://0c750422-608c-4f34-92fc-57c65fb13089-00-3z1c6z1kbqh.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@react-three_drei.js?v=cc8441ba:9151:8)
+at div
+at App (https://0c750422-608c-4f34-92fc-57c65fb13089-00-3z1c6z1kbqh.kirk.replit.dev/src/App.tsx?v=PSGtbk29bIVp7HJjSGiJK:29:39)
+at QueryClientProvider (https://0c750422-608c-4f34-92fc-57c65fb13089-00-3z1c6z1kbqh.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=cc8441ba:2805:3)
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+at t.value (https://0c750422-608c-4f34-92fc-57c65fb13089-00-3z1c6z1kbqh.kirk.replit.dev/__replco/static/devtools/eruda/3.2.3/eruda.js:2:17465)
+at new t (https://0c750422-608c-4f34-92fc-57c65fb13089-00-3z1c6z1kbqh.kirk.replit.dev/__replco/static/devtools/eruda/3.2.3/eruda.js:2:12630)
+at t.value (https://0c750422-608c-4f34-92fc-57c65fb13089-00-3z1c6z1kbqh.kirk.replit.dev/__replco/static/devtools/eruda/3.2.3/eruda.js:2:32766)
+at https://0c750422-608c-4f34-92fc-57c65fb13089-00-3z1c6z1kbqh.kirk.replit.dev/__replco/static/devtools/eruda/3.2.3/eruda.js:2:34400
+useResourceStore is not defined
+THREE.WebGLRenderer: Context Lost.
