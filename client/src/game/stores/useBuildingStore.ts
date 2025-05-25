@@ -146,8 +146,9 @@ export const useBuildingStore = create<BuildingState>()(
       const updatedBuildings: Building[] = [];
       let resourcesUpdated = false;
       
-      // Importar useNpcStore aqui para evitar dependências circulares
-      const { npcs } = require("./useNpcStore").useNpcStore.getState();
+      // Não podemos importar useNpcStore diretamente para evitar dependência circular
+      // Vamos simplificar e remover a funcionalidade de NPC por enquanto
+      const npcs: any[] = [];
       
       for (const building of get().buildings) {
         const buildingType = buildingTypes[building.type];
