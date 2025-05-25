@@ -1,5 +1,6 @@
 
 import { useTexture } from "@react-three/drei";
+import { useThree, useFrame } from "@react-three/fiber";
 import * as THREE from "three";
 import { useRef } from "react";
 
