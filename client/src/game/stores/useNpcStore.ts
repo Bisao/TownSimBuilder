@@ -161,6 +161,36 @@ export const useNpcStore = create<NPCState>()(
                 updatedNPC.state = "moving";
                 console.log(`NPC ${npc.type} está cansado e voltando para casa`);
               }
+            } else if (updatedNPC.state === "moving" && !updatedNPC.targetResource) {
+              // Procura recursos próximos quando está em movimento sem alvo
+              const resourceType = npc.type === "miner" ? "stone" : npc.type === "lumberjack" ? "wood" : null;
+              
+              if (resourceType && window.naturalResources) {
+                const availableResources = window.naturalResources.filter(r => 
+                  r.type === resourceType && !r.lastCollected
+                );
+
+                if (availableResources.length > 0) {
+                  // Encontra o recurso mais próximo
+                  let nearest = availableResources[0];
+                  let minDist = Infinity;
+                  
+                  for (const resource of availableResources) {
+                    const dist = Math.hypot(
+                      resource.position[0] - npc.position[0],
+                      resource.position[1] - npc.position[2]
+                    );
+                    if (dist < minDist) {
+                      minDist = dist;
+                      nearest = resource;
+                    }
+                  }
+
+                  updatedNPC.targetResource = nearest;
+                  updatedNPC.targetPosition = [nearest.position[0], 0, nearest.position[1]];
+                  console.log(`NPC ${npc.type} encontrou recurso em [${nearest.position[0]}, ${nearest.position[1]}]`);
+                }
+              }
             } else {
               const hasSpaceInInventory = updatedNPC.inventory.amount < 5;
               const shouldSearchNewArea = updatedNPC.memory.failedAttempts > 3;

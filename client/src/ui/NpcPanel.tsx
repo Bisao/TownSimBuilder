@@ -1,6 +1,6 @@
-
 import { NPC } from "../game/stores/useNpcStore";
 import { npcTypes } from "../game/constants/npcs";
+import { useBuildingStore } from "../game/stores/useBuildingStore";
 
 interface NpcPanelProps {
   npc: NPC | null;
@@ -52,7 +52,7 @@ const NpcPanel = ({ npc, onClose }: NpcPanelProps) => {
             <i className="fa-solid fa-times"></i>
           </button>
         </div>
-        
+
         <div className="space-y-6">
           <div className="bg-gray-50 p-4 rounded-lg">
             <h3 className="font-semibold mb-2 text-gray-700">Status</h3>
@@ -122,8 +122,19 @@ const NpcPanel = ({ npc, onClose }: NpcPanelProps) => {
               <button
                 onClick={() => {
                   if (npc.state === "idle") {
-                    npc.state = "gathering";
-                    npc.workProgress = 0;
+                    // Encontra a casa do NPC
+                    const buildings = useBuildingStore.getState().buildings;
+                    const home = buildings.find(b => b.id === npc.homeId);
+
+                    if (home) {
+                      // Define posição inicial como a casa
+                      npc.position = [home.position[0], 0, home.position[1]];
+                      npc.state = "moving"; // Começa movendo
+                      npc.workProgress = 0;
+                      // Limpa target anterior
+                      npc.targetResource = null;
+                      npc.targetPosition = null;
+                    }
                   }
                 }}
                 className={`w-full px-4 py-2 rounded-lg ${
@@ -140,8 +151,19 @@ const NpcPanel = ({ npc, onClose }: NpcPanelProps) => {
               <button
                 onClick={() => {
                   if (npc.state === "idle") {
-                    npc.state = "gathering";
-                    npc.workProgress = 0;
+                    // Encontra a casa do NPC
+                    const buildings = useBuildingStore.getState().buildings;
+                    const home = buildings.find(b => b.id === npc.homeId);
+
+                    if (home) {
+                      // Define posição inicial como a casa
+                      npc.position = [home.position[0], 0, home.position[1]];
+                      npc.state = "moving"; // Começa movendo
+                      npc.workProgress = 0;
+                      // Limpa target anterior
+                      npc.targetResource = null;
+                      npc.targetPosition = null;
+                    }
                   }
                 }}
                 className={`w-full px-4 py-2 rounded-lg ${
