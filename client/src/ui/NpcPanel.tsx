@@ -21,37 +21,39 @@ const NpcPanel = ({ npc, onClose }: NpcPanelProps) => {
   };
 
   const handleWorkClick = () => {
-    if (npc.state === "idle") {
-      const buildings = useBuildingStore.getState().buildings;
-      const home = buildings.find(b => b.id === npc.homeId);
+    if (!npc || npc.state !== "idle") return;
+    
+    const buildings = useBuildingStore.getState().buildings;
+    const home = buildings.find(b => b.id === npc.homeId);
+    
+    if (!home) return;
 
-      if (home) {
-        const updatedNpc = {
-          ...npc,
-          position: [home.position[0], 0, home.position[1]],
+    useNpcStore.setState(state => ({
+      npcs: state.npcs.map(n => {
+        if (n.id !== npc.id) return n;
+        
+        return {
+          ...n,
+          position: [home.position[0] + 0.5, 0, home.position[1] + 0.5],
           state: "searching",
           workProgress: 0,
           targetResource: null,
           targetPosition: null,
           needs: {
-            ...npc.needs,
-            energy: Math.max(npc.needs.energy, 50),
-            satisfaction: Math.max(npc.needs.satisfaction, 50)
+            energy: Math.max(n.needs.energy, 50),
+            satisfaction: Math.max(n.needs.satisfaction, 50)
           }
         };
-
-        useNpcStore.setState(state => ({
-          npcs: state.npcs.map(n => n.id === npc.id ? updatedNpc : n)
-        }));
-      }
-    }
+      })
+    }));
   };
 
   return (
     <div 
-      className="fixed inset-0 bg-black/50 flex items-center justify-center z-50"
+      className="fixed inset-0 bg-black/50 flex items-center justify-center z-[9999] pointer-events-auto"
       onClick={(e) => {
         if (e.target === e.currentTarget) onClose();
+        e.stopPropagation();
       }}
     >
       <div className="bg-white rounded-xl p-6 w-96 max-h-[90vh] overflow-y-auto relative">
@@ -149,8 +151,11 @@ const NpcPanel = ({ npc, onClose }: NpcPanelProps) => {
             <h3 className="font-semibold mb-2 text-gray-700">Trabalho</h3>
             {npc.type === "miner" && (
               <button
-                onClick={handleWorkClick}
-                className={`w-full px-4 py-2 rounded-lg ${
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleWorkClick();
+                }}
+                className={`w-full px-4 py-2 rounded-lg pointer-events-auto relative z-[10000] ${
                   npc.state !== "idle"
                     ? "bg-gray-200 cursor-not-allowed" 
                     : "bg-blue-500 hover:bg-blue-600 text-white"
