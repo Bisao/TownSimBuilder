@@ -105,6 +105,14 @@ const Npc = ({ npc }: NpcProps) => {
           <meshStandardMaterial color={npcType.color} />
         </mesh>
         
+        {/* Seta indicadora na cabeça */}
+        <group position={[0, 1.1, 0]} rotation={[0, 0, Math.PI]}>
+          <mesh>
+            <coneGeometry args={[0.08, 0.2, 3]} />
+            <meshStandardMaterial color="#ff4444" emissive="#ff2222" emissiveIntensity={0.3} />
+          </mesh>
+        </group>
+        
         {/* Corpo */}
         <mesh position={[0, 0.4, 0]}>
           <boxGeometry args={[0.3, 0.5, 0.2]} />

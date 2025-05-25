@@ -406,9 +406,9 @@ export const useNpcStore = create<NPCState>()(
               const dz = targetZ - currentZ;
               const distance = Math.sqrt(dx * dx + dz * dz);
 
-              // Reduz estamina ao se mover
-              updatedNPC.needs.energy = Math.max(0, updatedNPC.needs.energy - deltaTime * 3); // 3 pontos por segundo
-              updatedNPC.needs.satisfaction = Math.max(0, updatedNPC.needs.satisfaction - deltaTime * 1); // 1 ponto por segundo
+              // Reduz estamina ao se mover (consumo para 90 minutos)
+              updatedNPC.needs.energy = Math.max(0, updatedNPC.needs.energy - deltaTime * 0.018); // ~0.018 pontos por segundo (90 min)
+              updatedNPC.needs.satisfaction = Math.max(0, updatedNPC.needs.satisfaction - deltaTime * 0.009); // ~0.009 pontos por segundo (90 min)
 
               // Verificar se já chegou ao destino (tolerância de 0.1)
               if (distance < 0.1) {
@@ -519,9 +519,9 @@ export const useNpcStore = create<NPCState>()(
               // Progresso da coleta - mais rápido, 1 segundo para coletar
               updatedNPC.workProgress += deltaTime * 1.0;
 
-              // Reduz estamina e satisfação durante a coleta (consumo para 90 minutos)
-              updatedNPC.needs.energy = Math.max(0, updatedNPC.needs.energy - deltaTime * 0.018); // ~0.018 pontos por segundo (90 min)
-              updatedNPC.needs.satisfaction = Math.max(0, updatedNPC.needs.satisfaction - deltaTime * 0.009); // ~0.009 pontos por segundo (90 min)
+              // Reduz estamina e satisfação durante a coleta (consumo moderado)
+              updatedNPC.needs.energy = Math.max(0, updatedNPC.needs.energy - deltaTime * 0.5); // 0.5 pontos por segundo
+              updatedNPC.needs.satisfaction = Math.max(0, updatedNPC.needs.satisfaction - deltaTime * 0.3); // 0.3 pontos por segundo
 
               if (updatedNPC.workProgress >= 1) {
                 // Coletar recurso
