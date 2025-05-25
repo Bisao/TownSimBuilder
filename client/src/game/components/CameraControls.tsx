@@ -120,18 +120,7 @@ const CameraControls = () => {
     // Atualizar posição do alvo
     currentTarget.add(moveDirection);
 
-    // Calcular nova posição da câmera mantendo distância e altura
-    const distance = currentPosition.distanceTo(currentTarget);
-    const cameraOffset = new THREE.Vector3(
-      Math.sin(currentRotation) * distance,
-      distance * 0.8,
-      Math.cos(currentRotation) * distance
-    );
-
-    currentPosition.copy(currentTarget).add(cameraOffset);
-
-    // Atualizar câmera
-    camera.position.copy(currentPosition);
+    // Atualizar câmera apenas para olhar para o alvo
     camera.lookAt(currentTarget);
 
     // Atualizar store apenas quando houver mudanças significativas
