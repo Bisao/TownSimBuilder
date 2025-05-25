@@ -1,11 +1,13 @@
 import { useResourceStore } from "../game/stores/useResourceStore";
 import { resourceTypes } from "../game/constants/resources";
 
-const ResourcePanel = () => {
+const ResourcePanel = ({ isVisible }: { isVisible: boolean }) => {
   const { resources } = useResourceStore();
   
+  if (!isVisible) return null;
+  
   return (
-    <div className="absolute top-4 left-4 bg-gradient-to-br from-gray-900/95 to-black/95 rounded-xl p-4 shadow-lg border border-gray-800">
+    <div className="absolute top-16 left-4 bg-gradient-to-br from-gray-900/95 to-black/95 rounded-xl p-4 shadow-lg border border-gray-800">
       <h2 className="text-white text-center font-bold mb-2">Recursos</h2>
       <div className="grid grid-cols-2 gap-2">
         {Object.values(resourceTypes).map((resource) => (

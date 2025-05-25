@@ -4,9 +4,11 @@ import { resourceTypes } from "../game/constants/resources";
 import { useResourceStore } from "../game/stores/useResourceStore";
 import { cn } from "../lib/utils";
 
-const BuildingPanel = () => {
+const BuildingPanel = ({ isVisible }: { isVisible: boolean }) => {
   const { selectBuilding, selectedBuildingType } = useGameStore();
   const { resources } = useResourceStore();
+
+  if (!isVisible) return null;
 
   const handleSelectBuilding = (type: string) => {
     if (selectedBuildingType === type) {

@@ -12,6 +12,8 @@ const GameUI = () => {
   const { backgroundMusic, toggleMute, isMuted } = useAudio();
   const { timeOfDay, dayCount } = useGameStore();
   const [showControls, setShowControls] = useState(false);
+  const [showBuildingPanel, setShowBuildingPanel] = useState(false);
+  const [showResourcePanel, setShowResourcePanel] = useState(false);
   const [selectedNpc, setSelectedNpc] = useState<NPC | null>(null);
 
   useEffect(() => {
@@ -79,9 +81,25 @@ const GameUI = () => {
 
   return (
     <div className="absolute inset-0 pointer-events-none">
-      <ResourcePanel />
+      <div className="absolute top-4 left-4 flex gap-2 pointer-events-auto">
+        <button
+          onClick={() => setShowBuildingPanel(!showBuildingPanel)}
+          className="bg-black/80 text-white p-2 rounded-lg"
+          title="Painel de Construção"
+        >
+          <i className="fa-solid fa-hammer"></i>
+        </button>
+        <button
+          onClick={() => setShowResourcePanel(!showResourcePanel)}
+          className="bg-black/80 text-white p-2 rounded-lg"
+          title="Painel de Recursos"
+        >
+          <i className="fa-solid fa-box"></i>
+        </button>
+      </div>
+      <ResourcePanel isVisible={showResourcePanel} />
       <div className="pointer-events-auto">
-        <BuildingPanel />
+        <BuildingPanel isVisible={showBuildingPanel} />
       </div>
       <div className="absolute top-4 right-4 bg-black/80 rounded-lg p-2 text-white">
         <div>Dia {dayCount}</div>
