@@ -575,7 +575,7 @@ export const useNpcStore = create<NPCState>()(
                   updatedNPC.inventory.amount += 1;
                   console.log(`${npc.type} coletou ${resourceType}. Inventário: ${updatedNPC.inventory.amount}/5`);
 
-                  // Remove o recurso específico que estava sendo coletado
+                  // Marca o recurso como coletado em vez de removê-lo
                   if (window.naturalResources && npc.targetResource) {
                     const resourceIndex = window.naturalResources.findIndex(r => 
                       r.position[0] === npc.targetResource.position[0] &&
@@ -584,8 +584,8 @@ export const useNpcStore = create<NPCState>()(
                     );
 
                     if (resourceIndex !== -1) {
-                      window.naturalResources.splice(resourceIndex, 1);
-                      console.log(`Recurso ${resourceType} removido da posição [${npc.targetResource.position[0]}, ${npc.targetResource.position[1]}]`);
+                      window.naturalResources[resourceIndex].lastCollected = Date.now();
+                      console.log(`Recurso ${resourceType} coletado na posição [${npc.targetResource.position[0]}, ${npc.targetResource.position[1]}] - respawn em 5 minutos`);
                     }
                   }
 

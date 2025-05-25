@@ -243,16 +243,18 @@ const World = ({ onMarketSelect }: WorldProps) => {
         <Npc key={npc.id} npc={npc} />
       ))}
 
-      {/* Natural Resources */}
-      {naturalResources.map((resource, index) => (
-        <Resource
-          key={`${resource.type}-${index}`}
-          type={resource.type}
-          position={[resource.position[0], 0, resource.position[1]]}
-          color={resourceTypes[resource.type].color}
-          scale={0.8}
-        />
-      ))}
+      {/* Natural Resources - renderiza apenas recursos não coletados */}
+      {naturalResources
+        .filter(resource => !resource.lastCollected)
+        .map((resource, index) => (
+          <Resource
+            key={`resource-${resource.position[0]}-${resource.position[1]}`}
+            type={resource.type}
+            position={[resource.position[0], 0, resource.position[1]]}
+            color={resourceTypes[resource.type]?.color || "#ffffff"}
+            scale={0.8}
+          />
+        ))}
 
       {/* Building placement indicator */}
       {gameMode === "build" && <PlacementIndicator />}
