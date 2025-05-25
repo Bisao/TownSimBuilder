@@ -7,7 +7,7 @@ import { cn } from "../lib/utils";
 const BuildingPanel = () => {
   const { selectBuilding, selectedBuildingType } = useGameStore();
   const { resources } = useResourceStore();
-  
+
   const handleSelectBuilding = (type: string) => {
     if (selectedBuildingType === type) {
       // Se já estiver selecionado, desmarque-o
@@ -17,23 +17,23 @@ const BuildingPanel = () => {
       selectBuilding(type);
     }
   };
-  
+
   // Verifica se o jogador tem recursos suficientes para um edifício
   const canAfford = (type: string) => {
     const buildingType = buildingTypes[type];
     if (!buildingType) return false;
-    
+
     for (const [resourceType, amount] of Object.entries(buildingType.cost)) {
       if ((resources[resourceType] || 0) < amount) {
         return false;
       }
     }
-    
+
     return true;
   };
 
   return (
-    <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-black/80 rounded-lg p-2">
+    <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-gradient-to-br from-gray-900/95 to-black/95 rounded-xl p-4 shadow-lg border border-gray-800">
       <h2 className="text-white text-center font-bold mb-2">Edifícios</h2>
       <div className="flex gap-2 flex-wrap justify-center">
         {Object.values(buildingTypes).map((building) => (

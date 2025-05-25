@@ -5,7 +5,7 @@ const ResourcePanel = () => {
   const { resources } = useResourceStore();
   
   return (
-    <div className="absolute top-4 left-4 bg-black/80 rounded-lg p-2">
+    <div className="absolute top-4 left-4 bg-gradient-to-br from-gray-900/95 to-black/95 rounded-xl p-4 shadow-lg border border-gray-800">
       <h2 className="text-white text-center font-bold mb-2">Recursos</h2>
       <div className="grid grid-cols-2 gap-2">
         {Object.values(resourceTypes).map((resource) => (
