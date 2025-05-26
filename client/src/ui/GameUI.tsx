@@ -13,6 +13,8 @@ import { NPC } from "../game/stores/useNpcStore";
 import { useIsMobile } from "../hooks/use-is-mobile";
 import MarketWindow from "./MarketWindow";
 import NpcMetricsPanel from "./NpcMetricsPanel";
+import SeedSelectionPanel from "./SeedSelectionPanel";
+import SiloPanel from "./SiloPanel";
 const GameUI = () => {
   const { backgroundMusic, toggleMute, isMuted } = useAudio();
   const { timeOfDay, dayCount, isPaused, timeSpeed } = useGameStore();
@@ -23,6 +25,11 @@ const GameUI = () => {
   const [selectedNpc, setSelectedNpc] = useState<any>(null);
   const [showMetrics, setShowMetrics] = useState(false);
   const isMobile = useIsMobile();
+  const { npcs, updateNpc } = useNpcStore();
+  const [selectedNpcId, setSelectedNpcId] = useState<string | null>(null);
+  const [showSeedSelection, setShowSeedSelection] = useState(false);
+  const [showSiloPanel, setShowSiloPanel] = useState(false);
+  const [selectedSiloId, setSelectedSiloId] = useState<string | null>(null);
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -50,6 +57,7 @@ const GameUI = () => {
     };
 
     window.addEventListener('keydown', handleKeyDown);
+
     const handleNpcClick = (event: CustomEvent) => {
       setSelectedNpc(event.detail);
     };
@@ -62,13 +70,21 @@ const GameUI = () => {
       }
     };
 
+    const handleSiloClick = (event: CustomEvent<Building>) => {
+      const building = event.detail;
+      setSelectedSiloId(building.id);
+      setShowSiloPanel(true);
+    };
+
     window.addEventListener('npcClick', handleNpcClick as EventListener);
     window.addEventListener('npcHouseClick', handleNpcHouseClick as EventListener);
+    window.addEventListener('siloClick', handleSiloClick as EventListener);
 
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
       window.removeEventListener('npcClick', handleNpcClick as EventListener);
       window.removeEventListener('npcHouseClick', handleNpcHouseClick as EventListener);
+      window.removeEventListener('siloClick', handleSiloClick as EventListener);
     };
   }, []);
 
@@ -251,6 +267,35 @@ const GameUI = () => {
         <div className="absolute top-16 right-4 z-20">
           <NpcMetricsPanel />
         </div>
+      )}
+
+      {showSeedSelection && (
+        <SeedSelectionPanel
+          isOpen={showSeedSelection}
+          onClose={() => setShowSeedSelection(false)}
+          onSeedSelect={(seedType) => {
+            if (selectedNpcId) {
+              updateNpc(selectedNpcId, {
+                farmerData: {
+                  ...(npcs.find(n => n.id === selectedNpcId)?.farmerData || {}),
+                  selectedSeed: seedType
+                }
+              });
+            }
+            setShowSeedSelection(false);
+          }}
+        />
+      )}
+
+      {showSiloPanel && selectedSiloId && (
+        <SiloPanel
+          isOpen={showSiloPanel}
+          onClose={() => {
+            setShowSiloPanel(false);
+            setSelectedSiloId(null);
+          }}
+          siloId={selectedSiloId}
+        />
       )}
     </div>
   );

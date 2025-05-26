@@ -3,7 +3,6 @@ import { useRef, useState } from "react";
 import { useFrame } from "@react-three/fiber";
 import { buildingTypes } from "../constants/buildings";
 import { Building as BuildingType } from "../stores/useBuildingStore";
-import SiloPanel from "../../ui/SiloPanel";
 import * as THREE from "three";
 import { useThree } from "@react-three/fiber";
 import { useTexture } from "@react-three/drei";
@@ -20,7 +19,6 @@ const Building = ({ building, onClick }: BuildingProps) => {
   const lastProducedRef = useRef<number>(building.lastProduced);
   const [hovered, setHovered] = useState(false);
   const { camera } = useThree();
-  const [showSiloPanel, setShowSiloPanel] = useState(false);
 
   // Always call hooks at component level
   const npcs = useNpcStore(state => state.npcs);
@@ -105,7 +103,7 @@ const Building = ({ building, onClick }: BuildingProps) => {
       // Encontrar o NPC associado a esta casa
       window.dispatchEvent(new CustomEvent('npcHouseClick', { detail: building }));
     } else if (building.type === 'silo') {
-      setShowSiloPanel(true);
+      window.dispatchEvent(new CustomEvent('siloClick', { detail: building }));
     }
   };
 
@@ -180,14 +178,6 @@ const Building = ({ building, onClick }: BuildingProps) => {
           )}
         </group>
       )}
-        {/* Painel do silo */}
-        {showSiloPanel && (
-            <SiloPanel
-                isOpen={showSiloPanel}
-                onClose={() => setShowSiloPanel(false)}
-                siloId={building.id}
-            />
-        )}
     </mesh>
   );
 };
