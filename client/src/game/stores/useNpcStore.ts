@@ -102,8 +102,8 @@ const CONSTANTS = {
     ENERGY: 20,       // Regeneração mais rápida
     SATISFACTION: 15, // Regeneração mais rápida
   },
-  WORK_SPEED: 0.2,
-  GATHERING_SPEED: 0.67,
+  WORK_SPEED: 0.15,
+  GATHERING_SPEED: 0.15,
   MAX_INVENTORY: 5,
   MOVEMENT_TOLERANCE: 0.15,
   RESOURCE_PROXIMITY: 1.5,
@@ -570,7 +570,9 @@ class NPCStateHandlers {
       console.log(`NPC ${npc.type} começando a coletar recurso`);
     }
 
-    const newWorkProgress = npc.workProgress + adjustedDeltaTime * CONSTANTS.GATHERING_SPEED;
+    const npcConfig = npcTypes[npc.type];
+    const baseSpeed = npcConfig ? npcConfig.speed : 0.15;
+    const newWorkProgress = npc.workProgress + adjustedDeltaTime * baseSpeed;
 
     if (newWorkProgress >= 1) {
       return NPCStateHandlers.completeResourceGathering(npc);
@@ -643,7 +645,9 @@ class NPCStateHandlers {
   static handleWorkingState(npc: NPC, adjustedDeltaTime: number, buildings: any[]): Partial<NPC> {
     if (!npc.targetBuildingId) return { state: "idle" };
 
-    const newWorkProgress = npc.workProgress + adjustedDeltaTime * CONSTANTS.WORK_SPEED;
+    const npcConfig = npcTypes[npc.type];
+    const baseSpeed = npcConfig ? npcConfig.speed : 0.15;
+    const newWorkProgress = npc.workProgress + adjustedDeltaTime * baseSpeed;
 
     if (newWorkProgress >= 1) {
       if (Math.random() < 0.5) {
