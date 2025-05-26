@@ -50,8 +50,8 @@ const GameUI = () => {
       setSelectedNpc(event.detail);
     };
 
-    const handleNpcHouseClick = (e: CustomEvent) => {
-      const house = e.detail as Building;
+    const handleNpcHouseClick = (e: CustomEvent<Building>) => {
+      const house = e.detail;
       const npc = useNpcStore.getState().npcs.find(n => n.homeId === house.id);
       if (npc) {
         setSelectedNpc(npc);
