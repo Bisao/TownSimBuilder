@@ -16,7 +16,7 @@ export const resourceTypes: Record<string, ResourceType> = {
     description: "Material básico para construção",
     color: "#8B4513",
     icon: "fa-solid fa-tree",
-    initialAmount: 20,
+    initialAmount: 100,
     maxAmount: 500,
   },
   stone: {
@@ -25,7 +25,7 @@ export const resourceTypes: Record<string, ResourceType> = {
     description: "Material resistente para construções avançadas",
     color: "#708090",
     icon: "fa-solid fa-mountain",
-    initialAmount: 10,
+    initialAmount: 100,
     maxAmount: 300,
   },
   wheat: {
