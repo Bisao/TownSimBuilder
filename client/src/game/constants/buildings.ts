@@ -46,15 +46,10 @@ export const buildingTypes: Record<string, BuildingType> = {
   farm: {
     id: "farm",
     name: "Fazenda",
-    description: "Produz trigo ao longo do tempo",
+    description: "Local para plantio e colheita pelo fazendeiro",
     size: [1, 1],
     height: 0.5,
     cost: { wood: 5 },
-    produces: {
-      resourceType: "wheat",
-      amount: 2,
-      interval: 10,
-    },
     model: {
       color: "#FFD700",
       shape: "box",
