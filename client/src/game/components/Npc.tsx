@@ -291,196 +291,304 @@ const Npc = ({ npc }: NpcProps) => {
         )}
         
         {/* Braço Esquerdo */}
-        <mesh ref={leftArmRef} position={[-0.2, 0.5, 0]}>
-          <boxGeometry args={[0.1, 0.4, 0.1]} />
-          <meshStandardMaterial color={npcType.color} />
+        <group ref={leftArmRef} position={[-0.2, 0.5, 0]}>
+          {/* Ombro */}
+          <mesh position={[0, 0.1, 0]}>
+            <sphereGeometry args={[0.06, 12, 12]} />
+            <meshStandardMaterial color={npcType.color} />
+          </mesh>
+          
+          {/* Braço Superior */}
+          <mesh position={[0, -0.05, 0]}>
+            <boxGeometry args={[0.08, 0.25, 0.08]} />
+            <meshStandardMaterial color={npcType.color} />
+          </mesh>
+          
+          {/* Cotovelo */}
+          <mesh position={[0, -0.18, 0]}>
+            <sphereGeometry args={[0.05, 12, 12]} />
+            <meshStandardMaterial color={npcType.color} />
+          </mesh>
+          
+          {/* Antebraço */}
+          <mesh position={[0, -0.28, 0]}>
+            <boxGeometry args={[0.07, 0.2, 0.07]} />
+            <meshStandardMaterial color={npcType.color} />
+          </mesh>
+          
+          {/* Punho */}
+          <mesh position={[0, -0.38, 0]}>
+            <sphereGeometry args={[0.04, 12, 12]} />
+            <meshStandardMaterial color="#FDBCB4" />
+          </mesh>
           
           {/* Mão Esquerda */}
-          <mesh position={[0, -0.25, 0]}>
+          <mesh position={[0, -0.45, 0]}>
             <sphereGeometry args={[0.06, 12, 12]} />
             <meshStandardMaterial color="#FDBCB4" />
           </mesh>
           
           {/* Dedos Mão Esquerda */}
-          <mesh position={[-0.03, -0.3, 0.03]}>
+          <mesh position={[-0.03, -0.5, 0.03]}>
             <boxGeometry args={[0.015, 0.08, 0.015]} />
             <meshStandardMaterial color="#FDBCB4" />
           </mesh>
-          <mesh position={[0, -0.32, 0.03]}>
+          <mesh position={[0, -0.52, 0.03]}>
             <boxGeometry args={[0.015, 0.1, 0.015]} />
             <meshStandardMaterial color="#FDBCB4" />
           </mesh>
-          <mesh position={[0.03, -0.31, 0.03]}>
+          <mesh position={[0.03, -0.51, 0.03]}>
             <boxGeometry args={[0.015, 0.09, 0.015]} />
             <meshStandardMaterial color="#FDBCB4" />
           </mesh>
-          <mesh position={[0.04, -0.28, 0.03]}>
+          <mesh position={[0.04, -0.48, 0.03]}>
             <boxGeometry args={[0.015, 0.06, 0.015]} />
             <meshStandardMaterial color="#FDBCB4" />
           </mesh>
           {/* Polegar */}
-          <mesh position={[-0.05, -0.26, 0]} rotation={[0, 0, Math.PI / 6]}>
+          <mesh position={[-0.05, -0.46, 0]} rotation={[0, 0, Math.PI / 6]}>
             <boxGeometry args={[0.015, 0.06, 0.015]} />
             <meshStandardMaterial color="#FDBCB4" />
           </mesh>
-        </mesh>
+        </group>
         
         {/* Braço Direito */}
-        <mesh ref={rightArmRef} position={[0.2, 0.5, 0]}>
-          <boxGeometry args={[0.1, 0.4, 0.1]} />
-          <meshStandardMaterial color={npcType.color} />
+        <group ref={rightArmRef} position={[0.2, 0.5, 0]}>
+          {/* Ombro */}
+          <mesh position={[0, 0.1, 0]}>
+            <sphereGeometry args={[0.06, 12, 12]} />
+            <meshStandardMaterial color={npcType.color} />
+          </mesh>
+          
+          {/* Braço Superior */}
+          <mesh position={[0, -0.05, 0]}>
+            <boxGeometry args={[0.08, 0.25, 0.08]} />
+            <meshStandardMaterial color={npcType.color} />
+          </mesh>
+          
+          {/* Cotovelo */}
+          <mesh position={[0, -0.18, 0]}>
+            <sphereGeometry args={[0.05, 12, 12]} />
+            <meshStandardMaterial color={npcType.color} />
+          </mesh>
+          
+          {/* Antebraço */}
+          <mesh position={[0, -0.28, 0]}>
+            <boxGeometry args={[0.07, 0.2, 0.07]} />
+            <meshStandardMaterial color={npcType.color} />
+          </mesh>
+          
+          {/* Punho */}
+          <mesh position={[0, -0.38, 0]}>
+            <sphereGeometry args={[0.04, 12, 12]} />
+            <meshStandardMaterial color="#FDBCB4" />
+          </mesh>
           
           {/* Mão Direita */}
-          <mesh position={[0, -0.25, 0]}>
+          <mesh position={[0, -0.45, 0]}>
             <sphereGeometry args={[0.06, 12, 12]} />
             <meshStandardMaterial color="#FDBCB4" />
           </mesh>
           
           {/* Dedos Mão Direita */}
-          <mesh position={[0.03, -0.3, 0.03]}>
+          <mesh position={[0.03, -0.5, 0.03]}>
             <boxGeometry args={[0.015, 0.08, 0.015]} />
             <meshStandardMaterial color="#FDBCB4" />
           </mesh>
-          <mesh position={[0, -0.32, 0.03]}>
+          <mesh position={[0, -0.52, 0.03]}>
             <boxGeometry args={[0.015, 0.1, 0.015]} />
             <meshStandardMaterial color="#FDBCB4" />
           </mesh>
-          <mesh position={[-0.03, -0.31, 0.03]}>
+          <mesh position={[-0.03, -0.51, 0.03]}>
             <boxGeometry args={[0.015, 0.09, 0.015]} />
             <meshStandardMaterial color="#FDBCB4" />
           </mesh>
-          <mesh position={[-0.04, -0.28, 0.03]}>
+          <mesh position={[-0.04, -0.48, 0.03]}>
             <boxGeometry args={[0.015, 0.06, 0.015]} />
             <meshStandardMaterial color="#FDBCB4" />
           </mesh>
           {/* Polegar */}
-          <mesh position={[0.05, -0.26, 0]} rotation={[0, 0, -Math.PI / 6]}>
+          <mesh position={[0.05, -0.46, 0]} rotation={[0, 0, -Math.PI / 6]}>
             <boxGeometry args={[0.015, 0.06, 0.015]} />
             <meshStandardMaterial color="#FDBCB4" />
           </mesh>
-          
-          {/* Ferramentas específicas para cada profissão */}
-          {npc.type === "miner" && (
-            <group position={[0, -0.3, 0]} rotation={[0.3, 0, 0]}>
-              {/* Cabo da picareta */}
-              <mesh position={[0, 0, 0]}>
-                <cylinderGeometry args={[0.02, 0.02, 0.6, 8]} />
-                <meshStandardMaterial color="#8B4513" />
-              </mesh>
-              {/* Cabeça da picareta */}
-              <mesh position={[0, 0.3, 0]} rotation={[0, 0, Math.PI / 2]}>
-                <boxGeometry args={[0.3, 0.08, 0.08]} />
-                <meshStandardMaterial color="#C0C0C0" metalness={0.8} roughness={0.2} />
-              </mesh>
-              {/* Ponta afiada */}
-              <mesh position={[0.15, 0.3, 0]} rotation={[0, 0, Math.PI / 4]}>
-                <coneGeometry args={[0.04, 0.1, 4]} />
-                <meshStandardMaterial color="#C0C0C0" metalness={0.8} roughness={0.2} />
-              </mesh>
-            </group>
-          )}
-          
-          {npc.type === "lumberjack" && (
-            <group position={[0, -0.3, 0]} rotation={[0.2, 0, 0]}>
-              {/* Cabo do machado */}
-              <mesh position={[0, 0, 0]}>
-                <cylinderGeometry args={[0.03, 0.03, 0.7, 8]} />
-                <meshStandardMaterial color="#654321" />
-              </mesh>
-              {/* Lâmina do machado */}
-              <mesh position={[0, 0.35, 0]} rotation={[0, 0, Math.PI / 2]}>
-                <cylinderGeometry args={[0.15, 0.05, 0.05, 8]} />
-                <meshStandardMaterial color="#A0A0A0" metalness={0.7} roughness={0.3} />
-              </mesh>
-            </group>
-          )}
-          
-          {npc.type === "farmer" && (
-            <group position={[0, -0.3, 0]} rotation={[0.4, 0, 0]}>
-              {/* Cabo da enxada */}
-              <mesh position={[0, 0, 0]}>
-                <cylinderGeometry args={[0.02, 0.02, 0.6, 8]} />
-                <meshStandardMaterial color="#8B4513" />
-              </mesh>
-              {/* Lâmina da enxada */}
-              <mesh position={[0, 0.3, 0]} rotation={[Math.PI / 2, 0, 0]}>
-                <boxGeometry args={[0.2, 0.05, 0.15]} />
-                <meshStandardMaterial color="#A0A0A0" metalness={0.6} roughness={0.4} />
-              </mesh>
-            </group>
-          )}
-          
-          {npc.type === "baker" && (
-            <group position={[0, -0.25, 0]}>
-              {/* Saco de farinha */}
-              <mesh position={[0, 0, 0]}>
-                <boxGeometry args={[0.12, 0.2, 0.08]} />
-                <meshStandardMaterial color="#F5DEB3" />
-              </mesh>
-              {/* Amarração do saco */}
-              <mesh position={[0, 0.1, 0]}>
-                <torusGeometry args={[0.06, 0.01, 8, 16]} />
-                <meshStandardMaterial color="#8B4513" />
-              </mesh>
-            </group>
-          )}
-        </mesh>
+        </group>
+        
+        {/* Ferramentas seguradas com ambas as mãos - posicionadas entre os braços */}
+        {npc.type === "miner" && (
+          <group position={[0, 0.2, 0]} rotation={[0.3, 0, 0]}>
+            {/* Cabo da picareta */}
+            <mesh position={[0, 0, 0]}>
+              <cylinderGeometry args={[0.02, 0.02, 0.8, 8]} />
+              <meshStandardMaterial color="#8B4513" />
+            </mesh>
+            {/* Cabeça da picareta */}
+            <mesh position={[0, 0.4, 0]} rotation={[0, 0, Math.PI / 2]}>
+              <boxGeometry args={[0.3, 0.08, 0.08]} />
+              <meshStandardMaterial color="#C0C0C0" metalness={0.8} roughness={0.2} />
+            </mesh>
+            {/* Ponta afiada */}
+            <mesh position={[0.15, 0.4, 0]} rotation={[0, 0, Math.PI / 4]}>
+              <coneGeometry args={[0.04, 0.1, 4]} />
+              <meshStandardMaterial color="#C0C0C0" metalness={0.8} roughness={0.2} />
+            </mesh>
+          </group>
+        )}
+        
+        {npc.type === "lumberjack" && (
+          <group position={[0, 0.2, 0]} rotation={[0.2, 0, 0]}>
+            {/* Cabo do machado */}
+            <mesh position={[0, 0, 0]}>
+              <cylinderGeometry args={[0.03, 0.03, 0.9, 8]} />
+              <meshStandardMaterial color="#654321" />
+            </mesh>
+            {/* Lâmina do machado */}
+            <mesh position={[0, 0.45, 0]} rotation={[0, 0, Math.PI / 2]}>
+              <cylinderGeometry args={[0.15, 0.05, 0.05, 8]} />
+              <meshStandardMaterial color="#A0A0A0" metalness={0.7} roughness={0.3} />
+            </mesh>
+          </group>
+        )}
+        
+        {npc.type === "farmer" && (
+          <group position={[0, 0.2, 0]} rotation={[0.4, 0, 0]}>
+            {/* Cabo da enxada */}
+            <mesh position={[0, 0, 0]}>
+              <cylinderGeometry args={[0.02, 0.02, 0.8, 8]} />
+              <meshStandardMaterial color="#8B4513" />
+            </mesh>
+            {/* Lâmina da enxada */}
+            <mesh position={[0, 0.4, 0]} rotation={[Math.PI / 2, 0, 0]}>
+              <boxGeometry args={[0.2, 0.05, 0.15]} />
+              <meshStandardMaterial color="#A0A0A0" metalness={0.6} roughness={0.4} />
+            </mesh>
+          </group>
+        )}
+        
+        {npc.type === "baker" && (
+          <group position={[0, 0.1, 0.15]}>
+            {/* Saco de farinha segurado com as duas mãos */}
+            <mesh position={[0, 0, 0]}>
+              <boxGeometry args={[0.15, 0.25, 0.1]} />
+              <meshStandardMaterial color="#F5DEB3" />
+            </mesh>
+            {/* Amarração do saco */}
+            <mesh position={[0, 0.12, 0]}>
+              <torusGeometry args={[0.07, 0.01, 8, 16]} />
+              <meshStandardMaterial color="#8B4513" />
+            </mesh>
+          </group>
+        )}
         
         {/* Perna Esquerda */}
-        <mesh ref={leftLegRef} position={[-0.1, 0.1, 0]}>
-          <boxGeometry args={[0.1, 0.4, 0.1]} />
-          <meshStandardMaterial color={npcType.color} />
+        <group ref={leftLegRef} position={[-0.1, 0.1, 0]}>
+          {/* Quadril */}
+          <mesh position={[0, 0.1, 0]}>
+            <sphereGeometry args={[0.06, 12, 12]} />
+            <meshStandardMaterial color={npcType.color} />
+          </mesh>
+          
+          {/* Coxa */}
+          <mesh position={[0, -0.05, 0]}>
+            <boxGeometry args={[0.09, 0.25, 0.09]} />
+            <meshStandardMaterial color={npcType.color} />
+          </mesh>
+          
+          {/* Joelho */}
+          <mesh position={[0, -0.18, 0]}>
+            <sphereGeometry args={[0.05, 12, 12]} />
+            <meshStandardMaterial color={npcType.color} />
+          </mesh>
+          
+          {/* Panturrilha */}
+          <mesh position={[0, -0.28, 0]}>
+            <boxGeometry args={[0.08, 0.2, 0.08]} />
+            <meshStandardMaterial color={npcType.color} />
+          </mesh>
+          
+          {/* Tornozelo */}
+          <mesh position={[0, -0.38, 0]}>
+            <sphereGeometry args={[0.04, 12, 12]} />
+            <meshStandardMaterial color="#FDBCB4" />
+          </mesh>
           
           {/* Pé Esquerdo */}
-          <mesh position={[0, -0.25, 0.08]}>
+          <mesh position={[0, -0.45, 0.08]}>
             <boxGeometry args={[0.12, 0.08, 0.25]} />
             <meshStandardMaterial color="#654321" />
           </mesh>
           
           {/* Sola do Pé Esquerdo */}
-          <mesh position={[0, -0.29, 0.08]}>
+          <mesh position={[0, -0.49, 0.08]}>
             <boxGeometry args={[0.13, 0.02, 0.26]} />
             <meshStandardMaterial color="#2F1B14" />
           </mesh>
           
           {/* Cadarços Pé Esquerdo */}
-          <mesh position={[0, -0.21, 0.15]} rotation={[Math.PI / 6, 0, 0]}>
+          <mesh position={[0, -0.41, 0.15]} rotation={[Math.PI / 6, 0, 0]}>
             <boxGeometry args={[0.08, 0.01, 0.01]} />
             <meshStandardMaterial color="#FFFFFF" />
           </mesh>
-          <mesh position={[0, -0.23, 0.12]} rotation={[Math.PI / 6, 0, 0]}>
+          <mesh position={[0, -0.43, 0.12]} rotation={[Math.PI / 6, 0, 0]}>
             <boxGeometry args={[0.08, 0.01, 0.01]} />
             <meshStandardMaterial color="#FFFFFF" />
           </mesh>
-        </mesh>
+        </group>
         
         {/* Perna Direita */}
-        <mesh ref={rightLegRef} position={[0.1, 0.1, 0]}>
-          <boxGeometry args={[0.1, 0.4, 0.1]} />
-          <meshStandardMaterial color={npcType.color} />
+        <group ref={rightLegRef} position={[0.1, 0.1, 0]}>
+          {/* Quadril */}
+          <mesh position={[0, 0.1, 0]}>
+            <sphereGeometry args={[0.06, 12, 12]} />
+            <meshStandardMaterial color={npcType.color} />
+          </mesh>
+          
+          {/* Coxa */}
+          <mesh position={[0, -0.05, 0]}>
+            <boxGeometry args={[0.09, 0.25, 0.09]} />
+            <meshStandardMaterial color={npcType.color} />
+          </mesh>
+          
+          {/* Joelho */}
+          <mesh position={[0, -0.18, 0]}>
+            <sphereGeometry args={[0.05, 12, 12]} />
+            <meshStandardMaterial color={npcType.color} />
+          </mesh>
+          
+          {/* Panturrilha */}
+          <mesh position={[0, -0.28, 0]}>
+            <boxGeometry args={[0.08, 0.2, 0.08]} />
+            <meshStandardMaterial color={npcType.color} />
+          </mesh>
+          
+          {/* Tornozelo */}
+          <mesh position={[0, -0.38, 0]}>
+            <sphereGeometry args={[0.04, 12, 12]} />
+            <meshStandardMaterial color="#FDBCB4" />
+          </mesh>
           
           {/* Pé Direito */}
-          <mesh position={[0, -0.25, 0.08]}>
+          <mesh position={[0, -0.45, 0.08]}>
             <boxGeometry args={[0.12, 0.08, 0.25]} />
             <meshStandardMaterial color="#654321" />
           </mesh>
           
           {/* Sola do Pé Direito */}
-          <mesh position={[0, -0.29, 0.08]}>
+          <mesh position={[0, -0.49, 0.08]}>
             <boxGeometry args={[0.13, 0.02, 0.26]} />
             <meshStandardMaterial color="#2F1B14" />
           </mesh>
           
           {/* Cadarços Pé Direito */}
-          <mesh position={[0, -0.21, 0.15]} rotation={[Math.PI / 6, 0, 0]}>
+          <mesh position={[0, -0.41, 0.15]} rotation={[Math.PI / 6, 0, 0]}>
             <boxGeometry args={[0.08, 0.01, 0.01]} />
             <meshStandardMaterial color="#FFFFFF" />
           </mesh>
-          <mesh position={[0, -0.23, 0.12]} rotation={[Math.PI / 6, 0, 0]}>
+          <mesh position={[0, -0.43, 0.12]} rotation={[Math.PI / 6, 0, 0]}>
             <boxGeometry args={[0.08, 0.01, 0.01]} />
             <meshStandardMaterial color="#FFFFFF" />
           </mesh>
-        </mesh>
+        </group>
       </group>
       
       {/* Partículas de efeito */}
