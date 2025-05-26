@@ -1,8 +1,9 @@
 import { create } from "zustand";
 import { subscribeWithSelector } from "zustand/middleware";
-import { npcTypes, workplaceMapping } from "../constants/npcs";
+import { npcTypes } from "../constants/npcs";
 import { useBuildingStore } from "./useBuildingStore";
 import * as THREE from "three";
+import { useGameStore } from "./useGameStore";
 
 // Interface para um NPC no jogo
 interface NPCNeeds {
@@ -157,6 +158,14 @@ export const useNpcStore = create<NPCState>()(
     },
 
     updateNPCs: (deltaTime: number) => {
+    const { isPaused, timeSpeed } = useGameStore.getState();
+
+    // Se o jogo estiver pausado, não atualizar NPCs
+    if (isPaused) return;
+
+    // Aplicar multiplicador de velocidade
+    const adjustedDeltaTime = deltaTime * timeSpeed;
+
       const buildings = useBuildingStore.getState().buildings;
       const updatedNPCs: NPC[] = [];
 
@@ -447,7 +456,7 @@ export const useNpcStore = create<NPCState>()(
               // Velocidade de movimento baseada no tipo de NPC
               const npcConfig = npcTypes[npc.type];
               const baseSpeed = npcConfig ? npcConfig.speed : 0.5;
-              const moveSpeed = baseSpeed * deltaTime * 4; // Ajuste para movimento mais suave
+              const moveSpeed = baseSpeed * adjustedDeltaTime * 4; // Ajuste para movimento mais suave
 
               // Calcula direção
               const dx = targetX - currentX;
@@ -455,8 +464,8 @@ export const useNpcStore = create<NPCState>()(
               const distance = Math.sqrt(dx * dx + dz * dz);
 
               // Reduz estamina ao se mover (ajustado para 90 minutos)
-              updatedNPC.needs.energy = Math.max(0, updatedNPC.needs.energy - deltaTime * 0.0185);
-              updatedNPC.needs.satisfaction = Math.max(0, updatedNPC.needs.satisfaction - deltaTime * 0.0093);
+              updatedNPC.needs.energy = Math.max(0, updatedNPC.needs.energy - adjustedDeltaTime * 0.0185);
+              updatedNPC.needs.satisfaction = Math.max(0, updatedNPC.needs.satisfaction - adjustedDeltaTime * 0.0093);
 
               // Verificar se já chegou ao destino (tolerância de 0.15 para melhor detecção)
               if (distance < 0.15) {
@@ -548,11 +557,11 @@ export const useNpcStore = create<NPCState>()(
           case "working":
             if (npc.targetBuildingId) {
               // Progresso do trabalho
-              updatedNPC.workProgress += deltaTime * 0.2; // 5 segundos para completar
+              updatedNPC.workProgress += adjustedDeltaTime * 0.2; // 5 segundos para completar
 
               // Reduz estamina e satisfação durante o trabalho (consumo para 90 minutos)
-              updatedNPC.needs.energy = Math.max(0, updatedNPC.needs.energy - deltaTime * 0.0185); // 0.0185 pontos por segundo (90 min)
-              updatedNPC.needs.satisfaction = Math.max(0, updatedNPC.needs.satisfaction - deltaTime * 0.0093); // 0.0093 pontos por segundo (90 min)
+              updatedNPC.needs.energy = Math.max(0, updatedNPC.needs.energy - adjustedDeltaTime * 0.0185); // 0.0185 pontos por segundo (90 min)
+              updatedNPC.needs.satisfaction = Math.max(0, updatedNPC.needs.satisfaction - adjustedDeltaTime * 0.0093); // 0.0093 pontos por segundo (90 min)
 
               if (updatedNPC.workProgress >= 1) {
                 // Trabalho concluído - aumenta a produção do edifício
@@ -627,11 +636,11 @@ export const useNpcStore = create<NPCState>()(
               }
 
               // Progresso da coleta - 1.5 segundos para coletar (mais rápido)
-              updatedNPC.workProgress += deltaTime * 0.67;
+              updatedNPC.workProgress += adjustedDeltaTime * 0.67;
 
               // Reduz estamina e satisfação durante a coleta (ajustado para 90 minutos)
-              updatedNPC.needs.energy = Math.max(0, updatedNPC.needs.energy - deltaTime * 0.0185);
-              updatedNPC.needs.satisfaction = Math.max(0, updatedNPC.needs.satisfaction - deltaTime * 0.0093);
+              updatedNPC.needs.energy = Math.max(0, updatedNPC.needs.energy - adjustedDeltaTime * 0.0185);
+              updatedNPC.needs.satisfaction = Math.max(0, updatedNPC.needs.satisfaction - adjustedDeltaTime * 0.0093);
 
               if (updatedNPC.workProgress >= 1) {
                 // Coletar recurso
@@ -674,8 +683,8 @@ export const useNpcStore = create<NPCState>()(
 
           case "resting":
             // Regenera energia e satisfação quando em casa
-            updatedNPC.needs.energy = Math.min(100, updatedNPC.needs.energy + deltaTime * 15); // 15 pontos por segundo
-            updatedNPC.needs.satisfaction = Math.min(100, updatedNPC.needs.satisfaction + deltaTime * 10); // 10 pontos por segundo
+            updatedNPC.needs.energy = Math.min(100, updatedNPC.needs.energy + adjustedDeltaTime * 15); // 15 pontos por segundo
+            updatedNPC.needs.satisfaction = Math.min(100, updatedNPC.needs.satisfaction + adjustedDeltaTime * 10); // 10 pontos por segundo
 
             // Descansa até recuperar energia suficiente
             if (updatedNPC.needs.energy >= 80 && updatedNPC.needs.satisfaction >= 60) {

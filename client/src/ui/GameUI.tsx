@@ -1,12 +1,16 @@
 import { useEffect, useState } from "react";
-import { useAudio } from "../lib/stores/useAudio";
-import { useGameStore } from "../game/stores/useGameStore";
+import { useGameStore, Controls } from "../game/stores/useGameStore";
+import { useResourceStore } from "../game/stores/useResourceStore";
+import { useBuildingStore } from "../game/stores/useBuildingStore";
 import { useNpcStore } from "../game/stores/useNpcStore";
-import BuildingPanel from "./BuildingPanel";
-import ResourcePanel from "./ResourcePanel";
-import NpcPanel from "./NpcPanel";
-import { NPC } from "../game/stores/useNpcStore";
+import { useAudio } from "../lib/stores/useAudio";
 import { Building } from "../game/stores/useBuildingStore";
+import ResourcePanel from "./ResourcePanel";
+import BuildingPanel from "./BuildingPanel";
+import NpcPanel from "./NpcPanel";
+import { useKeyboardControls } from "@react-three/drei";
+import { useEffect, useRef } from "react";
+import { NPC } from "../game/stores/useNpcStore";
 import { useIsMobile } from "../hooks/use-is-mobile";
 const GameUI = () => {
   const { backgroundMusic, toggleMute, isMuted } = useAudio();

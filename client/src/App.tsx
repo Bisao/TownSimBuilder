@@ -22,16 +22,19 @@ function App() {
 
   // Define keyboard controls mapping
   const keyboardMap = [
-    { name: Controls.forward, keys: ["KeyW", "ArrowUp"] },
-    { name: Controls.backward, keys: ["KeyS", "ArrowDown"] },
-    { name: Controls.leftward, keys: ["KeyA", "ArrowLeft"] },
-    { name: Controls.rightward, keys: ["KeyD", "ArrowRight"] },
-    { name: Controls.zoomIn, keys: ["Equal", "NumpadAdd", "BracketRight"] },
-    { name: Controls.zoomOut, keys: ["Minus", "NumpadSubtract", "BracketLeft"] },
+    { name: Controls.forward, keys: ["ArrowUp", "KeyW"] },
+    { name: Controls.backward, keys: ["ArrowDown", "KeyS"] },
+    { name: Controls.leftward, keys: ["ArrowLeft", "KeyA"] },
+    { name: Controls.rightward, keys: ["ArrowRight", "KeyD"] },
+    { name: Controls.zoomIn, keys: ["Equal", "NumpadAdd"] },
+    { name: Controls.zoomOut, keys: ["Minus", "NumpadSubtract"] },
     { name: Controls.rotateCW, keys: ["KeyE"] },
     { name: Controls.rotateCCW, keys: ["KeyQ"] },
     { name: Controls.place, keys: ["Space"] },
     { name: Controls.cancel, keys: ["Escape"] },
+    { name: Controls.pauseTime, keys: ["KeyP"] },
+    { name: Controls.increaseTimeSpeed, keys: ["BracketRight"] },
+    { name: Controls.decreaseTimeSpeed, keys: ["BracketLeft"] },
   ];
 
   // Load audio assets
