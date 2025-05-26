@@ -80,10 +80,27 @@ const Npc = ({ npc }: NpcProps) => {
         rightArmRef.current.rotation.x = Math.sin(time * 5) * 0.5;
       }
     } else if (npc.state === "working" || npc.state === "gathering") {
-      // Animação de trabalho
+      // Animação de trabalho específica para cada profissão
       if (leftArmRef.current && rightArmRef.current) {
-        leftArmRef.current.rotation.x = Math.sin(time * 3) * 0.3;
-        rightArmRef.current.rotation.x = Math.sin(time * 3) * 0.3;
+        if (npc.type === "miner") {
+          // Movimento de picareta - mais vigoroso
+          leftArmRef.current.rotation.x = Math.sin(time * 4) * 0.6;
+          rightArmRef.current.rotation.x = Math.sin(time * 4) * 0.8 + 0.3;
+          rightArmRef.current.rotation.z = Math.sin(time * 4) * 0.2;
+        } else if (npc.type === "lumberjack") {
+          // Movimento de machado - alternado
+          leftArmRef.current.rotation.x = Math.sin(time * 2.5) * 0.7;
+          rightArmRef.current.rotation.x = Math.sin(time * 2.5) * 0.9 + 0.2;
+          rightArmRef.current.rotation.z = Math.sin(time * 2.5) * 0.3;
+        } else if (npc.type === "farmer") {
+          // Movimento de enxada - suave
+          leftArmRef.current.rotation.x = Math.sin(time * 2) * 0.4;
+          rightArmRef.current.rotation.x = Math.sin(time * 2) * 0.5 + 0.2;
+        } else {
+          // Movimento padrão para padeiro
+          leftArmRef.current.rotation.x = Math.sin(time * 3) * 0.3;
+          rightArmRef.current.rotation.x = Math.sin(time * 3) * 0.3;
+        }
       }
       
       // Partículas de trabalho
@@ -120,8 +137,70 @@ const Npc = ({ npc }: NpcProps) => {
         {/* Cabeça */}
         <mesh position={[0, 0.8, 0]}>
           <sphereGeometry args={[0.15, 16, 16]} />
-          <meshStandardMaterial color={npcType.color} />
+          <meshStandardMaterial color="#FDBCB4" />
         </mesh>
+        
+        {/* Chapéus/Capacetes específicos */}
+        {npc.type === "miner" && (
+          <group position={[0, 0.85, 0]}>
+            {/* Capacete de mineração */}
+            <mesh>
+              <sphereGeometry args={[0.17, 16, 8, 0, Math.PI * 2, 0, Math.PI / 2]} />
+              <meshStandardMaterial color="#FFD700" metalness={0.3} roughness={0.7} />
+            </mesh>
+            {/* Lanterna do capacete */}
+            <mesh position={[0, 0, 0.16]}>
+              <cylinderGeometry args={[0.03, 0.04, 0.06, 8]} />
+              <meshStandardMaterial color="#000000" />
+            </mesh>
+            <mesh position={[0, 0, 0.19]}>
+              <sphereGeometry args={[0.02, 8, 8]} />
+              <meshStandardMaterial color="#FFFF00" emissive="#FFFF00" emissiveIntensity={0.3} />
+            </mesh>
+          </group>
+        )}
+        
+        {npc.type === "lumberjack" && (
+          <group position={[0, 0.88, 0]}>
+            {/* Chapéu de lenhador */}
+            <mesh>
+              <cylinderGeometry args={[0.18, 0.18, 0.08, 8]} />
+              <meshStandardMaterial color="#8B0000" />
+            </mesh>
+            <mesh position={[0, 0.06, 0]}>
+              <cylinderGeometry args={[0.12, 0.12, 0.02, 8]} />
+              <meshStandardMaterial color="#8B0000" />
+            </mesh>
+          </group>
+        )}
+        
+        {npc.type === "farmer" && (
+          <group position={[0, 0.88, 0]}>
+            {/* Chapéu de palha */}
+            <mesh>
+              <cylinderGeometry args={[0.22, 0.16, 0.06, 16]} />
+              <meshStandardMaterial color="#DAA520" />
+            </mesh>
+            <mesh position={[0, 0.04, 0]}>
+              <cylinderGeometry args={[0.14, 0.14, 0.08, 16]} />
+              <meshStandardMaterial color="#DAA520" />
+            </mesh>
+          </group>
+        )}
+        
+        {npc.type === "baker" && (
+          <group position={[0, 0.88, 0]}>
+            {/* Touca de cozinheiro */}
+            <mesh>
+              <cylinderGeometry args={[0.16, 0.12, 0.15, 16]} />
+              <meshStandardMaterial color="#FFFFFF" />
+            </mesh>
+            <mesh position={[0, 0.1, 0]}>
+              <torusGeometry args={[0.16, 0.02, 8, 16]} />
+              <meshStandardMaterial color="#FFFFFF" />
+            </mesh>
+          </group>
+        )}
         
         {/* Seta indicadora na cabeça */}
         <group position={[0, 1.1, 0]} rotation={[0, 0, Math.PI]}>
@@ -137,6 +216,80 @@ const Npc = ({ npc }: NpcProps) => {
           <meshStandardMaterial color={npcType.color} />
         </mesh>
         
+        {/* Cinto com ferramentas */}
+        <mesh position={[0, 0.25, 0]}>
+          <boxGeometry args={[0.32, 0.08, 0.22]} />
+          <meshStandardMaterial color="#654321" />
+        </mesh>
+        
+        {/* Fivela do cinto */}
+        <mesh position={[0, 0.25, 0.11]}>
+          <boxGeometry args={[0.06, 0.06, 0.02]} />
+          <meshStandardMaterial color="#C0C0C0" metalness={0.8} roughness={0.2} />
+        </mesh>
+        
+        {/* Detalhes específicos no cinto */}
+        {npc.type === "miner" && (
+          <group>
+            {/* Martelo pequeno no cinto */}
+            <mesh position={[0.12, 0.25, 0]}>
+              <cylinderGeometry args={[0.01, 0.01, 0.15, 8]} />
+              <meshStandardMaterial color="#8B4513" />
+            </mesh>
+            <mesh position={[0.12, 0.32, 0]} rotation={[0, 0, Math.PI / 2]}>
+              <boxGeometry args={[0.08, 0.02, 0.02]} />
+              <meshStandardMaterial color="#A0A0A0" />
+            </mesh>
+          </group>
+        )}
+        
+        {npc.type === "lumberjack" && (
+          <group>
+            {/* Machado pequeno no cinto */}
+            <mesh position={[-0.12, 0.25, 0]}>
+              <cylinderGeometry args={[0.01, 0.01, 0.12, 8]} />
+              <meshStandardMaterial color="#654321" />
+            </mesh>
+            <mesh position={[-0.12, 0.31, 0]} rotation={[0, 0, Math.PI / 2]}>
+              <cylinderGeometry args={[0.04, 0.02, 0.02, 8]} />
+              <meshStandardMaterial color="#A0A0A0" />
+            </mesh>
+          </group>
+        )}
+        
+        {npc.type === "farmer" && (
+          <group>
+            {/* Sementes no cinto */}
+            <mesh position={[0.1, 0.25, 0]}>
+              <sphereGeometry args={[0.03, 8, 8]} />
+              <meshStandardMaterial color="#8B4513" />
+            </mesh>
+            <mesh position={[-0.1, 0.25, 0]}>
+              <sphereGeometry args={[0.03, 8, 8]} />
+              <meshStandardMaterial color="#228B22" />
+            </mesh>
+          </group>
+        )}
+        
+        {npc.type === "baker" && (
+          <group>
+            {/* Avental */}
+            <mesh position={[0, 0.4, 0.11]}>
+              <boxGeometry args={[0.28, 0.4, 0.02]} />
+              <meshStandardMaterial color="#FFFFFF" />
+            </mesh>
+            {/* Laços do avental */}
+            <mesh position={[0.14, 0.5, 0.05]} rotation={[0, 0, Math.PI / 4]}>
+              <boxGeometry args={[0.15, 0.02, 0.02]} />
+              <meshStandardMaterial color="#FFFFFF" />
+            </mesh>
+            <mesh position={[-0.14, 0.5, 0.05]} rotation={[0, 0, -Math.PI / 4]}>
+              <boxGeometry args={[0.15, 0.02, 0.02]} />
+              <meshStandardMaterial color="#FFFFFF" />
+            </mesh>
+          </group>
+        )}
+        
         {/* Braço Esquerdo */}
         <mesh ref={leftArmRef} position={[-0.2, 0.5, 0]}>
           <boxGeometry args={[0.1, 0.4, 0.1]} />
@@ -147,6 +300,72 @@ const Npc = ({ npc }: NpcProps) => {
         <mesh ref={rightArmRef} position={[0.2, 0.5, 0]}>
           <boxGeometry args={[0.1, 0.4, 0.1]} />
           <meshStandardMaterial color={npcType.color} />
+          
+          {/* Ferramentas específicas para cada profissão */}
+          {npc.type === "miner" && (
+            <group position={[0, -0.3, 0]} rotation={[0.3, 0, 0]}>
+              {/* Cabo da picareta */}
+              <mesh position={[0, 0, 0]}>
+                <cylinderGeometry args={[0.02, 0.02, 0.6, 8]} />
+                <meshStandardMaterial color="#8B4513" />
+              </mesh>
+              {/* Cabeça da picareta */}
+              <mesh position={[0, 0.3, 0]} rotation={[0, 0, Math.PI / 2]}>
+                <boxGeometry args={[0.3, 0.08, 0.08]} />
+                <meshStandardMaterial color="#C0C0C0" metalness={0.8} roughness={0.2} />
+              </mesh>
+              {/* Ponta afiada */}
+              <mesh position={[0.15, 0.3, 0]} rotation={[0, 0, Math.PI / 4]}>
+                <coneGeometry args={[0.04, 0.1, 4]} />
+                <meshStandardMaterial color="#C0C0C0" metalness={0.8} roughness={0.2} />
+              </mesh>
+            </group>
+          )}
+          
+          {npc.type === "lumberjack" && (
+            <group position={[0, -0.3, 0]} rotation={[0.2, 0, 0]}>
+              {/* Cabo do machado */}
+              <mesh position={[0, 0, 0]}>
+                <cylinderGeometry args={[0.03, 0.03, 0.7, 8]} />
+                <meshStandardMaterial color="#654321" />
+              </mesh>
+              {/* Lâmina do machado */}
+              <mesh position={[0, 0.35, 0]} rotation={[0, 0, Math.PI / 2]}>
+                <cylinderGeometry args={[0.15, 0.05, 0.05, 8]} />
+                <meshStandardMaterial color="#A0A0A0" metalness={0.7} roughness={0.3} />
+              </mesh>
+            </group>
+          )}
+          
+          {npc.type === "farmer" && (
+            <group position={[0, -0.3, 0]} rotation={[0.4, 0, 0]}>
+              {/* Cabo da enxada */}
+              <mesh position={[0, 0, 0]}>
+                <cylinderGeometry args={[0.02, 0.02, 0.6, 8]} />
+                <meshStandardMaterial color="#8B4513" />
+              </mesh>
+              {/* Lâmina da enxada */}
+              <mesh position={[0, 0.3, 0]} rotation={[Math.PI / 2, 0, 0]}>
+                <boxGeometry args={[0.2, 0.05, 0.15]} />
+                <meshStandardMaterial color="#A0A0A0" metalness={0.6} roughness={0.4} />
+              </mesh>
+            </group>
+          )}
+          
+          {npc.type === "baker" && (
+            <group position={[0, -0.25, 0]}>
+              {/* Saco de farinha */}
+              <mesh position={[0, 0, 0]}>
+                <boxGeometry args={[0.12, 0.2, 0.08]} />
+                <meshStandardMaterial color="#F5DEB3" />
+              </mesh>
+              {/* Amarração do saco */}
+              <mesh position={[0, 0.1, 0]}>
+                <torusGeometry args={[0.06, 0.01, 8, 16]} />
+                <meshStandardMaterial color="#8B4513" />
+              </mesh>
+            </group>
+          )}
         </mesh>
         
         {/* Perna Esquerda */}
