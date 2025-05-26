@@ -391,8 +391,8 @@ class NPCStateHandlers {
     const [currentX, , currentZ] = npc.position;
 
     const npcConfig = npcTypes[npc.type];
-    const baseSpeed = npcConfig ? npcConfig.speed : 0.5;
-    const moveSpeed = baseSpeed * adjustedDeltaTime * 4;
+    const baseSpeed = npcConfig ? npcConfig.speed : 0.15;
+    const moveSpeed = baseSpeed * adjustedDeltaTime * 8;
 
     const dx = targetX - currentX;
     const dz = targetZ - currentZ;

@@ -15,7 +15,7 @@ export const npcTypes: Record<string, NPCType> = {
     name: "Fazendeiro",
     profession: "Agricultura",
     description: "Trabalha em fazendas para aumentar a produção de trigo",
-    speed: 0.5,
+    speed: 0.15,
     workRadius: 10,
     color: "#006400", // Verde escuro
   },
@@ -24,7 +24,7 @@ export const npcTypes: Record<string, NPCType> = {
     name: "Lenhador",
     profession: "Extração",
     description: "Trabalha em serrarias para aumentar a produção de madeira",
-    speed: 0.4,
+    speed: 0.12,
     workRadius: 8,
     color: "#8B4513", // Marrom
   },
@@ -33,7 +33,7 @@ export const npcTypes: Record<string, NPCType> = {
     name: "Padeiro",
     profession: "Produção",
     description: "Trabalha em padarias para aumentar a produção de pão",
-    speed: 0.3,
+    speed: 0.10,
     workRadius: 5,
     color: "#D2691E", // Marrom claro
   },
@@ -42,7 +42,7 @@ export const npcTypes: Record<string, NPCType> = {
     name: "Minerador",
     profession: "Extração",
     description: "Trabalha em minas para aumentar a produção de pedra",
-    speed: 0.35,
+    speed: 0.11,
     workRadius: 7,
     color: "#708090", // Cinza
   },
