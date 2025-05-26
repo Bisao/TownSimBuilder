@@ -1,0 +1,44 @@
+useMemo is not defined
+useMemo is not defined
+The above error occurred in the <Building> component:
+
+    at Building (https://89ab168e-9ed6-4470-8869-c0b42e9b2c53-00-2t8bc5fslyon2.kirk.replit.dev/src/game/components/Building.tsx:27:21)
+    at World (https://89ab168e-9ed6-4470-8869-c0b42e9b2c53-00-2t8bc5fslyon2.kirk.replit.dev/src/game/components/World.tsx:33:18)
+    at Suspense
+    at Suspense
+    at ErrorBoundary (https://89ab168e-9ed6-4470-8869-c0b42e9b2c53-00-2t8bc5fslyon2.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-A3GN3WMN.js?v=cc8441ba:16490:5)
+    at FiberProvider (https://89ab168e-9ed6-4470-8869-c0b42e9b2c53-00-2t8bc5fslyon2.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-A3GN3WMN.js?v=cc8441ba:18170:21)
+    at Provider (https://89ab168e-9ed6-4470-8869-c0b42e9b2c53-00-2t8bc5fslyon2.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-A3GN3WMN.js?v=cc8441ba:17779:3)
+
+React will try to recreate this component tree from scratch using the error boundary you provided, ErrorBoundary.
+useMemo is not defined
+useMemo is not defined
+The above error occurred in the <ForwardRef(Canvas)> component:
+
+    at Canvas (https://89ab168e-9ed6-4470-8869-c0b42e9b2c53-00-2t8bc5fslyon2.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-A3GN3WMN.js?v=cc8441ba:18236:3)
+    at FiberProvider (https://89ab168e-9ed6-4470-8869-c0b42e9b2c53-00-2t8bc5fslyon2.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-A3GN3WMN.js?v=cc8441ba:18170:21)
+    at CanvasWrapper
+    at KeyboardControls (https://89ab168e-9ed6-4470-8869-c0b42e9b2c53-00-2t8bc5fslyon2.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@react-three_drei.js?v=cc8441ba:9151:8)
+    at div
+    at App (https://89ab168e-9ed6-4470-8869-c0b42e9b2c53-00-2t8bc5fslyon2.kirk.replit.dev/src/App.tsx?v=jgDwQJfTqChnHh4XUKb2z:29:39)
+    at QueryClientProvider (https://89ab168e-9ed6-4470-8869-c0b42e9b2c53-00-2t8bc5fslyon2.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=cc8441ba:2805:3)
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+
+at Canvas (https://89ab168e-9ed6-4470-8869-c0b42e9b2c53-00-2t8bc5fslyon2.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-A3GN3WMN.js?v=cc8441ba:18236:3)
+at FiberProvider (https://89ab168e-9ed6-4470-8869-c0b42e9b2c53-00-2t8bc5fslyon2.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-A3GN3WMN.js?v=cc8441ba:18170:21)
+at CanvasWrapper
+at KeyboardControls (https://89ab168e-9ed6-4470-8869-c0b42e9b2c53-00-2t8bc5fslyon2.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@react-three_drei.js?v=cc8441ba:9151:8)
+at div
+at App (https://89ab168e-9ed6-4470-8869-c0b42e9b2c53-00-2t8bc5fslyon2.kirk.replit.dev/src/App.tsx?v=jgDwQJfTqChnHh4XUKb2z:29:39)
+at QueryClientProvider (https://89ab168e-9ed6-4470-8869-c0b42e9b2c53-00-2t8bc5fslyon2.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=cc8441ba:2805:3)
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+at t.value (https://89ab168e-9ed6-4470-8869-c0b42e9b2c53-00-2t8bc5fslyon2.kirk.replit.dev/__replco/static/devtools/eruda/3.2.3/eruda.js:2:17465)
+at new t (https://89ab168e-9ed6-4470-8869-c0b42e9b2c53-00-2t8bc5fslyon2.kirk.replit.dev/__replco/static/devtools/eruda/3.2.3/eruda.js:2:12630)
+at t.value (https://89ab168e-9ed6-4470-8869-c0b42e9b2c53-00-2t8bc5fslyon2.kirk.replit.dev/__replco/static/devtools/eruda/3.2.3/eruda.js:2:32766)
+at https://89ab168e-9ed6-4470-8869-c0b42e9b2c53-00-2t8bc5fslyon2.kirk.replit.dev/__replco/static/devtools/eruda/3.2.3/eruda.js:2:34400
+useMemo is not defined
+THREE.WebGLRenderer: Context Lost.
