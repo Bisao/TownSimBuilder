@@ -88,7 +88,7 @@ export const useGameStore = create<GameState>()(
       // Proporção: 1440/43200 = 0.0333 minutos de jogo por segundo real
 
       // Converter delta (segundos) para fração do ciclo de jogo
-      // Ciclo mais lento: 720 minutos (43200 segundos) para um dia completo
+      // Ciclo de 720 minutos (43200 segundos) para um dia completo
       const cyclePerSecond = 1 / 43200; // 720 minutos por ciclo completo
       const newTimeCycle = (state.timeCycle + delta * cyclePerSecond) % 1;
 

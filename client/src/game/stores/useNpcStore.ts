@@ -16,6 +16,8 @@ interface NPCMemory {
   failedAttempts: number;
 }
 
+export type NPCSchedule = "home" | "working" | "lunch" | "traveling";
+
 // Funções auxiliares para IA
 function findUnexploredArea(visitedPositions: Array<[number, number]>): [number, number] {
   const gridSize = 40;
@@ -66,6 +68,8 @@ function calculatePathRisk(start: [number, number], end: [number, number], npcs:
   };
   needs: NPCNeeds;
   memory: NPCMemory;
+  currentSchedule: NPCSchedule;
+  name: string;
 }
 
 interface NPCState {
@@ -89,6 +93,18 @@ function findNearestResource(position: [number, number, number], resourceType: s
   }
   return null;
 }
+
+// Helper function to check if NPC should be working
+const shouldBeWorking = (timeOfDay: TimeOfDay, timeCycle: number): boolean => {
+  const hours = timeCycle * 24;
+
+  // Ciclo de trabalho:
+  // 6h-12h: trabalhar (manhã)
+  // 12h-13h: almoço em casa
+  // 13h-18h: trabalhar (tarde)
+  // 18h-6h: em casa
+  return (hours >= 6 && hours < 12) || (hours >= 13 && hours < 18);
+};
 
 export const useNpcStore = create<NPCState>()(
   subscribeWithSelector((set, get) => ({
@@ -120,7 +136,9 @@ export const useNpcStore = create<NPCState>()(
           lastVisitedPositions: [],
           knownResources: [],
           failedAttempts: 0
-        }
+        },
+        currentSchedule: "home",
+        name: `NPC ${get().npcIdCounter}`
       };
 
       set((state) => ({
@@ -138,7 +156,7 @@ export const useNpcStore = create<NPCState>()(
       }));
     },
 
-    updateNPCs: (deltaTime) => {
+    updateNPCs: (deltaTime: number) => {
       const buildings = useBuildingStore.getState().buildings;
       const updatedNPCs: NPC[] = [];
 
@@ -221,7 +239,7 @@ export const useNpcStore = create<NPCState>()(
                     updatedNPC.targetPosition = [bestResource.position[0], 0, bestResource.position[1]];
                     updatedNPC.targetBuildingId = null;
                     updatedNPC.state = "moving";
-                    
+
                     const distance = Math.hypot(
                       bestResource.position[0] - npc.position[0],
                       bestResource.position[1] - npc.position[2]
@@ -464,7 +482,7 @@ export const useNpcStore = create<NPCState>()(
                     // Depositar recursos no silo
                     const depositedAmount = updatedNPC.inventory.amount;
                     const depositedType = updatedNPC.inventory.type;
-                    
+
                     // Importar dinamicamente o store para evitar dependência circular
                     import('./useResourceStore').then(({ useResourceStore }) => {
                       const resourceStore = useResourceStore.getState();
@@ -500,7 +518,7 @@ export const useNpcStore = create<NPCState>()(
                     Math.abs(b.position[0] - targetX) < 1.0 && 
                     Math.abs(b.position[1] - targetZ) < 1.0
                   );
-                  
+
                   if (home && (updatedNPC.needs.energy < 80 || updatedNPC.needs.satisfaction < 60)) {
                     updatedNPC.state = "resting";
                     console.log(`NPC ${npc.type} chegou em casa e começou a descansar`);
@@ -722,12 +740,7 @@ export const useNpcStore = create<NPCState>()(
         return distance <= npcType.workRadius;
       });
 
-      // Escolher o mais próximo ou aleatório
-      if (possibleWorkplaces.length > 0) {
-        return possibleWorkplaces[0].id;
-      }
-
-      return null;
+      return possibleWorkplaces.length > 0 ? possibleWorkplaces[0].id : null;
     },
   }))
 );
