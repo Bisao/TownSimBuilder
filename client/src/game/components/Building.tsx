@@ -4,6 +4,8 @@ import { buildingTypes } from "../constants/buildings";
 import { Building as BuildingType } from "../stores/useBuildingStore";
 import * as THREE from "three";
 import { useTexture } from "@react-three/drei";
+import { Html } from "@react-three/drei";
+import useNpcStore from "../stores/useNpcStore";
 
 interface BuildingProps {
   building: BuildingType;
@@ -16,8 +18,18 @@ const Building = ({ building, onClick }: BuildingProps) => {
   const [hovered, setHovered] = useState(false);
   const { camera } = useThree();
 
+  // Move hook to component level
+  const npcs = useNpcStore(state => state.npcs);
+
   // Get building type definition
   const buildingType = buildingTypes[building.type];
+
+  // Memoize house NPCs to prevent unnecessary recalculations
+  const houseNpcs = useMemo(() => {
+    if (!building.type.includes("House")) return [];
+    return npcs.filter(npc => npc.homeId === building.id);
+  }, [npcs, building.id, building.type]);
+
   if (!buildingType) return null;
 
   // Load texture
@@ -86,7 +98,7 @@ const Building = ({ building, onClick }: BuildingProps) => {
       onClick(building);
     } else if (building.type.includes("House")) {
       // Encontrar o NPC associado a esta casa
-      const npc = window.dispatchEvent(new CustomEvent('npcHouseClick', { detail: building }));
+      window.dispatchEvent(new CustomEvent('npcHouseClick', { detail: building }));
     }
   };
 
@@ -111,6 +123,35 @@ const Building = ({ building, onClick }: BuildingProps) => {
         color={buildingType.model.color}
         emissive={hovered ? new THREE.Color(0x555555) : undefined}
       />
+      {/* Ícones de status dos NPCs para casas */}
+      {building.type.includes("House") && (
+        <group position={[0, buildingType.height + 0.3, 0]}>
+          {houseNpcs.map((npc, index) => {
+              return (
+                <Html
+                  key={npc.id}
+                  position={[
+                    -0.4 + (index * 0.4),
+                    0,
+                    0
+                  ]}
+                  occlude
+                >
+                  <div
+                    style={{
+                      width: '1rem',
+                      height: '1rem',
+                      borderRadius: '50%',
+                      backgroundColor: npc.isSleeping ? 'lightblue' : 'lightgreen',
+                      border: '1px solid black'
+                    }}
+                    title={npc.name + (npc.isSleeping ? ' (Dormindo)' : ' (Ativo)')}
+                  />
+                </Html>
+              );
+            })}
+        </group>
+      )}
     </mesh>
   );
 };

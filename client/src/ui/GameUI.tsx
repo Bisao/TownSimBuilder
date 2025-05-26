@@ -131,36 +131,21 @@ const GameUI = () => {
         </div>
         
         {/* Time control buttons */}
-        <div className="bg-black/80 rounded-lg p-2 text-white flex flex-col gap-1">
-          <button
-            onClick={() => {
-              const gameStore = useGameStore.getState();
-              if (isPaused) {
-                gameStore.resumeTime();
-              } else {
-                gameStore.pauseTime();
-              }
-            }}
-            className="bg-white/20 hover:bg-white/30 px-2 py-1 rounded text-sm transition-colors"
-            title={isPaused ? "Continuar (P)" : "Pausar (P)"}
-          >
-            P: {isPaused ? "▶️" : "⏸️"}
-          </button>
-          
+        <div className="bg-black/80 rounded-lg p-2 text-white flex gap-1">
           <button
             onClick={() => useGameStore.getState().decreaseTimeSpeed()}
-            className="bg-white/20 hover:bg-white/30 px-2 py-1 rounded text-sm transition-colors"
+            className="bg-blue-500 hover:bg-blue-600 px-2 py-1 rounded text-sm transition-colors"
             title="Diminuir velocidade ([)"
           >
-            [: {timeSpeed}x ⬇️
+            ⬇️
           </button>
           
           <button
             onClick={() => useGameStore.getState().increaseTimeSpeed()}
-            className="bg-white/20 hover:bg-white/30 px-2 py-1 rounded text-sm transition-colors"
+            className="bg-blue-500 hover:bg-blue-600 px-2 py-1 rounded text-sm transition-colors"
             title="Aumentar velocidade (])"
           >
-            ]: {timeSpeed}x ⬆️
+            ⬆️
           </button>
         </div>
       </div>
