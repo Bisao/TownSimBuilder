@@ -275,10 +275,13 @@ class NPCStateHandlers {
   static handleIdleState(npc: NPC, currentSchedule: NPCSchedule, buildings: any[], npcs: NPC[], reservations: ResourceReservation[]): Partial<NPC> {
     const updates: Partial<NPC> = {};
 
+    console.log(`NPC ${npc.type} em estado idle, verificando ações possíveis - horário: ${currentSchedule}`);
+
     // Verificar se deve ir para casa
     if (NPCUtils.shouldReturnHome(npc, currentSchedule)) {
       const home = buildings.find(b => b.id === npc.homeId);
       if (home) {
+        console.log(`NPC ${npc.type} está cansado e voltando para casa`);
         updates.targetPosition = [home.position[0], 0, home.position[1]];
         updates.targetBuildingId = null;
         updates.targetResource = null;
@@ -290,8 +293,10 @@ class NPCStateHandlers {
     const hasSpaceInInventory = npc.inventory.amount < CONSTANTS.MAX_INVENTORY;
 
     if (hasSpaceInInventory) {
+      console.log(`NPC ${npc.type} inventário disponível (${npc.inventory.amount}/${CONSTANTS.MAX_INVENTORY}), procurando recursos`);
       return NPCStateHandlers.handleResourceGathering(npc, npcs, reservations, buildings);
     } else {
+      console.log(`NPC ${npc.type} inventário cheio (${npc.inventory.amount}/${CONSTANTS.MAX_INVENTORY}), procurando silo`);
       return NPCStateHandlers.handleInventoryFull(npc, buildings, npcs);
     }
   }
@@ -455,9 +460,13 @@ class NPCStateHandlers {
   }
 
   static handleGatheringState(npc: NPC, adjustedDeltaTime: number): Partial<NPC> {
-    if (!npc.targetResource) return { state: "idle" };
+    if (!npc.targetResource) {
+      console.log(`NPC ${npc.type} sem recurso alvo, voltando para idle`);
+      return { state: "idle" };
+    }
 
     if (npc.inventory.amount >= CONSTANTS.MAX_INVENTORY) {
+      console.log(`NPC ${npc.type} inventário cheio durante coleta, voltando para idle`);
       return {
         targetResource: null,
         workProgress: 0,
@@ -465,18 +474,20 @@ class NPCStateHandlers {
       };
     }
 
+    const currentTime = Date.now();
     const resourceExists = window.naturalResources?.find(r => 
       r.position[0] === npc.targetResource!.position[0] &&
       r.position[1] === npc.targetResource!.position[1] &&
       r.type === npc.targetResource!.type &&
-      !r.lastCollected
+      (!r.lastCollected || (currentTime - r.lastCollected) > 300000) // 5 minutos
     );
 
     if (!resourceExists) {
+      console.log(`NPC ${npc.type} recurso não existe mais ou não disponível, procurando novo`);
       return {
         targetResource: null,
         workProgress: 0,
-        state: "idle"
+        state: "searching"
       };
     }
 
@@ -486,10 +497,16 @@ class NPCStateHandlers {
     );
 
     if (distanceToResource > CONSTANTS.RESOURCE_PROXIMITY) {
+      console.log(`NPC ${npc.type} muito longe do recurso (${distanceToResource.toFixed(2)}), movendo`);
       return {
         targetPosition: [npc.targetResource.position[0], 0, npc.targetResource.position[1]],
         state: "moving"
       };
+    }
+
+    // Primeira vez chegando ao recurso
+    if (npc.workProgress === 0) {
+      console.log(`NPC ${npc.type} começando a coletar recurso`);
     }
 
     const newWorkProgress = npc.workProgress + adjustedDeltaTime * CONSTANTS.GATHERING_SPEED;
@@ -609,9 +626,10 @@ class NPCStateHandlers {
     const resourceType = npc.type === "miner" ? "stone" : npc.type === "lumberjack" ? "wood" : null;
 
     if (resourceType && window.naturalResources) {
+      const currentTime = Date.now();
       const availableResources = window.naturalResources.filter(r => {
         const isCorrectType = r.type === resourceType;
-        const isNotCollected = !r.lastCollected;
+        const isNotCollected = !r.lastCollected || (currentTime - r.lastCollected) > 300000; // 5 minutos
         return isCorrectType && isNotCollected;
       });
 
@@ -630,14 +648,20 @@ class NPCStateHandlers {
           }
         }
 
+        console.log(`NPC ${npc.type} found resource ${nearest.type} at [${nearest.position[0]}, ${nearest.position[1]}] - distance: ${minDist.toFixed(2)}`);
+
         return {
           targetResource: nearest,
           targetPosition: [nearest.position[0], 0, nearest.position[1]],
           state: "moving"
         };
       } else {
+        // Se não há recursos disponíveis, explorar área aleatória
         const newX = Math.floor(Math.random() * 40);
         const newZ = Math.floor(Math.random() * 40);
+        
+        console.log(`NPC ${npc.type} no resources available, exploring [${newX}, ${newZ}]`);
+        
         return {
           targetPosition: [newX, 0, newZ],
           state: "moving"
@@ -645,6 +669,8 @@ class NPCStateHandlers {
       }
     }
 
+    // Se não há tipo de recurso válido, voltar para idle
+    console.log(`NPC ${npc.type} invalid resource type, returning to idle`);
     return { state: "idle" };
   }
 }
