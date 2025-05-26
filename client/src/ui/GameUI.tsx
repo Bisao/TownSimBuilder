@@ -70,7 +70,7 @@ const GameUI = () => {
 
   // Play background music
   useEffect(() => {
-    if (backgroundMusic) {
+    if (backgroundMusic && !isMuted) {
       backgroundMusic.play().catch((error) => {
         console.log("Background music autoplay prevented:", error);
       });
@@ -81,7 +81,7 @@ const GameUI = () => {
         backgroundMusic.pause();
       }
     };
-  }, [backgroundMusic]);
+  }, [backgroundMusic, isMuted]);
 
   // Convert time of day to formatted time
   const getTimeString = () => {
