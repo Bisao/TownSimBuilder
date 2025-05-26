@@ -65,6 +65,7 @@ export interface NPC {
     currentTask: "waiting" | "getting_seeds" | "planting" | "harvesting" | "delivering";
     targetFarmId: string | null;
     targetSiloId: string | null;
+    selectedSeed: string | null;
   };
 }
 
@@ -506,18 +507,20 @@ class NPCStateHandlers {
     if (!npc.farmerData) return { ...updates, state: "idle" };
 
     if (npc.farmerData.currentTask === "getting_seeds") {
-      // Pegar sementes do silo (simulado - depois implementaremos o storage do silo)
+      const selectedSeed = npc.farmerData.selectedSeed || "seeds";
+      
+      // Pegar sementes do silo
       import('./useResourceStore').then(({ useResourceStore }) => {
         const resourceStore = useResourceStore.getState();
-        if (resourceStore.resources.seeds >= 1) {
-          resourceStore.updateResource("seeds", -1);
+        if (resourceStore.resources[selectedSeed] >= 1) {
+          resourceStore.updateResource(selectedSeed, -1);
         }
       });
 
-      console.log(`Fazendeiro pegou sementes do silo`);
+      console.log(`Fazendeiro pegou ${selectedSeed} do silo`);
       return {
         ...updates,
-        inventory: { type: "seeds", amount: 1 },
+        inventory: { type: selectedSeed, amount: 1 },
         targetBuildingId: null,
         state: "idle",
         farmerData: {
@@ -933,13 +936,15 @@ class NPCStateHandlers {
         farmerData: {
           currentTask: "waiting",
           targetFarmId: null,
-          targetSiloId: null
+          targetSiloId: null,
+          selectedSeed: null
         }
       };
     }
 
-    // Verificar se tem sementes no inventário
-    const hasSeeds = npc.inventory.type === "seeds" && npc.inventory.amount > 0;
+    // Verificar se tem sementes no inventário (da semente selecionada)
+    const selectedSeed = npc.farmerData.selectedSeed || "seeds";
+    const hasSeeds = npc.inventory.type === selectedSeed && npc.inventory.amount > 0;
     
     // Verificar se tem trigo no inventário
     const hasWheat = npc.inventory.type === "wheat" && npc.inventory.amount > 0;
@@ -994,10 +999,26 @@ class NPCStateHandlers {
           }
         };
       } else {
+        // Verificar se há semente selecionada
+        const selectedSeed = npc.farmerData.selectedSeed;
+        if (!selectedSeed) {
+          console.log(`Fazendeiro aguardando seleção de semente`);
+          return { state: "resting" };
+        }
+
+        // Verificar se há sementes disponíveis no silo
+        import('./useResourceStore').then(({ useResourceStore }) => {
+          const resourceStore = useResourceStore.getState();
+          if (resourceStore.resources[selectedSeed] < 1) {
+            console.log(`Fazendeiro aguardando: sem ${selectedSeed} disponível`);
+            return { state: "resting" };
+          }
+        });
+
         // Ir buscar sementes no silo
         const nearestSilo = NPCUtils.findBestSilo(npc, buildings, []);
         if (nearestSilo) {
-          console.log(`Fazendeiro indo buscar sementes no silo`);
+          console.log(`Fazendeiro indo buscar ${selectedSeed} no silo`);
           return {
             targetPosition: [nearestSilo.position[0] + 0.5, 0, nearestSilo.position[1] + 0.5],
             targetBuildingId: nearestSilo.id,
@@ -1066,7 +1087,8 @@ export const useNpcStore = create<NPCStoreState>()(
           farmerData: {
             currentTask: "waiting",
             targetFarmId: null,
-            targetSiloId: null
+            targetSiloId: null,
+            selectedSeed: null
           }
         })
       };

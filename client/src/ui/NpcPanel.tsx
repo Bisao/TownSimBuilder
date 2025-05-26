@@ -1,8 +1,9 @@
-import React from "react";
+import React, { useState } from "react";
 import { NPC, useNpcStore } from "../game/stores/useNpcStore";
 import { npcTypes } from "../game/constants/npcs";
 import { useBuildingStore } from "../game/stores/useBuildingStore";
 import { useDraggable } from "../hooks/useDraggable";
+import SeedSelectionPanel from "./SeedSelectionPanel";
 
 interface NpcPanelProps {
   npc: NPC | null;
@@ -10,6 +11,8 @@ interface NpcPanelProps {
 }
 
 const NpcPanel = ({ npc, onClose }: NpcPanelProps) => {
+  const [showSeedSelection, setShowSeedSelection] = useState(false);
+  
   if (!npc) return null;
 
   // Inicia ciclo de trabalho automaticamente se estiver idle
@@ -265,34 +268,65 @@ const NpcPanel = ({ npc, onClose }: NpcPanelProps) => {
               </button>
             )}
             {npc.type === "farmer" && (
-              <button
-                onClick={() => {
-                  const updatedNpc = {
-                    ...npc,
-                    state: npc.state === "idle" ? "working" : "idle",
-                    workProgress: 0,
-                    targetResource: null,
-                    targetPosition: null,
-                    needs: {
-                      ...npc.needs,
-                      energy: Math.max(npc.needs.energy, 50),
-                      satisfaction: Math.max(npc.needs.satisfaction, 50)
+              <div className="space-y-3">
+                {npc.farmerData?.selectedSeed && (
+                  <div className="p-3 bg-yellow-50 rounded-lg border border-yellow-200">
+                    <div className="flex items-center gap-2">
+                      <span className="text-yellow-600">🌱</span>
+                      <span className="text-sm font-medium">
+                        Semente selecionada: {npc.farmerData.selectedSeed}
+                      </span>
+                    </div>
+                  </div>
+                )}
+                
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setShowSeedSelection(true);
+                  }}
+                  className="w-full px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg font-medium transition-colors"
+                >
+                  🌱 Selecionar Semente
+                </button>
+                
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    if (!npc.farmerData?.selectedSeed) {
+                      setShowSeedSelection(true);
+                      return;
                     }
-                  };
+                    
+                    const updatedNpc = {
+                      ...npc,
+                      state: npc.state === "idle" ? "idle" : "idle", // Force idle to restart cycle
+                      workProgress: 0,
+                      targetResource: null,
+                      targetPosition: null,
+                      needs: {
+                        ...npc.needs,
+                        energy: Math.max(npc.needs.energy, 70),
+                        satisfaction: Math.max(npc.needs.satisfaction, 70)
+                      }
+                    };
 
-                  useNpcStore.setState(state => ({
-                    npcs: state.npcs.map(n => n.id === npc.id ? updatedNpc : n)
-                  }));
-                }}
-                className={`w-full px-4 py-2 rounded-lg ${
-                  npc.state === "working" 
-                    ? "bg-gray-200 cursor-not-allowed" 
-                    : "bg-yellow-500 hover:bg-yellow-600"
-                } text-white font-medium transition-colors`}
-                disabled={npc.state === "working"}
-              >
-                {npc.state === "working" ? "Cultivando..." : "Cultivar"}
-              </button>
+                    useNpcStore.setState(state => ({
+                      npcs: state.npcs.map(n => n.id === npc.id ? updatedNpc : n)
+                    }));
+                  }}
+                  className={`w-full px-4 py-2 rounded-lg ${
+                    npc.state === "working" || npc.state === "planting" || npc.state === "harvesting"
+                      ? "bg-gray-200 cursor-not-allowed" 
+                      : "bg-yellow-500 hover:bg-yellow-600"
+                  } text-white font-medium transition-colors`}
+                  disabled={npc.state === "working" || npc.state === "planting" || npc.state === "harvesting"}
+                >
+                  {npc.state === "planting" ? "Plantando..." : 
+                   npc.state === "harvesting" ? "Colhendo..." :
+                   npc.state === "working" ? "Trabalhando..." : "Iniciar Cultivo"}
+                </button>
+              </div>
             )}
             {npc.type === "baker" && (
               <button
@@ -315,6 +349,29 @@ const NpcPanel = ({ npc, onClose }: NpcPanelProps) => {
           </div>
         </div>
       </div>
+      
+      {showSeedSelection && (
+        <SeedSelectionPanel
+          onSeedSelect={(seedType) => {
+            // Atualizar o NPC com a semente selecionada
+            useNpcStore.setState(state => ({
+              npcs: state.npcs.map(n => 
+                n.id === npc.id 
+                  ? {
+                      ...n,
+                      farmerData: {
+                        ...n.farmerData!,
+                        selectedSeed: seedType
+                      }
+                    }
+                  : n
+              )
+            }));
+            setShowSeedSelection(false);
+          }}
+          onClose={() => setShowSeedSelection(false)}
+        />
+      )}
     </div>
   );
 };

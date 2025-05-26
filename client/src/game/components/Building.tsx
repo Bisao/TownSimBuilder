@@ -1,3 +1,4 @@
+import React, { useMemo } from "react";
 import { useRef, useState } from "react";
 import { useFrame } from "@react-three/fiber";
 import { buildingTypes } from "../constants/buildings";
