@@ -9,6 +9,13 @@ export interface Building {
   position: [number, number]; // Grid position
   rotation: number; // In radians
   lastProduced: number; // Timestamp
+  plantation?: {
+    planted: boolean;
+    plantedAt: number;
+    growthTime: number; // em segundos
+    ready: boolean;
+    harvested: boolean;
+  };
 }
 
 interface BuildingState {
@@ -22,6 +29,9 @@ interface BuildingState {
   getOverlappingPositions: (type: string, position: [number, number]) => [number, number][];
   getBuildingAt: (position: [number, number]) => Building | undefined;
   updateProduction: (currentTime: number) => void;
+  plantSeeds: (buildingId: string) => boolean;
+  harvestCrop: (buildingId: string) => boolean;
+  updatePlantations: (currentTime: number) => void;
 }
 
 export const useBuildingStore = create<BuildingState>()(
@@ -224,6 +234,77 @@ export const useBuildingStore = create<BuildingState>()(
       if (resourcesUpdated || updatedBuildings.length !== get().buildings.length) {
         set({ buildings: updatedBuildings });
       }
+    },
+
+    plantSeeds: (buildingId) => {
+      const building = get().buildings.find(b => b.id === buildingId);
+      if (!building || building.type !== 'farm') return false;
+      
+      // Verificar se já tem plantação
+      if (building.plantation?.planted) return false;
+      
+      const currentTime = Date.now();
+      const updatedBuildings = get().buildings.map(b => {
+        if (b.id === buildingId) {
+          return {
+            ...b,
+            plantation: {
+              planted: true,
+              plantedAt: currentTime,
+              growthTime: 30, // 30 segundos para crescer
+              ready: false,
+              harvested: false
+            }
+          };
+        }
+        return b;
+      });
+      
+      set({ buildings: updatedBuildings });
+      return true;
+    },
+
+    harvestCrop: (buildingId) => {
+      const building = get().buildings.find(b => b.id === buildingId);
+      if (!building || building.type !== 'farm' || !building.plantation?.ready) return false;
+      
+      const updatedBuildings = get().buildings.map(b => {
+        if (b.id === buildingId) {
+          return {
+            ...b,
+            plantation: {
+              ...b.plantation!,
+              harvested: true,
+              ready: false
+            }
+          };
+        }
+        return b;
+      });
+      
+      set({ buildings: updatedBuildings });
+      return true;
+    },
+
+    updatePlantations: (currentTime) => {
+      const updatedBuildings = get().buildings.map(building => {
+        if (building.type === 'farm' && building.plantation?.planted && !building.plantation.ready) {
+          const timeSincePlanted = (currentTime - building.plantation.plantedAt) / 1000; // em segundos
+          
+          if (timeSincePlanted >= building.plantation.growthTime) {
+            return {
+              ...building,
+              plantation: {
+                ...building.plantation,
+                ready: true
+              }
+            };
+          }
+        }
+        return building;
+      });
+      
+      set({ buildings: updatedBuildings });
     },
   }))
 );

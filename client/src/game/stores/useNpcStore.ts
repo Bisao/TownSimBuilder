@@ -37,7 +37,7 @@ export interface TaskPriority {
 
 export type NPCSchedule = "home" | "working" | "lunch" | "traveling";
 
-export type NPCState = "idle" | "moving" | "working" | "gathering" | "resting" | "searching";
+export type NPCState = "idle" | "moving" | "working" | "gathering" | "resting" | "searching" | "planting" | "harvesting" | "going_to_silo" | "going_to_farm";
 
 export interface NPC {
   id: string;
@@ -61,6 +61,11 @@ export interface NPC {
   currentSchedule: NPCSchedule;
   name: string;
   skills: NPCSkills;
+  farmerData?: {
+    currentTask: "waiting" | "getting_seeds" | "planting" | "harvesting" | "delivering";
+    targetFarmId: string | null;
+    targetSiloId: string | null;
+  };
 }
 
 export interface ResourceReservation {
@@ -316,7 +321,12 @@ class NPCStateHandlers {
       return { state: "resting" };
     }
 
-    // Durante horário de trabalho, trabalhar normalmente
+    // Comportamento específico do fazendeiro
+    if (npc.type === "farmer") {
+      return NPCStateHandlers.handleFarmerCycle(npc, buildings);
+    }
+
+    // Durante horário de trabalho, trabalhar normalmente para outros NPCs
     const hasSpaceInInventory = npc.inventory.amount < CONSTANTS.MAX_INVENTORY;
 
     if (hasSpaceInInventory) {
@@ -465,20 +475,24 @@ class NPCStateHandlers {
     const silo = buildings.find(b => b.id === npc.targetBuildingId && b.type === 'silo');
 
     if (silo) {
-      const depositedAmount = npc.inventory.amount;
-      const depositedType = npc.inventory.type;
+      if (npc.type === "farmer") {
+        return NPCStateHandlers.handleFarmerSiloInteraction(npc, updates);
+      } else {
+        const depositedAmount = npc.inventory.amount;
+        const depositedType = npc.inventory.type;
 
-      import('./useResourceStore').then(({ useResourceStore }) => {
-        const resourceStore = useResourceStore.getState();
-        resourceStore.updateResource(depositedType, depositedAmount);
-      });
+        import('./useResourceStore').then(({ useResourceStore }) => {
+          const resourceStore = useResourceStore.getState();
+          resourceStore.updateResource(depositedType, depositedAmount);
+        });
 
-      return {
-        ...updates,
-        inventory: { type: '', amount: 0 },
-        targetBuildingId: null,
-        state: "idle"
-      };
+        return {
+          ...updates,
+          inventory: { type: '', amount: 0 },
+          targetBuildingId: null,
+          state: "idle"
+        };
+      }
     }
 
     return {
@@ -488,20 +502,167 @@ class NPCStateHandlers {
     };
   }
 
-  static handleWorkplaceArrival(npc: NPC, buildings: any[], updates: Partial<NPC>): Partial<NPC> {
-    const workBuilding = buildings.find(b => b.id === npc.targetBuildingId);
-    if (workBuilding && workBuilding.type !== 'silo') {
+  static handleFarmerSiloInteraction(npc: NPC, updates: Partial<NPC>): Partial<NPC> {
+    if (!npc.farmerData) return { ...updates, state: "idle" };
+
+    if (npc.farmerData.currentTask === "getting_seeds") {
+      // Pegar sementes do silo (simulado - depois implementaremos o storage do silo)
+      import('./useResourceStore').then(({ useResourceStore }) => {
+        const resourceStore = useResourceStore.getState();
+        if (resourceStore.resources.seeds >= 1) {
+          resourceStore.updateResource("seeds", -1);
+        }
+      });
+
+      console.log(`Fazendeiro pegou sementes do silo`);
       return {
         ...updates,
-        state: "working",
-        workProgress: 0
+        inventory: { type: "seeds", amount: 1 },
+        targetBuildingId: null,
+        state: "idle",
+        farmerData: {
+          ...npc.farmerData,
+          currentTask: "waiting"
+        }
       };
+    } else if (npc.farmerData.currentTask === "delivering") {
+      // Depositar trigo no silo
+      import('./useResourceStore').then(({ useResourceStore }) => {
+        const resourceStore = useResourceStore.getState();
+        resourceStore.updateResource("wheat", npc.inventory.amount);
+      });
+
+      console.log(`Fazendeiro depositou ${npc.inventory.amount} trigo no silo`);
+      return {
+        ...updates,
+        inventory: { type: '', amount: 0 },
+        targetBuildingId: null,
+        state: "idle",
+        farmerData: {
+          ...npc.farmerData,
+          currentTask: "waiting"
+        }
+      };
+    }
+
+    return { ...updates, state: "idle" };
+  }
+
+  static handleWorkplaceArrival(npc: NPC, buildings: any[], updates: Partial<NPC>): Partial<NPC> {
+    const workBuilding = buildings.find(b => b.id === npc.targetBuildingId);
+    
+    if (workBuilding) {
+      if (npc.type === "farmer" && workBuilding.type === "farm") {
+        return NPCStateHandlers.handleFarmerFarmArrival(npc, workBuilding, updates);
+      } else if (workBuilding.type !== 'silo') {
+        return {
+          ...updates,
+          state: "working",
+          workProgress: 0
+        };
+      }
     }
 
     return {
       ...updates,
       state: "idle",
       targetBuildingId: null
+    };
+  }
+
+  static handleFarmerFarmArrival(npc: NPC, farm: any, updates: Partial<NPC>): Partial<NPC> {
+    if (!npc.farmerData) return { ...updates, state: "idle" };
+
+    if (npc.farmerData.currentTask === "planting") {
+      console.log(`Fazendeiro iniciando plantio na fazenda ${farm.id}`);
+      return {
+        ...updates,
+        state: "planting",
+        workProgress: 0
+      };
+    } else if (npc.farmerData.currentTask === "harvesting") {
+      console.log(`Fazendeiro iniciando colheita na fazenda ${farm.id}`);
+      return {
+        ...updates,
+        state: "harvesting", 
+        workProgress: 0
+      };
+    }
+
+    return { ...updates, state: "idle" };
+  }
+
+  static handlePlantingState(npc: NPC, adjustedDeltaTime: number, buildings: any[]): Partial<NPC> {
+    if (!npc.targetBuildingId || !npc.farmerData) {
+      return { state: "idle" };
+    }
+
+    const newWorkProgress = npc.workProgress + adjustedDeltaTime * 0.5; // Plantio demora 2 segundos
+
+    if (newWorkProgress >= 1) {
+      // Concluir plantio
+      import('./useBuildingStore').then(({ useBuildingStore }) => {
+        useBuildingStore.getState().plantSeeds(npc.targetBuildingId!);
+      });
+
+      console.log(`Fazendeiro concluiu plantio na fazenda ${npc.targetBuildingId}`);
+      
+      return {
+        inventory: { type: '', amount: 0 }, // Consumir semente
+        workProgress: 0,
+        targetBuildingId: null,
+        state: "idle",
+        farmerData: {
+          ...npc.farmerData,
+          currentTask: "waiting",
+          targetFarmId: null
+        }
+      };
+    }
+
+    return {
+      workProgress: newWorkProgress,
+      needs: {
+        energy: Math.max(0, npc.needs.energy - adjustedDeltaTime * CONSTANTS.ENERGY_CONSUMPTION.WORKING),
+        satisfaction: Math.max(0, npc.needs.satisfaction - adjustedDeltaTime * CONSTANTS.SATISFACTION_CONSUMPTION.WORKING)
+      }
+    };
+  }
+
+  static handleHarvestingState(npc: NPC, adjustedDeltaTime: number, buildings: any[]): Partial<NPC> {
+    if (!npc.targetBuildingId || !npc.farmerData) {
+      return { state: "idle" };
+    }
+
+    const newWorkProgress = npc.workProgress + adjustedDeltaTime * 0.5; // Colheita demora 2 segundos
+
+    if (newWorkProgress >= 1) {
+      // Concluir colheita
+      import('./useBuildingStore').then(({ useBuildingStore }) => {
+        useBuildingStore.getState().harvestCrop(npc.targetBuildingId!);
+      });
+
+      console.log(`Fazendeiro concluiu colheita na fazenda ${npc.targetBuildingId}`);
+      
+      return {
+        inventory: { type: 'wheat', amount: 2 }, // Colher trigo
+        workProgress: 0,
+        targetBuildingId: null,
+        state: "idle",
+        farmerData: {
+          ...npc.farmerData,
+          currentTask: "waiting",
+          targetFarmId: null
+        }
+      };
+    }
+
+    return {
+      workProgress: newWorkProgress,
+      needs: {
+        energy: Math.max(0, npc.needs.energy - adjustedDeltaTime * CONSTANTS.ENERGY_CONSUMPTION.WORKING),
+        satisfaction: Math.max(0, npc.needs.satisfaction - adjustedDeltaTime * CONSTANTS.SATISFACTION_CONSUMPTION.WORKING)
+      }
     };
   }
 
@@ -755,6 +916,104 @@ class NPCStateHandlers {
     console.log(`NPC ${npc.type} invalid resource type, returning to idle`);
     return { state: "idle" };
   }
+
+  static handleFarmerCycle(npc: NPC, buildings: any[]): Partial<NPC> {
+    // Verificar se há silos e fazendas disponíveis
+    const silos = buildings.filter(b => b.type === 'silo');
+    const farms = buildings.filter(b => b.type === 'farm');
+
+    if (silos.length === 0 || farms.length === 0) {
+      console.log(`Fazendeiro aguardando: silos=${silos.length}, fazendas=${farms.length}`);
+      return { state: "resting" };
+    }
+
+    // Inicializar dados do fazendeiro se não existir
+    if (!npc.farmerData) {
+      return {
+        farmerData: {
+          currentTask: "waiting",
+          targetFarmId: null,
+          targetSiloId: null
+        }
+      };
+    }
+
+    // Verificar se tem sementes no inventário
+    const hasSeeds = npc.inventory.type === "seeds" && npc.inventory.amount > 0;
+    
+    // Verificar se tem trigo no inventário
+    const hasWheat = npc.inventory.type === "wheat" && npc.inventory.amount > 0;
+
+    if (hasWheat) {
+      // Levar trigo para o silo
+      const nearestSilo = NPCUtils.findBestSilo(npc, buildings, []);
+      if (nearestSilo) {
+        console.log(`Fazendeiro levando trigo para silo`);
+        return {
+          targetPosition: [nearestSilo.position[0] + 0.5, 0, nearestSilo.position[1] + 0.5],
+          targetBuildingId: nearestSilo.id,
+          state: "moving",
+          farmerData: {
+            ...npc.farmerData,
+            currentTask: "delivering",
+            targetSiloId: nearestSilo.id
+          }
+        };
+      }
+    }
+
+    if (hasSeeds) {
+      // Procurar fazenda sem plantação
+      const availableFarm = farms.find(f => !f.plantation?.planted || f.plantation?.harvested);
+      if (availableFarm) {
+        console.log(`Fazendeiro indo plantar na fazenda ${availableFarm.id}`);
+        return {
+          targetPosition: [availableFarm.position[0] + 0.5, 0, availableFarm.position[1] + 0.5],
+          targetBuildingId: availableFarm.id,
+          state: "moving",
+          farmerData: {
+            ...npc.farmerData,
+            currentTask: "planting",
+            targetFarmId: availableFarm.id
+          }
+        };
+      }
+    } else {
+      // Procurar fazenda pronta para colheita
+      const readyFarm = farms.find(f => f.plantation?.ready && !f.plantation?.harvested);
+      if (readyFarm) {
+        console.log(`Fazendeiro indo colher na fazenda ${readyFarm.id}`);
+        return {
+          targetPosition: [readyFarm.position[0] + 0.5, 0, readyFarm.position[1] + 0.5],
+          targetBuildingId: readyFarm.id,
+          state: "moving",
+          farmerData: {
+            ...npc.farmerData,
+            currentTask: "harvesting",
+            targetFarmId: readyFarm.id
+          }
+        };
+      } else {
+        // Ir buscar sementes no silo
+        const nearestSilo = NPCUtils.findBestSilo(npc, buildings, []);
+        if (nearestSilo) {
+          console.log(`Fazendeiro indo buscar sementes no silo`);
+          return {
+            targetPosition: [nearestSilo.position[0] + 0.5, 0, nearestSilo.position[1] + 0.5],
+            targetBuildingId: nearestSilo.id,
+            state: "moving",
+            farmerData: {
+              ...npc.farmerData,
+              currentTask: "getting_seeds",
+              targetSiloId: nearestSilo.id
+            }
+          };
+        }
+      }
+    }
+
+    return { state: "resting" };
+  }
 }
 
 // ===== STORE PRINCIPAL =====
@@ -802,7 +1061,14 @@ export const useNpcStore = create<NPCStoreState>()(
           working: 10 + Math.random() * 20,
           efficiency: 10 + Math.random() * 20,
           experience: 0
-        }
+        },
+        ...(type === "farmer" && {
+          farmerData: {
+            currentTask: "waiting",
+            targetFarmId: null,
+            targetSiloId: null
+          }
+        })
       };
 
       set((state) => ({
@@ -832,6 +1098,9 @@ export const useNpcStore = create<NPCStoreState>()(
       const adjustedDeltaTime = deltaTime * timeSpeed;
       const buildings = useBuildingStore.getState().buildings;
       const currentSchedule = NPCUtils.getScheduleForTime(timeCycle);
+
+      // Atualizar plantações
+      useBuildingStore.getState().updatePlantations(Date.now());
 
       const updatedNPCs = get().npcs.map(npc => {
         const updates: Partial<NPC> = { currentSchedule };
@@ -878,6 +1147,12 @@ export const useNpcStore = create<NPCStoreState>()(
             break;
           case "searching":
             Object.assign(updates, NPCStateHandlers.handleSearchingState(npc));
+            break;
+          case "planting":
+            Object.assign(updates, NPCStateHandlers.handlePlantingState(npc, adjustedDeltaTime, buildings));
+            break;
+          case "harvesting":
+            Object.assign(updates, NPCStateHandlers.handleHarvestingState(npc, adjustedDeltaTime, buildings));
             break;
         }
 

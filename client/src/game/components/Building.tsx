@@ -1,8 +1,10 @@
-import { useRef, useMemo, useState } from "react";
-import { useFrame, useThree } from "@react-three/fiber";
+import { useRef, useState } from "react";
+import { useFrame } from "@react-three/fiber";
 import { buildingTypes } from "../constants/buildings";
 import { Building as BuildingType } from "../stores/useBuildingStore";
+import SiloPanel from "../../ui/SiloPanel";
 import * as THREE from "three";
+import { useThree } from "@react-three/fiber";
 import { useTexture } from "@react-three/drei";
 import { Html } from "@react-three/drei";
 import { useNpcStore } from "../stores/useNpcStore";
@@ -17,6 +19,7 @@ const Building = ({ building, onClick }: BuildingProps) => {
   const lastProducedRef = useRef<number>(building.lastProduced);
   const [hovered, setHovered] = useState(false);
   const { camera } = useThree();
+  const [showSiloPanel, setShowSiloPanel] = useState(false);
 
   // Always call hooks at component level
   const npcs = useNpcStore(state => state.npcs);
@@ -100,6 +103,8 @@ const Building = ({ building, onClick }: BuildingProps) => {
     } else if (building.type.includes("House")) {
       // Encontrar o NPC associado a esta casa
       window.dispatchEvent(new CustomEvent('npcHouseClick', { detail: building }));
+    } else if (building.type === 'silo') {
+      setShowSiloPanel(true);
     }
   };
 
@@ -153,6 +158,35 @@ const Building = ({ building, onClick }: BuildingProps) => {
             })}
         </group>
       )}
+      {/* Renderizar plantação se for uma fazenda */}
+      {building.type === 'farm' && building.plantation && (
+        <group position={[0, 0.01, 0]}>
+          {building.plantation.planted && !building.plantation.harvested && (
+            <mesh position={[0, 0.1, 0]}>
+              <cylinderGeometry args={[0.3, 0.3, 0.2, 8]} />
+              <meshStandardMaterial 
+                color={building.plantation.ready ? "#32CD32" : "#90EE90"} 
+              />
+            </mesh>
+          )}
+          {building.plantation.planted && !building.plantation.harvested && (
+            <mesh position={[0, 0.25, 0]}>
+              <sphereGeometry args={[0.15, 8, 8]} />
+              <meshStandardMaterial 
+                color={building.plantation.ready ? "#FFD700" : "#ADFF2F"} 
+              />
+            </mesh>
+          )}
+        </group>
+      )}
+        {/* Painel do silo */}
+        {showSiloPanel && (
+            <SiloPanel
+                isOpen={showSiloPanel}
+                onClose={() => setShowSiloPanel(false)}
+                siloId={building.id}
+            />
+        )}
     </mesh>
   );
 };

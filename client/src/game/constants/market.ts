@@ -46,7 +46,7 @@ export const marketItems: Record<string, MarketItem> = {
     icon: "fa-solid fa-carrot",
     color: "#ff8c00",
   },
-  
+
   // Ferramentas
   hoe: {
     id: "hoe",
@@ -75,7 +75,7 @@ export const marketItems: Record<string, MarketItem> = {
     icon: "fa-solid fa-hammer",
     color: "#808080",
   },
-  
+
   // Insumos
   fertilizer: {
     id: "fertilizer",

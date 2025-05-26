@@ -34,11 +34,15 @@ const MarketWindow = ({ isOpen, onClose }: MarketWindowProps) => {
       // Deduzir o preço
       updateResource("coins", -item.price);
       
+      // Se o item tem um tipo de recurso, adicionar ao inventário
+      if (item.resourceType && item.amount) {
+        updateResource(item.resourceType, item.amount);
+      }
+      
       // Tocar som de sucesso
       playSuccess();
       
-      // Adicionar o item ao inventário (por enquanto, apenas mostra um alerta)
-      alert(`Você comprou: ${item.name}`);
+      alert(`Você comprou: ${item.name}${item.amount ? ` (${item.amount} unidades)` : ''}`);
     } else {
       alert("Moedas insuficientes!");
     }
