@@ -16,6 +16,8 @@ const Npc = ({ npc }: NpcProps) => {
   const leftArmRef = useRef<THREE.Mesh>(null);
   const rightArmRef = useRef<THREE.Mesh>(null);
   const particlesRef = useRef<THREE.Points>(null);
+  const groupRef = useRef<THREE.Group>(null);
+  const lastPositionRef = useRef<[number, number, number]>(npc.position);
   
   const handleClick = (event: THREE.Event) => {
     event.stopPropagation();
@@ -41,9 +43,25 @@ const Npc = ({ npc }: NpcProps) => {
   }, []);
   
   useFrame(({ clock }) => {
-    if (!bodyRef.current || !particlesRef.current) return;
+    if (!bodyRef.current || !particlesRef.current || !groupRef.current) return;
     
     const time = clock.getElapsedTime();
+    
+    // Calcular rotação baseada na direção do movimento
+    if (npc.state === "moving" && npc.targetPosition) {
+      const currentPos = npc.position;
+      const targetPos = npc.targetPosition;
+      
+      // Calcular direção do movimento
+      const dx = targetPos[0] - currentPos[0];
+      const dz = targetPos[2] - currentPos[2];
+      
+      // Apenas atualizar rotação se há movimento significativo
+      if (Math.abs(dx) > 0.01 || Math.abs(dz) > 0.01) {
+        const angle = Math.atan2(dx, dz);
+        groupRef.current.rotation.y = angle;
+      }
+    }
     
     // Animação do corpo ao andar
     if (npc.state === "moving") {
@@ -97,7 +115,7 @@ const Npc = ({ npc }: NpcProps) => {
   });
   
   return (
-    <group position={[npc.position[0], 0.01, npc.position[2]]} onClick={handleClick}>
+    <group ref={groupRef} position={[npc.position[0], 0.01, npc.position[2]]} onClick={handleClick}>
       <group ref={bodyRef}>
         {/* Cabeça */}
         <mesh position={[0, 0.8, 0]}>
