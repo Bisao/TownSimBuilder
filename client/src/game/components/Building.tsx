@@ -18,19 +18,20 @@ const Building = ({ building, onClick }: BuildingProps) => {
   const [hovered, setHovered] = useState(false);
   const { camera } = useThree();
 
-  // Move hook to component level
+  // Always call hooks at component level
   const npcs = useNpcStore(state => state.npcs);
 
   // Get building type definition
   const buildingType = buildingTypes[building.type];
+
+  // Early return AFTER all hooks are called
+  if (!buildingType) return null;
 
   // Memoize house NPCs to prevent unnecessary recalculations
   const houseNpcs = useMemo(() => {
     if (!building.type.includes("House")) return [];
     return npcs.filter(npc => npc.homeId === building.id);
   }, [npcs, building.id, building.type]);
-
-  if (!buildingType) return null;
 
   // Load texture
   const woodTexture = useTexture("/textures/wood.jpg");
