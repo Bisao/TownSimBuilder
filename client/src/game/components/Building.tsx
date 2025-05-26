@@ -5,7 +5,7 @@ import { Building as BuildingType } from "../stores/useBuildingStore";
 import * as THREE from "three";
 import { useTexture } from "@react-three/drei";
 import { Html } from "@react-three/drei";
-import useNpcStore from "../stores/useNpcStore";
+import { useNpcStore } from "../stores/useNpcStore";
 
 interface BuildingProps {
   building: BuildingType;

@@ -110,7 +110,7 @@ const shouldBeWorking = (timeCycle: number): boolean => {
 // Helper function to determine what NPCs should be doing based on time
 const getScheduleForTime = (timeCycle: number): NPCSchedule => {
   const hours = timeCycle * 24;
-  
+
   if (hours >= 6 && hours < 12) return "working";
   if (hours >= 12 && hours < 13) return "lunch";
   if (hours >= 13 && hours < 18) return "working";
@@ -178,16 +178,16 @@ export const useNpcStore = create<NPCState>()(
 
       const buildings = useBuildingStore.getState().buildings;
       const updatedNPCs: NPC[] = [];
-      
+
       // Determinar o horário atual
       const currentSchedule = getScheduleForTime(timeCycle);
 
       for (const npc of get().npcs) {
         let updatedNPC = { ...npc };
-        
+
         // Atualizar o horário atual do NPC
         updatedNPC.currentSchedule = currentSchedule;
-        
+
         // Verificar se NPC deve estar em casa (almoço ou noite)
         if (currentSchedule === "lunch" || currentSchedule === "home") {
           const home = buildings.find(b => b.id === npc.homeId);
@@ -196,7 +196,7 @@ export const useNpcStore = create<NPCState>()(
               home.position[0] - npc.position[0],
               home.position[1] - npc.position[2]
             );
-            
+
             // Se não está em casa e deveria estar, vai para casa
             if (distanceToHome > 1.0 && npc.state !== "moving") {
               console.log(`NPC ${npc.type} indo para casa - horário: ${currentSchedule}`);
@@ -207,7 +207,7 @@ export const useNpcStore = create<NPCState>()(
               updatedNPCs.push(updatedNPC);
               continue;
             }
-            
+
             // Se está em casa, descansa
             if (distanceToHome <= 1.0 && npc.state !== "resting") {
               updatedNPC.state = "resting";
@@ -817,3 +817,5 @@ export const useNpcStore = create<NPCState>()(
     },
   }))
 );
+
+export { useNpcStore };
