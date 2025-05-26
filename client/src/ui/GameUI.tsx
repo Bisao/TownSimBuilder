@@ -165,7 +165,7 @@ const GameUI = () => {
         </div>
       </div>
       
-      <div className="absolute bottom-4 right-4 pointer-events-auto"></div>
+      <div className="absolute bottom-4 right-4 pointer-events-auto">
         <button 
           className="bg-black/80 text-white p-2 rounded-full"
           onClick={() => setShowControls(!showControls)}
@@ -194,6 +194,7 @@ const GameUI = () => {
           </div>
         )}
       </div>
+      
       <div className="absolute top-4 left-64 flex gap-2 pointer-events-auto">
         <button 
           onClick={toggleMute}
