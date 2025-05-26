@@ -50,6 +50,8 @@ export interface NPC {
   state: NPCState;
   workProgress: number;
   lastResourceTime: number;
+  lastMoveTime: number;
+  stuckTimer: number;
   inventory: {
     type: string;
     amount: number;
@@ -380,7 +382,10 @@ class NPCStateHandlers {
   }
 
   static handleMovingState(npc: NPC, adjustedDeltaTime: number, buildings: any[]): Partial<NPC> {
-    if (!npc.targetPosition) return { state: "idle" };
+    if (!npc.targetPosition) {
+      console.log(`NPC ${npc.type} sem targetPosition, voltando para idle`);
+      return { state: "idle" };
+    }
 
     const [targetX, , targetZ] = npc.targetPosition;
     const [currentX, , currentZ] = npc.position;
@@ -400,11 +405,16 @@ class NPCStateHandlers {
       }
     };
 
-    if (distance < CONSTANTS.MOVEMENT_TOLERANCE) {
+    // Aumentar tolerância e adicionar timeout para evitar travamento
+    const tolerance = Math.max(CONSTANTS.MOVEMENT_TOLERANCE, 0.3);
+    
+    if (distance < tolerance || moveSpeed === 0) {
+      console.log(`NPC ${npc.type} chegou ao destino [${targetX.toFixed(1)}, ${targetZ.toFixed(1)}]`);
       updates.position = [targetX, 0, targetZ];
       updates.targetPosition = null;
 
       if (npc.targetResource) {
+        console.log(`NPC ${npc.type} começando a coletar recurso`);
         updates.state = "gathering";
         updates.workProgress = 0;
       } else if (npc.inventory.amount > 0 && npc.targetBuildingId) {
@@ -415,12 +425,32 @@ class NPCStateHandlers {
         return NPCStateHandlers.handleHomeArrival(npc, buildings, updates);
       }
     } else {
+      // Verificar se o NPC está se movendo muito devagar ou travado
+      if (moveSpeed < 0.001) {
+        console.log(`NPC ${npc.type} movimento muito lento, forçando chegada ao destino`);
+        updates.position = [targetX, 0, targetZ];
+        updates.targetPosition = null;
+        updates.state = "idle";
+        return updates;
+      }
+
       const dirX = dx / distance;
       const dirZ = dz / distance;
       const newX = currentX + dirX * moveSpeed;
       const newZ = currentZ + dirZ * moveSpeed;
       const [clampedX, clampedZ] = NPCUtils.clampPosition(newX, newZ);
-      updates.position = [clampedX, 0, clampedZ];
+      
+      // Verificar se a posição realmente mudou
+      const positionChanged = Math.abs(clampedX - currentX) > 0.001 || Math.abs(clampedZ - currentZ) > 0.001;
+      
+      if (!positionChanged && distance > tolerance) {
+        console.log(`NPC ${npc.type} não conseguiu se mover, forçando teleporte para destino`);
+        updates.position = [targetX, 0, targetZ];
+        updates.targetPosition = null;
+        updates.state = "idle";
+      } else {
+        updates.position = [clampedX, 0, clampedZ];
+      }
     }
 
     return updates;
@@ -742,6 +772,8 @@ export const useNpcStore = create<NPCStoreState>()(
         state: "idle",
         workProgress: 0,
         lastResourceTime: 0,
+        lastMoveTime: Date.now(),
+        stuckTimer: 0,
         inventory: { type: '', amount: 0 },
         needs: {
           energy: 100,
@@ -795,6 +827,29 @@ export const useNpcStore = create<NPCStoreState>()(
       const updatedNPCs = get().npcs.map(npc => {
         const updates: Partial<NPC> = { currentSchedule };
         const oldState = npc.state;
+        const currentTime = Date.now();
+
+        // Detectar NPCs travados no estado "moving"
+        if (npc.state === "moving") {
+          // Se não se moveu nas últimas 2 segundos, incrementar stuckTimer
+          const lastPosition = npc.position;
+          updates.stuckTimer = npc.stuckTimer + adjustedDeltaTime;
+          
+          // Se estiver travado há mais de 3 segundos, forçar reset
+          if (updates.stuckTimer > 3) {
+            console.log(`NPC ${npc.type} travado há ${updates.stuckTimer.toFixed(1)}s, forçando reset`);
+            updates.state = "idle";
+            updates.targetPosition = null;
+            updates.targetResource = null;
+            updates.targetBuildingId = null;
+            updates.stuckTimer = 0;
+            updates.lastMoveTime = currentTime;
+          }
+        } else {
+          // Reset do stuckTimer se não estiver em movimento
+          updates.stuckTimer = 0;
+          updates.lastMoveTime = currentTime;
+        }
 
         switch (npc.state) {
           case "idle":
