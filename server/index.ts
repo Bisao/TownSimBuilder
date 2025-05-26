@@ -1,21 +1,8 @@
 import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
-import { createServer } from 'http';
-import { WebSocketServer } from 'ws';
-import path from 'path';
-import { fileURLToPath } from 'url';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 
 const app = express();
-const server = createServer(app);
-const wss = new WebSocketServer({ server });
-
-const PORT = process.env.PORT || 5000;
-const HOST = process.env.HOST || '0.0.0.0';
-
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
@@ -49,21 +36,8 @@ app.use((req, res, next) => {
   next();
 });
 
-// Middleware
-app.use(express.static(path.join(__dirname, '../dist/public')));
-
-// Routes
-app.get('/api/health', (req, res) => {
-  res.json({ status: 'ok' });
-});
-
-// Serve React app for all other routes
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, '../dist/public/index.html'));
-});
-
 (async () => {
-  await registerRoutes(app);
+  const server = await registerRoutes(app);
 
   app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
     const status = err.status || err.statusCode || 500;
@@ -81,30 +55,15 @@ app.get('*', (req, res) => {
   } else {
     serveStatic(app);
   }
-  // WebSocket connection
-  wss.on('connection', (ws) => {
-    console.log('Cliente conectado via WebSocket');
-
-    ws.on('message', (message) => {
-      try {
-        console.log('Mensagem recebida:', message.toString());
-      } catch (error) {
-        console.error('Erro ao processar mensagem:', error);
-      }
-    });
-
-    ws.on('close', () => {
-      console.log('Cliente desconectado');
-    });
-
-    ws.on('error', (error) => {
-      console.error('Erro no WebSocket:', error);
-    });
-  });
 
   // ALWAYS serve the app on port 5000
   // this serves both the API and the client
-  server.listen(PORT, HOST, () => {
-    log(`serving on port http://${HOST}:${PORT}`);
+  const port = 5000;
+  server.listen({
+    port,
+    host: "0.0.0.0",
+    reusePort: true,
+  }, () => {
+    log(`serving on port ${port}`);
   });
 })();
