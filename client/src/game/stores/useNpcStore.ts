@@ -125,6 +125,42 @@ const workplaceMapping: Record<string, string> = {
   lumberyard: "lumberjack"
 };
 
+const getDistance = (pos1: [number, number, number], pos2: [number, number, number]): number => {
+  return Math.hypot(pos1[0] - pos2[0], pos1[2] - pos2[2]);
+};
+
+const findNearestNaturalResource = (npc: NPC, resourceType: string): [number, number] | null => {
+    const naturalResources = (window as any).naturalResources;
+    if (!naturalResources || !Array.isArray(naturalResources)) {
+      console.log("window.naturalResources não está disponível ou não é um array");
+      return null;
+    }
+
+    const availableResources = naturalResources.filter((r: any) => 
+      r && r.type === resourceType && !r.lastCollected && r.position
+    );
+
+    if (availableResources.length === 0) {
+      console.log(`Nenhum recurso ${resourceType} disponível`);
+      return null;
+    }
+
+    let nearest = availableResources[0];
+    let minDistance = getDistance(npc.position, [nearest.position[0], 0, nearest.position[1]]);
+
+    for (const resource of availableResources) {
+      if (resource && resource.position) {
+        const distance = getDistance(npc.position, [resource.position[0], 0, resource.position[1]]);
+        if (distance < minDistance) {
+          minDistance = distance;
+          nearest = resource;
+        }
+      }
+    }
+
+    return nearest.position;
+  };
+
 export const useNpcStore = create<NPCState>()(
   subscribeWithSelector((set, get) => ({
     npcs: [],

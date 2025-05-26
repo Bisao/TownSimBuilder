@@ -85,9 +85,9 @@ const GameUI = () => {
 
   // Convert time of day to formatted time
   const getTimeString = () => {
-    const timeCycle = useGameStore.getState().timeCycle;
-    const hours = Math.floor(timeCycle * 24);
-    const minutes = Math.floor((timeCycle * 24 * 60) % 60);
+    const gameStore = useGameStore.getState();
+    const hours = Math.floor(gameStore.timeCycle * 24);
+    const minutes = Math.floor((gameStore.timeCycle * 24 * 60) % 60);
     return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
   };
 
@@ -133,6 +133,21 @@ const GameUI = () => {
         {/* Time control buttons */}
         <div className="bg-black/80 rounded-lg p-2 text-white flex gap-1">
           <button
+            onClick={() => {
+              const gameStore = useGameStore.getState();
+              if (gameStore.isPaused) {
+                gameStore.resumeTime();
+              } else {
+                gameStore.pauseTime();
+              }
+            }}
+            className={`${isPaused ? 'bg-green-500 hover:bg-green-600' : 'bg-yellow-500 hover:bg-yellow-600'} px-2 py-1 rounded text-sm transition-colors`}
+            title={isPaused ? "Continuar (P)" : "Pausar (P)"}
+          >
+            {isPaused ? "▶️" : "⏸️"}
+          </button>
+          
+          <button
             onClick={() => useGameStore.getState().decreaseTimeSpeed()}
             className="bg-blue-500 hover:bg-blue-600 px-2 py-1 rounded text-sm transition-colors"
             title="Diminuir velocidade ([)"
@@ -147,6 +162,11 @@ const GameUI = () => {
           >
             ⬆️
           </button>
+        </div>
+        
+        {/* Speed indicator */}
+        <div className="bg-black/80 rounded-lg p-2 text-white text-center text-sm mt-1">
+          {isPaused ? "PAUSADO" : `${timeSpeed}x`}
         </div>
       </div>
       

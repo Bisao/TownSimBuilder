@@ -141,14 +141,16 @@ export const useGameStore = create<GameState>()(
 
     increaseTimeSpeed: () => set((state) => {
       const speeds = [0.25, 0.5, 1, 2, 4, 8, 16];
-      const currentIndex = speeds.indexOf(state.timeSpeed);
+      let currentIndex = speeds.indexOf(state.timeSpeed);
+      if (currentIndex === -1) currentIndex = 2; // Default to 1x if not found
       const nextIndex = Math.min(currentIndex + 1, speeds.length - 1);
       return { timeSpeed: speeds[nextIndex] };
     }),
 
     decreaseTimeSpeed: () => set((state) => {
       const speeds = [0.25, 0.5, 1, 2, 4, 8, 16];
-      const currentIndex = speeds.indexOf(state.timeSpeed);
+      let currentIndex = speeds.indexOf(state.timeSpeed);
+      if (currentIndex === -1) currentIndex = 2; // Default to 1x if not found
       const nextIndex = Math.max(currentIndex - 1, 0);
       return { timeSpeed: speeds[nextIndex] };
     }),
