@@ -122,7 +122,7 @@ function getAvailableTasks(npc: NPC, buildings: any[], currentTime: number): Tas
       const availableResources = window.naturalResources.filter(r => 
         r.type === resourceType && !r.lastCollected
       );
-      
+
       if (availableResources.length > 0) {
         tasks.push({
           type: "gather",
@@ -206,10 +206,10 @@ const shouldBeWorking = (timeCycle: number): boolean => {
 // Helper function to determine what NPCs should be doing based on time
 const getScheduleForTime = (timeCycle: number, npcId?: string): NPCSchedule => {
   const hours = timeCycle * 24;
-  
+
   // Sistema de turnos - alguns NPCs trabalham em horários diferentes
   const isNightShift = npcId ? parseInt(npcId.slice(-1), 16) % 3 === 0 : false;
-  
+
   if (isNightShift) {
     // Turno noturno: 22h-6h trabalho, 6h-14h descanso, 14h-22h casa
     if (hours >= 22 || hours < 6) return "working";
@@ -469,7 +469,7 @@ export const useNpcStore = create<NPCState>()(
                   if (bestResource) {
                     // Reserva o recurso
                     const reserved = get().reserveResource(npc.id, resourceType, bestResource.position);
-                    
+
                     if (reserved) {
                       // Define o recurso como alvo e muda para estado de movimento
                       updatedNPC.targetResource = bestResource;
@@ -539,7 +539,7 @@ export const useNpcStore = create<NPCState>()(
                   updatedNPC.targetBuildingId = bestSilo.id;
                   updatedNPC.targetResource = null;
                   updatedNPC.state = "moving";
-                  
+
                   const distance = Math.hypot(
                     bestSilo.position[0] - npc.position[0],
                     bestSilo.position[1] - npc.position[2]
@@ -554,85 +554,6 @@ export const useNpcStore = create<NPCState>()(
             }
             break;
           }
-
-            // Todos os NPCs procuram recursos se tiverem espaço no inventário
-            if ((npc.type === "lumberjack" || npc.type === "miner") && hasSpaceInInventory) {
-              const resourceMapping = {
-                "lumberjack": "wood",
-                "miner": "stone"
-              };
-              const resourceType = resourceMapping[npc.type];
-
-              // Buscar recurso mais próximo no grid
-              // Pega o tipo de NPC para definir raio de trabalho
-              const npcConfig = npcTypes[npc.type];
-              // Busca todos os recursos do tipo correto em todo o grid
-              const resources = window.naturalResources?.filter(r => {
-                // Verifica tipo e status do recurso
-                const isCorrectType = r.type === resourceType;
-                const isNotCollected = !r.lastCollected;
-
-                // Verifica se não está sendo coletado por outro NPC
-                const isNotTargeted = !get().npcs.some(
-                  other => other.id !== npc.id && 
-                  other.targetResource?.position[0] === r.position[0] &&
-                  other.targetResource?.position[1] === r.position[1]
-                );
-
-                return isCorrectType && isNotCollected && isNotTargeted;
-              }) || [];
-
-              let nearestResource = null;
-              let minDistance = Infinity;
-
-              for (const resource of resources) {
-                const distance = Math.hypot(
-                  resource.position[0] - npc.position[0],
-                  resource.position[1] - npc.position[2]
-                );
-
-                if (distance < minDistance) {
-                  minDistance = distance;
-                  nearestResource = resource;
-                }
-              }
-
-              if (nearestResource) {
-                console.log(`NPC ${npc.type} encontrou recurso em [${nearestResource.position}]`);
-                updatedNPC.targetResource = nearestResource;
-                updatedNPC.targetPosition = [nearestResource.position[0], 0, nearestResource.position[1]];
-                updatedNPC.state = "moving";
-              } else {
-                // Se não encontrar recurso, move-se aleatoriamente
-                if (Math.random() < 0.01) {
-                  const randomX = npc.position[0] + (Math.random() * 10 - 5);
-                  const randomZ = npc.position[2] + (Math.random() * 10 - 5);
-                  updatedNPC.targetPosition = [randomX, 0, randomZ];
-                  updatedNPC.state = "moving";
-                }
-              }
-            } else if (!npc.targetBuildingId) {
-              const workplace = get().findWorkplace(npc.id);
-              if (workplace) {
-                const workplaceBuilding = buildings.find(b => b.id === workplace);
-                if (workplaceBuilding) {
-                  // Encontrar posição do edifício alvo
-                  const [bx, bz] = workplaceBuilding.position;
-                  updatedNPC.targetPosition = [bx + 0.5, 0, bz + 0.5];
-                  updatedNPC.targetBuildingId = workplace;
-                  updatedNPC.state = "moving";
-                }
-              } else {
-                // Se não encontrar trabalho, mova-se aleatoriamente
-                if (Math.random() < 0.01) { // 1% de chance por frame
-                  const randomX = npc.position[0] + (Math.random() * 10 - 5);
-                  const randomZ = npc.position[2] + (Math.random() * 10 - 5);
-                  updatedNPC.targetPosition = [randomX, 0, randomZ];
-                  updatedNPC.state = "moving";
-                }
-              }
-            }
-            break;
 
           case "searching":
             // Explora o mapa procurando por recursos
@@ -883,7 +804,7 @@ export const useNpcStore = create<NPCState>()(
               // Progresso da coleta - 1.5 segundos para coletar (mais rápido)
               updatedNPC.workProgress += adjustedDeltaTime * 0.67;
 
-              // Reduz estamina e satisfação durante a coleta (ajustado para 90 minutos)
+              // Reduz estamina e satisfção durante a coleta (ajustado para 90 minutos)
               updatedNPC.needs.energy = Math.max(0, updatedNPC.needs.energy - adjustedDeltaTime * 0.0185);
               updatedNPC.needs.satisfaction = Math.max(0, updatedNPC.needs.satisfaction - adjustedDeltaTime * 0.0093);
 
@@ -894,17 +815,17 @@ export const useNpcStore = create<NPCState>()(
                 if (updatedNPC.inventory.type === '' || updatedNPC.inventory.type === resourceType) {
                   updatedNPC.inventory.type = resourceType;
                   updatedNPC.inventory.amount += 1;
-                  
+
                   // Ganhar experiência e melhorar habilidades
                   updatedNPC.skills.experience += 1;
                   updatedNPC.skills.gathering = Math.min(100, updatedNPC.skills.gathering + 0.1);
                   updatedNPC.skills.efficiency = Math.min(100, updatedNPC.skills.efficiency + 0.05);
                   updatedNPC.memory.efficiency = 1 + (updatedNPC.skills.efficiency / 100);
                   updatedNPC.memory.lastTaskCompletion = Date.now();
-                  
+
                   // Liberar reserva do recurso
                   get().releaseResource(npc.id);
-                  
+
                   // Atualizar métricas (importação dinâmica para evitar dependência circular)
                   import('./useNpcMetrics').then(({ useNpcMetrics }) => {
                     useNpcMetrics.getState().updateMetrics(npc.id, "collect", resourceType);
@@ -912,7 +833,7 @@ export const useNpcStore = create<NPCState>()(
                     // Fallback se não conseguir importar
                     console.log("Métricas não disponíveis");
                   });
-                  
+
                   console.log(`${npc.type} coletou ${resourceType}. Inventário: ${updatedNPC.inventory.amount}/5 - XP: ${updatedNPC.skills.experience} - Eficiência: ${updatedNPC.skills.efficiency.toFixed(1)}`);
 
                   // Marca o recurso como coletado
@@ -1022,7 +943,7 @@ export const useNpcStore = create<NPCState>()(
 
     reserveResource: (npcId, resourceType, position) => {
       const state = get();
-      
+
       // Verifica se já está reservado
       if (state.isResourceReserved(resourceType, position)) {
         return false;
@@ -1055,7 +976,7 @@ export const useNpcStore = create<NPCState>()(
       const filteredReservations = state.resourceReservations.filter(
         r => r.npcId !== npcId
       );
-      
+
       set({ resourceReservations: filteredReservations });
       console.log(`Reservas liberadas para NPC ${npcId}`);
     },
@@ -1063,7 +984,7 @@ export const useNpcStore = create<NPCState>()(
     isResourceReserved: (resourceType, position) => {
       const state = get();
       const now = Date.now();
-      
+
       return state.resourceReservations.some(r => 
         r.resourceType === resourceType &&
         r.resourcePosition[0] === position[0] &&
