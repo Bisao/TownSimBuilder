@@ -14,6 +14,7 @@ const server = createServer(app);
 const wss = new WebSocketServer({ server });
 
 const PORT = process.env.PORT || 5000;
+const HOST = process.env.HOST || '0.0.0.0';
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -103,7 +104,7 @@ app.get('*', (req, res) => {
 
   // ALWAYS serve the app on port 5000
   // this serves both the API and the client
-  server.listen(PORT, '0.0.0.0', () => {
-    log(`serving on port ${PORT}`);
+  server.listen(PORT, HOST, () => {
+    log(`serving on port http://${HOST}:${PORT}`);
   });
 })();
