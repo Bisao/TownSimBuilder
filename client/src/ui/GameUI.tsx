@@ -11,13 +11,17 @@ import NpcPanel from "./NpcPanel";
 import { useKeyboardControls } from "@react-three/drei";
 import { NPC } from "../game/stores/useNpcStore";
 import { useIsMobile } from "../hooks/use-is-mobile";
+import MarketWindow from "./MarketWindow";
+import NpcMetricsPanel from "./NpcMetricsPanel";
 const GameUI = () => {
   const { backgroundMusic, toggleMute, isMuted } = useAudio();
   const { timeOfDay, dayCount, isPaused, timeSpeed } = useGameStore();
   const [showControls, setShowControls] = useState(false);
   const [showBuildingPanel, setShowBuildingPanel] = useState(false);
   const [showResourcePanel, setShowResourcePanel] = useState(false);
-  const [selectedNpc, setSelectedNpc] = useState<NPC | null>(null);
+  const [showMarket, setShowMarket] = useState(false);
+  const [selectedNpc, setSelectedNpc] = useState<any>(null);
+  const [showMetrics, setShowMetrics] = useState(false);
   const isMobile = useIsMobile();
 
   useEffect(() => {
@@ -25,7 +29,7 @@ const GameUI = () => {
       if (event.key === 'Escape') {
         setSelectedNpc(null);
       }
-      
+
       // Time control shortcuts
       if (event.key === 'p' || event.key === 'P') {
         const gameStore = useGameStore.getState();
@@ -35,11 +39,11 @@ const GameUI = () => {
           gameStore.pauseTime();
         }
       }
-      
+
       if (event.key === '[') {
         useGameStore.getState().decreaseTimeSpeed();
       }
-      
+
       if (event.key === ']') {
         useGameStore.getState().increaseTimeSpeed();
       }
@@ -129,7 +133,7 @@ const GameUI = () => {
           <div>Dia {dayCount}</div>
           <div>{getTimeString()} ({getTimeOfDayName()})</div>
         </div>
-        
+
         {/* Time control buttons */}
         <div className="bg-black/80 rounded-lg p-2 text-white flex gap-1">
           <button
@@ -146,7 +150,7 @@ const GameUI = () => {
           >
             {isPaused ? "▶️" : "⏸️"}
           </button>
-          
+
           <button
             onClick={() => useGameStore.getState().decreaseTimeSpeed()}
             className="bg-blue-500 hover:bg-blue-600 px-2 py-1 rounded text-sm transition-colors"
@@ -154,7 +158,7 @@ const GameUI = () => {
           >
             ⬇️
           </button>
-          
+
           <button
             onClick={() => useGameStore.getState().increaseTimeSpeed()}
             className="bg-blue-500 hover:bg-blue-600 px-2 py-1 rounded text-sm transition-colors"
@@ -163,13 +167,13 @@ const GameUI = () => {
             ⬆️
           </button>
         </div>
-        
+
         {/* Speed indicator */}
         <div className="bg-black/80 rounded-lg p-2 text-white text-center text-sm mt-1">
           {isPaused ? "PAUSADO" : `${timeSpeed}x`}
         </div>
       </div>
-      
+
       <div className="absolute bottom-4 right-4 pointer-events-auto">
         <button 
           className="bg-black/80 text-white p-2 rounded-full"
@@ -199,7 +203,7 @@ const GameUI = () => {
           </div>
         )}
       </div>
-      
+
       <div className="absolute top-4 left-64 flex gap-2 pointer-events-auto">
         <button 
           onClick={toggleMute}
@@ -215,9 +219,38 @@ const GameUI = () => {
         >
           <i className="fa-solid fa-grid-2"></i>
         </button>
+
+          <button
+            onClick={() => setShowMarket(!showMarket)}
+            className="bg-yellow-600 hover:bg-yellow-700 text-white px-4 py-2 rounded-lg font-medium transition-colors"
+          >
+            <i className="fa-solid fa-store mr-2"></i>
+            Mercado
+          </button>
+
+          <button
+            onClick={() => setShowMetrics(!showMetrics)}
+            className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg font-medium transition-colors"
+          >
+            <i className="fa-solid fa-chart-line mr-2"></i>
+            Métricas
+          </button>
       </div>
       {selectedNpc && (
         <NpcPanel npc={selectedNpc} onClose={() => setSelectedNpc(null)} />
+      )}
+      {/* Market Window */}
+      {showMarket && (
+        <div className="absolute top-16 left-4 z-20">
+          <MarketWindow />
+        </div>
+      )}
+
+      {/* Metrics Panel */}
+      {showMetrics && (
+        <div className="absolute top-16 right-4 z-20">
+          <NpcMetricsPanel />
+        </div>
       )}
     </div>
   );
