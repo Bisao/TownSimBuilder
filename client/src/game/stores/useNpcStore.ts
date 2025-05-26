@@ -117,6 +117,14 @@ const getScheduleForTime = (timeCycle: number): NPCSchedule => {
   return "home";
 };
 
+// Mapping de tipos de workplace para tipos de NPC
+const workplaceMapping: Record<string, string> = {
+  farm: "farmer",
+  bakery: "baker",
+  mine: "miner",
+  lumberyard: "lumberjack"
+};
+
 export const useNpcStore = create<NPCState>()(
   subscribeWithSelector((set, get) => ({
     npcs: [],
@@ -817,5 +825,3 @@ export const useNpcStore = create<NPCState>()(
     },
   }))
 );
-
-export { useNpcStore };
