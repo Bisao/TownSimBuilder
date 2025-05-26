@@ -96,7 +96,7 @@ function findNearestResource(position: [number, number, number], resourceType: s
 }
 
 // Helper function to check if NPC should be working
-const shouldBeWorking = (timeOfDay: TimeOfDay, timeCycle: number): boolean => {
+const shouldBeWorking = (timeCycle: number): boolean => {
   const hours = timeCycle * 24;
 
   // Ciclo de trabalho:
@@ -105,6 +105,16 @@ const shouldBeWorking = (timeOfDay: TimeOfDay, timeCycle: number): boolean => {
   // 13h-18h: trabalhar (tarde)
   // 18h-6h: em casa
   return (hours >= 6 && hours < 12) || (hours >= 13 && hours < 18);
+};
+
+// Helper function to determine what NPCs should be doing based on time
+const getScheduleForTime = (timeCycle: number): NPCSchedule => {
+  const hours = timeCycle * 24;
+  
+  if (hours >= 6 && hours < 12) return "working";
+  if (hours >= 12 && hours < 13) return "lunch";
+  if (hours >= 13 && hours < 18) return "working";
+  return "home";
 };
 
 export const useNpcStore = create<NPCState>()(
@@ -158,7 +168,7 @@ export const useNpcStore = create<NPCState>()(
     },
 
     updateNPCs: (deltaTime: number) => {
-    const { isPaused, timeSpeed } = useGameStore.getState();
+    const { isPaused, timeSpeed, timeCycle } = useGameStore.getState();
 
     // Se o jogo estiver pausado, não atualizar NPCs
     if (isPaused) return;
@@ -168,14 +178,64 @@ export const useNpcStore = create<NPCState>()(
 
       const buildings = useBuildingStore.getState().buildings;
       const updatedNPCs: NPC[] = [];
+      
+      // Determinar o horário atual
+      const currentSchedule = getScheduleForTime(timeCycle);
 
       for (const npc of get().npcs) {
         let updatedNPC = { ...npc };
+        
+        // Atualizar o horário atual do NPC
+        updatedNPC.currentSchedule = currentSchedule;
+        
+        // Verificar se NPC deve estar em casa (almoço ou noite)
+        if (currentSchedule === "lunch" || currentSchedule === "home") {
+          const home = buildings.find(b => b.id === npc.homeId);
+          if (home) {
+            const distanceToHome = Math.hypot(
+              home.position[0] - npc.position[0],
+              home.position[1] - npc.position[2]
+            );
+            
+            // Se não está em casa e deveria estar, vai para casa
+            if (distanceToHome > 1.0 && npc.state !== "moving") {
+              console.log(`NPC ${npc.type} indo para casa - horário: ${currentSchedule}`);
+              updatedNPC.targetPosition = [home.position[0], 0, home.position[1]];
+              updatedNPC.targetBuildingId = null;
+              updatedNPC.targetResource = null;
+              updatedNPC.state = "moving";
+              updatedNPCs.push(updatedNPC);
+              continue;
+            }
+            
+            // Se está em casa, descansa
+            if (distanceToHome <= 1.0 && npc.state !== "resting") {
+              updatedNPC.state = "resting";
+              updatedNPC.targetPosition = null;
+              updatedNPC.targetBuildingId = null;
+              updatedNPC.targetResource = null;
+              console.log(`NPC ${npc.type} descansando em casa - horário: ${currentSchedule}`);
+            }
+          }
+        }
 
         // Lógica baseada no estado atual do NPC
         switch (npc.state) {
           case "idle": {
-            console.log(`NPC ${npc.type} em estado idle, verificando ações possíveis`);
+            console.log(`NPC ${npc.type} em estado idle, verificando ações possíveis - horário: ${currentSchedule}`);
+
+            // Se não é horário de trabalho, vai para casa
+            if (currentSchedule !== "working") {
+              const home = buildings.find(b => b.id === npc.homeId);
+              if (home) {
+                updatedNPC.targetPosition = [home.position[0], 0, home.position[1]];
+                updatedNPC.targetBuildingId = null;
+                updatedNPC.targetResource = null;
+                updatedNPC.state = "moving";
+                console.log(`NPC ${npc.type} voltando para casa - horário: ${currentSchedule}`);
+                break;
+              }
+            }
 
             // Verifica se precisa descansar primeiro
             if (updatedNPC.needs.energy < 30) {
@@ -686,10 +746,14 @@ export const useNpcStore = create<NPCState>()(
             updatedNPC.needs.energy = Math.min(100, updatedNPC.needs.energy + adjustedDeltaTime * 15); // 15 pontos por segundo
             updatedNPC.needs.satisfaction = Math.min(100, updatedNPC.needs.satisfaction + adjustedDeltaTime * 10); // 10 pontos por segundo
 
-            // Descansa até recuperar energia suficiente
-            if (updatedNPC.needs.energy >= 80 && updatedNPC.needs.satisfaction >= 60) {
+            // Se é horário de trabalho e tem energia suficiente, volta ao trabalho
+            if (currentSchedule === "working" && updatedNPC.needs.energy >= 80 && updatedNPC.needs.satisfaction >= 60) {
               updatedNPC.state = "idle";
-              console.log(`NPC ${npc.type} descansou e voltou ao trabalho`);
+              console.log(`NPC ${npc.type} descansou e voltou ao trabalho - horário: ${currentSchedule}`);
+            }
+            // Se não é horário de trabalho, continua descansando
+            else if (currentSchedule !== "working") {
+              console.log(`NPC ${npc.type} descansando em casa - horário: ${currentSchedule}`);
             }
             break;
         }

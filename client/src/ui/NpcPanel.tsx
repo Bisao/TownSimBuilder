@@ -40,13 +40,20 @@ const NpcPanel = ({ npc, onClose }: NpcPanelProps) => {
   }
 
   const npcType = npcTypes[npc.type];
-  const stateTranslations: { [key: string]: string } = {
-    idle: "Descansando",
+  const stateTranslations = {
+    idle: "Parado",
     moving: "Movendo",
     working: "Trabalhando",
     gathering: "Coletando",
     resting: "Descansando",
     searching: "Procurando"
+  };
+
+  const scheduleTranslations = {
+    home: "Em Casa",
+    working: "Horário de Trabalho",
+    lunch: "Horário de Almoço",
+    traveling: "Viajando"
   };
 
   const { dragRef, position, isDragging, handleMouseDown } = useDraggable({
