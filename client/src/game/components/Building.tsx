@@ -4,7 +4,7 @@ import { buildingTypes } from "../constants/buildings";
 import { Building as BuildingType } from "../stores/useBuildingStore";
 import * as THREE from "three";
 import { useTexture, Html } from "@react-three/drei"; // Import Html
-import { npcs } from "../constants/npcs"; // Import npcs
+import { useNpcStore } from "../stores/useNpcStore"; // Import NPC store
 
 interface BuildingProps {
   building: BuildingType;
@@ -117,6 +117,7 @@ const Building = ({ building, onClick }: BuildingProps) => {
       {building.type.includes("House") && (
         <group position={[0, buildingType.height + 0.3, 0]}>
           {(() => {
+            const npcs = useNpcStore(state => state.npcs);
             const houseNpcs = npcs.filter(npc => npc.homeId === building.id);
 
             return houseNpcs.map((npc, index) => {
