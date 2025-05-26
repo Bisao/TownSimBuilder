@@ -1,0 +1,34 @@
+[vite] connecting...
+[vite] connected.
+Sistema de áudio inicializado
+Camera initialized: 
+Object {position: Array(3), target: Array(3)}
+Initializing game world and resources
+Mercado inicial criado em [16, 25]
+Building minerHouse placed at 10,1
+NPC miner criado em 10.5,0,1.5
+Warning: Cannot update a component (&#x60;NpcMetricsPanel&#x60;) while rendering a different component (&#x60;NpcPanel&#x60;). To locate the bad setState() call inside &#x60;NpcPanel&#x60;, follow the stack trace as described in https://reactjs.org/link/setstate-in-render
+    at NpcPanel (https://ecc93734-5ddd-45de-8efb-0f7cc677620d-00-11ok0ajtsekgc.spock.replit.dev/src/ui/NpcPanel.tsx:22:21)
+    at div
+    at GameUI (https://ecc93734-5ddd-45de-8efb-0f7cc677620d-00-11ok0ajtsekgc.spock.replit.dev/src/ui/GameUI.tsx:30:52)
+    at KeyboardControls (https://ecc93734-5ddd-45de-8efb-0f7cc677620d-00-11ok0ajtsekgc.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@react-three_drei.js?v=cc8441ba:9151:8)
+    at div
+    at App (https://ecc93734-5ddd-45de-8efb-0f7cc677620d-00-11ok0ajtsekgc.spock.replit.dev/src/App.tsx?v=mSvWCaM5TJi-HgM5qqaAZ:29:39)
+    at QueryClientProvider (https://ecc93734-5ddd-45de-8efb-0f7cc677620d-00-11ok0ajtsekgc.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=cc8441ba:2805:3)
+at NpcPanel (https://ecc93734-5ddd-45de-8efb-0f7cc677620d-00-11ok0ajtsekgc.spock.replit.dev/src/ui/NpcPanel.tsx:22:21)
+at div
+at GameUI (https://ecc93734-5ddd-45de-8efb-0f7cc677620d-00-11ok0ajtsekgc.spock.replit.dev/src/ui/GameUI.tsx:30:52)
+at KeyboardControls (https://ecc93734-5ddd-45de-8efb-0f7cc677620d-00-11ok0ajtsekgc.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@react-three_drei.js?v=cc8441ba:9151:8)
+at div
+at App (https://ecc93734-5ddd-45de-8efb-0f7cc677620d-00-11ok0ajtsekgc.spock.replit.dev/src/App.tsx?v=mSvWCaM5TJi-HgM5qqaAZ:29:39)
+at QueryClientProvider (https://ecc93734-5ddd-45de-8efb-0f7cc677620d-00-11ok0ajtsekgc.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=cc8441ba:2805:3)
+at t.value (https://ecc93734-5ddd-45de-8efb-0f7cc677620d-00-11ok0ajtsekgc.spock.replit.dev/__replco/static/devtools/eruda/3.2.3/eruda.js:2:17465)
+at new t (https://ecc93734-5ddd-45de-8efb-0f7cc677620d-00-11ok0ajtsekgc.spock.replit.dev/__replco/static/devtools/eruda/3.2.3/eruda.js:2:12630)
+at t.value (https://ecc93734-5ddd-45de-8efb-0f7cc677620d-00-11ok0ajtsekgc.spock.replit.dev/__replco/static/devtools/eruda/3.2.3/eruda.js:2:32766)
+at https://ecc93734-5ddd-45de-8efb-0f7cc677620d-00-11ok0ajtsekgc.spock.replit.dev/__replco/static/devtools/eruda/3.2.3/eruda.js:2:34400
+Iniciando trabalho para NPC miner - Estado atual: idle
+Atualizando NPC miner: estado searching -> idle para buscar recursos
+Trabalho iniciado para NPC miner
+Iniciando trabalho para NPC miner - Estado atual: idle
+Atualizando NPC miner: estado searching -> idle para buscar recursos
+Trabalho iniciado para NPC miner
