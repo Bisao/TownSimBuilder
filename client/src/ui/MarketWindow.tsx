@@ -12,6 +12,7 @@ interface MarketWindowProps {
 
 const MarketWindow = ({ isOpen, onClose }: MarketWindowProps) => {
   const [activeCategory, setActiveCategory] = useState("seeds");
+  const [marketMode, setMarketMode] = useState<"buy" | "sell">("buy");
   const { resources, updateResource } = useResourceStore();
   const { dragRef, position, isDragging, handleMouseDown } = useDraggable({
     initialPosition: { x: window.innerWidth / 2 - 384, y: window.innerHeight / 2 - 300 }
@@ -45,6 +46,31 @@ const MarketWindow = ({ isOpen, onClose }: MarketWindowProps) => {
       alert(`Você comprou: ${item.name}${item.amount ? ` (${item.amount} unidades)` : ''}`);
     } else {
       alert("Moedas insuficientes!");
+    }
+  };
+
+  // Função para vender um item
+  const sellItem = (itemId: string) => {
+    const item = marketItems[itemId];
+    if (!item || !item.resourceType || !item.amount) return;
+    
+    const currentAmount = resources[item.resourceType] || 0;
+    
+    // Verificar se o jogador tem o recurso para vender
+    if (currentAmount >= item.amount) {
+      // Remover o recurso do inventário
+      updateResource(item.resourceType, -item.amount);
+      
+      // Adicionar moedas (venda por 70% do preço de compra)
+      const sellPrice = Math.floor(item.price * 0.7);
+      updateResource("coins", sellPrice);
+      
+      // Tocar som de sucesso
+      playSuccess();
+      
+      alert(`Você vendeu: ${item.name} por ${sellPrice} moedas`);
+    } else {
+      alert(`Você não tem ${item.name} suficiente para vender!`);
     }
   };
   
@@ -81,6 +107,32 @@ const MarketWindow = ({ isOpen, onClose }: MarketWindowProps) => {
           </button>
         </div>
         
+        {/* Toggle Buy/Sell Mode */}
+        <div className="flex bg-gray-700 rounded-lg p-1 mb-4">
+          <button
+            className={cn(
+              "flex-1 py-2 px-4 rounded-md font-medium transition-colors",
+              marketMode === "buy"
+                ? "bg-green-600 text-white"
+                : "text-gray-400 hover:text-gray-200"
+            )}
+            onClick={() => setMarketMode("buy")}
+          >
+            Comprar
+          </button>
+          <button
+            className={cn(
+              "flex-1 py-2 px-4 rounded-md font-medium transition-colors",
+              marketMode === "sell"
+                ? "bg-orange-600 text-white"
+                : "text-gray-400 hover:text-gray-200"
+            )}
+            onClick={() => setMarketMode("sell")}
+          >
+            Vender
+          </button>
+        </div>
+        
         {/* Abas de categorias */}
         <div className="flex border-b border-gray-700 mb-4">
           {marketCategories.map((category) => (
@@ -109,40 +161,68 @@ const MarketWindow = ({ isOpen, onClose }: MarketWindowProps) => {
         
         {/* Lista de itens */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {filteredItems.map((item) => (
-            <div
-              key={item.id}
-              className="bg-gray-700 rounded-lg p-3 flex flex-col hover:bg-gray-600 transition-colors"
-            >
-              <div className="flex items-center gap-3 mb-2">
-                <div 
-                  className="w-10 h-10 rounded-full flex items-center justify-center"
-                  style={{ backgroundColor: item.color }}
-                >
-                  {/* Substituir ícones FontAwesome por emoji ou texto */}
-                  <span>🔖</span>
-                </div>
-                <div>
-                  <h3 className="font-bold">{item.name}</h3>
-                  <p className="text-sm text-gray-300">
-                    Preço: <span className="text-yellow-400">{item.price}</span>
-                  </p>
-                </div>
-              </div>
-              
-              <p className="text-sm text-gray-300 mb-3">
-                {item.description}
-              </p>
-              
-              <button
-                className="mt-auto bg-yellow-600 hover:bg-yellow-700 text-white py-1 px-3 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
-                onClick={() => buyItem(item.id)}
-                disabled={(resources.coins || 0) < item.price}
+          {filteredItems.map((item) => {
+            const canSell = item.resourceType && (resources[item.resourceType] || 0) >= (item.amount || 1);
+            const sellPrice = Math.floor(item.price * 0.7);
+            const hasEnoughStock = marketMode === "sell" ? canSell : true;
+            const currentStock = item.resourceType ? (resources[item.resourceType] || 0) : 0;
+            
+            return (
+              <div
+                key={item.id}
+                className="bg-gray-700 rounded-lg p-3 flex flex-col hover:bg-gray-600 transition-colors"
               >
-                Comprar
-              </button>
-            </div>
-          ))}
+                <div className="flex items-center gap-3 mb-2">
+                  <div 
+                    className="w-10 h-10 rounded-full flex items-center justify-center"
+                    style={{ backgroundColor: item.color }}
+                  >
+                    {/* Substituir ícones FontAwesome por emoji ou texto */}
+                    <span>🔖</span>
+                  </div>
+                  <div>
+                    <h3 className="font-bold">{item.name}</h3>
+                    {marketMode === "buy" ? (
+                      <p className="text-sm text-gray-300">
+                        Preço: <span className="text-yellow-400">{item.price}</span>
+                      </p>
+                    ) : (
+                      <p className="text-sm text-gray-300">
+                        Vende por: <span className="text-orange-400">{sellPrice}</span>
+                      </p>
+                    )}
+                  </div>
+                </div>
+                
+                <p className="text-sm text-gray-300 mb-2">
+                  {item.description}
+                </p>
+                
+                {marketMode === "sell" && (
+                  <p className="text-sm text-blue-300 mb-3">
+                    Estoque: {currentStock} unidade(s)
+                  </p>
+                )}
+                
+                <button
+                  className={cn(
+                    "mt-auto text-white py-1 px-3 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed",
+                    marketMode === "buy" 
+                      ? "bg-green-600 hover:bg-green-700" 
+                      : "bg-orange-600 hover:bg-orange-700"
+                  )}
+                  onClick={() => marketMode === "buy" ? buyItem(item.id) : sellItem(item.id)}
+                  disabled={
+                    marketMode === "buy" 
+                      ? (resources.coins || 0) < item.price
+                      : !canSell
+                  }
+                >
+                  {marketMode === "buy" ? "Comprar" : "Vender"}
+                </button>
+              </div>
+            );
+          })}
         </div>
       </div>
     </div>

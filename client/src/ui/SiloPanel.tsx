@@ -19,7 +19,7 @@ const SiloPanel = ({ isOpen, onClose, siloId }: SiloPanelProps) => {
   if (!isOpen) return null;
 
   // Recursos que podem ser armazenados no silo
-  const storableResources = ['wheat', 'seeds', 'bread'];
+  const storableResources = ['wheat', 'seeds', 'corn_seeds', 'carrot_seeds', 'bread'];
 
   return (
     <div 
