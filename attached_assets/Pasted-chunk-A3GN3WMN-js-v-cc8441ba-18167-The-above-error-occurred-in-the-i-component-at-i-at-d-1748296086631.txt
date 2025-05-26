@@ -1,0 +1,219 @@
+chunk-A3GN3WMN.js?v=cc8441ba:18167 The above error occurred in the <i> component:
+
+    at i
+    at div
+    at div
+    at div
+    at div
+    at div
+    at SiloPanel (https://89ab168e-9ed6-4470-8869-c0b42e9b2c53-00-2t8bc5fslyon2.kirk.replit.dev/src/ui/SiloPanel.tsx:21:22)
+    at mesh
+    at Building (https://89ab168e-9ed6-4470-8869-c0b42e9b2c53-00-2t8bc5fslyon2.kirk.replit.dev/src/game/components/Building.tsx:28:21)
+    at World (https://89ab168e-9ed6-4470-8869-c0b42e9b2c53-00-2t8bc5fslyon2.kirk.replit.dev/src/game/components/World.tsx:33:18)
+    at Suspense
+    at Suspense
+    at ErrorBoundary (https://89ab168e-9ed6-4470-8869-c0b42e9b2c53-00-2t8bc5fslyon2.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-A3GN3WMN.js?v=cc8441ba:16490:5)
+    at FiberProvider (https://89ab168e-9ed6-4470-8869-c0b42e9b2c53-00-2t8bc5fslyon2.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-A3GN3WMN.js?v=cc8441ba:18170:21)
+    at Provider (https://89ab168e-9ed6-4470-8869-c0b42e9b2c53-00-2t8bc5fslyon2.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-A3GN3WMN.js?v=cc8441ba:17779:3)
+
+React will try to recreate this component tree from scratch using the error boundary you provided, ErrorBoundary.
+console.error @ chunk-A3GN3WMN.js?v=cc8441ba:18167
+2chunk-A3GN3WMN.js?v=cc8441ba:18167 The above error occurred in the <div> component:
+
+    at div
+    at div
+    at div
+    at div
+    at div
+    at div
+    at div
+    at SiloPanel (https://89ab168e-9ed6-4470-8869-c0b42e9b2c53-00-2t8bc5fslyon2.kirk.replit.dev/src/ui/SiloPanel.tsx:21:22)
+    at mesh
+    at Building (https://89ab168e-9ed6-4470-8869-c0b42e9b2c53-00-2t8bc5fslyon2.kirk.replit.dev/src/game/components/Building.tsx:28:21)
+    at World (https://89ab168e-9ed6-4470-8869-c0b42e9b2c53-00-2t8bc5fslyon2.kirk.replit.dev/src/game/components/World.tsx:33:18)
+    at Suspense
+    at Suspense
+    at ErrorBoundary (https://89ab168e-9ed6-4470-8869-c0b42e9b2c53-00-2t8bc5fslyon2.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-A3GN3WMN.js?v=cc8441ba:16490:5)
+    at FiberProvider (https://89ab168e-9ed6-4470-8869-c0b42e9b2c53-00-2t8bc5fslyon2.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-A3GN3WMN.js?v=cc8441ba:18170:21)
+    at Provider (https://89ab168e-9ed6-4470-8869-c0b42e9b2c53-00-2t8bc5fslyon2.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-A3GN3WMN.js?v=cc8441ba:17779:3)
+
+React will try to recreate this component tree from scratch using the error boundary you provided, ErrorBoundary.
+console.error @ chunk-A3GN3WMN.js?v=cc8441ba:18167
+2chunk-A3GN3WMN.js?v=cc8441ba:18167 The above error occurred in the <div> component:
+
+    at div
+    at div
+    at div
+    at div
+    at div
+    at div
+    at SiloPanel (https://89ab168e-9ed6-4470-8869-c0b42e9b2c53-00-2t8bc5fslyon2.kirk.replit.dev/src/ui/SiloPanel.tsx:21:22)
+    at mesh
+    at Building (https://89ab168e-9ed6-4470-8869-c0b42e9b2c53-00-2t8bc5fslyon2.kirk.replit.dev/src/game/components/Building.tsx:28:21)
+    at World (https://89ab168e-9ed6-4470-8869-c0b42e9b2c53-00-2t8bc5fslyon2.kirk.replit.dev/src/game/components/World.tsx:33:18)
+    at Suspense
+    at Suspense
+    at ErrorBoundary (https://89ab168e-9ed6-4470-8869-c0b42e9b2c53-00-2t8bc5fslyon2.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-A3GN3WMN.js?v=cc8441ba:16490:5)
+    at FiberProvider (https://89ab168e-9ed6-4470-8869-c0b42e9b2c53-00-2t8bc5fslyon2.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-A3GN3WMN.js?v=cc8441ba:18170:21)
+    at Provider (https://89ab168e-9ed6-4470-8869-c0b42e9b2c53-00-2t8bc5fslyon2.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-A3GN3WMN.js?v=cc8441ba:17779:3)
+
+React will try to recreate this component tree from scratch using the error boundary you provided, ErrorBoundary.
+console.error @ chunk-A3GN3WMN.js?v=cc8441ba:18167
+chunk-A3GN3WMN.js?v=cc8441ba:18167 The above error occurred in the <i> component:
+
+    at i
+    at div
+    at div
+    at div
+    at div
+    at div
+    at SiloPanel (https://89ab168e-9ed6-4470-8869-c0b42e9b2c53-00-2t8bc5fslyon2.kirk.replit.dev/src/ui/SiloPanel.tsx:21:22)
+    at mesh
+    at Building (https://89ab168e-9ed6-4470-8869-c0b42e9b2c53-00-2t8bc5fslyon2.kirk.replit.dev/src/game/components/Building.tsx:28:21)
+    at World (https://89ab168e-9ed6-4470-8869-c0b42e9b2c53-00-2t8bc5fslyon2.kirk.replit.dev/src/game/components/World.tsx:33:18)
+    at Suspense
+    at Suspense
+    at ErrorBoundary (https://89ab168e-9ed6-4470-8869-c0b42e9b2c53-00-2t8bc5fslyon2.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-A3GN3WMN.js?v=cc8441ba:16490:5)
+    at FiberProvider (https://89ab168e-9ed6-4470-8869-c0b42e9b2c53-00-2t8bc5fslyon2.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-A3GN3WMN.js?v=cc8441ba:18170:21)
+    at Provider (https://89ab168e-9ed6-4470-8869-c0b42e9b2c53-00-2t8bc5fslyon2.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-A3GN3WMN.js?v=cc8441ba:17779:3)
+
+React will try to recreate this component tree from scratch using the error boundary you provided, ErrorBoundary.
+console.error @ chunk-A3GN3WMN.js?v=cc8441ba:18167
+2chunk-A3GN3WMN.js?v=cc8441ba:18167 The above error occurred in the <div> component:
+
+    at div
+    at div
+    at div
+    at div
+    at div
+    at div
+    at div
+    at SiloPanel (https://89ab168e-9ed6-4470-8869-c0b42e9b2c53-00-2t8bc5fslyon2.kirk.replit.dev/src/ui/SiloPanel.tsx:21:22)
+    at mesh
+    at Building (https://89ab168e-9ed6-4470-8869-c0b42e9b2c53-00-2t8bc5fslyon2.kirk.replit.dev/src/game/components/Building.tsx:28:21)
+    at World (https://89ab168e-9ed6-4470-8869-c0b42e9b2c53-00-2t8bc5fslyon2.kirk.replit.dev/src/game/components/World.tsx:33:18)
+    at Suspense
+    at Suspense
+    at ErrorBoundary (https://89ab168e-9ed6-4470-8869-c0b42e9b2c53-00-2t8bc5fslyon2.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-A3GN3WMN.js?v=cc8441ba:16490:5)
+    at FiberProvider (https://89ab168e-9ed6-4470-8869-c0b42e9b2c53-00-2t8bc5fslyon2.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-A3GN3WMN.js?v=cc8441ba:18170:21)
+    at Provider (https://89ab168e-9ed6-4470-8869-c0b42e9b2c53-00-2t8bc5fslyon2.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-A3GN3WMN.js?v=cc8441ba:17779:3)
+
+React will try to recreate this component tree from scratch using the error boundary you provided, ErrorBoundary.
+console.error @ chunk-A3GN3WMN.js?v=cc8441ba:18167
+2chunk-A3GN3WMN.js?v=cc8441ba:18167 The above error occurred in the <div> component:
+
+    at div
+    at div
+    at div
+    at div
+    at div
+    at div
+    at SiloPanel (https://89ab168e-9ed6-4470-8869-c0b42e9b2c53-00-2t8bc5fslyon2.kirk.replit.dev/src/ui/SiloPanel.tsx:21:22)
+    at mesh
+    at Building (https://89ab168e-9ed6-4470-8869-c0b42e9b2c53-00-2t8bc5fslyon2.kirk.replit.dev/src/game/components/Building.tsx:28:21)
+    at World (https://89ab168e-9ed6-4470-8869-c0b42e9b2c53-00-2t8bc5fslyon2.kirk.replit.dev/src/game/components/World.tsx:33:18)
+    at Suspense
+    at Suspense
+    at ErrorBoundary (https://89ab168e-9ed6-4470-8869-c0b42e9b2c53-00-2t8bc5fslyon2.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-A3GN3WMN.js?v=cc8441ba:16490:5)
+    at FiberProvider (https://89ab168e-9ed6-4470-8869-c0b42e9b2c53-00-2t8bc5fslyon2.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-A3GN3WMN.js?v=cc8441ba:18170:21)
+    at Provider (https://89ab168e-9ed6-4470-8869-c0b42e9b2c53-00-2t8bc5fslyon2.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-A3GN3WMN.js?v=cc8441ba:17779:3)
+
+React will try to recreate this component tree from scratch using the error boundary you provided, ErrorBoundary.
+console.error @ chunk-A3GN3WMN.js?v=cc8441ba:18167
+chunk-A3GN3WMN.js?v=cc8441ba:18167 The above error occurred in the <i> component:
+
+    at i
+    at div
+    at div
+    at div
+    at div
+    at div
+    at SiloPanel (https://89ab168e-9ed6-4470-8869-c0b42e9b2c53-00-2t8bc5fslyon2.kirk.replit.dev/src/ui/SiloPanel.tsx:21:22)
+    at mesh
+    at Building (https://89ab168e-9ed6-4470-8869-c0b42e9b2c53-00-2t8bc5fslyon2.kirk.replit.dev/src/game/components/Building.tsx:28:21)
+    at World (https://89ab168e-9ed6-4470-8869-c0b42e9b2c53-00-2t8bc5fslyon2.kirk.replit.dev/src/game/components/World.tsx:33:18)
+    at Suspense
+    at Suspense
+    at ErrorBoundary (https://89ab168e-9ed6-4470-8869-c0b42e9b2c53-00-2t8bc5fslyon2.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-A3GN3WMN.js?v=cc8441ba:16490:5)
+    at FiberProvider (https://89ab168e-9ed6-4470-8869-c0b42e9b2c53-00-2t8bc5fslyon2.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-A3GN3WMN.js?v=cc8441ba:18170:21)
+    at Provider (https://89ab168e-9ed6-4470-8869-c0b42e9b2c53-00-2t8bc5fslyon2.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-A3GN3WMN.js?v=cc8441ba:17779:3)
+
+React will try to recreate this component tree from scratch using the error boundary you provided, ErrorBoundary.
+console.error @ chunk-A3GN3WMN.js?v=cc8441ba:18167
+2chunk-A3GN3WMN.js?v=cc8441ba:18167 The above error occurred in the <div> component:
+
+    at div
+    at div
+    at div
+    at div
+    at div
+    at div
+    at div
+    at SiloPanel (https://89ab168e-9ed6-4470-8869-c0b42e9b2c53-00-2t8bc5fslyon2.kirk.replit.dev/src/ui/SiloPanel.tsx:21:22)
+    at mesh
+    at Building (https://89ab168e-9ed6-4470-8869-c0b42e9b2c53-00-2t8bc5fslyon2.kirk.replit.dev/src/game/components/Building.tsx:28:21)
+    at World (https://89ab168e-9ed6-4470-8869-c0b42e9b2c53-00-2t8bc5fslyon2.kirk.replit.dev/src/game/components/World.tsx:33:18)
+    at Suspense
+    at Suspense
+    at ErrorBoundary (https://89ab168e-9ed6-4470-8869-c0b42e9b2c53-00-2t8bc5fslyon2.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-A3GN3WMN.js?v=cc8441ba:16490:5)
+    at FiberProvider (https://89ab168e-9ed6-4470-8869-c0b42e9b2c53-00-2t8bc5fslyon2.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-A3GN3WMN.js?v=cc8441ba:18170:21)
+    at Provider (https://89ab168e-9ed6-4470-8869-c0b42e9b2c53-00-2t8bc5fslyon2.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-A3GN3WMN.js?v=cc8441ba:17779:3)
+
+React will try to recreate this component tree from scratch using the error boundary you provided, ErrorBoundary.
+console.error @ chunk-A3GN3WMN.js?v=cc8441ba:18167
+2chunk-A3GN3WMN.js?v=cc8441ba:18167 The above error occurred in the <div> component:
+
+    at div
+    at div
+    at div
+    at div
+    at div
+    at div
+    at SiloPanel (https://89ab168e-9ed6-4470-8869-c0b42e9b2c53-00-2t8bc5fslyon2.kirk.replit.dev/src/ui/SiloPanel.tsx:21:22)
+    at mesh
+    at Building (https://89ab168e-9ed6-4470-8869-c0b42e9b2c53-00-2t8bc5fslyon2.kirk.replit.dev/src/game/components/Building.tsx:28:21)
+    at World (https://89ab168e-9ed6-4470-8869-c0b42e9b2c53-00-2t8bc5fslyon2.kirk.replit.dev/src/game/components/World.tsx:33:18)
+    at Suspense
+    at Suspense
+    at ErrorBoundary (https://89ab168e-9ed6-4470-8869-c0b42e9b2c53-00-2t8bc5fslyon2.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-A3GN3WMN.js?v=cc8441ba:16490:5)
+    at FiberProvider (https://89ab168e-9ed6-4470-8869-c0b42e9b2c53-00-2t8bc5fslyon2.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-A3GN3WMN.js?v=cc8441ba:18170:21)
+    at Provider (https://89ab168e-9ed6-4470-8869-c0b42e9b2c53-00-2t8bc5fslyon2.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-A3GN3WMN.js?v=cc8441ba:17779:3)
+
+React will try to recreate this component tree from scratch using the error boundary you provided, ErrorBoundary.
+console.error @ chunk-A3GN3WMN.js?v=cc8441ba:18167
+2chunk-A3GN3WMN.js?v=cc8441ba:18276 Uncaught Error: R3F: Div is not part of the THREE namespace! Did you forget to extend? See: https://docs.pmnd.rs/react-three-fiber/api/objects#using-3rd-party-objects-declaratively
+    at createInstance (chunk-A3GN3WMN.js?v=cc8441ba:16205:15)
+    at completeWork (chunk-A3GN3WMN.js?v=cc8441ba:8414:34)
+    at completeUnitOfWork (chunk-A3GN3WMN.js?v=cc8441ba:13690:24)
+    at performUnitOfWork (chunk-A3GN3WMN.js?v=cc8441ba:13672:13)
+    at workLoopSync (chunk-A3GN3WMN.js?v=cc8441ba:13604:13)
+    at renderRootSync (chunk-A3GN3WMN.js?v=cc8441ba:13583:15)
+    at recoverFromConcurrentError (chunk-A3GN3WMN.js?v=cc8441ba:13173:28)
+    at performSyncWorkOnRoot (chunk-A3GN3WMN.js?v=cc8441ba:13316:28)
+    at flushSyncCallbacks (chunk-A3GN3WMN.js?v=cc8441ba:2766:30)
+    at workLoop (chunk-A3GN3WMN.js?v=cc8441ba:274:42)
+chunk-A3GN3WMN.js?v=cc8441ba:18167 The above error occurred in the <ForwardRef(Canvas)> component:
+
+    at Canvas (https://89ab168e-9ed6-4470-8869-c0b42e9b2c53-00-2t8bc5fslyon2.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-A3GN3WMN.js?v=cc8441ba:18236:3)
+    at FiberProvider (https://89ab168e-9ed6-4470-8869-c0b42e9b2c53-00-2t8bc5fslyon2.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-A3GN3WMN.js?v=cc8441ba:18170:21)
+    at CanvasWrapper
+    at KeyboardControls (https://89ab168e-9ed6-4470-8869-c0b42e9b2c53-00-2t8bc5fslyon2.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@react-three_drei.js?v=cc8441ba:9151:8)
+    at div
+    at App (https://89ab168e-9ed6-4470-8869-c0b42e9b2c53-00-2t8bc5fslyon2.kirk.replit.dev/src/App.tsx?v=-_HbGaMfNcTff2OUvSTFw:29:39)
+    at QueryClientProvider (https://89ab168e-9ed6-4470-8869-c0b42e9b2c53-00-2t8bc5fslyon2.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=cc8441ba:2805:3)
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+console.error @ chunk-A3GN3WMN.js?v=cc8441ba:18167
+chunk-WERSD76P.js?v=cc8441ba:19413 Uncaught Error: R3F: Div is not part of the THREE namespace! Did you forget to extend? See: https://docs.pmnd.rs/react-three-fiber/api/objects#using-3rd-party-objects-declaratively
+    at createInstance (chunk-A3GN3WMN.js?v=cc8441ba:16205:15)
+    at completeWork (chunk-A3GN3WMN.js?v=cc8441ba:8414:34)
+    at completeUnitOfWork (chunk-A3GN3WMN.js?v=cc8441ba:13690:24)
+    at performUnitOfWork (chunk-A3GN3WMN.js?v=cc8441ba:13672:13)
+    at workLoopSync (chunk-A3GN3WMN.js?v=cc8441ba:13604:13)
+    at renderRootSync (chunk-A3GN3WMN.js?v=cc8441ba:13583:15)
+    at recoverFromConcurrentError (chunk-A3GN3WMN.js?v=cc8441ba:13173:28)
+    at performSyncWorkOnRoot (chunk-A3GN3WMN.js?v=cc8441ba:13316:28)
+    at flushSyncCallbacks (chunk-A3GN3WMN.js?v=cc8441ba:2766:30)
+    at workLoop (chunk-A3GN3WMN.js?v=cc8441ba:274:42)
+chunk-664ZIH6C.js?v=cc8441ba:17835 THRE
