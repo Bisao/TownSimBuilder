@@ -57,29 +57,29 @@ const DayNightCycle = () => {
     if (timeOfDay === "dawn") {
       // Amanhecer (6h-8h) - luz dourada crescente
       const dawnProgress = (hours - 6) / 2; // 0 a 1 durante amanhecer (2 horas)
-      directionalIntensity = dawnProgress * sunIntensity * 2.0;
-      ambientIntensity = 0.2 + dawnProgress * 0.4;
+      directionalIntensity = dawnProgress * sunIntensity * 5.0;
+      ambientIntensity = 0.5 + dawnProgress * 0.8;
       lightColor = new THREE.Color(1, 0.8 + dawnProgress * 0.15, 0.6 + dawnProgress * 0.3);
       ambientColor = new THREE.Color(0.5 + dawnProgress * 0.1, 0.4 + dawnProgress * 0.2, 0.6 + dawnProgress * 0.2);
     } else if (timeOfDay === "day") {
       // Dia (8h-18h) - luz intensa e branca
-      directionalIntensity = sunIntensity * 3.0;
-      ambientIntensity = 0.6;
+      directionalIntensity = sunIntensity * 6.0;
+      ambientIntensity = 1.2;
       lightColor = new THREE.Color(1, 0.98, 0.95); // Branco solar
       ambientColor = new THREE.Color(0.6, 0.7, 0.9); // Azul céu
     } else if (timeOfDay === "dusk") {
       // Entardecer (18h-19h) - luz alaranjada decrescente  
       const duskProgress = (hours - 18) / 1; // 0 a 1 durante entardecer (1 hora)
-      directionalIntensity = (1 - duskProgress) * sunIntensity * 2.0;
-      ambientIntensity = 0.4 - duskProgress * 0.25;
+      directionalIntensity = (1 - duskProgress) * sunIntensity * 4.0;
+      ambientIntensity = 0.8 - duskProgress * 0.4;
       lightColor = new THREE.Color(1, 0.7 - duskProgress * 0.2, 0.4 - duskProgress * 0.2);
       ambientColor = new THREE.Color(0.6 - duskProgress * 0.4, 0.4 - duskProgress * 0.2, 0.5 + duskProgress * 0.1);
     } else {
-      // Noite (19h-6h) - apenas luz lunar
-      directionalIntensity = 0.05;
-      ambientIntensity = 0.1;
+      // Noite (19h-6h) - luz lunar mais intensa
+      directionalIntensity = 0.3;
+      ambientIntensity = 0.4;
       lightColor = new THREE.Color(0.7, 0.8, 1); // Azul lunar
-      ambientColor = new THREE.Color(0.15, 0.15, 0.3); // Azul noturno
+      ambientColor = new THREE.Color(0.2, 0.2, 0.4); // Azul noturno mais claro
     }
     
     // Aplicar intensidades e cores
