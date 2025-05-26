@@ -13,31 +13,33 @@ const NpcPanel = ({ npc, onClose }: NpcPanelProps) => {
   if (!npc) return null;
 
   // Inicia ciclo de trabalho automaticamente se estiver idle
-  if (npc.state === "idle") {
-    const buildings = useBuildingStore.getState().buildings;
-    const home = buildings.find(b => b.id === npc.homeId);
+  React.useEffect(() => {
+    if (npc.state === "idle") {
+      const buildings = useBuildingStore.getState().buildings;
+      const home = buildings.find(b => b.id === npc.homeId);
 
-    if (home) {
-      useNpcStore.setState(state => ({
-        npcs: state.npcs.map(n => {
-          if (n.id !== npc.id) return n;
+      if (home) {
+        useNpcStore.setState(state => ({
+          npcs: state.npcs.map(n => {
+            if (n.id !== npc.id) return n;
 
-          return {
-            ...n,
-            position: [home.position[0] + 0.5, 0, home.position[1] + 0.5],
-            state: "searching",
-            workProgress: 0,
-            targetResource: null,
-            targetPosition: null,
-            needs: {
-              energy: Math.max(n.needs.energy, 50),
-              satisfaction: Math.max(n.needs.satisfaction, 50)
-            }
-          };
-        })
-      }));
+            return {
+              ...n,
+              position: [home.position[0] + 0.5, 0, home.position[1] + 0.5],
+              state: "searching",
+              workProgress: 0,
+              targetResource: null,
+              targetPosition: null,
+              needs: {
+                energy: Math.max(n.needs.energy, 50),
+                satisfaction: Math.max(n.needs.satisfaction, 50)
+              }
+            };
+          })
+        }));
+      }
     }
-  }
+  }, [npc.state, npc.id]);
 
   const npcType = npcTypes[npc.type];
   const stateTranslations = {
