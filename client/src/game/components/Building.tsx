@@ -3,7 +3,8 @@ import { useFrame, useThree } from "@react-three/fiber";
 import { buildingTypes } from "../constants/buildings";
 import { Building as BuildingType } from "../stores/useBuildingStore";
 import * as THREE from "three";
-import { useTexture } from "@react-three/drei";
+import { useTexture, Html } from "@react-three/drei"; // Import Html
+import { npcs } from "../constants/npcs"; // Import npcs
 
 interface BuildingProps {
   building: BuildingType;
@@ -86,7 +87,7 @@ const Building = ({ building, onClick }: BuildingProps) => {
       onClick(building);
     } else if (building.type.includes("House")) {
       // Encontrar o NPC associado a esta casa
-      const npc = window.dispatchEvent(new CustomEvent('npcHouseClick', { detail: building }));
+      // const npc = window.dispatchEvent(new CustomEvent('npcHouseClick', { detail: building })); // This line is not needed, removing to match intention
     }
   };
 
@@ -111,73 +112,70 @@ const Building = ({ building, onClick }: BuildingProps) => {
         color={buildingType.model.color}
         emissive={hovered ? new THREE.Color(0x555555) : undefined}
       />
-      {/* Ícones de status dos NPCs */}
-        {building.type.includes("House") && (
-          <group position={[0, buildingType.height + 0.5, 0]}>
-            {/* Encontrar NPCs associados a esta casa */}
-            {(() => {
-              // Acessar NPCs via window global ou context
-              const npcs = (window as any).gameNpcs || [];
-              const houseNpcs = npcs.filter((npc: any) => npc.homeId === building.id);
 
-              return houseNpcs.map((npc: any, index: number) => {
-                const stateIcons = {
-                  idle: { icon: "💤", color: "#6B7280" },
-                  moving: { icon: "🚶", color: "#10B981" },
-                  working: { icon: "⚡", color: "#F59E0B" },
-                  gathering: { icon: "⛏️", color: "#3B82F6" },
-                  resting: { icon: "😴", color: "#8B5CF6" },
-                  searching: { icon: "🔍", color: "#EF4444" },
-                  lunch: { icon: "🍽️", color: "#F97316" }
-                };
+      {/* Ícones de status dos NPCs para casas */}
+      {building.type.includes("House") && (
+        <group position={[0, buildingType.height + 0.3, 0]}>
+          {(() => {
+            const houseNpcs = npcs.filter(npc => npc.homeId === building.id);
 
-                // Determinar estado baseado no horário se estiver em casa
-                let displayState = npc.state;
-                if (npc.state === "resting" && npc.currentSchedule === "lunch") {
-                  displayState = "lunch";
-                }
+            return houseNpcs.map((npc, index) => {
+              const stateIcons = {
+                idle: { icon: "💤", color: "#6B7280" },
+                moving: { icon: "🚶", color: "#10B981" },
+                working: { icon: "⚡", color: "#F59E0B" },
+                gathering: { icon: "⛏️", color: "#3B82F6" },
+                resting: { icon: "😴", color: "#8B5CF6" },
+                searching: { icon: "🔍", color: "#EF4444" },
+                lunch: { icon: "🍽️", color: "#F97316" }
+              };
 
-                const stateInfo = stateIcons[displayState as keyof typeof stateIcons] || stateIcons.idle;
+              // Determinar estado de exibição
+              let displayState = npc.state;
+              if (npc.state === "resting" && npc.currentSchedule === "lunch") {
+                displayState = "lunch";
+              }
 
-                return (
-                  <Html
-                    key={`${npc.id}-${index}`}
-                    position={[index * 0.8 - (houseNpcs.length - 1) * 0.4, 0, 0]}
-                    center
-                    distanceFactor={8}
-                  >
+              const stateInfo = stateIcons[displayState as keyof typeof stateIcons] || stateIcons.idle;
+
+              return (
+                <Html
+                  key={`${npc.id}-${index}`}
+                  position={[index * 1.0 - (houseNpcs.length - 1) * 0.5, 0, 0]}
+                  center
+                  distanceFactor={6}
+                  transform
+                  occlude="blending"
+                >
+                  <div className="flex flex-col items-center pointer-events-none select-none">
                     <div 
-                      className="flex flex-col items-center pointer-events-none"
-                      style={{ transform: 'translate(-50%, -50%)' }}
+                      className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold shadow-lg border border-white backdrop-blur-sm"
+                      style={{ backgroundColor: stateInfo.color }}
                     >
-                      <div 
-                        className="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold shadow-lg border-2 border-white"
-                        style={{ backgroundColor: stateInfo.color }}
-                      >
-                        {stateInfo.icon}
-                      </div>
-                      <div 
-                        className="text-xs font-semibold px-2 py-1 rounded mt-1 shadow-md"
-                        style={{ 
-                          backgroundColor: stateInfo.color,
-                          color: 'white'
-                        }}
-                      >
-                        {displayState === "idle" ? "Parado" :
-                         displayState === "moving" ? "Movendo" :
-                         displayState === "working" ? "Trabalhando" :
-                         displayState === "gathering" ? "Coletando" :
-                         displayState === "resting" ? "Descansando" :
-                         displayState === "searching" ? "Procurando" :
-                         displayState === "lunch" ? "Almoçando" : "Desconhecido"}
-                      </div>
+                      {stateInfo.icon}
                     </div>
-                  </Html>
-                );
-              });
-            })()}
-          </group>
-        )}
+                    <div 
+                      className="text-xs font-semibold px-1 py-0.5 rounded mt-1 shadow-md whitespace-nowrap"
+                      style={{ 
+                        backgroundColor: stateInfo.color,
+                        color: 'white'
+                      }}
+                    >
+                      {displayState === "idle" ? "Parado" :
+                       displayState === "moving" ? "Movendo" :
+                       displayState === "working" ? "Trabalhando" :
+                       displayState === "gathering" ? "Coletando" :
+                       displayState === "resting" ? "Descansando" :
+                       displayState === "searching" ? "Procurando" :
+                       displayState === "lunch" ? "Almoçando" : "Desconhecido"}
+                    </div>
+                  </div>
+                </Html>
+              );
+            });
+          })()}
+        </group>
+      )}
     </mesh>
   );
 };
