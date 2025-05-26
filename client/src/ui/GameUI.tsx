@@ -13,7 +13,7 @@ import { NPC } from "../game/stores/useNpcStore";
 import { useIsMobile } from "../hooks/use-is-mobile";
 const GameUI = () => {
   const { backgroundMusic, toggleMute, isMuted } = useAudio();
-  const { timeOfDay, dayCount } = useGameStore();
+  const { timeOfDay, dayCount, isPaused, timeSpeed } = useGameStore();
   const [showControls, setShowControls] = useState(false);
   const [showBuildingPanel, setShowBuildingPanel] = useState(false);
   const [showResourcePanel, setShowResourcePanel] = useState(false);
@@ -21,13 +21,31 @@ const GameUI = () => {
   const isMobile = useIsMobile();
 
   useEffect(() => {
-    const handleEscKey = (event: KeyboardEvent) => {
+    const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
         setSelectedNpc(null);
       }
+      
+      // Time control shortcuts
+      if (event.key === 'p' || event.key === 'P') {
+        const gameStore = useGameStore.getState();
+        if (gameStore.isPaused) {
+          gameStore.resumeTime();
+        } else {
+          gameStore.pauseTime();
+        }
+      }
+      
+      if (event.key === '[') {
+        useGameStore.getState().decreaseTimeSpeed();
+      }
+      
+      if (event.key === ']') {
+        useGameStore.getState().increaseTimeSpeed();
+      }
     };
 
-    window.addEventListener('keydown', handleEscKey);
+    window.addEventListener('keydown', handleKeyDown);
     const handleNpcClick = (event: CustomEvent) => {
       setSelectedNpc(event.detail);
     };
@@ -44,7 +62,7 @@ const GameUI = () => {
     window.addEventListener('npcHouseClick', handleNpcHouseClick as EventListener);
 
     return () => {
-      window.removeEventListener('keydown', handleEscKey);
+      window.removeEventListener('keydown', handleKeyDown);
       window.removeEventListener('npcClick', handleNpcClick as EventListener);
       window.removeEventListener('npcHouseClick', handleNpcHouseClick as EventListener);
     };
@@ -105,11 +123,49 @@ const GameUI = () => {
       <div className="pointer-events-auto">
         <BuildingPanel isVisible={showBuildingPanel} />
       </div>
-      <div className="absolute top-4 right-4 bg-black/80 rounded-lg p-2 text-white">
-        <div>Dia {dayCount}</div>
-        <div>{getTimeString()} ({getTimeOfDayName()})</div>
+      <div className="absolute top-4 right-4 pointer-events-auto">
+        {/* Time display panel */}
+        <div className="bg-black/80 rounded-lg p-2 text-white mb-2">
+          <div>Dia {dayCount}</div>
+          <div>{getTimeString()} ({getTimeOfDayName()})</div>
+        </div>
+        
+        {/* Time control buttons */}
+        <div className="bg-black/80 rounded-lg p-2 text-white flex flex-col gap-1">
+          <button
+            onClick={() => {
+              const gameStore = useGameStore.getState();
+              if (isPaused) {
+                gameStore.resumeTime();
+              } else {
+                gameStore.pauseTime();
+              }
+            }}
+            className="bg-white/20 hover:bg-white/30 px-2 py-1 rounded text-sm transition-colors"
+            title={isPaused ? "Continuar (P)" : "Pausar (P)"}
+          >
+            P: {isPaused ? "▶️" : "⏸️"}
+          </button>
+          
+          <button
+            onClick={() => useGameStore.getState().decreaseTimeSpeed()}
+            className="bg-white/20 hover:bg-white/30 px-2 py-1 rounded text-sm transition-colors"
+            title="Diminuir velocidade ([)"
+          >
+            [: {timeSpeed}x ⬇️
+          </button>
+          
+          <button
+            onClick={() => useGameStore.getState().increaseTimeSpeed()}
+            className="bg-white/20 hover:bg-white/30 px-2 py-1 rounded text-sm transition-colors"
+            title="Aumentar velocidade (])"
+          >
+            ]: {timeSpeed}x ⬆️
+          </button>
+        </div>
       </div>
-      <div className="absolute bottom-4 right-4 pointer-events-auto">
+      
+      <div className="absolute bottom-4 right-4 pointer-events-auto"></div>
         <button 
           className="bg-black/80 text-white p-2 rounded-full"
           onClick={() => setShowControls(!showControls)}
@@ -125,28 +181,35 @@ const GameUI = () => {
               <div>Girar Câmera:</div>
               <div>Q, E</div>
               <div>Zoom:</div>
-              <div>+, -, [ ]</div>
+              <div>+, -</div>
               <div>Colocar Edifício:</div>
               <div>Espaço</div>
               <div>Cancelar:</div>
               <div>Esc</div>
+              <div>Pausar/Continuar:</div>
+              <div>P</div>
+              <div>Velocidade Tempo:</div>
+              <div>[ ]</div>
             </div>
           </div>
         )}
       </div>
-      <button 
-        onClick={toggleMute}
-        className="absolute top-4 right-32 bg-black/80 p-2 rounded-lg text-white pointer-events-auto"
-      >
-        <i className={`fa-solid ${isMuted ? 'fa-volume-xmark' : 'fa-volume-high'}`}></i>
-      </button>
-      <button 
-        onClick={() => window.dispatchEvent(new KeyboardEvent('keydown', { code: 'KeyG' }))}
-        className="absolute top-4 right-48 bg-black/80 p-2 rounded-lg text-white pointer-events-auto"
-        title="Alternar Grid (G)"
-      >
-        <i className="fa-solid fa-grid-2"></i>
-      </button>
+      <div className="absolute top-4 left-64 flex gap-2 pointer-events-auto">
+        <button 
+          onClick={toggleMute}
+          className="bg-black/80 p-2 rounded-lg text-white"
+          title={isMuted ? "Ativar som" : "Silenciar"}
+        >
+          <i className={`fa-solid ${isMuted ? 'fa-volume-xmark' : 'fa-volume-high'}`}></i>
+        </button>
+        <button 
+          onClick={() => window.dispatchEvent(new KeyboardEvent('keydown', { code: 'KeyG' }))}
+          className="bg-black/80 p-2 rounded-lg text-white"
+          title="Alternar Grid (G)"
+        >
+          <i className="fa-solid fa-grid-2"></i>
+        </button>
+      </div>
       {selectedNpc && (
         <NpcPanel npc={selectedNpc} onClose={() => setSelectedNpc(null)} />
       )}
