@@ -87,18 +87,18 @@ interface NPCStoreState {
 
 const CONSTANTS = {
   ENERGY_CONSUMPTION: {
-    MOVING: 0.0185,
-    WORKING: 0.0185,
-    GATHERING: 0.0185,
+    MOVING: 0.025,    // Aumentado para tornar energia mais importante
+    WORKING: 0.030,   // Trabalho consome mais energia
+    GATHERING: 0.028, // Coleta consome energia considerável
   },
   SATISFACTION_CONSUMPTION: {
-    MOVING: 0.0093,
-    WORKING: 0.0093,
-    GATHERING: 0.0093,
+    MOVING: 0.015,    // Movimento reduz satisfação
+    WORKING: 0.020,   // Trabalho reduz satisfação
+    GATHERING: 0.018, // Coleta reduz satisfação
   },
   REGENERATION: {
-    ENERGY: 15,
-    SATISFACTION: 10,
+    ENERGY: 20,       // Regeneração mais rápida
+    SATISFACTION: 15, // Regeneração mais rápida
   },
   WORK_SPEED: 0.2,
   GATHERING_SPEED: 0.67,
@@ -156,24 +156,36 @@ class NPCUtils {
 
   static getScheduleForTime(timeCycle: number, npcId?: string): NPCSchedule {
     const hours = timeCycle * 24;
-    const isNightShift = npcId ? parseInt(npcId.slice(-1), 16) % 3 === 0 : false;
-
-    if (isNightShift) {
-      if (hours >= 22 || hours < 6) return "working";
-      if (hours >= 6 && hours < 14) return "home";
-      if (hours >= 14 && hours < 15) return "lunch";
-      return "home";
+    
+    // Horário padrão para todos os NPCs:
+    // 6h-12h: trabalho
+    // 12h-13h: almoço (em casa)
+    // 13h-18h: trabalho
+    // 18h-6h: descanso (em casa)
+    
+    if (hours >= 6 && hours < 12) {
+      return "working"; // Manhã de trabalho
+    } else if (hours >= 12 && hours < 13) {
+      return "lunch"; // Hora do almoço
+    } else if (hours >= 13 && hours < 18) {
+      return "working"; // Tarde de trabalho
     } else {
-      if (hours >= 6 && hours < 12) return "working";
-      if (hours >= 12 && hours < 13) return "lunch";
-      if (hours >= 13 && hours < 18) return "working";
-      return "home";
+      return "home"; // Noite/madrugada - descanso
     }
   }
 
   static shouldReturnHome(npc: NPC, currentSchedule: NPCSchedule): boolean {
-    return (currentSchedule === "lunch" || currentSchedule === "home") ||
-           (npc.needs.energy < 20 || npc.needs.satisfaction < 20);
+    // Sempre retornar para casa se for hora do almoço ou descanso
+    if (currentSchedule === "lunch" || currentSchedule === "home") {
+      return true;
+    }
+    
+    // Retornar para casa se energia ou satisfação estiverem baixas
+    if (npc.needs.energy <= 30 || npc.needs.satisfaction <= 30) {
+      return true;
+    }
+    
+    return false;
   }
 
   static findNearestAvailableResource(npc: NPC, resourceType: string, npcs: NPC[], reservations: ResourceReservation[]): any | null {
@@ -274,15 +286,21 @@ class NPCUtils {
 class NPCStateHandlers {
   static handleIdleState(npc: NPC, currentSchedule: NPCSchedule, buildings: any[], npcs: NPC[], reservations: ResourceReservation[]): Partial<NPC> {
     const updates: Partial<NPC> = {};
+    
+    const timeCycle = useGameStore.getState().timeCycle;
+    const hours = timeCycle * 24;
 
-    console.log(`NPC ${npc.type} em estado idle, verificando ações possíveis - horário: ${currentSchedule}`);
+    console.log(`NPC ${npc.type} em estado idle - horário: ${currentSchedule} (${hours.toFixed(1)}h) - energia: ${npc.needs.energy.toFixed(1)} - satisfação: ${npc.needs.satisfaction.toFixed(1)}`);
 
-    // Verificar se deve ir para casa
+    // Verificar se deve ir para casa por horário ou necessidades
     if (NPCUtils.shouldReturnHome(npc, currentSchedule)) {
       const home = buildings.find(b => b.id === npc.homeId);
       if (home) {
-        console.log(`NPC ${npc.type} está cansado e voltando para casa`);
-        updates.targetPosition = [home.position[0], 0, home.position[1]];
+        const reason = currentSchedule === "lunch" ? "almoçar" : 
+                      currentSchedule === "home" ? "descansar" : 
+                      "repor energia/satisfação";
+        console.log(`NPC ${npc.type} voltando para casa para ${reason}`);
+        updates.targetPosition = [home.position[0] + 0.5, 0, home.position[1] + 0.5];
         updates.targetBuildingId = null;
         updates.targetResource = null;
         updates.state = "moving";
@@ -290,6 +308,13 @@ class NPCStateHandlers {
       }
     }
 
+    // Se não for horário de trabalho, ficar em casa
+    if (currentSchedule !== "working") {
+      console.log(`NPC ${npc.type} aguardando horário de trabalho`);
+      return { state: "resting" };
+    }
+
+    // Durante horário de trabalho, trabalhar normalmente
     const hasSpaceInInventory = npc.inventory.amount < CONSTANTS.MAX_INVENTORY;
 
     if (hasSpaceInInventory) {
@@ -452,7 +477,8 @@ class NPCStateHandlers {
       Math.abs(b.position[1] - updates.position![2]) < 1.0
     );
 
-    if (home && (npc.needs.energy < 80 || npc.needs.satisfaction < 60)) {
+    if (home) {
+      console.log(`NPC ${npc.type} chegou em casa - energia: ${npc.needs.energy} - satisfação: ${npc.needs.satisfaction}`);
       return { ...updates, state: "resting" };
     }
 
@@ -607,12 +633,27 @@ class NPCStateHandlers {
   }
 
   static handleRestingState(npc: NPC, adjustedDeltaTime: number, currentSchedule: NPCSchedule): Partial<NPC> {
+    const timeCycle = useGameStore.getState().timeCycle;
+    const hours = timeCycle * 24;
+    
+    // Regeneração mais rápida em casa
+    const homeRegenerationMultiplier = 2.0;
     const newNeeds = {
-      energy: Math.min(100, npc.needs.energy + adjustedDeltaTime * CONSTANTS.REGENERATION.ENERGY),
-      satisfaction: Math.min(100, npc.needs.satisfaction + adjustedDeltaTime * CONSTANTS.REGENERATION.SATISFACTION)
+      energy: Math.min(100, npc.needs.energy + adjustedDeltaTime * CONSTANTS.REGENERATION.ENERGY * homeRegenerationMultiplier),
+      satisfaction: Math.min(100, npc.needs.satisfaction + adjustedDeltaTime * CONSTANTS.REGENERATION.SATISFACTION * homeRegenerationMultiplier)
     };
 
-    if (currentSchedule === "working" && newNeeds.energy >= 80 && newNeeds.satisfaction >= 60) {
+    console.log(`NPC ${npc.type} descansando - energia: ${newNeeds.energy.toFixed(1)} - satisfação: ${newNeeds.satisfaction.toFixed(1)} - horário: ${currentSchedule} (${hours.toFixed(1)}h)`);
+
+    // Só sair para trabalhar se:
+    // 1. For horário de trabalho
+    // 2. Energia e satisfação estiverem adequadas
+    // 3. Não for hora do almoço nem descanso
+    if (currentSchedule === "working" && 
+        newNeeds.energy >= 70 && 
+        newNeeds.satisfaction >= 70 &&
+        !NPCUtils.shouldReturnHome(npc, currentSchedule)) {
+      console.log(`NPC ${npc.type} saindo para trabalhar - energia restaurada`);
       return {
         needs: newNeeds,
         state: "idle"
