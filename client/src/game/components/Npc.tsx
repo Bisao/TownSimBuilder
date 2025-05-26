@@ -294,12 +294,70 @@ const Npc = ({ npc }: NpcProps) => {
         <mesh ref={leftArmRef} position={[-0.2, 0.5, 0]}>
           <boxGeometry args={[0.1, 0.4, 0.1]} />
           <meshStandardMaterial color={npcType.color} />
+          
+          {/* Mão Esquerda */}
+          <mesh position={[0, -0.25, 0]}>
+            <sphereGeometry args={[0.06, 12, 12]} />
+            <meshStandardMaterial color="#FDBCB4" />
+          </mesh>
+          
+          {/* Dedos Mão Esquerda */}
+          <mesh position={[-0.03, -0.3, 0.03]}>
+            <boxGeometry args={[0.015, 0.08, 0.015]} />
+            <meshStandardMaterial color="#FDBCB4" />
+          </mesh>
+          <mesh position={[0, -0.32, 0.03]}>
+            <boxGeometry args={[0.015, 0.1, 0.015]} />
+            <meshStandardMaterial color="#FDBCB4" />
+          </mesh>
+          <mesh position={[0.03, -0.31, 0.03]}>
+            <boxGeometry args={[0.015, 0.09, 0.015]} />
+            <meshStandardMaterial color="#FDBCB4" />
+          </mesh>
+          <mesh position={[0.04, -0.28, 0.03]}>
+            <boxGeometry args={[0.015, 0.06, 0.015]} />
+            <meshStandardMaterial color="#FDBCB4" />
+          </mesh>
+          {/* Polegar */}
+          <mesh position={[-0.05, -0.26, 0]} rotation={[0, 0, Math.PI / 6]}>
+            <boxGeometry args={[0.015, 0.06, 0.015]} />
+            <meshStandardMaterial color="#FDBCB4" />
+          </mesh>
         </mesh>
         
         {/* Braço Direito */}
         <mesh ref={rightArmRef} position={[0.2, 0.5, 0]}>
           <boxGeometry args={[0.1, 0.4, 0.1]} />
           <meshStandardMaterial color={npcType.color} />
+          
+          {/* Mão Direita */}
+          <mesh position={[0, -0.25, 0]}>
+            <sphereGeometry args={[0.06, 12, 12]} />
+            <meshStandardMaterial color="#FDBCB4" />
+          </mesh>
+          
+          {/* Dedos Mão Direita */}
+          <mesh position={[0.03, -0.3, 0.03]}>
+            <boxGeometry args={[0.015, 0.08, 0.015]} />
+            <meshStandardMaterial color="#FDBCB4" />
+          </mesh>
+          <mesh position={[0, -0.32, 0.03]}>
+            <boxGeometry args={[0.015, 0.1, 0.015]} />
+            <meshStandardMaterial color="#FDBCB4" />
+          </mesh>
+          <mesh position={[-0.03, -0.31, 0.03]}>
+            <boxGeometry args={[0.015, 0.09, 0.015]} />
+            <meshStandardMaterial color="#FDBCB4" />
+          </mesh>
+          <mesh position={[-0.04, -0.28, 0.03]}>
+            <boxGeometry args={[0.015, 0.06, 0.015]} />
+            <meshStandardMaterial color="#FDBCB4" />
+          </mesh>
+          {/* Polegar */}
+          <mesh position={[0.05, -0.26, 0]} rotation={[0, 0, -Math.PI / 6]}>
+            <boxGeometry args={[0.015, 0.06, 0.015]} />
+            <meshStandardMaterial color="#FDBCB4" />
+          </mesh>
           
           {/* Ferramentas específicas para cada profissão */}
           {npc.type === "miner" && (
@@ -372,12 +430,56 @@ const Npc = ({ npc }: NpcProps) => {
         <mesh ref={leftLegRef} position={[-0.1, 0.1, 0]}>
           <boxGeometry args={[0.1, 0.4, 0.1]} />
           <meshStandardMaterial color={npcType.color} />
+          
+          {/* Pé Esquerdo */}
+          <mesh position={[0, -0.25, 0.08]}>
+            <boxGeometry args={[0.12, 0.08, 0.25]} />
+            <meshStandardMaterial color="#654321" />
+          </mesh>
+          
+          {/* Sola do Pé Esquerdo */}
+          <mesh position={[0, -0.29, 0.08]}>
+            <boxGeometry args={[0.13, 0.02, 0.26]} />
+            <meshStandardMaterial color="#2F1B14" />
+          </mesh>
+          
+          {/* Cadarços Pé Esquerdo */}
+          <mesh position={[0, -0.21, 0.15]} rotation={[Math.PI / 6, 0, 0]}>
+            <boxGeometry args={[0.08, 0.01, 0.01]} />
+            <meshStandardMaterial color="#FFFFFF" />
+          </mesh>
+          <mesh position={[0, -0.23, 0.12]} rotation={[Math.PI / 6, 0, 0]}>
+            <boxGeometry args={[0.08, 0.01, 0.01]} />
+            <meshStandardMaterial color="#FFFFFF" />
+          </mesh>
         </mesh>
         
         {/* Perna Direita */}
         <mesh ref={rightLegRef} position={[0.1, 0.1, 0]}>
           <boxGeometry args={[0.1, 0.4, 0.1]} />
           <meshStandardMaterial color={npcType.color} />
+          
+          {/* Pé Direito */}
+          <mesh position={[0, -0.25, 0.08]}>
+            <boxGeometry args={[0.12, 0.08, 0.25]} />
+            <meshStandardMaterial color="#654321" />
+          </mesh>
+          
+          {/* Sola do Pé Direito */}
+          <mesh position={[0, -0.29, 0.08]}>
+            <boxGeometry args={[0.13, 0.02, 0.26]} />
+            <meshStandardMaterial color="#2F1B14" />
+          </mesh>
+          
+          {/* Cadarços Pé Direito */}
+          <mesh position={[0, -0.21, 0.15]} rotation={[Math.PI / 6, 0, 0]}>
+            <boxGeometry args={[0.08, 0.01, 0.01]} />
+            <meshStandardMaterial color="#FFFFFF" />
+          </mesh>
+          <mesh position={[0, -0.23, 0.12]} rotation={[Math.PI / 6, 0, 0]}>
+            <boxGeometry args={[0.08, 0.01, 0.01]} />
+            <meshStandardMaterial color="#FFFFFF" />
+          </mesh>
         </mesh>
       </group>
       
