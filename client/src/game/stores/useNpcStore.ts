@@ -576,7 +576,9 @@ class NPCStateHandlers {
 
       // Atualizar métricas
       import('./useNpcMetrics').then(({ useNpcMetrics }) => {
-        useNpcMetrics.getState().updateMetrics(npc.id, "collect", resourceType);
+        const metricsStore = useNpcMetrics.getState();
+        metricsStore.recordResourceCollection(npc.id, resourceType, 1);
+        metricsStore.updateEfficiency(npc.id, newSkills.efficiency);
       }).catch(() => {});
 
       return {
@@ -767,6 +769,11 @@ export const useNpcStore = create<NPCStoreState>()(
         npcIdCounter: state.npcIdCounter + 1,
       }));
 
+      // Inicializar métricas para o novo NPC
+      import('./useNpcMetrics').then(({ useNpcMetrics }) => {
+        useNpcMetrics.getState().initializeNPC(id);
+      }).catch(() => {});
+
       console.log(`NPC ${type} criado em ${position}`);
       return id;
     },
@@ -787,6 +794,7 @@ export const useNpcStore = create<NPCStoreState>()(
 
       const updatedNPCs = get().npcs.map(npc => {
         const updates: Partial<NPC> = { currentSchedule };
+        const oldState = npc.state;
 
         switch (npc.state) {
           case "idle":
@@ -809,7 +817,16 @@ export const useNpcStore = create<NPCStoreState>()(
             break;
         }
 
-        return { ...npc, ...updates };
+        const updatedNpc = { ...npc, ...updates };
+
+        // Atualizar métricas se o estado mudou
+        if (oldState !== updatedNpc.state) {
+          import('./useNpcMetrics').then(({ useNpcMetrics }) => {
+            useNpcMetrics.getState().updateActivity(npc.id, updatedNpc.state);
+          }).catch(() => {});
+        }
+
+        return updatedNpc;
       });
 
       set({ npcs: updatedNPCs });
