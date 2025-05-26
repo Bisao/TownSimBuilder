@@ -1,0 +1,119 @@
+Replit version d5c47c70, pid2 version 0.0.1337
+_app-923c3620a6eb4e49.js:38 
+      /////////////////////
+   ///////////////////////////
+  ////////@@@@@@@//////////////
+  ////////@@@@@@@//////////////
+  ////////@@@@@@@//////////////        Curious and driven?
+  ///////////////@@@@@@@///////        Work with us!
+  ///////////////@@@@@@@///////
+  ///////////////@@@@@@@///////        https://join.replit.com/hack.with.us
+  ////////@@@@@@@//////////////
+  ////////@@@@@@@//////////////
+  ////////@@@@@@#//////////////
+   ///////////////////////////
+      /////////////////////
+      
+_app-923c3620a6eb4e49.js:38 [LaunchDarkly] LaunchDarkly client initialized
+_app-923c3620a6eb4e49.js:38 [LaunchDarkly] Opening stream connection to https://clientstream.launchdarkly.com/eval/62b35a865152ab14c5942820/eyJrZXkiOiI0MzE0NDk5MCIsImtpbmQiOiJ1c2VyIiwibmFtZSI6Im1vb3NlMzMxNiIsInJvbGVzIjpbImludGVudF9wZXJzb25hbCJdLCJlbWFpbCI6Im1vb3NlMzMxNkBtYWlsc2hhbi5jb20iLCJ0aW1lX2NyZWF0ZWQiOjE3NDgyNjQ2MDE4MjksIl9tZXRhIjp7InByaXZhdGVBdHRyaWJ1dGVzIjpbImVtYWlsIl19fQ
+_app-923c3620a6eb4e49.js:38 [LaunchDarkly] Closing stream connection
+_app-923c3620a6eb4e49.js:38 [LaunchDarkly] Opening stream connection to https://clientstream.launchdarkly.com/eval/62b35a865152ab14c5942820/eyJrZXkiOiI0MzE0NDk5MCIsImtpbmQiOiJ1c2VyIiwibmFtZSI6Im1vb3NlMzMxNiIsInJvbGVzIjpbImludGVudF9wZXJzb25hbCJdLCJlbWFpbCI6Im1vb3NlMzMxNkBtYWlsc2hhbi5jb20iLCJ0aW1lX2NyZWF0ZWQiOjE3NDgyNjQ2MDE4MjksIl9tZXRhIjp7InByaXZhdGVBdHRyaWJ1dGVzIjpbImVtYWlsIl19fQ
+bash.svg:1 
+            
+            
+           Failed to load resource: net::ERR_NAME_NOT_RESOLVED
+_app-923c3620a6eb4e49.js:38 [LaunchDarkly] Closing stream connection
+_app-923c3620a6eb4e49.js:38 [LaunchDarkly] Opening stream connection to https://clientstream.launchdarkly.com/eval/62b35a865152ab14c5942820/eyJrZXkiOiI0MzE0NDk5MCIsImtpbmQiOiJ1c2VyIiwibmFtZSI6Im1vb3NlMzMxNiIsInJvbGVzIjpbImludGVudF9wZXJzb25hbCJdLCJlbWFpbCI6Im1vb3NlMzMxNkBtYWlsc2hhbi5jb20iLCJ0aW1lX2NyZWF0ZWQiOjE3NDgyNjQ2MDE4MjksIl9tZXRhIjp7InByaXZhdGVBdHRyaWJ1dGVzIjpbImVtYWlsIl19fQ
+framework-17fa984df9fa1fab.js:1 Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+_ @ framework-17fa984df9fa1fab.js:1
+framework-17fa984df9fa1fab.js:1 Unrecognized feature: 'ambient-light-sensor'.
+_ @ framework-17fa984df9fa1fab.js:1
+framework-17fa984df9fa1fab.js:1 Unrecognized feature: 'battery'.
+_ @ framework-17fa984df9fa1fab.js:1
+framework-17fa984df9fa1fab.js:1 Unrecognized feature: 'execution-while-not-rendered'.
+_ @ framework-17fa984df9fa1fab.js:1
+framework-17fa984df9fa1fab.js:1 Unrecognized feature: 'execution-while-out-of-viewport'.
+_ @ framework-17fa984df9fa1fab.js:1
+framework-17fa984df9fa1fab.js:1 Unrecognized feature: 'layout-animations'.
+_ @ framework-17fa984df9fa1fab.js:1
+framework-17fa984df9fa1fab.js:1 Unrecognized feature: 'legacy-image-formats'.
+_ @ framework-17fa984df9fa1fab.js:1
+framework-17fa984df9fa1fab.js:1 Unrecognized feature: 'navigation-override'.
+_ @ framework-17fa984df9fa1fab.js:1
+framework-17fa984df9fa1fab.js:1 Unrecognized feature: 'oversized-images'.
+_ @ framework-17fa984df9fa1fab.js:1
+framework-17fa984df9fa1fab.js:1 Unrecognized feature: 'publickey-credentials'.
+_ @ framework-17fa984df9fa1fab.js:1
+framework-17fa984df9fa1fab.js:1 Unrecognized feature: 'speaker-selection'.
+_ @ framework-17fa984df9fa1fab.js:1
+framework-17fa984df9fa1fab.js:1 Unrecognized feature: 'unoptimized-images'.
+_ @ framework-17fa984df9fa1fab.js:1
+framework-17fa984df9fa1fab.js:1 Unrecognized feature: 'unsized-media'.
+_ @ framework-17fa984df9fa1fab.js:1
+framework-17fa984df9fa1fab.js:1 Unrecognized feature: 'pointer-lock'.
+_ @ framework-17fa984df9fa1fab.js:1
+framework-17fa984df9fa1fab.js:1 Allow attribute will take precedence over 'allowfullscreen'.
+_ @ framework-17fa984df9fa1fab.js:1
+framework-17fa984df9fa1fab.js:1 Allow attribute will take precedence over 'allowpaymentrequest'.
+_ @ framework-17fa984df9fa1fab.js:1
+gravatar.com/avatar/9b2d043c8184927d94223eda083e4d82?d=404:1 
+            
+            
+           Failed to load resource: the server responded with a status of 404 ()
+gravatar.com/avatar/9b2d043c8184927d94223eda083e4d82?d=404:1 
+            
+            
+           Failed to load resource: the server responded with a status of 404 ()
+gravatar.com/avatar/9b2d043c8184927d94223eda083e4d82?d=404:1 
+            
+            
+           Failed to load resource: the server responded with a status of 404 ()
+gravatar.com/avatar/9b2d043c8184927d94223eda083e4d82?d=404:1 
+            
+            
+           Failed to load resource: the server responded with a status of 404 ()
+framework-17fa984df9fa1fab.js:1 Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+_ @ framework-17fa984df9fa1fab.js:1
+_app-923c3620a6eb4e49.js:38 WARN: A component changed from uncontrolled to controlled.
+(anonymous) @ _app-923c3620a6eb4e49.js:38
+gravatar.com/avatar/9b2d043c8184927d94223eda083e4d82?d=404:1 
+            
+            
+           Failed to load resource: the server responded with a status of 404 ()
+gravatar.com/avatar/9b2d043c8184927d94223eda083e4d82?d=404:1 
+            
+            
+           Failed to load resource: the server responded with a status of 404 ()
+gravatar.com/avatar/9b2d043c8184927d94223eda083e4d82?d=404:1 
+            
+            
+           Failed to load resource: the server responded with a status of 404 ()
+gravatar.com/avatar/9b2d043c8184927d94223eda083e4d82?d=404:1 
+            
+            
+           Failed to load resource: the server responded with a status of 404 ()
+gravatar.com/avatar/9b2d043c8184927d94223eda083e4d82?d=404:1 
+            
+            
+           Failed to load resource: the server responded with a status of 404 ()
+gravatar.com/avatar/9b2d043c8184927d94223eda083e4d82?d=404:1 
+            
+            
+           Failed to load resource: the server responded with a status of 404 ()
+framework-17fa984df9fa1fab.js:1 Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+_ @ framework-17fa984df9fa1fab.js:1
+gravatar.com/avatar/9b2d043c8184927d94223eda083e4d82?d=404:1 
+            
+            
+           Failed to load resource: the server responded with a status of 404 ()
+gravatar.com/avatar/9b2d043c8184927d94223eda083e4d82?d=404:1 
+            
+            
+           Failed to load resource: the server responded with a status of 404 ()
+gravatar.com/avatar/9b2d043c8184927d94223eda083e4d82?d=404:1 
+            
+            
+           Failed to load resource: the server responded with a status of 404 ()
+framework-17fa984df9fa1fab.js:1 Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+_ @ framework-17fa984df9fa1fab.js:1
+539Chrome is moving towards a new experience that allows users to choose to browse without third-party cookies.
