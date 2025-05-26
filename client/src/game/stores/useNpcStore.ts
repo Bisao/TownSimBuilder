@@ -392,7 +392,7 @@ class NPCStateHandlers {
 
     const npcConfig = npcTypes[npc.type];
     const baseSpeed = npcConfig ? npcConfig.speed : 0.15;
-    const moveSpeed = baseSpeed * adjustedDeltaTime * 8;
+    const moveSpeed = baseSpeed * adjustedDeltaTime * 6;
 
     const dx = targetX - currentX;
     const dz = targetZ - currentZ;
@@ -405,6 +405,10 @@ class NPCStateHandlers {
       }
     };
 
+    // Calcular fator de desaceleração baseado na distância
+    const slowdownDistance = 2.0; // Começar a desacelerar quando estiver a 2 unidades do destino
+    const speedMultiplier = distance > slowdownDistance ? 1.0 : Math.max(0.2, distance / slowdownDistance);
+    
     // Aumentar tolerância e adicionar timeout para evitar travamento
     const tolerance = Math.max(CONSTANTS.MOVEMENT_TOLERANCE, 0.3);
     
@@ -436,8 +440,9 @@ class NPCStateHandlers {
 
       const dirX = dx / distance;
       const dirZ = dz / distance;
-      const newX = currentX + dirX * moveSpeed;
-      const newZ = currentZ + dirZ * moveSpeed;
+      const adjustedMoveSpeed = moveSpeed * speedMultiplier;
+      const newX = currentX + dirX * adjustedMoveSpeed;
+      const newZ = currentZ + dirZ * adjustedMoveSpeed;
       const [clampedX, clampedZ] = NPCUtils.clampPosition(newX, newZ);
       
       // Verificar se a posição realmente mudou
