@@ -1,4 +1,3 @@
-
 import React from "react";
 import { useEconomyStore } from "../game/stores/useEconomyStore";
 import { useDraggable } from "../hooks/useDraggable";
@@ -19,7 +18,7 @@ const EconomyPanel: React.FC = () => {
 
   return (
     <div
-      className={`absolute bg-gray-800 text-white p-4 rounded-lg shadow-lg w-80 ${
+      className={`absolute bg-gray-800 text-white p-4 rounded-lg shadow-lg w-96 ${
         isDragging ? "z-50" : "z-10"
       }`}
       style={{
@@ -32,31 +31,19 @@ const EconomyPanel: React.FC = () => {
         className="cursor-move mb-3 font-bold text-lg border-b border-gray-600 pb-2"
         onMouseDown={handleMouseDown}
       >
-        💰 Economia
+        💰 Painel Econômico
       </div>
 
-      <div className="space-y-3">
-        {/* Status Geral */}
-        <div className="grid grid-cols-2 gap-2 text-sm">
-          <div className="bg-gray-700 p-2 rounded">
-            <div className="text-yellow-400 font-semibold">Moedas</div>
-            <div className="text-lg">{coins.toLocaleString()}</div>
-          </div>
-          <div className="bg-gray-700 p-2 rounded">
-            <div className="text-blue-400 font-semibold">Felicidade</div>
-            <div className="text-lg">{happiness.toFixed(1)}%</div>
-          </div>
-          <div className="bg-gray-700 p-2 rounded">
-            <div className="text-green-400 font-semibold">População</div>
-            <div className="text-lg">{population}</div>
-          </div>
-          <div className="bg-gray-700 p-2 rounded">
-            <div className="text-purple-400 font-semibold">Taxa de Imposto</div>
-            <div className="text-lg">{(taxRate * 100).toFixed(1)}%</div>
+      <div className="space-y-4">
+        {/* Treasury */}
+        <div className="bg-gray-700 p-3 rounded">
+          <div className="flex justify-between items-center">
+            <span className="text-yellow-400 font-semibold">Tesouro Público</span>
+            <span className="text-xl font-bold">{coins.toLocaleString()}</span>
           </div>
         </div>
 
-        {/* Controle de Impostos */}
+        {/* Tax System */}
         <div className="bg-gray-700 p-3 rounded">
           <label className="block text-sm font-semibold mb-2">Taxa de Imposto</label>
           <input

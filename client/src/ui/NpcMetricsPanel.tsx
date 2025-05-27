@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNpcStore } from '../game/stores/useNpcStore';
 import { useNpcMetrics } from '../game/stores/useNpcMetrics';
@@ -28,7 +27,7 @@ const NpcMetricsPanel: React.FC = () => {
     updateActivity,
     initializeNPC
   } = useNpcMetrics();
-  
+
   const [detailedMetrics, setDetailedMetrics] = useState<DetailedMetrics[]>([]);
   const [showDetails, setShowDetails] = useState<string | null>(null);
   const [selectedNpc, setSelectedNpc] = useState<string | null>(null);
@@ -50,7 +49,7 @@ const NpcMetricsPanel: React.FC = () => {
         const workHours = getWorkHours(npc.id);
         const restHours = getRestHours(npc.id);
         const totalResources = getTotalResourcesCollected(npc.id);
-        
+
         return {
           npcId: npc.id,
           npcType: npc.type,
@@ -64,13 +63,13 @@ const NpcMetricsPanel: React.FC = () => {
           experience: npc.skills?.experience || 0
         };
       });
-      
+
       setDetailedMetrics(data);
     };
 
     updateMetrics();
     const interval = setInterval(updateMetrics, 3000); // Atualiza a cada 3 segundos
-    
+
     return () => clearInterval(interval);
   }, [npcs, metrics, getWorkHours, getRestHours, getTotalResourcesCollected, updateActivity, initializeNPC]);
 
@@ -163,7 +162,7 @@ const NpcMetricsPanel: React.FC = () => {
                 <div className="text-green-600">📦 {npc.totalResources}</div>
               </div>
             </div>
-            
+
             {showDetails === npc.npcId && (
               <div className="mt-3 pt-3 border-t space-y-2">
                 <div className="grid grid-cols-2 gap-2 text-sm">

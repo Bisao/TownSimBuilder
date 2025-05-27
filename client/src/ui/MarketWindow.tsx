@@ -17,32 +17,32 @@ const MarketWindow = ({ isOpen, onClose }: MarketWindowProps) => {
   const { dragRef, position, isDragging, handleMouseDown } = useDraggable({
     initialPosition: { x: window.innerWidth / 2 - 384, y: window.innerHeight / 2 - 300 }
   });
-  
+
   // Filtrar itens pela categoria selecionada
   const filteredItems = Object.values(marketItems).filter(
     (item) => item.category === activeCategory
   );
-  
+
   // Função para comprar um item
   const { playSuccess } = useAudio();
-  
+
   const buyItem = (itemId: string) => {
     const item = marketItems[itemId];
     if (!item) return;
-    
+
     // Verificar se o jogador tem moedas suficientes
     if ((resources.coins || 0) >= item.price) {
       // Deduzir o preço
       updateResource("coins", -item.price);
-      
+
       // Se o item tem um tipo de recurso, adicionar ao inventário
       if (item.resourceType && item.amount) {
         updateResource(item.resourceType, item.amount);
       }
-      
+
       // Tocar som de sucesso
       playSuccess();
-      
+
       alert(`Você comprou: ${item.name}${item.amount ? ` (${item.amount} unidades)` : ''}`);
     } else {
       alert("Moedas insuficientes!");
@@ -53,29 +53,29 @@ const MarketWindow = ({ isOpen, onClose }: MarketWindowProps) => {
   const sellItem = (itemId: string) => {
     const item = marketItems[itemId];
     if (!item || !item.resourceType || !item.amount) return;
-    
+
     const currentAmount = resources[item.resourceType] || 0;
-    
+
     // Verificar se o jogador tem o recurso para vender
     if (currentAmount >= item.amount) {
       // Remover o recurso do inventário
       updateResource(item.resourceType, -item.amount);
-      
+
       // Adicionar moedas (venda por 70% do preço de compra)
       const sellPrice = Math.floor(item.price * 0.7);
       updateResource("coins", sellPrice);
-      
+
       // Tocar som de sucesso
       playSuccess();
-      
+
       alert(`Você vendeu: ${item.name} por ${sellPrice} moedas`);
     } else {
       alert(`Você não tem ${item.name} suficiente para vender!`);
     }
   };
-  
+
   if (!isOpen) return null;
-  
+
   return (
     <div 
       className="fixed inset-0 z-50 bg-black/50 pointer-events-auto"
@@ -106,7 +106,7 @@ const MarketWindow = ({ isOpen, onClose }: MarketWindowProps) => {
             &times;
           </button>
         </div>
-        
+
         {/* Toggle Buy/Sell Mode */}
         <div className="flex bg-gray-700 rounded-lg p-1 mb-4">
           <button
@@ -132,7 +132,7 @@ const MarketWindow = ({ isOpen, onClose }: MarketWindowProps) => {
             Vender
           </button>
         </div>
-        
+
         {/* Abas de categorias */}
         <div className="flex border-b border-gray-700 mb-4">
           {marketCategories.map((category) => (
@@ -152,13 +152,13 @@ const MarketWindow = ({ isOpen, onClose }: MarketWindowProps) => {
             </button>
           ))}
         </div>
-        
+
         {/* Exibição das moedas */}
         <div className="flex items-center gap-2 mb-4 text-yellow-400">
           <span>💰</span>
           <span className="font-bold">{resources.coins || 0}</span>
         </div>
-        
+
         {/* Lista de itens */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {filteredItems.map((item) => {
@@ -166,7 +166,7 @@ const MarketWindow = ({ isOpen, onClose }: MarketWindowProps) => {
             const sellPrice = Math.floor(item.price * 0.7);
             const hasEnoughStock = marketMode === "sell" ? canSell : true;
             const currentStock = item.resourceType ? (resources[item.resourceType] || 0) : 0;
-            
+
             return (
               <div
                 key={item.id}
@@ -193,17 +193,17 @@ const MarketWindow = ({ isOpen, onClose }: MarketWindowProps) => {
                     )}
                   </div>
                 </div>
-                
+
                 <p className="text-sm text-gray-300 mb-2">
                   {item.description}
                 </p>
-                
+
                 {marketMode === "sell" && (
                   <p className="text-sm text-blue-300 mb-3">
                     Estoque: {currentStock} unidade(s)
                   </p>
                 )}
-                
+
                 <button
                   className={cn(
                     "mt-auto text-white py-1 px-3 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed",
