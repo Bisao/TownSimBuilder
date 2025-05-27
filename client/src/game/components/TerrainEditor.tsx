@@ -1,3 +1,4 @@
+
 import { useThree, useFrame } from "@react-three/fiber";
 import { useRef, useState, useEffect } from "react";
 import * as THREE from "three";
@@ -57,22 +58,22 @@ const TerrainEditor = () => {
 
     // Update raycaster
     raycaster.setFromCamera(mouse, camera);
-
+    
     // Create a large plane for intersection
     const plane = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0);
     const intersection = new THREE.Vector3();
-
+    
     if (raycaster.ray.intersectPlane(plane, intersection)) {
       setCurrentPosition(intersection);
-
+      
       // Update preview position
       if (previewRef.current && selectedTool !== "select") {
         const gridX = Math.floor(intersection.x + 0.5);
         const gridZ = Math.floor(intersection.z + 0.5);
-
+        
         previewRef.current.position.set(gridX, 0.1, gridZ);
         previewRef.current.visible = true;
-
+        
         // Update preview size based on brush size
         previewRef.current.scale.set(brushSize, 1, brushSize);
       }
@@ -87,16 +88,16 @@ const TerrainEditor = () => {
 
     // Apply brush effect in radius
     const radius = Math.floor(brushSize / 2);
-
+    
     for (let x = gridX - radius; x <= gridX + radius; x++) {
       for (let z = gridZ - radius; z <= gridZ + radius; z++) {
         if (x < 0 || x >= gridSize || z < 0 || z >= gridSize) continue;
-
+        
         const distance = Math.sqrt((x - gridX) ** 2 + (z - gridZ) ** 2);
         if (distance > radius) continue;
-
+        
         const strength = (1 - distance / radius) * brushStrength;
-
+        
         applyToolEffect(x, z, strength);
       }
     }
@@ -105,7 +106,7 @@ const TerrainEditor = () => {
   const applyToolEffect = (x: number, z: number, strength: number) => {
     const existingTile = getTerrainTile(x, z);
     const currentHeight = existingTile?.height || 0;
-
+    
     switch (selectedTool) {
       case "terrain_height":
         // Increase height
@@ -113,21 +114,21 @@ const TerrainEditor = () => {
           height: Math.min(currentHeight + strength, 10),
         });
         break;
-
+        
       case "terrain_paint":
         updateTerrainTile(x, z, {
           type: selectedTerrainType,
           height: currentHeight,
         });
         break;
-
+        
       case "water":
         updateTerrainTile(x, z, {
           type: "water",
           height: Math.min(currentHeight, 0),
         });
         break;
-
+        
       case "eraser":
         // Reset to default
         updateTerrainTile(x, z, {
@@ -175,7 +176,7 @@ const TerrainEditor = () => {
           />
         </mesh>
       )}
-
+      
       {/* Editor Grid Overlay */}
       <gridHelper 
         args={[gridSize, gridSize, "#FF0000", "#FF0000"]} 
