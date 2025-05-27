@@ -1,6 +1,6 @@
 import React from "react";
 
-export const Sky: React.FC = () => {
+const Sky: React.FC = () => {
   return (
     <group>
       {/* Céu de fundo lowpoly */}
@@ -124,3 +124,5 @@ export const Sky: React.FC = () => {
     </group>
   );
 };
+
+export default Sky;
