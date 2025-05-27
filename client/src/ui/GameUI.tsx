@@ -357,7 +357,7 @@ const GameUI = () => {
       )}
 
       <MapEditorPanel isVisible={showMapEditor} />
-      
+
       {showEconomyPanel && (
         <div className="absolute top-16 left-4 z-20">
           <EconomyPanel />
@@ -369,7 +369,7 @@ const GameUI = () => {
           <ResearchPanel />
         </div>
       )}
-      
+
     </div>
   );
 };

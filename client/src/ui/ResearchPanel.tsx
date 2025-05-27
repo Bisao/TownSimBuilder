@@ -1,4 +1,3 @@
-
 import React from "react";
 import { useResearchStore } from "../game/stores/useResearchStore";
 import { useDraggable } from "../hooks/useDraggable";
@@ -78,7 +77,7 @@ const ResearchPanel: React.FC = () => {
                 <div className="flex-1">
                   <h4 className="font-semibold text-sm">{tech.name}</h4>
                   <p className="text-xs text-gray-300 mt-1">{tech.description}</p>
-                  
+
                   {tech.prerequisites.length > 0 && (
                     <div className="text-xs text-gray-400 mt-1">
                       Requer: {tech.prerequisites.map(prereq => 

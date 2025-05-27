@@ -1,3 +1,8 @@
+` tags.
+
+```python
+# Applying the requested changes to the code.
+<replit_final_file>
 import { create } from "zustand";
 import { subscribeWithSelector } from "zustand/middleware";
 
@@ -13,115 +18,98 @@ export interface Technology {
 }
 
 interface ResearchState {
-  technologies: Record<string, Technology>;
   researchPoints: number;
-  pointsPerSecond: number;
+  researchCategories: Record<string, Technology[]>;
+  completedResearch: Set<string>;
+  currentResearch: string | null;
+  researchProgress: number;
 
   // Actions
-  researchTechnology: (id: string) => boolean;
-  addResearchPoints: (points: number) => void;
-  canResearch: (id: string) => boolean;
-  getAvailableTechnologies: () => Technology[];
+  addResearchPoints: (amount: number) => void;
+  spendResearchPoints: (amount: number) => boolean;
+  startResearch: (technologyId: string) => void;
+  completeResearch: (technologyId: string) => void;
+  getAvailableResearch: () => Technology[];
+  resetResearch: () => void;
 }
+
+const DEFAULT_RESEARCH_CATEGORIES: Record<string, Technology[]> = {
+  agriculture: [
+    {
+      id: "improved_farming",
+      name: "Agricultura Melhorada",
+      description: "Aumenta a produção de culturas em 25%",
+      cost: 100,
+      category: "agriculture",
+      prerequisites: [],
+      effects: { farmingEfficiency: 1.25 }
+    },
+    {
+      id: "irrigation",
+      name: "Irrigação",
+      description: "Permite cultivo em terrenos áridos",
+      cost: 150,
+      category: "agriculture",
+      prerequisites: ["improved_farming"],
+      effects: { allowAridFarming: true }
+    }
+  ],
+  construction: [
+    {
+      id: "advanced_materials",
+      name: "Materiais Avançados",
+      description: "Reduz custo de construção em 20%",
+      cost: 120,
+      category: "construction",
+      prerequisites: [],
+      effects: { buildingCostReduction: 0.8 }
+    },
+    {
+      id: "architecture",
+      name: "Arquitetura",
+      description: "Desbloqueia novos tipos de edifícios",
+      cost: 200,
+      category: "construction",
+      prerequisites: ["advanced_materials"],
+      effects: { newBuildings: ["tower", "bridge"] }
+    }
+  ],
+  economy: [
+    {
+      id: "trade_routes",
+      name: "Rotas Comerciais",
+      description: "Aumenta rendimento do comércio em 30%",
+      cost: 80,
+      category: "economy",
+      prerequisites: [],
+      effects: { tradeIncomeMultiplier: 1.3 }
+    },
+    {
+      id: "banking",
+      name: "Sistema Bancário",
+      description: "Gera renda passiva de juros",
+      cost: 250,
+      category: "economy",
+      prerequisites: ["trade_routes"],
+      effects: { passiveIncome: 10 }
+    }
+  ]
+};
 
 export const useResearchStore = create<ResearchState>()(
   subscribeWithSelector((set, get) => ({
     researchPoints: 50,
-    pointsPerSecond: 1,
-
-    technologies: {
-      "advanced_farming": {
-        id: "advanced_farming",
-        name: "Agricultura Avançada",
-        description: "Aumenta a produção de fazendas em 25%",
-        cost: 100,
-        requirements: [],
-        unlocks: ["irrigation"],
-        researched: false,
-        category: "farming"
-      },
-      "irrigation": {
-        id: "irrigation",
-        name: "Irrigação",
-        description: "Permite fazendas produzirem em terrenos secos",
-        cost: 150,
-        requirements: ["advanced_farming"],
-        unlocks: ["greenhouse"],
-        researched: false,
-        category: "farming"
-      },
-      "improved_tools": {
-        id: "improved_tools",
-        name: "Ferramentas Melhoradas",
-        description: "NPCs trabalham 20% mais rápido",
-        cost: 75,
-        requirements: [],
-        unlocks: ["advanced_tools"],
-        researched: false,
-        category: "mining"
-      },
-      "stone_masonry": {
-        id: "stone_masonry",
-        name: "Alvenaria",
-        description: "Desbloqueia construções de pedra",
-        cost: 120,
-        requirements: [],
-        unlocks: ["reinforced_buildings"],
-        researched: false,
-        category: "construction"
-      },
-      "market_expansion": {
-        id: "market_expansion",
-        name: "Expansão do Mercado",
-        description: "Aumenta preços de venda em 15%",
-        cost: 90,
-        requirements: [],
-        unloks: ["trade_routes"],
-        researched: false,
-        category: "economy"
-      }
-    },
+    researchCategories: DEFAULT_RESEARCH_CATEGORIES,
+    completedResearch: new Set(),
+    currentResearch: null,
+    researchProgress: 0,
 
     // Actions
-    researchTechnology: (id) => {
-      const state = get();
-      const tech = state.technologies[id];
-
-      if (!tech || tech.researched || !state.canResearch(id) || state.researchPoints < tech.cost) {
-        return false;
-      }
-
-      set((state) => ({
-        researchPoints: state.researchPoints - tech.cost,
-        technologies: {
-          ...state.technologies,
-          [id]: { ...tech, researched: true }
-        }
-      }));
-
-      return true;
-    },
-
-    addResearchPoints: (points) => set((state) => ({
-      researchPoints: state.researchPoints + points
-    })),
-
-    canResearch: (id) => {
-      const state = get();
-      const tech = state.technologies[id];
-
-      if (!tech || tech.researched) return false;
-
-      return tech.requirements.every(reqId => 
-        state.technologies[reqId]?.researched || false
-      );
-    },
-
-    getAvailableTechnologies: () => {
-      const state = get();
-      return Object.values(state.technologies).filter(tech => 
-        !tech.researched && state.canResearch(tech.id)
-      );
-    }
+    addResearchPoints: (amount: number) => void,
+    spendResearchPoints: (amount: number) => boolean,
+    startResearch: (technologyId: string) => void,
+    completeResearch: (technologyId: string) => void,
+    getAvailableResearch: () => Technology[];
+    resetResearch: () => void
   }))
 );
