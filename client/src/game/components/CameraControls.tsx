@@ -191,11 +191,6 @@ const CameraControls = () => {
 
   // Atualização por frame
   useFrame(() => {
-    // Se estiver em controle manual, não atualizar a câmera
-    if (isManualControl) {
-      return;
-    }
-
     const currentTarget = targetRef.current;
     const currentPosition = positionRef.current;
     const currentRotation = rotationRef.current;
@@ -208,24 +203,26 @@ const CameraControls = () => {
       rotationRef.current -= ROTATE_SPEED;
     }
 
-    // Movimento da câmera
+    // Movimento da câmera (só funciona se não estiver em controle manual do NPC)
     const moveDirection = new THREE.Vector3();
 
-    if (forward) {
-      moveDirection.x += Math.sin(currentRotation) * MOVE_SPEED;
-      moveDirection.z += Math.cos(currentRotation) * MOVE_SPEED;
-    }
-    if (backward) {
-      moveDirection.x -= Math.sin(currentRotation) * MOVE_SPEED;
-      moveDirection.z -= Math.cos(currentRotation) * MOVE_SPEED;
-    }
-    if (leftward) {
-      moveDirection.x += Math.cos(currentRotation) * MOVE_SPEED;
-      moveDirection.z += Math.sin(currentRotation) * MOVE_SPEED;
-    }
-    if (rightward) {
-      moveDirection.x -= Math.cos(currentRotation) * MOVE_SPEED;
-      moveDirection.z += Math.sin(currentRotation) * MOVE_SPEED;
+    if (!isManualControl) {
+      if (forward) {
+        moveDirection.x += Math.sin(currentRotation) * MOVE_SPEED;
+        moveDirection.z += Math.cos(currentRotation) * MOVE_SPEED;
+      }
+      if (backward) {
+        moveDirection.x -= Math.sin(currentRotation) * MOVE_SPEED;
+        moveDirection.z -= Math.cos(currentRotation) * MOVE_SPEED;
+      }
+      if (leftward) {
+        moveDirection.x += Math.cos(currentRotation) * MOVE_SPEED;
+        moveDirection.z += Math.sin(currentRotation) * MOVE_SPEED;
+      }
+      if (rightward) {
+        moveDirection.x -= Math.cos(currentRotation) * MOVE_SPEED;
+        moveDirection.z += Math.sin(currentRotation) * MOVE_SPEED;
+      }
     }
 
     // Atualizar posição do alvo

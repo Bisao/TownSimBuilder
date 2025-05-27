@@ -24,7 +24,7 @@ const ManualNpcController = () => {
         case 'd':
           updateManualControlKeys({ right: true });
           break;
-        case 'e':
+        case ' ':
           event.preventDefault();
           updateManualControlKeys({ action: true });
           break;
@@ -51,7 +51,7 @@ const ManualNpcController = () => {
         case 'd':
           updateManualControlKeys({ right: false });
           break;
-        case 'e':
+        case ' ':
           updateManualControlKeys({ action: false });
           break;
       }
