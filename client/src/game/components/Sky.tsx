@@ -126,3 +126,4 @@ const Sky: React.FC = () => {
 };
 
 export default Sky;
+export { Sky };

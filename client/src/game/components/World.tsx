@@ -10,6 +10,7 @@ import Terrain from "./Terrain";
 import TerrainEditor from "./TerrainEditor";
 import PlacementIndicator from "./PlacementIndicator";
 import ManualNpcController from "./ManualNpcController";
+import Sky from "./Sky";
 import { useGameStore } from "../stores/useGameStore";
 import { useNpcStore } from "../stores/useNpcStore";
 import { useResourceStore } from "../stores/useResourceStore";

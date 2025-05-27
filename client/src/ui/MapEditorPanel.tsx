@@ -94,13 +94,16 @@ const MapEditorPanel = ({ isVisible }: { isVisible: boolean }) => {
         {/* Content */}
         <div className="p-4 overflow-y-auto max-h-[calc(80vh-60px)]">
           {/* Editor Mode Toggle */}
-          <div className="mb-4">
+          <div className="mb-4 flex justify-center">
             <button
-              onClick={() => setEditorMode(!isEditorMode)}
-              className={`w-full p-3 rounded-lg font-medium transition-colors ${
+              onClick={() => {
+                console.log("Toggling editor mode from", isEditorMode, "to", !isEditorMode);
+                setEditorMode(!isEditorMode);
+              }}
+              className={`w-full p-4 rounded-lg font-bold text-lg transition-all transform hover:scale-105 ${
                 isEditorMode 
-                  ? "bg-red-600 hover:bg-red-700 text-white" 
-                  : "bg-green-600 hover:bg-green-700 text-white"
+                  ? "bg-red-600 hover:bg-red-700 text-white shadow-lg border-2 border-red-400" 
+                  : "bg-green-600 hover:bg-green-700 text-white shadow-lg border-2 border-green-400"
               }`}
             >
               <i className={`fa-solid ${isEditorMode ? 'fa-stop' : 'fa-play'} mr-2`}></i>
