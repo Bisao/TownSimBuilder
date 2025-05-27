@@ -10,6 +10,8 @@ import { useGameStore } from "./useGameStore";
 export interface NPCNeeds {
   energy: number;
   satisfaction: number;
+  health: number;
+  hunger: number;
 }
 
 export interface NPCSkills {
@@ -1173,7 +1175,9 @@ export const useNpcStore = create<NPCStoreState>()(
         inventory: { type: '', amount: 0 },
         needs: {
           energy: 100,
-          satisfaction: 100
+          satisfaction: 100,
+          health: 100,
+          hunger: 100
         },
         memory: {
           lastVisitedPositions: [],

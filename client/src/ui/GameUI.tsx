@@ -3,6 +3,8 @@ import { useGameStore, Controls } from "../game/stores/useGameStore";
 import { useResourceStore } from "../game/stores/useResourceStore";
 import { useBuildingStore } from "../game/stores/useBuildingStore";
 import { useNpcStore } from "../game/stores/useNpcStore";
+import { useEconomyStore } from "../game/stores/useEconomyStore";
+import { useEventStore } from "../game/stores/useEventStore";
 import { useAudio } from "../lib/stores/useAudio";
 import { Building } from "../game/stores/useBuildingStore";
 import ResourcePanel from "./ResourcePanel";
@@ -32,6 +34,7 @@ const GameUI = () => {
   const [showSiloPanel, setShowSiloPanel] = useState(false);
   const [selectedSiloId, setSelectedSiloId] = useState<string | null>(null);
   const [showMapEditor, setShowMapEditor] = useState(false);
+  const [showEconomyPanel, setShowEconomyPanel] = useState(false);
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -122,6 +125,20 @@ const GameUI = () => {
       default: return "dia";
     }
   };
+
+    // Update NPCs
+  useEffect(() => {
+    if (!isPaused) {
+      const interval = setInterval(() => {
+        updateNPCs(0.016); // ~60 FPS
+
+        // Update economy and events
+        useEconomyStore.getState().calculateTaxes();
+        useEventStore.getState().updateEvents(0.016);
+      }, 16);
+      return () => clearInterval(interval);
+    }
+  }, [isPaused, updateNPCs]);
 
   return (
     <div className="absolute inset-0 pointer-events-none">
@@ -260,6 +277,14 @@ const GameUI = () => {
           >
             <i className="fa-solid fa-map mr-2"></i>
             Editor
+          </button>
+
+          <button
+            onClick={() => setShowEconomyPanel(!showEconomyPanel)}
+            className={`${showEconomyPanel ? 'bg-yellow-600' : 'bg-gray-600'} hover:bg-yellow-700 text-white px-3 py-2 rounded transition-colors flex items-center gap-2`}
+          >
+            <i className="fa-solid fa-coins"></i>
+            Economia
           </button>
       </div>
       {selectedNpc && (
