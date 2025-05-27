@@ -238,7 +238,7 @@ const GameUI = () => {
       {showResearchPanel && <ResearchPanel />}
       {showEventPanel && <EventPanel />}
       {showEconomyPanel && <EconomyPanel />}
-      {showMetrics && <NpcMetricsPanel />}
+      {showNpcMetrics && <NpcMetricsPanel />}
       {showMapEditor && <MapEditorPanel isVisible={showMapEditor} />}
 
       {/* Market Window */}
