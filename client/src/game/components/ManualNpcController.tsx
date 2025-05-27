@@ -2,6 +2,7 @@
 import { useEffect, useState } from 'react';
 import { useGameStore } from '../stores/useGameStore';
 import { useNpcStore } from '../stores/useNpcStore';
+import { useBuildingStore } from '../stores/useBuildingStore';
 
 const ManualNpcController = () => {
   const { isManualControl, controlledNpcId, updateManualControlKeys, setControlledNpc } = useGameStore();
@@ -175,7 +176,7 @@ const ManualNpcController = () => {
 
 // Função auxiliar para verificar se há ação disponível
 function isActionAvailable(npc: any): boolean {
-  const buildings = useNpcStore.getState ? useBuildingStore?.getState?.()?.buildings || [] : [];
+  const buildings = useBuildingStore.getState().buildings;
   const [x, , z] = npc.position;
 
   // Verificar edifícios próximos
@@ -203,7 +204,7 @@ function isActionAvailable(npc: any): boolean {
 
 // Função auxiliar para obter texto da ação
 function getActionText(npc: any): string {
-  const buildings = useNpcStore.getState ? useBuildingStore?.getState?.()?.buildings || [] : [];
+  const buildings = useBuildingStore.getState().buildings;
   const [x, , z] = npc.position;
 
   const nearbyBuilding = buildings.find(b => {
