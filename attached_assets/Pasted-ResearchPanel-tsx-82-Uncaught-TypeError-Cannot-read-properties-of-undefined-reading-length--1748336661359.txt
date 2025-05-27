@@ -1,0 +1,105 @@
+ResearchPanel.tsx:82 Uncaught TypeError: Cannot read properties of undefined (reading 'length')
+    at ResearchPanel.tsx:82:39
+    at Array.map (<anonymous>)
+    at ResearchPanel (ResearchPanel.tsx:66:40)
+    at renderWithHooks (chunk-WERSD76P.js?v=cc8441ba:11548:26)
+    at mountIndeterminateComponent (chunk-WERSD76P.js?v=cc8441ba:14926:21)
+    at beginWork (chunk-WERSD76P.js?v=cc8441ba:15914:22)
+    at HTMLUnknownElement.callCallback2 (chunk-WERSD76P.js?v=cc8441ba:3674:22)
+    at Object.invokeGuardedCallbackDev (chunk-WERSD76P.js?v=cc8441ba:3699:24)
+    at invokeGuardedCallback (chunk-WERSD76P.js?v=cc8441ba:3733:39)
+    at beginWork$1 (chunk-WERSD76P.js?v=cc8441ba:19765:15)
+(anonymous) @ ResearchPanel.tsx:82
+ResearchPanel @ ResearchPanel.tsx:66
+renderWithHooks @ chunk-WERSD76P.js?v=cc8441ba:11548
+mountIndeterminateComponent @ chunk-WERSD76P.js?v=cc8441ba:14926
+beginWork @ chunk-WERSD76P.js?v=cc8441ba:15914
+callCallback2 @ chunk-WERSD76P.js?v=cc8441ba:3674
+invokeGuardedCallbackDev @ chunk-WERSD76P.js?v=cc8441ba:3699
+invokeGuardedCallback @ chunk-WERSD76P.js?v=cc8441ba:3733
+beginWork$1 @ chunk-WERSD76P.js?v=cc8441ba:19765
+performUnitOfWork @ chunk-WERSD76P.js?v=cc8441ba:19198
+workLoopSync @ chunk-WERSD76P.js?v=cc8441ba:19137
+renderRootSync @ chunk-WERSD76P.js?v=cc8441ba:19116
+performSyncWorkOnRoot @ chunk-WERSD76P.js?v=cc8441ba:18874
+flushSyncCallbacks @ chunk-WERSD76P.js?v=cc8441ba:9119
+(anonymous) @ chunk-WERSD76P.js?v=cc8441ba:18627
+ResearchPanel.tsx:82 Uncaught TypeError: Cannot read properties of undefined (reading 'length')
+    at ResearchPanel.tsx:82:39
+    at Array.map (<anonymous>)
+    at ResearchPanel (ResearchPanel.tsx:66:40)
+    at renderWithHooks (chunk-WERSD76P.js?v=cc8441ba:11548:26)
+    at mountIndeterminateComponent (chunk-WERSD76P.js?v=cc8441ba:14926:21)
+    at beginWork (chunk-WERSD76P.js?v=cc8441ba:15914:22)
+    at HTMLUnknownElement.callCallback2 (chunk-WERSD76P.js?v=cc8441ba:3674:22)
+    at Object.invokeGuardedCallbackDev (chunk-WERSD76P.js?v=cc8441ba:3699:24)
+    at invokeGuardedCallback (chunk-WERSD76P.js?v=cc8441ba:3733:39)
+    at beginWork$1 (chunk-WERSD76P.js?v=cc8441ba:19765:15)
+(anonymous) @ ResearchPanel.tsx:82
+ResearchPanel @ ResearchPanel.tsx:66
+renderWithHooks @ chunk-WERSD76P.js?v=cc8441ba:11548
+mountIndeterminateComponent @ chunk-WERSD76P.js?v=cc8441ba:14926
+beginWork @ chunk-WERSD76P.js?v=cc8441ba:15914
+callCallback2 @ chunk-WERSD76P.js?v=cc8441ba:3674
+invokeGuardedCallbackDev @ chunk-WERSD76P.js?v=cc8441ba:3699
+invokeGuardedCallback @ chunk-WERSD76P.js?v=cc8441ba:3733
+beginWork$1 @ chunk-WERSD76P.js?v=cc8441ba:19765
+performUnitOfWork @ chunk-WERSD76P.js?v=cc8441ba:19198
+workLoopSync @ chunk-WERSD76P.js?v=cc8441ba:19137
+renderRootSync @ chunk-WERSD76P.js?v=cc8441ba:19116
+recoverFromConcurrentError @ chunk-WERSD76P.js?v=cc8441ba:18736
+performSyncWorkOnRoot @ chunk-WERSD76P.js?v=cc8441ba:18879
+flushSyncCallbacks @ chunk-WERSD76P.js?v=cc8441ba:9119
+(anonymous) @ chunk-WERSD76P.js?v=cc8441ba:18627
+chunk-A3GN3WMN.js?v=cc8441ba:18167 The above error occurred in the <ResearchPanel> component:
+
+    at ResearchPanel (https://387bd07d-fc86-4e16-a1cc-bc43cd5f03bb-00-pn828y6br5qt.worf.replit.dev/src/ui/ResearchPanel.tsx:29:7)
+    at div
+    at div
+    at GameUI (https://387bd07d-fc86-4e16-a1cc-bc43cd5f03bb-00-pn828y6br5qt.worf.replit.dev/src/ui/GameUI.tsx:38:52)
+    at KeyboardControls (https://387bd07d-fc86-4e16-a1cc-bc43cd5f03bb-00-pn828y6br5qt.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@react-three_drei.js?v=cc8441ba:9151:8)
+    at div
+    at App (https://387bd07d-fc86-4e16-a1cc-bc43cd5f03bb-00-pn828y6br5qt.worf.replit.dev/src/App.tsx?v=fD_hKgd3lH5FIz1p6g5E8:29:39)
+    at QueryClientProvider (https://387bd07d-fc86-4e16-a1cc-bc43cd5f03bb-00-pn828y6br5qt.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=cc8441ba:2805:3)
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+console.error @ chunk-A3GN3WMN.js?v=cc8441ba:18167
+logCapturedError @ chunk-WERSD76P.js?v=cc8441ba:14032
+update.callback @ chunk-WERSD76P.js?v=cc8441ba:14052
+callCallback @ chunk-WERSD76P.js?v=cc8441ba:11248
+commitUpdateQueue @ chunk-WERSD76P.js?v=cc8441ba:11265
+commitLayoutEffectOnFiber @ chunk-WERSD76P.js?v=cc8441ba:17093
+commitLayoutMountEffects_complete @ chunk-WERSD76P.js?v=cc8441ba:17980
+commitLayoutEffects_begin @ chunk-WERSD76P.js?v=cc8441ba:17969
+commitLayoutEffects @ chunk-WERSD76P.js?v=cc8441ba:17920
+commitRootImpl @ chunk-WERSD76P.js?v=cc8441ba:19353
+commitRoot @ chunk-WERSD76P.js?v=cc8441ba:19277
+performSyncWorkOnRoot @ chunk-WERSD76P.js?v=cc8441ba:18895
+flushSyncCallbacks @ chunk-WERSD76P.js?v=cc8441ba:9119
+(anonymous) @ chunk-WERSD76P.js?v=cc8441ba:18627
+chunk-WERSD76P.js?v=cc8441ba:9129 Uncaught TypeError: Cannot read properties of undefined (reading 'length')
+    at ResearchPanel.tsx:82:39
+    at Array.map (<anonymous>)
+    at ResearchPanel (ResearchPanel.tsx:66:40)
+    at renderWithHooks (chunk-WERSD76P.js?v=cc8441ba:11548:26)
+    at mountIndeterminateComponent (chunk-WERSD76P.js?v=cc8441ba:14926:21)
+    at beginWork (chunk-WERSD76P.js?v=cc8441ba:15914:22)
+    at beginWork$1 (chunk-WERSD76P.js?v=cc8441ba:19753:22)
+    at performUnitOfWork (chunk-WERSD76P.js?v=cc8441ba:19198:20)
+    at workLoopSync (chunk-WERSD76P.js?v=cc8441ba:19137:13)
+    at renderRootSync (chunk-WERSD76P.js?v=cc8441ba:19116:15)
+(anonymous) @ ResearchPanel.tsx:82
+ResearchPanel @ ResearchPanel.tsx:66
+renderWithHooks @ chunk-WERSD76P.js?v=cc8441ba:11548
+mountIndeterminateComponent @ chunk-WERSD76P.js?v=cc8441ba:14926
+beginWork @ chunk-WERSD76P.js?v=cc8441ba:15914
+beginWork$1 @ chunk-WERSD76P.js?v=cc8441ba:19753
+performUnitOfWork @ chunk-WERSD76P.js?v=cc8441ba:19198
+workLoopSync @ chunk-WERSD76P.js?v=cc8441ba:19137
+renderRootSync @ chunk-WERSD76P.js?v=cc8441ba:19116
+recoverFromConcurrentError @ chunk-WERSD76P.js?v=cc8441ba:18736
+performSyncWorkOnRoot @ chunk-WERSD76P.js?v=cc8441ba:18879
+flushSyncCallbacks @ chunk-WERSD76P.js?v=cc8441ba:9119
+(anonymous) @ chunk-WERSD76P.js?v=cc8441ba:18627
+chunk-664ZIH6C.js?v=cc8441ba:17835 THREE.WebGLRenderer: Context Lost.
