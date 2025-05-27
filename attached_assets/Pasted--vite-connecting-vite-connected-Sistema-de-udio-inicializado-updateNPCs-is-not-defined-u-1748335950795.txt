@@ -1,0 +1,29 @@
+[vite] connecting...
+[vite] connected.
+Sistema de áudio inicializado
+updateNPCs is not defined
+updateNPCs is not defined
+The above error occurred in the <GameUI> component:
+
+    at GameUI (https://387bd07d-fc86-4e16-a1cc-bc43cd5f03bb-00-pn828y6br5qt.worf.replit.dev/src/ui/GameUI.tsx:35:52)
+    at KeyboardControls (https://387bd07d-fc86-4e16-a1cc-bc43cd5f03bb-00-pn828y6br5qt.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@react-three_drei.js?v=cc8441ba:9151:8)
+    at div
+    at App (https://387bd07d-fc86-4e16-a1cc-bc43cd5f03bb-00-pn828y6br5qt.worf.replit.dev/src/App.tsx?v=wGMihWcegT8gS704z1x1p:29:39)
+    at QueryClientProvider (https://387bd07d-fc86-4e16-a1cc-bc43cd5f03bb-00-pn828y6br5qt.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=cc8441ba:2805:3)
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+
+at GameUI (https://387bd07d-fc86-4e16-a1cc-bc43cd5f03bb-00-pn828y6br5qt.worf.replit.dev/src/ui/GameUI.tsx:35:52)
+at KeyboardControls (https://387bd07d-fc86-4e16-a1cc-bc43cd5f03bb-00-pn828y6br5qt.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@react-three_drei.js?v=cc8441ba:9151:8)
+at div
+at App (https://387bd07d-fc86-4e16-a1cc-bc43cd5f03bb-00-pn828y6br5qt.worf.replit.dev/src/App.tsx?v=wGMihWcegT8gS704z1x1p:29:39)
+at QueryClientProvider (https://387bd07d-fc86-4e16-a1cc-bc43cd5f03bb-00-pn828y6br5qt.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=cc8441ba:2805:3)
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+at t.value (https://387bd07d-fc86-4e16-a1cc-bc43cd5f03bb-00-pn828y6br5qt.worf.replit.dev/__replco/static/devtools/eruda/3.2.3/eruda.js:2:17465)
+at new t (https://387bd07d-fc86-4e16-a1cc-bc43cd5f03bb-00-pn828y6br5qt.worf.replit.dev/__replco/static/devtools/eruda/3.2.3/eruda.js:2:12630)
+at t.value (https://387bd07d-fc86-4e16-a1cc-bc43cd5f03bb-00-pn828y6br5qt.worf.replit.dev/__replco/static/devtools/eruda/3.2.3/eruda.js:2:32766)
+at https://387bd07d-fc86-4e16-a1cc-bc43cd5f03bb-00-pn828y6br5qt.worf.replit.dev/__replco/static/devtools/eruda/3.2.3/eruda.js:2:34400
+updateNPCs is not defined
