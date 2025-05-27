@@ -32,7 +32,7 @@ const MapEditorPanel = ({ isVisible }: { isVisible: boolean }) => {
   const [exportData, setExportData] = useState("");
 
   const { dragRef, position } = useDraggable({
-    initialPosition: { x: window.innerWidth - 320, y: 100 }
+    initialPosition: { x: Math.max(10, window.innerWidth - 330), y: 100 }
   });
 
   if (!isVisible) return null;
@@ -78,9 +78,11 @@ const MapEditorPanel = ({ isVisible }: { isVisible: boolean }) => {
         ref={dragRef}
         className="fixed bg-gray-900 text-white rounded-lg shadow-2xl border border-gray-700 w-80 max-h-[80vh] overflow-hidden"
         style={{
-          left: position.x,
-          top: position.y,
+          left: Math.max(10, Math.min(position.x, window.innerWidth - 330)),
+          top: Math.max(10, Math.min(position.y, window.innerHeight - 100)),
           zIndex: 1000,
+          backdropFilter: 'blur(10px)',
+          backgroundColor: 'rgba(17, 24, 39, 0.95)',
         }}
       >
         {/* Header */}
@@ -100,15 +102,20 @@ const MapEditorPanel = ({ isVisible }: { isVisible: boolean }) => {
                 console.log("Toggling editor mode from", isEditorMode, "to", !isEditorMode);
                 setEditorMode(!isEditorMode);
               }}
-              className={`w-full p-4 rounded-lg font-bold text-lg transition-all transform hover:scale-105 ${
+              className={`w-full p-4 rounded-lg font-bold text-lg transition-all transform hover:scale-105 shadow-xl ${
                 isEditorMode 
-                  ? "bg-red-600 hover:bg-red-700 text-white shadow-lg border-2 border-red-400" 
-                  : "bg-green-600 hover:bg-green-700 text-white shadow-lg border-2 border-green-400"
+                  ? "bg-red-600 hover:bg-red-700 text-white border-2 border-red-400" 
+                  : "bg-green-600 hover:bg-green-700 text-white border-2 border-green-400"
               }`}
             >
               <i className={`fa-solid ${isEditorMode ? 'fa-stop' : 'fa-play'} mr-2`}></i>
               {isEditorMode ? "Sair do Editor" : "Entrar no Editor"}
             </button>
+          </div>
+          
+          {/* Status do Editor */}
+          <div className="mb-2 text-center text-sm text-gray-400">
+            Status: {isEditorMode ? "Ativo" : "Inativo"}
           </div>
 
           {isEditorMode && (

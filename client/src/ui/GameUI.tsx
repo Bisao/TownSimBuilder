@@ -287,11 +287,14 @@ const GameUI = () => {
           </button>
 
           <button
-            onClick={() => setShowMapEditor(!showMapEditor)}
-            className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg font-medium transition-colors"
+            onClick={() => {
+              console.log("Toggling map editor:", !showMapEditor);
+              setShowMapEditor(!showMapEditor);
+            }}
+            className={`${showMapEditor ? 'bg-indigo-600' : 'bg-gray-600'} hover:bg-indigo-700 text-white px-4 py-2 rounded-lg font-medium transition-colors shadow-lg`}
           >
             <i className="fa-solid fa-map mr-2"></i>
-            Editor
+            Editor {showMapEditor ? '(Ativo)' : ''}
           </button>
 
           <button
