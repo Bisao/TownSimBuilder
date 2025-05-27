@@ -130,7 +130,7 @@ const GameUI = () => {
   useEffect(() => {
     if (!isPaused) {
       const interval = setInterval(() => {
-        updateNPCs(0.016); // ~60 FPS
+        useNpcStore.getState().updateNPCs(0.016); // ~60 FPS
 
         // Update economy and events
         useEconomyStore.getState().calculateTaxes();
@@ -138,7 +138,7 @@ const GameUI = () => {
       }, 16);
       return () => clearInterval(interval);
     }
-  }, [isPaused, updateNPCs]);
+  }, [isPaused]);
 
   return (
     <div className="absolute inset-0 pointer-events-none">
