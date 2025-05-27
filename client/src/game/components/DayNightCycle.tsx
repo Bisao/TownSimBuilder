@@ -116,4 +116,9 @@ const DayNightCycle = () => {
   );
 };
 
+export default DayNightCycle;>
+    </>
+  );
+};
+
 export default DayNightCycle;

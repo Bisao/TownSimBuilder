@@ -15,6 +15,7 @@ import { useResourceStore } from "../stores/useResourceStore";
 import { useGameStore } from "../stores/useGameStore";
 import { useNpcStore } from "../stores/useNpcStore";
 import { workplaceMapping } from "../constants/npcs";
+import { resourceTypes } from "../constants/resources";
 import MarketWindow from "../../ui/MarketWindow";
 import { Building as BuildingType } from "../stores/useBuildingStore";
 
