@@ -467,10 +467,15 @@ const Building = ({ building, onClick }: BuildingProps) => {
     );
   };
 
+  // Calcular altura do terreno baseada na posição
+  const terrainHeight = Math.sin(position[0] * 0.1) * 0.8 + 
+                        Math.cos(position[2] * 0.08) * 0.6 + 
+                        Math.sin(position[0] * 0.15) * Math.cos(position[2] * 0.12) * 0.4;
+
   return (
     <mesh
       ref={ref}
-      position={position as [number, number, number]}
+      position={[position[0], terrainHeight, position[2]]}
       rotation={[0, building.rotation, 0]}
       castShadow
       receiveShadow

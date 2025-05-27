@@ -16,8 +16,13 @@ const Resource: React.FC<ResourceProps> = ({ type, position }) => {
   const isTree = type === 'wood';
   const isStone = type === 'stone';
 
+  // Calcular altura do terreno baseada na posição
+  const terrainHeight = Math.sin(position[0] * 0.1) * 0.8 + 
+                        Math.cos(position[1] * 0.08) * 0.6 + 
+                        Math.sin(position[0] * 0.15) * Math.cos(position[1] * 0.12) * 0.4;
+
   return (
-    <group position={[position[0], 0, position[1]]}>
+    <group position={[position[0], terrainHeight, position[1]]}>
       {isTree && (
         <>
           {/* Tronco lowpoly */}
