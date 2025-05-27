@@ -9,8 +9,15 @@ import Npc from "./Npc";
 import Terrain from "./Terrain";
 import TerrainEditor from "./TerrainEditor";
 import PlacementIndicator from "./PlacementIndicator";
+import ManualNpcController from "./ManualNpcController";
+import { useGameStore } from "../stores/useGameStore";
+import { useNpcStore } from "../stores/useNpcStore";
+import { useResourceStore } from "../stores/useResourceStore";
+import { useBuildingStore, Building as BuildingType } from "../stores/useBuildingStore";
+import { workplaceMapping } from "../constants/npcs";
+import { resourceTypes } from "../constants/resources";
 import MarketWindow from "../../ui/MarketWindow";
-import { Building as BuildingType } from "../stores/useBuildingStore";
+
 interface WorldProps {
   onMarketSelect?: (BuildingType) => void;
 }
@@ -220,7 +227,7 @@ const World = ({ onMarketSelect }: WorldProps) => {
   return (
     <>
       <CameraControls />
-      
+
       {/* Terrain */}
       <Terrain />
 
