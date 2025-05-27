@@ -17,7 +17,7 @@ const Terrain = () => {
     isEditorMode, 
     gridSize: editorGridSize, 
     showGrid: editorShowGrid,
-    terrainTiles 
+    terrain: terrainTiles 
   } = useMapEditorStore();
   
   const currentGridSize = isEditorMode ? editorGridSize : GRID_SIZE;
@@ -39,11 +39,11 @@ const Terrain = () => {
     const geometry = new THREE.PlaneGeometry(currentGridSize, currentGridSize, currentGridSize - 1, currentGridSize - 1);
     const positions = geometry.attributes.position.array as Float32Array;
     
-    if (isEditorMode && terrainTiles.size > 0) {
+    if (isEditorMode && Object.keys(terrainTiles).length > 0) {
       // Apply editor modifications
       for (let i = 0; i < currentGridSize; i++) {
         for (let j = 0; j < currentGridSize; j++) {
-          const tile = terrainTiles.get(`${i},${j}`);
+          const tile = terrainTiles[`${i},${j}`];
           if (tile) {
             const index = (i * currentGridSize + j) * 3 + 2; // Z component
             if (index < positions.length) {
@@ -61,7 +61,7 @@ const Terrain = () => {
 
   // Generate terrain colors based on terrain types
   const terrainColors = useMemo(() => {
-    if (!isEditorMode || terrainTiles.size === 0) {
+    if (!isEditorMode || Object.keys(terrainTiles).length === 0) {
       return null;
     }
 
@@ -69,7 +69,7 @@ const Terrain = () => {
     
     for (let i = 0; i < currentGridSize; i++) {
       for (let j = 0; j < currentGridSize; j++) {
-        const tile = terrainTiles.get(`${i},${j}`);
+        const tile = terrainTiles[`${i},${j}`];
         const index = (i * currentGridSize + j) * 3;
         
         let color = new THREE.Color("#4CAF50"); // Default grass color
