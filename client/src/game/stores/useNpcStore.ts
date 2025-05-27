@@ -1008,9 +1008,9 @@ class NPCStateHandlers {
     }
 
     // Consumo de energia ajustado para sprint
-    const sprintMultiplier = keys.sprint ? 2.5 : 1;
-    const energyConsumption = hasMovement ? CONSTANTS.ENERGY_CONSUMPTION.MOVING * 0.3 * sprintMultiplier : 0;
-    const satisfactionConsumption = hasMovement ? CONSTANTS.SATISFACTION_CONSUMPTION.MOVING * 0.3 * sprintMultiplier : 0;
+    const energySprintMultiplier = keys.sprint ? 2.5 : 1;
+    const energyConsumption = hasMovement ? CONSTANTS.ENERGY_CONSUMPTION.MOVING * 0.3 * energySprintMultiplier : 0;
+    const satisfactionConsumption = hasMovement ? CONSTANTS.SATISFACTION_CONSUMPTION.MOVING * 0.3 * energySprintMultiplier : 0;
 
     return {
       ...npc,
