@@ -194,6 +194,12 @@ const GameUI = () => {
       {/* UI Panels */}
       <div className="absolute top-4 right-4 flex flex-col gap-2">
         <button
+          onClick={() => setShowBuildingPanel(!showBuildingPanel)}
+          className="px-3 py-2 bg-orange-600 hover:bg-orange-700 text-white rounded text-sm"
+        >
+          Estruturas
+        </button>
+        <button
           onClick={() => setShowResearchPanel(!showResearchPanel)}
           className="px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded text-sm"
         >
