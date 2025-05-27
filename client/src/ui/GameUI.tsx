@@ -40,6 +40,8 @@ const GameUI = () => {
   const [showMapEditor, setShowMapEditor] = useState(false);
   const [showEconomyPanel, setShowEconomyPanel] = useState(false);
   const [showResearchPanel, setShowResearchPanel] = useState(false);
+  const [showEventPanel, setShowEventPanel] = useState(false);
+  const [showNpcMetrics, setShowNpcMetrics] = useState(false);
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
