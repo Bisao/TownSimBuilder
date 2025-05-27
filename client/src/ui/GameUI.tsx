@@ -365,7 +365,7 @@ const GameUI = () => {
       )}
 
       {showResearchPanel && (
-        <div className="absolute top-16 right-4 z-20">
+        <div className="absolute top-16 left-4 z-20" style={{ marginTop: showEconomyPanel ? '400px' : '0' }}>
           <ResearchPanel />
         </div>
       )}
