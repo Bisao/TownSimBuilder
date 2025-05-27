@@ -1,215 +1,126 @@
-import { useTexture } from "@react-three/drei";
-import { useGameStore } from "../stores/useGameStore";
-import { useEffect, useMemo, useRef } from "react";
-import * as THREE from "three";
-import { useFrame } from "@react-three/fiber";
+import React from "react";
 
-export const Sky = () => {
-  const { timeOfDay, timeCycle } = useGameStore();
-  const sunRef = useRef<THREE.Mesh>(null);
-  const moonRef = useRef<THREE.Mesh>(null);
-
-  const skyTexture = useTexture("/textures/sky.png");
-
-  const skyColors = useMemo(() => ({
-    dawn: new THREE.Color("#FF6B6B"),  // Rosa suave
-    day: new THREE.Color("#87CEEB"),   // Azul céu
-    dusk: new THREE.Color("#FF8C42"),  // Laranja suave
-    night: new THREE.Color("#1A1A2E"), // Azul muito escuro
-  }), []);
-
-  const fogColors = useMemo(() => ({
-    dawn: new THREE.Color("#FFE5E5"),  // Rosa muito claro
-    day: new THREE.Color("#E6F3FF"),   // Azul muito claro
-    dusk: new THREE.Color("#FFE0CC"),  // Laranja muito claro
-    night: new THREE.Color("#0F0F23"), // Azul escuro
-  }), []);
-
-  // Função para interpolar cores baseado nos horários realistas
-  const getCurrentSkyColor = () => {
-    const colors = skyColors;
-    const hours = timeCycle * 24;
-
-    let color1, color2, factor;
-
-    if (hours >= 0 && hours < 6) {
-      // Noite (0h-6h)
-      return colors.night;
-    } else if (hours >= 6 && hours < 8) {
-      // Amanhecer (6h-8h)
-      color1 = colors.dawn;
-      color2 = colors.day;
-      factor = (hours - 6) / 2;
-    } else if (hours >= 8 && hours < 18) {
-      // Dia (8h-18h)
-      return colors.day;
-    } else if (hours >= 18 && hours < 19) {
-      // Entardecer (18h-19h)
-      color1 = colors.day;
-      color2 = colors.dusk;
-      factor = (hours - 18) / 1;
-    } else {
-      // Noite (19h-24h)
-      color1 = colors.dusk;
-      color2 = colors.night;
-      factor = (hours - 19) / 5;
-    }
-
-    return new THREE.Color().lerpColors(color1, color2, factor);
-  };
-
-  const getCurrentFogColor = () => {
-    const colors = fogColors;
-    const hours = timeCycle * 24;
-
-    let color1, color2, factor;
-
-    if (hours >= 0 && hours < 6) {
-      // Noite (0h-6h)
-      return colors.night;
-    } else if (hours >= 6 && hours < 8) {
-      // Amanhecer (6h-8h)
-      color1 = colors.dawn;
-      color2 = colors.day;
-      factor = (hours - 6) / 2;
-    } else if (hours >= 8 && hours < 18) {
-      // Dia (8h-18h)
-      return colors.day;
-    } else if (hours >= 18 && hours < 19) {
-      // Entardecer (18h-19h)
-      color1 = colors.day;
-      color2 = colors.dusk;
-      factor = (hours - 18) / 1;
-    } else {
-      // Noite (19h-24h)
-      color1 = colors.dusk;
-      color2 = colors.night;
-      factor = (hours - 19) / 5;
-    }
-
-    return new THREE.Color().lerpColors(color1, color2, factor);
-  };
-
-  useFrame(() => {
-    // Calcular posição do sol baseado nos horários realistas
-    const hours = timeCycle * 24;
-
-    let sunAngle = 0;
-    let sunElevation = 0;
-
-    if (hours >= 6 && hours <= 18) {
-      // Durante o dia (6h-18h): sol visível
-      const dayProgress = (hours - 6) / 12; // 0 a 1 durante o dia
-      sunAngle = dayProgress * Math.PI; // 0 a π (leste para oeste)
-      sunElevation = Math.sin(dayProgress * Math.PI) * 0.9; // Parábola do sol
-    } else {
-      // Durante a noite: sol abaixo do horizonte
-      sunElevation = -0.3;
-    }
-
-    const sunDistance = 400;
-    const sunX = Math.cos(sunAngle) * sunDistance;
-    const sunY = Math.max(sunElevation * sunDistance, -50);
-    const sunZ = Math.sin(sunAngle) * sunDistance;
-
-    // Posição da lua (oposta ao sol)
-    const moonAngle = sunAngle + Math.PI;
-    const moonElevation = hours >= 21 || hours <= 6 ? Math.abs(sunElevation) : -0.5;
-    const moonX = Math.cos(moonAngle) * sunDistance;
-    const moonY = Math.max(moonElevation * sunDistance, -50);
-    const moonZ = Math.sin(moonAngle) * sunDistance;
-
-    // Atualizar posições
-    if (sunRef.current) {
-      sunRef.current.position.set(sunX, sunY, sunZ);
-      // Sol visível das 6h às 18h
-      sunRef.current.visible = hours >= 6 && hours <= 18;
-
-      // Intensidade do brilho do sol baseada na altura
-      const sunIntensity = Math.max(0, sunElevation);
-      if (sunRef.current.material instanceof THREE.MeshBasicMaterial) {
-        sunRef.current.material.opacity = sunIntensity * 0.8 + 0.2;
-      }
-    }
-
-    if (moonRef.current) {
-      moonRef.current.position.set(moonX, moonY, moonZ);
-      // Lua visível das 21h às 6h
-      moonRef.current.visible = hours >= 21 || hours <= 6;
-
-      // Intensidade do brilho da lua
-      const moonIntensity = Math.max(0, moonElevation);
-      if (moonRef.current.material instanceof THREE.MeshBasicMaterial) {
-        moonRef.current.material.opacity = moonIntensity * 0.6 + 0.3;
-      }
-    }
-  });
-
-  useEffect(() => {
-    const skyColor = getCurrentSkyColor();
-    const fogColor = getCurrentFogColor();
-
-    if (skyTexture) {
-      skyTexture.colorSpace = THREE.SRGBColorSpace;
-    }
-
-    // Atualizar cor do fog da cena
-    const scene = document.querySelector('canvas')?.parentElement;
-    if (scene) {
-      scene.style.backgroundColor = fogColor.getStyle();
-    }
-  }, [timeCycle, skyTexture]);
-
+export const Sky: React.FC = () => {
   return (
-    <>
-      {/* Céu */}
-      <mesh position={[0, 0, 0]}>
-        <sphereGeometry args={[800, 32, 32]} />
-        <meshBasicMaterial
-          map={skyTexture}
-          color={getCurrentSkyColor()}
-          side={THREE.BackSide}
-          fog={false}
+    <group>
+      {/* Céu de fundo lowpoly */}
+      <mesh>
+        <sphereGeometry args={[100, 12, 6]} />
+        <meshBasicMaterial 
+          color="#87CEEB" 
+          side={2} // DoubleSide para renderizar por dentro
+          flatShading
         />
       </mesh>
 
-      {/* Sol */}
-      <mesh ref={sunRef} position={[0, 100, 0]}>
-        <sphereGeometry args={[15, 16, 16]} />
-        <meshBasicMaterial
-          color="#FFD700"
-          transparent
-          opacity={1}
+      {/* Sol lowpoly */}
+      <mesh position={[30, 40, 30]}>
+        <dodecahedronGeometry args={[3]} />
+        <meshBasicMaterial 
+          color="#FFD700" 
+          emissive="#FFD700" 
+          emissiveIntensity={0.4}
+          flatShading
         />
-        {/* Halo do sol */}
-        <mesh scale={[2, 2, 2]}>
-          <sphereGeometry args={[15, 16, 16]} />
-          <meshBasicMaterial
-            color="#FFFF99"
-            transparent
-            opacity={0.3}
-          />
-        </mesh>
       </mesh>
 
-      {/* Lua */}
-      <mesh ref={moonRef} position={[0, 100, 0]}>
-        <sphereGeometry args={[12, 16, 16]} />
-        <meshBasicMaterial
-          color="#F0F0F0"
-          transparent
-          opacity={0.8}
-        />
-        {/* Halo da lua */}
-        <mesh scale={[1.5, 1.5, 1.5]}>
-          <sphereGeometry args={[12, 16, 16]} />
-          <meshBasicMaterial
-            color="#E6E6FA"
-            transparent
-            opacity={0.2}
-          />
+      {/* Raios de sol */}
+      {Array.from({ length: 8 }).map((_, i) => {
+        const angle = (i / 8) * Math.PI * 2;
+        const x = Math.cos(angle) * 5;
+        const z = Math.sin(angle) * 5;
+
+        return (
+          <mesh key={i} position={[30 + x, 40, 30 + z]} rotation={[0, angle, 0]}>
+            <coneGeometry args={[0.1, 1.5, 3]} />
+            <meshBasicMaterial 
+              color="#FFD700" 
+              emissive="#FFD700" 
+              emissiveIntensity={0.2}
+              flatShading
+              transparent
+              opacity={0.6}
+            />
+          </mesh>
+        );
+      })}
+
+      {/* Nuvens lowpoly */}
+      <group position={[20, 25, 15]}>
+        <mesh position={[0, 0, 0]}>
+          <dodecahedronGeometry args={[2]} />
+          <meshBasicMaterial color="#FFFFFF" opacity={0.8} transparent flatShading />
         </mesh>
-      </mesh>
-    </>
+        <mesh position={[3, 0, 1]}>
+          <icosahedronGeometry args={[1.5]} />
+          <meshBasicMaterial color="#FFFFFF" opacity={0.8} transparent flatShading />
+        </mesh>
+        <mesh position={[-2, 0, 1]}>
+          <octahedronGeometry args={[1.8]} />
+          <meshBasicMaterial color="#FFFFFF" opacity={0.8} transparent flatShading />
+        </mesh>
+        <mesh position={[1, 1, -1]}>
+          <tetrahedronGeometry args={[1]} />
+          <meshBasicMaterial color="#F8F8FF" opacity={0.7} transparent flatShading />
+        </mesh>
+      </group>
+
+      <group position={[-25, 20, 35]}>
+        <mesh position={[0, 0, 0]}>
+          <icosahedronGeometry args={[1.8]} />
+          <meshBasicMaterial color="#FFFFFF" opacity={0.7} transparent flatShading />
+        </mesh>
+        <mesh position={[2.5, 0, 0]}>
+          <dodecahedronGeometry args={[1.2]} />
+          <meshBasicMaterial color="#FFFFFF" opacity={0.7} transparent flatShading />
+        </mesh>
+        <mesh position={[-1, 0.8, 0.5]}>
+          <octahedronGeometry args={[0.8]} />
+          <meshBasicMaterial color="#F8F8FF" opacity={0.6} transparent flatShading />
+        </mesh>
+      </group>
+
+      <group position={[40, 30, -20]}>
+        <mesh position={[0, 0, 0]}>
+          <icosahedronGeometry args={[2.5]} />
+          <meshBasicMaterial color="#FFFFFF" opacity={0.6} transparent flatShading />
+        </mesh>
+        <mesh position={[4, -0.5, 1]}>
+          <dodecahedronGeometry args={[2]} />
+          <meshBasicMaterial color="#FFFFFF" opacity={0.6} transparent flatShading />
+        </mesh>
+        <mesh position={[-3, 0.5, 0]}>
+          <octahedronGeometry args={[1.5]} />
+          <meshBasicMaterial color="#FFFFFF" opacity={0.6} transparent flatShading />
+        </mesh>
+        <mesh position={[2, 1.2, -1]}>
+          <tetrahedronGeometry args={[1.2]} />
+          <meshBasicMaterial color="#F8F8FF" opacity={0.5} transparent flatShading />
+        </mesh>
+      </group>
+
+      {/* Nuvens distantes menores */}
+      <group position={[60, 35, 10]}>
+        <mesh position={[0, 0, 0]}>
+          <tetrahedronGeometry args={[1]} />
+          <meshBasicMaterial color="#FFFFFF" opacity={0.4} transparent flatShading />
+        </mesh>
+        <mesh position={[1.5, 0.2, 0.5]}>
+          <octahedronGeometry args={[0.7]} />
+          <meshBasicMaterial color="#F8F8FF" opacity={0.4} transparent flatShading />
+        </mesh>
+      </group>
+
+      <group position={[-60, 32, -25]}>
+        <mesh position={[0, 0, 0]}>
+          <dodecahedronGeometry args={[1.2]} />
+          <meshBasicMaterial color="#FFFFFF" opacity={0.3} transparent flatShading />
+        </mesh>
+        <mesh position={[2, 0, 1]}>
+          <icosahedronGeometry args={[0.8]} />
+          <meshBasicMaterial color="#F8F8FF" opacity={0.3} transparent flatShading />
+        </mesh>
+      </group>
+    </group>
   );
 };

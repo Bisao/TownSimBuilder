@@ -1,55 +1,97 @@
-import { useRef } from "react";
-import { useFrame } from "@react-three/fiber";
-import * as THREE from "three";
+import React from "react";
+import { resourceTypes } from "../constants/resources";
 
 interface ResourceProps {
   type: string;
-  position: [number, number, number];
-  color: string;
-  scale?: number;
+  position: [number, number];
 }
 
-const Resource = ({ type, position, color, scale = 1 }: ResourceProps) => {
-  const ref = useRef<THREE.Mesh>(null);
-  
-  // Simple animation for resource objects
-  useFrame(({ clock }) => {
-    if (!ref.current) return;
-    
-    // Floating animation
-    ref.current.position.y = 0.5 + Math.sin(clock.getElapsedTime() * 2) * 0.1;
-    
-    // Slow rotation
-    ref.current.rotation.y = clock.getElapsedTime() * 0.5;
-  });
-  
+const Resource: React.FC<ResourceProps> = ({ type, position }) => {
+  const resourceType = resourceTypes[type];
+
+  if (!resourceType) {
+    return null;
+  }
+
+  const isTree = type === 'wood';
+  const isStone = type === 'stone';
+
   return (
-    <mesh
-      ref={ref}
-      position={position}
-      castShadow
-      receiveShadow
-    >
-      {type === "wood" && (
-        <cylinderGeometry args={[0.1 * scale, 0.1 * scale, 1 * scale, 8]} />
+    <group position={[position[0], 0, position[1]]}>
+      {isTree && (
+        <>
+          {/* Tronco lowpoly */}
+          <mesh position={[0, 0.5, 0]}>
+            <cylinderGeometry args={[0.08, 0.12, 1, 6]} />
+            <meshStandardMaterial color="#8B4513" flatShading />
+          </mesh>
+
+          {/* Textura da casca */}
+          <mesh position={[0, 0.3, 0]}>
+            <cylinderGeometry args={[0.13, 0.13, 0.1, 6]} />
+            <meshStandardMaterial color="#654321" flatShading />
+          </mesh>
+          <mesh position={[0, 0.7, 0]}>
+            <cylinderGeometry args={[0.09, 0.09, 0.1, 6]} />
+            <meshStandardMaterial color="#654321" flatShading />
+          </mesh>
+
+          {/* Copa lowpoly em camadas */}
+          <mesh position={[0, 1.1, 0]}>
+            <coneGeometry args={[0.7, 0.8, 8]} />
+            <meshStandardMaterial color="#228B22" flatShading />
+          </mesh>
+          <mesh position={[0, 1.5, 0]}>
+            <coneGeometry args={[0.5, 0.6, 8]} />
+            <meshStandardMaterial color="#32CD32" flatShading />
+          </mesh>
+          <mesh position={[0, 1.8, 0]}>
+            <coneGeometry args={[0.3, 0.4, 8]} />
+            <meshStandardMaterial color="#90EE90" flatShading />
+          </mesh>
+
+          {/* Galhos pequenos */}
+          <mesh position={[0.2, 0.8, 0]} rotation={[0, 0, Math.PI / 6]}>
+            <cylinderGeometry args={[0.02, 0.03, 0.3, 4]} />
+            <meshStandardMaterial color="#8B4513" flatShading />
+          </mesh>
+          <mesh position={[-0.15, 0.9, 0.1]} rotation={[0, Math.PI / 4, -Math.PI / 8]}>
+            <cylinderGeometry args={[0.02, 0.03, 0.25, 4]} />
+            <meshStandardMaterial color="#8B4513" flatShading />
+          </mesh>
+        </>
       )}
-      {type === "stone" && (
-        <dodecahedronGeometry args={[0.3 * scale]} />
+
+      {isStone && (
+        <group>
+          {/* Rocha principal lowpoly */}
+          <mesh position={[0, 0.25, 0]}>
+            <dodecahedronGeometry args={[0.4]} />
+            <meshStandardMaterial color="#696969" flatShading />
+          </mesh>
+
+          {/* Rochas menores ao redor */}
+          <mesh position={[0.3, 0.1, 0.2]} rotation={[0.3, 0.8, 0.2]}>
+            <octahedronGeometry args={[0.15]} />
+            <meshStandardMaterial color="#778899" flatShading />
+          </mesh>
+          <mesh position={[-0.2, 0.08, 0.3]} rotation={[0.5, 1.2, 0.1]}>
+            <tetrahedronGeometry args={[0.12]} />
+            <meshStandardMaterial color="#708090" flatShading />
+          </mesh>
+          <mesh position={[0.1, 0.05, -0.3]} rotation={[0.2, 0.5, 0.8]}>
+            <octahedronGeometry args={[0.1]} />
+            <meshStandardMaterial color="#A9A9A9" flatShading />
+          </mesh>
+
+          {/* Pequenos cristais/minerais */}
+          <mesh position={[0, 0.5, 0]} rotation={[0.3, 0.7, 0.1]}>
+            <octahedronGeometry args={[0.08]} />
+            <meshStandardMaterial color="#C0C0C0" metalness={0.7} roughness={0.3} flatShading />
+          </mesh>
+        </group>
       )}
-      {type === "wheat" && (
-        <coneGeometry args={[0.2 * scale, 0.8 * scale, 8]} />
-      )}
-      {type === "water" && (
-        <sphereGeometry args={[0.3 * scale, 16, 16]} />
-      )}
-      {type === "bread" && (
-        <boxGeometry args={[0.4 * scale, 0.2 * scale, 0.2 * scale]} />
-      )}
-      {type === "coins" && (
-        <cylinderGeometry args={[0.2 * scale, 0.2 * scale, 0.05 * scale, 16]} />
-      )}
-      <meshStandardMaterial color={color} />
-    </mesh>
+    </group>
   );
 };
 

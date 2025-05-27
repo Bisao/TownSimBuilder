@@ -1,4 +1,3 @@
-
 import { useTexture } from "@react-three/drei";
 import { useThree, useFrame } from "@react-three/fiber";
 import * as THREE from "three";
@@ -22,7 +21,7 @@ const Terrain = () => {
     window.addEventListener('keydown', handleKeyPress);
     return () => window.removeEventListener('keydown', handleKeyPress);
   }, []);
-  
+
   // Load grass texture
   const grassTexture = useTexture("/textures/grass.png");
   grassTexture.wrapS = grassTexture.wrapT = THREE.RepeatWrapping;
@@ -38,7 +37,7 @@ const Terrain = () => {
       }
     }
   });
-  
+
   return (
     <group>
       {/* Main terrain */}
@@ -54,7 +53,7 @@ const Terrain = () => {
           color="#4CAF50"
         />
       </mesh>
-      
+
       {/* Grid lines for building placement */}
       <gridHelper 
         ref={gridRef}
