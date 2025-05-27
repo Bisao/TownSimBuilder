@@ -957,18 +957,31 @@ class NPCStateHandlers {
     let newX = x;
     let newZ = z;
 
-    // Controle de movimento
+    // Usar rotação do NPC para movimento direcional
+    const rotation = npc.rotation || 0;
+
+    // Controle de movimento baseado na direção do NPC
     if (keys.forward) {
-      newZ -= moveSpeed;
+      // Mover para frente na direção que o NPC está olhando
+      newX += Math.sin(rotation) * moveSpeed;
+      newZ += Math.cos(rotation) * moveSpeed;
     }
     if (keys.backward) {
-      newZ += moveSpeed;
+      // Mover para trás
+      newX -= Math.sin(rotation) * moveSpeed;
+      newZ -= Math.cos(rotation) * moveSpeed;
     }
     if (keys.left) {
-      newX -= moveSpeed;
+      // Girar para esquerda e mover
+      const newRotation = rotation - Math.PI / 2;
+      newX += Math.sin(newRotation) * moveSpeed;
+      newZ += Math.cos(newRotation) * moveSpeed;
     }
     if (keys.right) {
-      newX += moveSpeed;
+      // Girar para direita e mover
+      const newRotation = rotation + Math.PI / 2;
+      newX += Math.sin(newRotation) * moveSpeed;
+      newZ += Math.cos(newRotation) * moveSpeed;
     }
 
     // Limitar posição dentro do grid
@@ -983,9 +996,17 @@ class NPCStateHandlers {
       if (window.naturalResources) {
         const resourceType = npc.type === "miner" ? "stone" : npc.type === "lumberjack" ? "wood" : null;
         if (resourceType) {
+          // Verificar se NPC está no mesmo tile do recurso (distância < 1.0)
           const nearbyResource = window.naturalResources.find(r => {
-            const distance = Math.hypot(r.position[0] - clampedX, r.position[1] - clampedZ);
-            return r.type === resourceType && distance < 1.5 && !r.lastCollected;
+            const npcTileX = Math.round(clampedX);
+            const npcTileZ = Math.round(clampedZ);
+            const resourceTileX = Math.round(r.position[0]);
+            const resourceTileZ = Math.round(r.position[1]);
+            
+            return r.type === resourceType && 
+                   npcTileX === resourceTileX && 
+                   npcTileZ === resourceTileZ && 
+                   !r.lastCollected;
           });
 
           if (nearbyResource && npc.inventory.amount < CONSTANTS.MAX_INVENTORY) {

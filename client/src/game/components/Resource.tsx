@@ -1,96 +1,101 @@
-import React from "react";
+import { useFrame } from "@react-three/fiber";
+import { useRef, useState } from "react";
+import * as THREE from "three";
+import { useResourceStore } from "../stores/useResourceStore";
+import { useNpcStore } from "../stores/useNpcStore";
+import { useGameStore } from "../stores/useGameStore";
 import { resourceTypes } from "../constants/resources";
 
 interface ResourceProps {
+  id: string;
   type: string;
   position: [number, number];
+  amount: number;
 }
 
-const Resource: React.FC<ResourceProps> = ({ type, position }) => {
-  const resourceType = resourceTypes[type];
+const Resource = ({ id, type, position, amount }: ResourceProps) => {
+  const meshRef = useRef<THREE.Mesh>(null);
+  const glowRef = useRef<THREE.Mesh>(null);
+  const [hovered, setHovered] = useState(false);
+  const { removeResource } = useResourceStore();
+  const { npcs } = useNpcStore();
+  const { controlledNpcId, isManualControl } = useGameStore();
 
-  if (!resourceType) {
-    return null;
-  }
+  const resourceConfig = resourceTypes[type];
+  if (!resourceConfig) return null;
 
-  const isTree = type === 'wood';
-  const isStone = type === 'stone';
+  // Verificar se há um NPC próximo que pode coletar este recurso
+  const canBeCollected = npcs.some(npc => {
+    if (!isManualControl || npc.id !== controlledNpcId) return false;
 
-  return (
-    <group position={[position[0], 0, position[1]]}>
-      {isTree && (
-        <>
-          {/* Tronco lowpoly */}
-          <mesh position={[0, 0.5, 0]}>
-            <cylinderGeometry args={[0.08, 0.12, 1, 6]} />
-            <meshStandardMaterial color="#8B4513" flatShading />
-          </mesh>
+    const npcTileX = Math.round(npc.position[0]);
+    const npcTileZ = Math.round(npc.position[2]);
+    const resourceTileX = Math.round(position[0]);
+    const resourceTileZ = Math.round(position[1]);
 
-          {/* Textura da casca */}
-          <mesh position={[0, 0.3, 0]}>
-            <cylinderGeometry args={[0.13, 0.13, 0.1, 6]} />
-            <meshStandardMaterial color="#654321" flatShading />
-          </mesh>
-          <mesh position={[0, 0.7, 0]}>
-            <cylinderGeometry args={[0.09, 0.09, 0.1, 6]} />
-            <meshStandardMaterial color="#654321" flatShading />
-          </mesh>
+    const canCollectType = (npc.type === "miner" && type === "stone") || 
+                          (npc.type === "lumberjack" && type === "wood");
 
-          {/* Copa lowpoly em camadas */}
-          <mesh position={[0, 1.1, 0]}>
-            <coneGeometry args={[0.7, 0.8, 8]} />
-            <meshStandardMaterial color="#228B22" flatShading />
-          </mesh>
-          <mesh position={[0, 1.5, 0]}>
-            <coneGeometry args={[0.5, 0.6, 8]} />
-            <meshStandardMaterial color="#32CD32" flatShading />
-          </mesh>
-          <mesh position={[0, 1.8, 0]}>
-            <coneGeometry args={[0.3, 0.4, 8]} />
-            <meshStandardMaterial color="#90EE90" flatShading />
-          </mesh>
+    return canCollectType && 
+           npcTileX === resourceTileX && 
+           npcTileZ === resourceTileZ &&
+           npc.inventory.amount < 10; // MAX_INVENTORY
+  });
 
-          {/* Galhos pequenos */}
-          <mesh position={[0.2, 0.8, 0]} rotation={[0, 0, Math.PI / 6]}>
-            <cylinderGeometry args={[0.02, 0.03, 0.3, 4]} />
-            <meshStandardMaterial color="#8B4513" flatShading />
-          </mesh>
-          <mesh position={[-0.15, 0.9, 0.1]} rotation={[0, Math.PI / 4, -Math.PI / 8]}>
-            <cylinderGeometry args={[0.02, 0.03, 0.25, 4]} />
-            <meshStandardMaterial color="#8B4513" flatShading />
-          </mesh>
-        </>
+  // Posição no mundo 3D
+  const worldPosition: [number, number, number] = [
+    position[0],
+    resourceConfig.height / 2,
+    position[1],
+  ];
+
+  // Animação de flutuação sutil
+  useFrame((state) => {
+    if (meshRef.current) {
+      meshRef.current.position.y =
+        resourceConfig.height / 2 +
+        Math.sin(state.clock.elapsedTime * 2 + position[0] + position[1]) * 0.1;
+    }
+
+    // Animação do brilho para recursos coletáveis
+    if (glowRef.current && canBeCollected) {
+      const intensity = 0.5 + Math.sin(state.clock.elapsedTime * 4) * 0.3;
+      glowRef.current.scale.setScalar(1.2 + intensity * 0.3);
+      (glowRef.current.material as THREE.MeshBasicMaterial).opacity = intensity;
+    }
+  });
+
+return (
+    <group position={worldPosition}>
+      {/* Efeito de brilho para recursos coletáveis */}
+      {canBeCollected && (
+        <mesh ref={glowRef}>
+          <ringGeometry args={[0.6, 1.0, 16]} />
+          <meshBasicMaterial 
+            color="#00ff00" 
+            transparent 
+            opacity={0.5}
+            side={THREE.DoubleSide}
+          />
+        </mesh>
       )}
 
-      {isStone && (
-        <group>
-          {/* Rocha principal lowpoly */}
-          <mesh position={[0, 0.25, 0]}>
-            <dodecahedronGeometry args={[0.4]} />
-            <meshStandardMaterial color="#696969" flatShading />
-          </mesh>
-
-          {/* Rochas menores ao redor */}
-          <mesh position={[0.3, 0.1, 0.2]} rotation={[0.3, 0.8, 0.2]}>
-            <octahedronGeometry args={[0.15]} />
-            <meshStandardMaterial color="#778899" flatShading />
-          </mesh>
-          <mesh position={[-0.2, 0.08, 0.3]} rotation={[0.5, 1.2, 0.1]}>
-            <tetrahedronGeometry args={[0.12]} />
-            <meshStandardMaterial color="#708090" flatShading />
-          </mesh>
-          <mesh position={[0.1, 0.05, -0.3]} rotation={[0.2, 0.5, 0.8]}>
-            <octahedronGeometry args={[0.1]} />
-            <meshStandardMaterial color="#A9A9A9" flatShading />
-          </mesh>
-
-          {/* Pequenos cristais/minerais */}
-          <mesh position={[0, 0.5, 0]} rotation={[0.3, 0.7, 0.1]}>
-            <octahedronGeometry args={[0.08]} />
-            <meshStandardMaterial color="#C0C0C0" metalness={0.7} roughness={0.3} flatShading />
-          </mesh>
-        </group>
-      )}
+      <mesh
+        ref={meshRef}
+        onPointerOver={() => setHovered(true)}
+        onPointerOut={() => setHovered(false)}
+        onClick={() => {
+          if (hovered) {
+            removeResource(id);
+          }
+        }}
+      >
+        <boxGeometry args={resourceConfig.size} />
+        <meshLambertMaterial
+          color={hovered ? resourceConfig.hoverColor : canBeCollected ? '#90EE90' : resourceConfig.color}
+          flatShading
+        />
+      </mesh>
     </group>
   );
 };
