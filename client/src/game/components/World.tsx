@@ -16,6 +16,7 @@ import { Sky } from "./Sky";
 import DayNightCycle from "./DayNightCycle";
 import MarketWindow from "../../ui/MarketWindow";
 import { Building as BuildingType } from "../stores/useBuildingStore";
+import ManualNpcController from "./ManualNpcController";
 
 interface WorldProps {
   onMarketSelect?: (building: BuildingType) => void;
@@ -258,6 +259,7 @@ const World = ({ onMarketSelect }: WorldProps) => {
 
       {/* Building placement indicator */}
       {gameMode === "build" && <PlacementIndicator />}
+      <ManualNpcController />
     </>
   );
 };

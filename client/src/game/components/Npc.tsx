@@ -206,9 +206,29 @@ const Npc = ({ npc }: NpcProps) => {
         <group position={[0, 1.1, 0]} rotation={[0, 0, Math.PI]}>
           <mesh>
             <coneGeometry args={[0.08, 0.2, 3]} />
-            <meshStandardMaterial color="#ff4444" emissive="#ff2222" emissiveIntensity={0.3} />
+            <meshStandardMaterial 
+              color={npc.controlMode === "manual" ? "#00ff00" : "#ff4444"} 
+              emissive={npc.controlMode === "manual" ? "#00dd00" : "#ff2222"} 
+              emissiveIntensity={0.3} 
+            />
           </mesh>
         </group>
+        
+        {/* Anel indicador para controle manual */}
+        {npc.controlMode === "manual" && (
+          <group position={[0, 0.1, 0]}>
+            <mesh rotation={[Math.PI / 2, 0, 0]}>
+              <torusGeometry args={[0.8, 0.05, 8, 32]} />
+              <meshStandardMaterial 
+                color="#00ff00" 
+                emissive="#00dd00" 
+                emissiveIntensity={0.2}
+                transparent 
+                opacity={0.6} 
+              />
+            </mesh>
+          </group>
+        )}
         
         {/* Corpo */}
         <mesh position={[0, 0.4, 0]}>

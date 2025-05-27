@@ -53,6 +53,8 @@ export interface NPC {
   lastMoveTime: number;
   stuckTimer: number;
   isWorkingManually?: boolean;
+  isPlayerControlled?: boolean;
+  controlMode: "autonomous" | "manual";
   inventory: {
     type: string;
     amount: number;
@@ -949,6 +951,80 @@ class NPCStateHandlers {
     return { state: "idle" };
   }
 
+  static handleManualControl(npc: NPC, deltaTime: number, keys: any): NPC {
+    const moveSpeed = 0.2 * deltaTime; // Velocidade do movimento manual
+    const [x, y, z] = npc.position;
+    let newX = x;
+    let newZ = z;
+
+    // Controle de movimento
+    if (keys.forward) {
+      newZ -= moveSpeed;
+    }
+    if (keys.backward) {
+      newZ += moveSpeed;
+    }
+    if (keys.left) {
+      newX -= moveSpeed;
+    }
+    if (keys.right) {
+      newX += moveSpeed;
+    }
+
+    // Limitar posição dentro do grid
+    const [clampedX, clampedZ] = NPCUtils.clampPosition(newX, newZ);
+
+    let newState = npc.state;
+    let workProgress = npc.workProgress;
+
+    // Ação manual (trabalhar/coletar)
+    if (keys.action) {
+      // Verificar se há recurso próximo para coletar
+      if (window.naturalResources) {
+        const resourceType = npc.type === "miner" ? "stone" : npc.type === "lumberjack" ? "wood" : null;
+        if (resourceType) {
+          const nearbyResource = window.naturalResources.find(r => {
+            const distance = Math.hypot(r.position[0] - clampedX, r.position[1] - clampedZ);
+            return r.type === resourceType && distance < 1.5 && !r.lastCollected;
+          });
+
+          if (nearbyResource && npc.inventory.amount < CONSTANTS.MAX_INVENTORY) {
+            newState = "gathering";
+            workProgress = npc.workProgress + deltaTime * 0.5;
+
+            // Completar coleta
+            if (workProgress >= 1) {
+              // Marcar recurso como coletado
+              nearbyResource.lastCollected = Date.now();
+              
+              return {
+                ...npc,
+                position: [clampedX, y, clampedZ],
+                state: "idle",
+                workProgress: 0,
+                inventory: {
+                  type: resourceType,
+                  amount: npc.inventory.amount + 1
+                }
+              };
+            }
+          }
+        }
+      }
+    }
+
+    return {
+      ...npc,
+      position: [clampedX, y, clampedZ],
+      state: newState,
+      workProgress: workProgress,
+      needs: {
+        energy: Math.max(0, npc.needs.energy - deltaTime * CONSTANTS.ENERGY_CONSUMPTION.MOVING * 0.5),
+        satisfaction: Math.max(0, npc.needs.satisfaction - deltaTime * CONSTANTS.SATISFACTION_CONSUMPTION.MOVING * 0.5)
+      }
+    };
+  }
+
   static handleFarmerCycle(npc: NPC, buildings: any[]): Partial<NPC> {
     // Verificar se há silos e fazendas disponíveis
     const silos = buildings.filter(b => b.type === 'silo');
@@ -1092,6 +1168,8 @@ export const useNpcStore = create<NPCStoreState>()(
         lastResourceTime: 0,
         lastMoveTime: Date.now(),
         stuckTimer: 0,
+        isPlayerControlled: false,
+        controlMode: "autonomous",
         inventory: { type: '', amount: 0 },
         needs: {
           energy: 100,
@@ -1143,7 +1221,7 @@ export const useNpcStore = create<NPCStoreState>()(
     },
 
     updateNPCs: (deltaTime: number) => {
-      const { isPaused, timeSpeed, timeCycle } = useGameStore.getState();
+      const { isPaused, timeSpeed, timeCycle, isManualControl, controlledNpcId, manualControlKeys } = useGameStore.getState();
       if (isPaused) return;
 
       const adjustedDeltaTime = deltaTime * timeSpeed;
@@ -1154,6 +1232,10 @@ export const useNpcStore = create<NPCStoreState>()(
       useBuildingStore.getState().updatePlantations(Date.now());
 
       const updatedNPCs = get().npcs.map(npc => {
+        // Se este NPC está sendo controlado manualmente
+        if (isManualControl && controlledNpcId === npc.id && npc.controlMode === "manual") {
+          return NPCStateHandlers.handleManualControl(npc, adjustedDeltaTime, manualControlKeys);
+        }
         const updates: Partial<NPC> = { currentSchedule };
         const oldState = npc.state;
         const currentTime = Date.now();
@@ -1284,6 +1366,46 @@ export const useNpcStore = create<NPCStoreState>()(
     isResourceReserved: (resourceType, position) => {
       const state = get();
       return NPCUtils.isResourceReservedByPosition(resourceType, position, state.resourceReservations);
+    },
+
+    toggleNpcControlMode: (npcId: string) => {
+      set((state) => ({
+        npcs: state.npcs.map(npc =>
+          npc.id === npcId
+            ? {
+                ...npc,
+                controlMode: npc.controlMode === "autonomous" ? "manual" : "autonomous",
+                isPlayerControlled: npc.controlMode === "autonomous",
+                // Reset state quando muda modo
+                state: "idle" as const,
+                targetPosition: null,
+                targetResource: null,
+                targetBuildingId: null,
+                workProgress: 0,
+              }
+            : npc
+        ),
+      }));
+    },
+
+    setNpcControlMode: (npcId: string, mode: "autonomous" | "manual") => {
+      set((state) => ({
+        npcs: state.npcs.map(npc =>
+          npc.id === npcId
+            ? {
+                ...npc,
+                controlMode: mode,
+                isPlayerControlled: mode === "manual",
+                // Reset state quando muda modo
+                state: "idle" as const,
+                targetPosition: null,
+                targetResource: null,
+                targetBuildingId: null,
+                workProgress: 0,
+              }
+            : npc
+        ),
+      }));
     },
   }))
 );

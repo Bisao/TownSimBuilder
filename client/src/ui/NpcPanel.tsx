@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { NPC, useNpcStore } from "../game/stores/useNpcStore";
 import { npcTypes } from "../game/constants/npcs";
 import { useBuildingStore } from "../game/stores/useBuildingStore";
+import { useGameStore } from "../game/stores/useGameStore";
 import { useDraggable } from "../hooks/useDraggable";
 import SeedSelectionPanel from "./SeedSelectionPanel";
 
@@ -249,8 +250,55 @@ const NpcPanel = ({ npc, onClose }: NpcPanelProps) => {
           </div>
 
           <div className="bg-gray-50 p-4 rounded-lg">
-            <h3 className="font-semibold mb-2 text-gray-700">Trabalho</h3>
-            {npc.type === "miner" && (
+            <h3 className="font-semibold mb-2 text-gray-700">Modo de Controle</h3>
+            <div className="flex gap-2 mb-4">
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  useNpcStore.getState().setNpcControlMode(npc.id, "autonomous");
+                  useGameStore.getState().setControlledNpc(null);
+                }}
+                className={`flex-1 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                  npc.controlMode === "autonomous" 
+                    ? "bg-blue-500 text-white" 
+                    : "bg-gray-200 text-gray-600 hover:bg-gray-300"
+                }`}
+              >
+                🤖 Autônomo
+              </button>
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  useNpcStore.getState().setNpcControlMode(npc.id, "manual");
+                  useGameStore.getState().setControlledNpc(npc.id);
+                }}
+                className={`flex-1 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                  npc.controlMode === "manual" 
+                    ? "bg-green-500 text-white" 
+                    : "bg-gray-200 text-gray-600 hover:bg-gray-300"
+                }`}
+              >
+                🎮 Manual
+              </button>
+            </div>
+            
+            {npc.controlMode === "manual" && (
+              <div className="mb-4 p-3 bg-green-50 rounded-lg border border-green-200">
+                <p className="text-sm text-green-700 font-medium mb-2">
+                  🎮 Controle Manual Ativo
+                </p>
+                <div className="text-xs text-green-600 space-y-1">
+                  <div>WASD - Movimento</div>
+                  <div>Espaço - Ação (trabalhar/coletar)</div>
+                  <div>ESC - Sair do controle</div>
+                </div>
+              </div>
+            )}
+          </div>
+
+          <div className="bg-gray-50 p-4 rounded-lg">
+            <h3 className="font-semibold mb-2 text-gray-700">Trabalho Autônomo</h3>
+            {npc.type === "miner" && npc.controlMode === "autonomous" && (
               <button
                 onClick={(e) => {
                   e.stopPropagation();
@@ -268,7 +316,7 @@ const NpcPanel = ({ npc, onClose }: NpcPanelProps) => {
                  npc.state === "moving" ? "Movendo..." : "Iniciar Mineração"}
               </button>
             )}
-             {npc.type === "lumberjack" && (
+             {npc.type === "lumberjack" && npc.controlMode === "autonomous" && (
               <button
                 onClick={(e) => {
                   e.stopPropagation();
@@ -286,7 +334,7 @@ const NpcPanel = ({ npc, onClose }: NpcPanelProps) => {
                  npc.state === "moving" ? "Movendo..." : "Iniciar Corte"}
               </button>
             )}
-            {npc.type === "farmer" && (
+            {npc.type === "farmer" && npc.controlMode === "autonomous" && (
               <div className="space-y-3">
                 {npc.farmerData?.selectedSeed && (
                   <div className="p-3 bg-yellow-50 rounded-lg border border-yellow-200">
@@ -354,7 +402,7 @@ const NpcPanel = ({ npc, onClose }: NpcPanelProps) => {
                 </button>
               </div>
             )}
-            {npc.type === "baker" && (
+            {npc.type === "baker" && npc.controlMode === "autonomous" && (
               <button
                 onClick={() => {
                   if (npc.state === "idle") {
@@ -371,6 +419,14 @@ const NpcPanel = ({ npc, onClose }: NpcPanelProps) => {
               >
                 {npc.state === "working" ? "Assando..." : "Assar"}
               </button>
+            )}
+            
+            {npc.controlMode === "manual" && (
+              <div className="text-center p-4 bg-blue-50 rounded-lg border border-blue-200">
+                <p className="text-sm text-blue-700">
+                  Use WASD para mover e Espaço para trabalhar/coletar recursos próximos
+                </p>
+              </div>
             )}
           </div>
         </div>

@@ -57,6 +57,17 @@ interface GameState {
   setTimeSpeed: (speed: number) => void;
   increaseTimeSpeed: () => void;
   decreaseTimeSpeed: () => void;
+
+  // NPC Manual Control
+  controlledNpcId: string | null;
+  isManualControl: boolean;
+  manualControlKeys: {
+    forward: boolean;
+    backward: boolean;
+    left: boolean;
+    right: boolean;
+    action: boolean;
+  };
 }
 
 export const useGameStore = create<GameState>()(
@@ -78,6 +89,17 @@ export const useGameStore = create<GameState>()(
     cameraPosition: [20, 20, 20],
     cameraTarget: [0, 0, 0],
     cameraRotation: 0,
+
+    // NPC Manual Control
+    controlledNpcId: null,
+    isManualControl: false,
+    manualControlKeys: {
+      forward: false,
+      backward: false,
+      left: false,
+      right: false,
+      action: false,
+    },
 
     // Actions
     setGameMode: (mode) => set({ gameMode: mode }),
@@ -118,7 +140,7 @@ export const useGameStore = create<GameState>()(
       // 6h-8h: amanhecer, 8h-18h: dia, 18h-19h: entardecer, 19h-6h: noite
       let timeOfDay: TimeOfDay = state.timeOfDay;
       const hours = newTimeCycle * 24;
-      
+
       if (hours >= 6 && hours < 8) timeOfDay = "dawn"; // 6h-8h: amanhecer
       else if (hours >= 8 && hours < 18) timeOfDay = "day"; // 8h-18h: dia
       else if (hours >= 18 && hours < 19) timeOfDay = "dusk"; // 18h-19h: entardecer  
@@ -154,5 +176,19 @@ export const useGameStore = create<GameState>()(
       const nextIndex = Math.max(currentIndex - 1, 0);
       return { timeSpeed: speeds[nextIndex] };
     }),
+    // Manual Control Actions
+    setControlledNpc: (npcId) => set({ 
+      controlledNpcId: npcId,
+      isManualControl: npcId !== null 
+    }),
+
+    setManualControl: (enabled) => set({ 
+      isManualControl: enabled,
+      controlledNpcId: enabled ? get().controlledNpcId : null 
+    }),
+
+    updateManualControlKeys: (keys) => set((state) => ({
+      manualControlKeys: { ...state.manualControlKeys, ...keys }
+    })),
   }))
 );
