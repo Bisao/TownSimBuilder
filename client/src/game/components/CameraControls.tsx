@@ -3,6 +3,7 @@ import { useEffect, useRef } from "react";
 import { useKeyboardControls } from "@react-three/drei";
 import * as THREE from "three";
 import { Controls, useGameStore } from "../stores/useGameStore";
+import { useNpcStore } from "../stores/useNpcStore";
 
 const CameraControls = () => {
   const { camera, gl } = useThree();
@@ -38,35 +39,59 @@ const CameraControls = () => {
 
     // Listener para focar na câmera quando NPC for selecionado
     const handleFocusOnNpc = (event: CustomEvent) => {
-      const { position } = event.detail;
+      const { position, followMode } = event.detail;
       const npcX = position[0];
       const npcZ = position[2];
 
-      // Define nova posição da câmera (mais próxima)
-      const newTarget = new THREE.Vector3(npcX, 0, npcZ);
-      const distance = 8; // Distância da câmera ao NPC
-      const height = 6; // Altura da câmera
-      const angle = Math.PI / 4; // Ângulo de 45 graus
+      if (followMode) {
+        // Modo de seguir (controle manual) - posicionar atrás do NPC
+        const newTarget = new THREE.Vector3(npcX, 1, npcZ);
+        const distance = 5; // Distância da câmera ao NPC
+        const height = 3; // Altura da câmera
+        const angle = 0; // Ângulo para ficar atrás
 
-      const newCameraPosition = new THREE.Vector3(
-        npcX - distance * Math.cos(angle),
-        height,
-        npcZ - distance * Math.sin(angle)
-      );
+        const newCameraPosition = new THREE.Vector3(
+          npcX - distance * Math.sin(angle),
+          height,
+          npcZ + distance * Math.cos(angle)
+        );
 
-      // Atualizar referências
-      targetRef.current.copy(newTarget);
-      positionRef.current.copy(newCameraPosition);
+        // Atualizar referências
+        targetRef.current.copy(newTarget);
+        positionRef.current.copy(newCameraPosition);
 
-      // Atualizar câmera imediatamente
-      camera.position.copy(newCameraPosition);
-      camera.lookAt(newTarget);
+        // Atualizar câmera imediatamente
+        camera.position.copy(newCameraPosition);
+        camera.lookAt(newTarget);
+
+        console.log(`Câmera em modo de seguir NPC na posição [${npcX}, ${npcZ}]`);
+      } else {
+        // Modo normal de foco
+        const newTarget = new THREE.Vector3(npcX, 0, npcZ);
+        const distance = 8; // Distância da câmera ao NPC
+        const height = 6; // Altura da câmera
+        const angle = Math.PI / 4; // Ângulo de 45 graus
+
+        const newCameraPosition = new THREE.Vector3(
+          npcX - distance * Math.cos(angle),
+          height,
+          npcZ - distance * Math.sin(angle)
+        );
+
+        // Atualizar referências
+        targetRef.current.copy(newTarget);
+        positionRef.current.copy(newCameraPosition);
+
+        // Atualizar câmera imediatamente
+        camera.position.copy(newCameraPosition);
+        camera.lookAt(newTarget);
+
+        console.log(`Câmera focada no NPC na posição [${npcX}, ${npcZ}]`);
+      }
 
       // Atualizar store
-      updateCameraTarget([newTarget.x, newTarget.y, newTarget.z]);
-      updateCameraPosition([newCameraPosition.x, newCameraPosition.y, newCameraPosition.z]);
-
-      console.log(`Câmera focada no NPC na posição [${npcX}, ${npcZ}]`);
+      updateCameraTarget([targetRef.current.x, targetRef.current.y, targetRef.current.z]);
+      updateCameraPosition([positionRef.current.x, positionRef.current.y, positionRef.current.z]);
     };
 
     window.addEventListener('focusOnNpc', handleFocusOnNpc as EventListener);
@@ -187,7 +212,8 @@ const CameraControls = () => {
   const rotateCCW = useKeyboardControls<Controls>((state) => state.rotateCCW);
 
   // Obter estado do controle manual do NPC
-  const { isManualControl } = useGameStore();
+  const { isManualControl, controlledNpcId } = useGameStore();
+  const { npcs } = useNpcStore();
 
   // Atualização por frame
   useFrame(() => {
@@ -195,12 +221,48 @@ const CameraControls = () => {
     const currentPosition = positionRef.current;
     const currentRotation = rotationRef.current;
 
-    // Rotação da câmera
-    if (rotateCW) {
-      rotationRef.current += ROTATE_SPEED;
+    // Se estiver em controle manual do NPC, seguir o NPC
+    if (isManualControl && controlledNpcId) {
+      const controlledNpc = npcs.find(npc => npc.id === controlledNpcId);
+      if (controlledNpc) {
+        const npcX = controlledNpc.position[0];
+        const npcZ = controlledNpc.position[2];
+        
+        // Posicionar câmera atrás do NPC
+        const distance = 5; // Distância da câmera ao NPC
+        const height = 3; // Altura da câmera
+        const angle = 0; // Ângulo fixo para ficar atrás
+        
+        // Nova posição da câmera (atrás do NPC)
+        const newCameraPosition = new THREE.Vector3(
+          npcX - distance * Math.sin(angle),
+          height,
+          npcZ + distance * Math.cos(angle)
+        );
+        
+        // Novo alvo da câmera (o NPC)
+        const newTarget = new THREE.Vector3(npcX, 1, npcZ);
+        
+        // Suavizar movimento da câmera
+        currentPosition.lerp(newCameraPosition, 0.1);
+        currentTarget.lerp(newTarget, 0.1);
+        
+        // Atualizar câmera
+        camera.position.copy(currentPosition);
+        camera.lookAt(currentTarget);
+        
+        return; // Sair cedo para não executar a lógica normal
+      }
     }
-    if (rotateCCW) {
-      rotationRef.current -= ROTATE_SPEED;
+
+    // Rotação da câmera (só funciona se não estiver em controle manual do NPC)
+    if (!isManualControl) {
+      if (rotateCW) {
+        rotationRef.current += ROTATE_SPEED;
+      }
+      if (rotateCCW) {
+        rotationRef.current -= ROTATE_SPEED;
+      }
     }
 
     // Movimento da câmera (só funciona se não estiver em controle manual do NPC)

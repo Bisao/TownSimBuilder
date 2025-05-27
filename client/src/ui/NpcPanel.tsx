@@ -257,6 +257,11 @@ const NpcPanel = ({ npc, onClose }: NpcPanelProps) => {
                   e.stopPropagation();
                   useNpcStore.getState().setNpcControlMode(npc.id, "autonomous");
                   useGameStore.getState().setControlledNpc(null);
+                  
+                  // Resetar câmera para posição padrão
+                  const { updateCameraPosition, updateCameraTarget } = useGameStore.getState();
+                  updateCameraPosition([20, 20, 20]);
+                  updateCameraTarget([0, 0, 0]);
                 }}
                 className={`flex-1 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
                   npc.controlMode === "autonomous" 
@@ -271,6 +276,15 @@ const NpcPanel = ({ npc, onClose }: NpcPanelProps) => {
                   e.stopPropagation();
                   useNpcStore.getState().setNpcControlMode(npc.id, "manual");
                   useGameStore.getState().setControlledNpc(npc.id);
+                  
+                  // Disparar evento para focar câmera no NPC
+                  window.dispatchEvent(new CustomEvent('focusOnNpc', { 
+                    detail: { 
+                      position: npc.position,
+                      npcId: npc.id,
+                      followMode: true
+                    } 
+                  }));
                 }}
                 className={`flex-1 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
                   npc.controlMode === "manual" 
