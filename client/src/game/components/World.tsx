@@ -3,24 +3,16 @@ import { useFrame } from "@react-three/fiber";
 import CameraControls from "./CameraControls";
 import Sky from "./Sky";
 import DayNightCycle from "./DayNightCycle";
+import Building from "./Building";
+import Resource from "./Resource";
+import Npc from "./Npc";
 import Terrain from "./Terrain";
 import TerrainEditor from "./TerrainEditor";
-import Building from "./Building";
-import Npc from "./Npc";
-import Resource from "./Resource";
 import PlacementIndicator from "./PlacementIndicator";
-import ManualNpcController from "./ManualNpcController";
-import { useBuildingStore } from "../stores/useBuildingStore";
-import { useResourceStore } from "../stores/useResourceStore";
-import { useGameStore } from "../stores/useGameStore";
-import { useNpcStore } from "../stores/useNpcStore";
-import { workplaceMapping } from "../constants/npcs";
-import { resourceTypes } from "../constants/resources";
 import MarketWindow from "../../ui/MarketWindow";
 import { Building as BuildingType } from "../stores/useBuildingStore";
-
 interface WorldProps {
-  onMarketSelect?: (building: BuildingType) => void;
+  onMarketSelect?: (BuildingType) => void;
 }
 
 const World = ({ onMarketSelect }: WorldProps) => {
@@ -228,9 +220,16 @@ const World = ({ onMarketSelect }: WorldProps) => {
   return (
     <>
       <CameraControls />
+      
+      {/* Terrain */}
+      <Terrain />
+
+      {/* Terrain Editor */}
+      <TerrainEditor />
+
+      {/* Sky */}
       <Sky />
       <DayNightCycle />
-      <Terrain onTerrainClick={handleTerrainClick} />
       {/* Buildings */}
       {buildings.map((building) => (
         <Building 

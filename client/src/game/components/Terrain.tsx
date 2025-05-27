@@ -1,3 +1,4 @@
+
 import { useTexture } from "@react-three/drei";
 import { useThree, useFrame } from "@react-three/fiber";
 import * as THREE from "three";
@@ -33,77 +34,105 @@ const Terrain = () => {
     return () => window.removeEventListener('keydown', handleKeyPress);
   }, [isEditorMode]);
 
-  // Load grass texture
-  const grassTexture = useTexture("/textures/grass.png");
-  grassTexture.wrapS = grassTexture.wrapT = THREE.RepeatWrapping;
-  grassTexture.repeat.set(currentGridSize/2, currentGridSize/2);
-  
-  // Generate terrain geometry with height data
+  // Generate terrain geometry based on editor data
   const terrainGeometry = useMemo(() => {
-    const geometry = new THREE.PlaneGeometry(
-      currentGridSize, 
-      currentGridSize, 
-      currentGridSize - 1, 
-      currentGridSize - 1
-    );
-    
+    const geometry = new THREE.PlaneGeometry(currentGridSize, currentGridSize, currentGridSize - 1, currentGridSize - 1);
     const positions = geometry.attributes.position.array as Float32Array;
     
-    // Apply height data from editor
-    for (let i = 0; i < positions.length; i += 3) {
-      const x = Math.floor(positions[i] + currentGridSize / 2);
-      const z = Math.floor(positions[i + 1] + currentGridSize / 2);
-      const key = `${x},${z}`;
-      const tile = terrainTiles.get(key);
-      
-      if (tile) {
-        positions[i + 2] = tile.height;
+    if (isEditorMode && terrainTiles.size > 0) {
+      // Apply editor modifications
+      for (let i = 0; i < currentGridSize; i++) {
+        for (let j = 0; j < currentGridSize; j++) {
+          const tile = terrainTiles.get(`${i},${j}`);
+          if (tile) {
+            const index = (i * currentGridSize + j) * 3 + 2; // Z component
+            if (index < positions.length) {
+              positions[index] = tile.height;
+            }
+          }
+        }
       }
+      geometry.attributes.position.needsUpdate = true;
     }
     
-    geometry.attributes.position.needsUpdate = true;
     geometry.computeVertexNormals();
-    
     return geometry;
-  }, [currentGridSize, terrainTiles]);
+  }, [currentGridSize, terrainTiles, isEditorMode]);
 
-  useFrame(() => {
-    if (gridRef.current) {
-      const distanceToCamera = camera.position.y;
-      // Ajusta a opacidade do grid baseado na distância
-      const opacity = Math.min(1, Math.max(0.2, 20 / distanceToCamera));
-      if (gridRef.current.material instanceof THREE.Material) {
-        gridRef.current.material.opacity = opacity;
+  // Generate terrain colors based on terrain types
+  const terrainColors = useMemo(() => {
+    if (!isEditorMode || terrainTiles.size === 0) {
+      return null;
+    }
+
+    const colors = new Float32Array(currentGridSize * currentGridSize * 3);
+    
+    for (let i = 0; i < currentGridSize; i++) {
+      for (let j = 0; j < currentGridSize; j++) {
+        const tile = terrainTiles.get(`${i},${j}`);
+        const index = (i * currentGridSize + j) * 3;
+        
+        let color = new THREE.Color("#4CAF50"); // Default grass color
+        
+        if (tile) {
+          switch (tile.type) {
+            case "grass":
+              color = new THREE.Color("#4CAF50");
+              break;
+            case "dirt":
+              color = new THREE.Color("#8B4513");
+              break;
+            case "sand":
+              color = new THREE.Color("#F4A460");
+              break;
+            case "stone":
+              color = new THREE.Color("#708090");
+              break;
+            case "water":
+              color = new THREE.Color("#4FC3F7");
+              break;
+          }
+        }
+        
+        colors[index] = color.r;
+        colors[index + 1] = color.g;
+        colors[index + 2] = color.b;
       }
     }
-  });
+    
+    return colors;
+  }, [currentGridSize, terrainTiles, isEditorMode]);
 
   return (
     <group>
-      {/* Main terrain */}
+      {/* Terrain Mesh */}
       <mesh 
         ref={meshRef}
         rotation={[-Math.PI / 2, 0, 0]} 
-        position={[currentGridSize/2 - 0.5, -0.1, currentGridSize/2 - 0.5]} 
+        position={[currentGridSize / 2 - 0.5, 0, currentGridSize / 2 - 0.5]}
         receiveShadow
-        geometry={terrainGeometry}
       >
-        <meshStandardMaterial 
-          map={grassTexture} 
-          color="#4CAF50"
-          wireframe={isEditorMode && shouldShowGrid}
+        <primitive object={terrainGeometry} />
+        <meshLambertMaterial 
+          color={isEditorMode ? "#ffffff" : "#4CAF50"}
+          vertexColors={isEditorMode && terrainColors ? true : false}
         />
+        {terrainColors && isEditorMode && (
+          <bufferAttribute
+            attach="attributes-color"
+            args={[terrainColors, 3]}
+          />
+        )}
       </mesh>
 
-      {/* Grid lines for building placement */}
-      <gridHelper 
-        ref={gridRef}
-        args={[currentGridSize, currentGridSize, "#000", "#444"]} 
-        position={[currentGridSize/2 - 0.5, 0, currentGridSize/2 - 0.5]}
-        visible={shouldShowGrid && !isEditorMode}
-      >
-        <meshBasicMaterial transparent opacity={0.5} />
-      </gridHelper>
+      {/* Grid Helper */}
+      {shouldShowGrid && (
+        <gridHelper 
+          ref={gridRef}
+          args={[currentGridSize, currentGridSize, "#888888", "#888888"]} 
+          position={[currentGridSize / 2 - 0.5, 0.01, currentGridSize / 2 - 0.5]}
+        />
+      )}
     </group>
   );
 };
