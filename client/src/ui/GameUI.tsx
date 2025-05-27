@@ -5,6 +5,7 @@ import { useBuildingStore } from "../game/stores/useBuildingStore";
 import { useNpcStore } from "../game/stores/useNpcStore";
 import { useEconomyStore } from "../game/stores/useEconomyStore";
 import { useEventStore } from "../game/stores/useEventStore";
+import { useResearchStore } from "../game/stores/useResearchStore";
 import { useAudio } from "../lib/stores/useAudio";
 import { Building } from "../game/stores/useBuildingStore";
 import ResourcePanel from "./ResourcePanel";
@@ -18,7 +19,8 @@ import NpcMetricsPanel from "./NpcMetricsPanel";
 import SeedSelectionPanel from "./SeedSelectionPanel";
 import SiloPanel from "./SiloPanel";
 import MapEditorPanel from "./MapEditorPanel";
-import ResearchPanel from "./ResearchPanel"; // Import ResearchPanel
+import ResearchPanel from "./ResearchPanel";
+import EconomyPanel from "./EconomyPanel";
 const GameUI = () => {
   const { backgroundMusic, toggleMute, isMuted } = useAudio();
   const { timeOfDay, dayCount, isPaused, timeSpeed } = useGameStore();
@@ -36,6 +38,7 @@ const GameUI = () => {
   const [selectedSiloId, setSelectedSiloId] = useState<string | null>(null);
   const [showMapEditor, setShowMapEditor] = useState(false);
   const [showEconomyPanel, setShowEconomyPanel] = useState(false);
+  const [showResearchPanel, setShowResearchPanel] = useState(false);
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -145,7 +148,7 @@ const GameUI = () => {
         // Generate research points based on population and buildings
         const npcCount = useNpcStore.getState().npcs.length;
         if (npcCount > 0) {
-          // useResearchStore.getState().addResearchPoints(npcCount * 0.1); // Removing because addResearchPoints doesn't exist.
+          useResearchStore.getState().addResearchPoints(npcCount * 0.1);
         }
       }, 16);
       return () => clearInterval(interval);
@@ -298,6 +301,14 @@ const GameUI = () => {
             <i className="fa-solid fa-coins"></i>
             Economia
           </button>
+
+          <button
+            onClick={() => setShowResearchPanel(!showResearchPanel)}
+            className={`${showResearchPanel ? 'bg-blue-600' : 'bg-gray-600'} hover:bg-blue-700 text-white px-3 py-2 rounded transition-colors flex items-center gap-2`}
+          >
+            <i className="fa-solid fa-flask"></i>
+            Pesquisa
+          </button>
       </div>
       {selectedNpc && (
         <NpcPanel npc={selectedNpc} onClose={() => setSelectedNpc(null)} />
@@ -346,7 +357,18 @@ const GameUI = () => {
       )}
 
       <MapEditorPanel isVisible={showMapEditor} />
-      {/* Include ResearchPanel */}
+      
+      {showEconomyPanel && (
+        <div className="absolute top-16 left-4 z-20">
+          <EconomyPanel />
+        </div>
+      )}
+
+      {showResearchPanel && (
+        <div className="absolute top-16 right-4 z-20">
+          <ResearchPanel />
+        </div>
+      )}
       
     </div>
   );

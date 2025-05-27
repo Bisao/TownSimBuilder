@@ -1,154 +1,127 @@
-
 import { create } from "zustand";
 import { subscribeWithSelector } from "zustand/middleware";
 
-interface Technology {
+export interface Technology {
   id: string;
   name: string;
   description: string;
-  cost: number; // research points needed
-  unlocks: string[]; // building types or features
-  prerequisites: string[]; // required tech IDs
+  cost: number;
+  requirements: string[];
+  unlocks: string[];
   researched: boolean;
+  category: "farming" | "mining" | "construction" | "economy";
 }
 
 interface ResearchState {
-  researchPoints: number;
   technologies: Record<string, Technology>;
-  currentResearch: string | null;
-  researchProgress: number;
-  
-  // Actions
-  addResearchPoints: (amount: number) => void;
-  startResearch: (techId: string) => boolean;
-  updateResearch: (deltaTime: number) => void;
-  canResearch: (techId: string) => boolean;
-  isUnlocked: (buildingType: string) => boolean;
-}
+  researchPoints: number;
+  pointsPerSecond: number;
 
-const TECHNOLOGIES: Record<string, Technology> = {
-  agriculture: {
-    id: "agriculture",
-    name: "Agricultura Avançada",
-    description: "Melhora a eficiência das fazendas",
-    cost: 50,
-    unlocks: ["advanced_farm"],
-    prerequisites: [],
-    researched: false,
-  },
-  mining: {
-    id: "mining",
-    name: "Técnicas de Mineração",
-    description: "Permite construir minas mais eficientes",
-    cost: 75,
-    unlocks: ["advanced_mine"],
-    prerequisites: [],
-    researched: false,
-  },
-  storage: {
-    id: "storage",
-    name: "Sistemas de Armazenamento",
-    description: "Desbloqueia silos e armazéns grandes",
-    cost: 100,
-    unlocks: ["large_silo"],
-    prerequisites: ["agriculture"],
-    researched: false,
-  },
-  automation: {
-    id: "automation",
-    name: "Automação",
-    description: "NPCs trabalham mais eficientemente",
-    cost: 150,
-    unlocks: ["automation_bonus"],
-    prerequisites: ["mining", "agriculture"],
-    researched: false,
-  },
-};
+  // Actions
+  researchTechnology: (id: string) => boolean;
+  addResearchPoints: (points: number) => void;
+  canResearch: (id: string) => boolean;
+  getAvailableTechnologies: () => Technology[];
+}
 
 export const useResearchStore = create<ResearchState>()(
   subscribeWithSelector((set, get) => ({
-    researchPoints: 0,
-    technologies: { ...TECHNOLOGIES },
-    currentResearch: null,
-    researchProgress: 0,
+    researchPoints: 50,
+    pointsPerSecond: 1,
 
-    addResearchPoints: (amount) => {
-      set((state) => ({
-        researchPoints: state.researchPoints + amount
-      }));
+    technologies: {
+      "advanced_farming": {
+        id: "advanced_farming",
+        name: "Agricultura Avançada",
+        description: "Aumenta a produção de fazendas em 25%",
+        cost: 100,
+        requirements: [],
+        unlocks: ["irrigation"],
+        researched: false,
+        category: "farming"
+      },
+      "irrigation": {
+        id: "irrigation",
+        name: "Irrigação",
+        description: "Permite fazendas produzirem em terrenos secos",
+        cost: 150,
+        requirements: ["advanced_farming"],
+        unlocks: ["greenhouse"],
+        researched: false,
+        category: "farming"
+      },
+      "improved_tools": {
+        id: "improved_tools",
+        name: "Ferramentas Melhoradas",
+        description: "NPCs trabalham 20% mais rápido",
+        cost: 75,
+        requirements: [],
+        unlocks: ["advanced_tools"],
+        researched: false,
+        category: "mining"
+      },
+      "stone_masonry": {
+        id: "stone_masonry",
+        name: "Alvenaria",
+        description: "Desbloqueia construções de pedra",
+        cost: 120,
+        requirements: [],
+        unlocks: ["reinforced_buildings"],
+        researched: false,
+        category: "construction"
+      },
+      "market_expansion": {
+        id: "market_expansion",
+        name: "Expansão do Mercado",
+        description: "Aumenta preços de venda em 15%",
+        cost: 90,
+        requirements: [],
+        unloks: ["trade_routes"],
+        researched: false,
+        category: "economy"
+      }
     },
 
-    startResearch: (techId) => {
+    // Actions
+    researchTechnology: (id) => {
       const state = get();
-      const tech = state.technologies[techId];
-      
-      if (!tech || !state.canResearch(techId) || state.currentResearch) {
+      const tech = state.technologies[id];
+
+      if (!tech || tech.researched || !state.canResearch(id) || state.researchPoints < tech.cost) {
         return false;
       }
 
-      set({
-        currentResearch: techId,
-        researchProgress: 0
-      });
+      set((state) => ({
+        researchPoints: state.researchPoints - tech.cost,
+        technologies: {
+          ...state.technologies,
+          [id]: { ...tech, researched: true }
+        }
+      }));
 
       return true;
     },
 
-    updateResearch: (deltaTime) => {
+    addResearchPoints: (points) => set((state) => ({
+      researchPoints: state.researchPoints + points
+    })),
+
+    canResearch: (id) => {
       const state = get();
-      
-      if (!state.currentResearch) return;
+      const tech = state.technologies[id];
 
-      const tech = state.technologies[state.currentResearch];
-      if (!tech) return;
-
-      const researchSpeed = 1; // points per second
-      const newProgress = state.researchProgress + deltaTime * researchSpeed;
-
-      if (newProgress >= tech.cost) {
-        // Research completed
-        set((state) => ({
-          technologies: {
-            ...state.technologies,
-            [tech.id]: { ...tech, researched: true }
-          },
-          currentResearch: null,
-          researchProgress: 0,
-          researchPoints: state.researchPoints - tech.cost
-        }));
-
-        console.log(`Research completed: ${tech.name}`);
-      } else {
-        set({ researchProgress: newProgress });
-      }
-    },
-
-    canResearch: (techId) => {
-      const state = get();
-      const tech = state.technologies[techId];
-      
       if (!tech || tech.researched) return false;
-      
-      // Check prerequisites
-      for (const prereqId of tech.prerequisites) {
-        const prereq = state.technologies[prereqId];
-        if (!prereq || !prereq.researched) return false;
-      }
 
-      return state.researchPoints >= tech.cost;
-    },
-
-    isUnlocked: (buildingType) => {
-      const state = get();
-      
-      // Basic buildings are always unlocked
-      const basicBuildings = ["house", "farm", "bakery", "market", "silo"];
-      if (basicBuildings.includes(buildingType)) return true;
-
-      // Check if any researched technology unlocks this building
-      return Object.values(state.technologies).some(
-        tech => tech.researched && tech.unlocks.includes(buildingType)
+      return tech.requirements.every(reqId => 
+        state.technologies[reqId]?.researched || false
       );
     },
+
+    getAvailableTechnologies: () => {
+      const state = get();
+      return Object.values(state.technologies).filter(tech => 
+        !tech.researched && state.canResearch(tech.id)
+      );
+    }
   }))
 );
