@@ -436,10 +436,126 @@ const NpcPanel = ({ npc, onClose }: NpcPanelProps) => {
             )}
             
             {npc.controlMode === "manual" && (
-              <div className="text-center p-4 bg-blue-50 rounded-lg border border-blue-200">
-                <p className="text-sm text-blue-700">
-                  Use WASD para mover e Espaço para trabalhar/coletar recursos próximos
-                </p>
+              <div className="space-y-3">
+                <div className="text-center p-4 bg-green-50 rounded-lg border border-green-200">
+                  <div className="text-sm font-medium text-green-700 mb-2">
+                    🎮 Modo Manual Ativo
+                  </div>
+                  <div className="grid grid-cols-2 gap-2 text-xs text-green-600">
+                    <div>WASD - Movimento</div>
+                    <div>Shift - Correr</div>
+                    <div>Espaço - Ação</div>
+                    <div>Tab - Trocar NPC</div>
+                    <div>H - Ocultar HUD</div>
+                    <div>ESC - Sair</div>
+                  </div>
+                </div>
+
+                {/* Status Bars */}
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs">⚡ Energia:</span>
+                    <div className="flex-1 h-2 bg-gray-200 rounded-full overflow-hidden">
+                      <div 
+                        className={`h-full transition-all duration-300 ${
+                          npc.needs.energy > 60 ? 'bg-yellow-400' : 
+                          npc.needs.energy > 30 ? 'bg-orange-400' : 'bg-red-400'
+                        }`}
+                        style={{ width: `${npc.needs.energy}%` }}
+                      />
+                    </div>
+                    <span className="text-xs">{Math.round(npc.needs.energy)}</span>
+                  </div>
+
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs">😊 Satisfação:</span>
+                    <div className="flex-1 h-2 bg-gray-200 rounded-full overflow-hidden">
+                      <div 
+                        className={`h-full transition-all duration-300 ${
+                          npc.needs.satisfaction > 60 ? 'bg-green-400' : 
+                          npc.needs.satisfaction > 30 ? 'bg-yellow-400' : 'bg-red-400'
+                        }`}
+                        style={{ width: `${npc.needs.satisfaction}%` }}
+                      />
+                    </div>
+                    <span className="text-xs">{Math.round(npc.needs.satisfaction)}</span>
+                  </div>
+
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs">📦 Inventário:</span>
+                    <div className="flex-1 text-xs">
+                      {npc.inventory.amount > 0 ? (
+                        <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded">
+                          {npc.inventory.amount}x {npc.inventory.type}
+                        </span>
+                      ) : (
+                        <span className="text-gray-500">Vazio</span>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Comandos Rápidos */}
+                <div className="space-y-2">
+                  <div className="text-xs font-medium text-gray-700">Comandos Rápidos:</div>
+                  <div className="grid grid-cols-2 gap-2">
+                    <button
+                      onClick={() => {
+                        // Comando para ir para casa
+                        const buildings = useBuildingStore.getState().buildings;
+                        const home = buildings.find(b => b.id === npc.homeId);
+                        if (home) {
+                          useNpcStore.setState(state => ({
+                            npcs: state.npcs.map(n => 
+                              n.id === npc.id 
+                                ? {
+                                    ...n,
+                                    targetPosition: [home.position[0] + 0.5, 0, home.position[1] + 0.5],
+                                    state: "moving" as const
+                                  }
+                                : n
+                            )
+                          }));
+                        }
+                      }}
+                      className="px-2 py-1 bg-blue-500 hover:bg-blue-600 text-white text-xs rounded transition-colors"
+                    >
+                      🏠 Ir para Casa
+                    </button>
+
+                    <button
+                      onClick={() => {
+                        // Comando para procurar silo mais próximo
+                        const buildings = useBuildingStore.getState().buildings;
+                        const silos = buildings.filter(b => b.type === 'silo');
+                        if (silos.length > 0) {
+                          const nearestSilo = silos.reduce((nearest, silo) => {
+                            const currentDist = Math.hypot(silo.position[0] - npc.position[0], silo.position[1] - npc.position[2]);
+                            const nearestDist = Math.hypot(nearest.position[0] - npc.position[0], nearest.position[1] - npc.position[2]);
+                            return currentDist < nearestDist ? silo : nearest;
+                          });
+
+                          useNpcStore.setState(state => ({
+                            npcs: state.npcs.map(n => 
+                              n.id === npc.id 
+                                ? {
+                                    ...n,
+                                    targetPosition: [nearestSilo.position[0] + 0.5, 0, nearestSilo.position[1] + 0.5],
+                                    targetBuildingId: nearestSilo.id,
+                                    state: "moving" as const
+                                  }
+                                : n
+                            )
+                          }));
+                        }
+                      }}
+                      className="px-2 py-1 bg-purple-500 hover:bg-purple-600 text-white text-xs rounded transition-colors"
+                      disabled={npc.inventory.amount === 0}
+                    >
+                      🏗️ Ir ao Silo
+                    </button>
+                  </div>
+                </div>
               </div>
             )}
           </div>

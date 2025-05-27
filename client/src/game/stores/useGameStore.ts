@@ -67,6 +67,7 @@ interface GameState {
     left: boolean;
     right: boolean;
     action: boolean;
+    sprint: boolean;
   };
 }
 
@@ -99,6 +100,7 @@ export const useGameStore = create<GameState>()(
       left: false,
       right: false,
       action: false,
+      sprint: false,
     },
 
     // Actions

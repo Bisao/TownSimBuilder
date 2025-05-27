@@ -954,23 +954,38 @@ class NPCStateHandlers {
   }
 
   static handleManualControl(npc: NPC, deltaTime: number, keys: any): NPC {
-    const moveSpeed = 0.2 * deltaTime; // Velocidade do movimento manual
+    const npcConfig = npcTypes[npc.type];
+    const baseSpeed = npcConfig ? npcConfig.speed : 0.15;
+    const sprintMultiplier = keys.sprint ? 2.5 : 1;
+    const moveSpeed = baseSpeed * deltaTime * 3 * sprintMultiplier; // Movimento manual com sprint
     const [x, y, z] = npc.position;
     let newX = x;
     let newZ = z;
+    let hasMovement = false;
 
-    // Controle de movimento
+    // Controle de movimento com suporte a movimento diagonal
     if (keys.forward) {
       newZ -= moveSpeed;
+      hasMovement = true;
     }
     if (keys.backward) {
       newZ += moveSpeed;
+      hasMovement = true;
     }
     if (keys.left) {
       newX -= moveSpeed;
+      hasMovement = true;
     }
     if (keys.right) {
       newX += moveSpeed;
+      hasMovement = true;
+    }
+
+    // Normalizar movimento diagonal para manter velocidade consistente
+    if ((keys.forward || keys.backward) && (keys.left || keys.right)) {
+      const factor = Math.sqrt(2) / 2;
+      newX = x + (newX - x) * factor;
+      newZ = z + (newZ - z) * factor;
     }
 
     // Limitar posição dentro do grid
@@ -978,52 +993,193 @@ class NPCStateHandlers {
 
     let newState = npc.state;
     let workProgress = npc.workProgress;
+    let inventory = npc.inventory;
+    let targetBuildingId = npc.targetBuildingId;
 
-    // Ação manual (trabalhar/coletar)
+    // Sistema de ações contextuais melhorado
     if (keys.action) {
-      // Verificar se há recurso próximo para coletar
-      if (window.naturalResources) {
-        const resourceType = npc.type === "miner" ? "stone" : npc.type === "lumberjack" ? "wood" : null;
-        if (resourceType) {
-          const nearbyResource = window.naturalResources.find(r => {
-            const distance = Math.hypot(r.position[0] - clampedX, r.position[1] - clampedZ);
-            return r.type === resourceType && distance < 1.5 && !r.lastCollected;
-          });
-
-          if (nearbyResource && npc.inventory.amount < CONSTANTS.MAX_INVENTORY) {
-            newState = "gathering";
-            workProgress = npc.workProgress + deltaTime * 0.5;
-
-            // Completar coleta
-            if (workProgress >= 1) {
-              // Marcar recurso como coletado
-              nearbyResource.lastCollected = Date.now();
-              
-              return {
-                ...npc,
-                position: [clampedX, y, clampedZ],
-                state: "idle",
-                workProgress: 0,
-                inventory: {
-                  type: resourceType,
-                  amount: npc.inventory.amount + 1
-                }
-              };
-            }
-          }
-        }
+      const actionResult = NPCStateHandlers.handleManualAction(npc, clampedX, clampedZ, deltaTime);
+      if (actionResult) {
+        newState = actionResult.state || newState;
+        workProgress = actionResult.workProgress !== undefined ? actionResult.workProgress : workProgress;
+        inventory = actionResult.inventory || inventory;
+        targetBuildingId = actionResult.targetBuildingId !== undefined ? actionResult.targetBuildingId : targetBuildingId;
       }
     }
+
+    // Consumo de energia ajustado para sprint
+    const sprintMultiplier = keys.sprint ? 2.5 : 1;
+    const energyConsumption = hasMovement ? CONSTANTS.ENERGY_CONSUMPTION.MOVING * 0.3 * sprintMultiplier : 0;
+    const satisfactionConsumption = hasMovement ? CONSTANTS.SATISFACTION_CONSUMPTION.MOVING * 0.3 * sprintMultiplier : 0;
 
     return {
       ...npc,
       position: [clampedX, y, clampedZ],
       state: newState,
       workProgress: workProgress,
+      inventory: inventory,
+      targetBuildingId: targetBuildingId,
       needs: {
-        energy: Math.max(0, npc.needs.energy - deltaTime * CONSTANTS.ENERGY_CONSUMPTION.MOVING * 0.5),
-        satisfaction: Math.max(0, npc.needs.satisfaction - deltaTime * CONSTANTS.SATISFACTION_CONSUMPTION.MOVING * 0.5)
+        ...npc.needs,
+        energy: Math.max(0, npc.needs.energy - deltaTime * energyConsumption),
+        satisfaction: Math.max(0, npc.needs.satisfaction - deltaTime * satisfactionConsumption)
       }
+    };
+  }
+
+  // Nova função para ações contextuais
+  static handleManualAction(npc: NPC, x: number, z: number, deltaTime: number): any {
+    const buildings = useBuildingStore.getState().buildings;
+    
+    // Verificar proximidade com edifícios
+    const nearbyBuilding = buildings.find(b => {
+      const distance = Math.hypot(b.position[0] - x, b.position[1] - z);
+      return distance < 1.5;
+    });
+
+    if (nearbyBuilding) {
+      return NPCStateHandlers.handleManualBuildingInteraction(npc, nearbyBuilding, deltaTime);
+    }
+
+    // Verificar recursos naturais
+    if (window.naturalResources) {
+      const resourceType = npc.type === "miner" ? "stone" : npc.type === "lumberjack" ? "wood" : null;
+      if (resourceType) {
+        const nearbyResource = window.naturalResources.find(r => {
+          const distance = Math.hypot(r.position[0] - x, r.position[1] - z);
+          return r.type === resourceType && distance < 1.5 && (!r.lastCollected || (Date.now() - r.lastCollected) > 300000);
+        });
+
+        if (nearbyResource && npc.inventory.amount < CONSTANTS.MAX_INVENTORY) {
+          return NPCStateHandlers.handleManualResourceGathering(npc, nearbyResource, deltaTime);
+        }
+      }
+    }
+
+    return null;
+  }
+
+  static handleManualBuildingInteraction(npc: NPC, building: any, deltaTime: number): any {
+    // Silo - depositar recursos
+    if (building.type === 'silo' && npc.inventory.amount > 0) {
+      import('./useResourceStore').then(({ useResourceStore }) => {
+        const resourceStore = useResourceStore.getState();
+        resourceStore.updateResource(npc.inventory.type, npc.inventory.amount);
+      });
+
+      console.log(`${npc.type} depositou ${npc.inventory.amount} ${npc.inventory.type} no silo manualmente`);
+      
+      return {
+        inventory: { type: '', amount: 0 },
+        state: "idle"
+      };
+    }
+
+    // Fazenda - ações específicas do fazendeiro
+    if (building.type === 'farm' && npc.type === 'farmer') {
+      return NPCStateHandlers.handleManualFarmInteraction(npc, building, deltaTime);
+    }
+
+    // Workplace - trabalhar no edifício
+    const workplaceType = Object.entries(WORKPLACE_MAPPING).find(([_, npcTypeId]) => npcTypeId === npc.type)?.[0];
+    if (building.type === workplaceType) {
+      const newWorkProgress = npc.workProgress + deltaTime * 2; // Trabalho manual mais rápido
+
+      if (newWorkProgress >= 1) {
+        console.log(`${npc.type} completou trabalho manual no ${building.type}`);
+        return {
+          workProgress: 0,
+          state: "idle"
+        };
+      }
+
+      return {
+        workProgress: newWorkProgress,
+        state: "working"
+      };
+    }
+
+    return null;
+  }
+
+  static handleManualFarmInteraction(npc: NPC, farm: any, deltaTime: number): any {
+    // Se tem sementes, plantar
+    if (npc.inventory.type === "seeds" || npc.inventory.type === "potato_seeds" || npc.inventory.type === "carrot_seeds") {
+      if (!farm.plantation?.planted || farm.plantation?.harvested) {
+        const newWorkProgress = npc.workProgress + deltaTime * 2;
+
+        if (newWorkProgress >= 1) {
+          import('./useBuildingStore').then(({ useBuildingStore }) => {
+            useBuildingStore.getState().plantSeeds(farm.id);
+          });
+
+          console.log(`Fazendeiro plantou ${npc.inventory.type} manualmente`);
+          
+          return {
+            inventory: { type: '', amount: 0 },
+            workProgress: 0,
+            state: "idle"
+          };
+        }
+
+        return {
+          workProgress: newWorkProgress,
+          state: "planting"
+        };
+      }
+    }
+
+    // Se a fazenda está pronta para colheita
+    if (farm.plantation?.ready && !farm.plantation?.harvested) {
+      const newWorkProgress = npc.workProgress + deltaTime * 2;
+
+      if (newWorkProgress >= 1) {
+        import('./useBuildingStore').then(({ useBuildingStore }) => {
+          useBuildingStore.getState().harvestCrop(farm.id);
+        });
+
+        console.log(`Fazendeiro colheu manualmente`);
+        
+        return {
+          inventory: { type: 'wheat', amount: 2 },
+          workProgress: 0,
+          state: "idle"
+        };
+      }
+
+      return {
+        workProgress: newWorkProgress,
+        state: "harvesting"
+      };
+    }
+
+    return null;
+  }
+
+  static handleManualResourceGathering(npc: NPC, resource: any, deltaTime: number): any {
+    const newWorkProgress = npc.workProgress + deltaTime * 2; // Coleta manual mais rápida
+
+    if (newWorkProgress >= 1) {
+      const resourceType = resource.type;
+      
+      // Marcar recurso como coletado
+      resource.lastCollected = Date.now();
+      
+      console.log(`${npc.type} coletou ${resourceType} manualmente`);
+      
+      return {
+        inventory: {
+          type: resourceType,
+          amount: npc.inventory.amount + 1
+        },
+        workProgress: 0,
+        state: "idle"
+      };
+    }
+
+    return {
+      workProgress: newWorkProgress,
+      state: "gathering"
     };
   }
 
