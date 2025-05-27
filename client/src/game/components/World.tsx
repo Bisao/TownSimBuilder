@@ -1,22 +1,22 @@
 import { useEffect, useRef, useState } from "react";
 import { useFrame } from "@react-three/fiber";
+import CameraControls from "./CameraControls";
+import Sky from "./Sky";
+import DayNightCycle from "./DayNightCycle";
 import Terrain from "./Terrain";
+import TerrainEditor from "./TerrainEditor";
 import Building from "./Building";
 import Npc from "./Npc";
 import Resource from "./Resource";
-import { resourceTypes } from "../constants/resources";
-import CameraControls from "./CameraControls";
 import PlacementIndicator from "./PlacementIndicator";
+import ManualNpcController from "./ManualNpcController";
 import { useBuildingStore } from "../stores/useBuildingStore";
 import { useResourceStore } from "../stores/useResourceStore";
 import { useGameStore } from "../stores/useGameStore";
 import { useNpcStore } from "../stores/useNpcStore";
 import { workplaceMapping } from "../constants/npcs";
-import { Sky } from "./Sky";
-import DayNightCycle from "./DayNightCycle";
 import MarketWindow from "../../ui/MarketWindow";
 import { Building as BuildingType } from "../stores/useBuildingStore";
-import ManualNpcController from "./ManualNpcController";
 
 interface WorldProps {
   onMarketSelect?: (building: BuildingType) => void;

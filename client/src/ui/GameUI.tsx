@@ -15,6 +15,7 @@ import MarketWindow from "./MarketWindow";
 import NpcMetricsPanel from "./NpcMetricsPanel";
 import SeedSelectionPanel from "./SeedSelectionPanel";
 import SiloPanel from "./SiloPanel";
+import MapEditorPanel from "./MapEditorPanel";
 const GameUI = () => {
   const { backgroundMusic, toggleMute, isMuted } = useAudio();
   const { timeOfDay, dayCount, isPaused, timeSpeed } = useGameStore();
@@ -30,6 +31,7 @@ const GameUI = () => {
   const [showSeedSelection, setShowSeedSelection] = useState(false);
   const [showSiloPanel, setShowSiloPanel] = useState(false);
   const [selectedSiloId, setSelectedSiloId] = useState<string | null>(null);
+  const [showMapEditor, setShowMapEditor] = useState(false);
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -251,6 +253,14 @@ const GameUI = () => {
             <i className="fa-solid fa-chart-line mr-2"></i>
             Métricas
           </button>
+
+          <button
+            onClick={() => setShowMapEditor(!showMapEditor)}
+            className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg font-medium transition-colors"
+          >
+            <i className="fa-solid fa-map mr-2"></i>
+            Editor
+          </button>
       </div>
       {selectedNpc && (
         <NpcPanel npc={selectedNpc} onClose={() => setSelectedNpc(null)} />
@@ -297,6 +307,8 @@ const GameUI = () => {
           siloId={selectedSiloId}
         />
       )}
+
+      <MapEditorPanel isVisible={showMapEditor} />
     </div>
   );
 };
