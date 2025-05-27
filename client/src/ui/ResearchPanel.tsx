@@ -1,3 +1,4 @@
+
 import React from "react";
 import { useResearchStore } from "../game/stores/useResearchStore";
 import { useDraggable } from "../hooks/useDraggable";
@@ -15,6 +16,22 @@ const ResearchPanel: React.FC = () => {
   const { isDragging, position, handleMouseDown } = useDraggable("research-panel");
 
   const currentTech = currentResearch ? technologies[currentResearch] : null;
+
+  // Group technologies by category
+  const categorizedTechs = Object.values(technologies).reduce((acc, tech) => {
+    if (!acc[tech.category]) {
+      acc[tech.category] = [];
+    }
+    acc[tech.category].push(tech);
+    return acc;
+  }, {} as Record<string, typeof technologies[string][]>);
+
+  const categoryNames = {
+    farming: "🌾 Agricultura",
+    construction: "🏗️ Construção",
+    economy: "💰 Economia",
+    mining: "⛏️ Mineração"
+  };
 
   return (
     <div
@@ -59,66 +76,68 @@ const ResearchPanel: React.FC = () => {
           )}
         </div>
 
-        {/* Available Technologies */}
-        <div className="space-y-2 max-h-64 overflow-y-auto">
-          <h3 className="font-semibold text-sm text-gray-300">Tecnologias Disponíveis</h3>
-          {Object.values(technologies).map((tech) => (
-            <div
-              key={tech.id}
-              className={`p-3 rounded border ${
-                tech.researched
-                  ? "border-green-500 bg-green-900/30"
-                  : canResearch(tech.id)
-                  ? "border-blue-500 bg-blue-900/30"
-                  : "border-gray-600 bg-gray-700/50"
-              }`}
-            >
-              <div className="flex justify-between items-start">
-                <div className="flex-1">
-                  <h4 className="font-semibold text-sm">{tech.name}</h4>
-                  <p className="text-xs text-gray-300 mt-1">{tech.description}</p>
-
-                  {tech.prerequisites.length > 0 && (
-                    <div className="text-xs text-gray-400 mt-1">
-                      Requer: {tech.prerequisites.map(prereq => 
-                        technologies[prereq]?.name || prereq
-                      ).join(", ")}
+        {/* Technologies by Category */}
+        {Object.entries(categorizedTechs).map(([category, techs]) => (
+          <div key={category} className="bg-gray-700 p-3 rounded">
+            <h3 className="text-sm font-semibold text-gray-300 mb-2">
+              {categoryNames[category as keyof typeof categoryNames] || category}
+            </h3>
+            <div className="space-y-2">
+              {techs.map((tech) => (
+                <div
+                  key={tech.id}
+                  className={`p-2 rounded border ${
+                    tech.researched
+                      ? "border-green-600 bg-green-900/20"
+                      : currentResearch === tech.id
+                      ? "border-blue-600 bg-blue-900/20"
+                      : canResearch(tech.id)
+                      ? "border-gray-500 bg-gray-600/20"
+                      : "border-gray-600 bg-gray-700/20 opacity-60"
+                  }`}
+                >
+                  <div className="flex justify-between items-start">
+                    <div className="flex-1">
+                      <div className="font-medium text-sm">{tech.name}</div>
+                      <div className="text-xs text-gray-400 mt-1">
+                        {tech.description}
+                      </div>
+                      {tech.requirements.length > 0 && (
+                        <div className="text-xs text-gray-500 mt-1">
+                          Requer: {tech.requirements.join(", ")}
+                        </div>
+                      )}
                     </div>
-                  )}
-
-                  <div className="text-xs text-blue-400 mt-1">
-                    Desbloqueia: {tech.unlocks.join(", ")}
+                    <div className="ml-3 text-right">
+                      {tech.researched ? (
+                        <span className="text-green-400 text-xs">✓ Pesquisado</span>
+                      ) : currentResearch === tech.id ? (
+                        <span className="text-blue-400 text-xs">Em progresso...</span>
+                      ) : (
+                        <div>
+                          <div className="text-yellow-400 font-semibold text-sm">
+                            {tech.cost}
+                          </div>
+                          <button
+                            onClick={() => startResearch(tech.id)}
+                            disabled={!canResearch(tech.id) || !!currentResearch}
+                            className={`text-xs px-2 py-1 rounded mt-1 ${
+                              canResearch(tech.id) && !currentResearch
+                                ? "bg-blue-600 hover:bg-blue-500"
+                                : "bg-gray-600 cursor-not-allowed"
+                            }`}
+                          >
+                            Pesquisar
+                          </button>
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </div>
-
-                <div className="ml-3 text-right">
-                  {tech.researched ? (
-                    <span className="text-green-400 text-xs">✓ Pesquisado</span>
-                  ) : currentResearch === tech.id ? (
-                    <span className="text-blue-400 text-xs">Em progresso...</span>
-                  ) : (
-                    <div>
-                      <div className="text-yellow-400 font-semibold text-sm">
-                        {tech.cost}
-                      </div>
-                      <button
-                        onClick={() => startResearch(tech.id)}
-                        disabled={!canResearch(tech.id) || !!currentResearch}
-                        className={`text-xs px-2 py-1 rounded mt-1 ${
-                          canResearch(tech.id) && !currentResearch
-                            ? "bg-blue-600 hover:bg-blue-500"
-                            : "bg-gray-600 cursor-not-allowed"
-                        }`}
-                      >
-                        Pesquisar
-                      </button>
-                    </div>
-                  )}
-                </div>
-              </div>
+              ))}
             </div>
-          ))}
-        </div>
+          </div>
+        ))}
       </div>
     </div>
   );
