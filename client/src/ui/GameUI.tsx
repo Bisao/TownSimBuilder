@@ -152,12 +152,6 @@ const GameUI = () => {
     useResearchStore.getState().initResearches();
   }, []);
 
-  const [showResearchPanel, setShowResearchPanel] = useState(false);
-  const [showEventPanel, setShowEventPanel] = useState(false);
-  const [showEconomyPanel, setShowEconomyPanel] = useState(false);
-  const [showNpcMetrics, setShowNpcMetrics] = useState(false);
-  const [showMapEditor, setShowMapEditor] = useState(false);
-
   return (
     <>
       {/* Time Control */}
@@ -167,20 +161,27 @@ const GameUI = () => {
         </div>
         <div className="flex gap-2 mt-2">
           <button
-            onClick={() => isPaused ? resumeTime() : pauseTime()}
+            onClick={() => {
+              const gameStore = useGameStore.getState();
+              if (gameStore.isPaused) {
+                gameStore.resumeTime();
+              } else {
+                gameStore.pauseTime();
+              }
+            }}
             className="px-2 py-1 bg-blue-600 hover:bg-blue-700 rounded text-xs"
           >
             {isPaused ? "▶️" : "⏸️"}
           </button>
           <button
-            onClick={decreaseTimeSpeed}
+            onClick={() => useGameStore.getState().decreaseTimeSpeed()}
             className="px-2 py-1 bg-gray-600 hover:bg-gray-700 rounded text-xs"
           >
             -
           </button>
           <span className="px-2 py-1 text-xs">{timeSpeed}x</span>
           <button
-            onClick={increaseTimeSpeed}
+            onClick={() => useGameStore.getState().increaseTimeSpeed()}
             className="px-2 py-1 bg-gray-600 hover:bg-gray-700 rounded text-xs"
           >
             +
@@ -223,207 +224,15 @@ const GameUI = () => {
       </div>
 
       {/* Panels */}
-      <ResourcePanel />
-      <BuildingPanel />
-      <NpcPanel />
+      <ResourcePanel isVisible={showResourcePanel} />
+      <BuildingPanel isVisible={showBuildingPanel} />
       
       {showResearchPanel && <ResearchPanel />}
       {showEventPanel && <EventPanel />}
       {showEconomyPanel && <EconomyPanel />}
-      {showNpcMetrics && <NpcMetricsPanel />}
-      {showMapEditor && <MapEditorPanel />}
+      {showMetrics && <NpcMetricsPanel />}
+      {showMapEditor && <MapEditorPanel isVisible={showMapEditor} />}
 
-      {/* Other UI components */}
-      {selectedNpc && (
-        <SeedSelectionPanel
-          npc={selectedNpc}
-          onClose={() => setSelectedNpc(null)}
-        />
-      )}
-      
-      <SiloPanel />
-    </>
-  );
-};
-
-export default GameUI;
-
-        // Update building production
-        import('../game/stores/useBuildingStore').then(({ useBuildingStore }) => {
-          useBuildingStore.getState().updateProduction(Date.now());
-        });
-
-        // Generate research points based on population and buildings
-        const npcCount = useNpcStore.getState().npcs.length;
-        if (npcCount > 0) {
-          useResearchStore.getState().addResearchPoints(npcCount * 0.1);
-        }
-      }, 16);
-      return () => clearInterval(interval);
-    }
-  }, [isPaused]);
-
-  return (
-    <div className="absolute inset-0 pointer-events-none">
-      <div className="absolute top-4 left-4 flex gap-2 pointer-events-auto">
-        <button
-          onClick={() => setShowBuildingPanel(!showBuildingPanel)}
-          className="bg-black/80 text-white p-2 rounded-lg"
-          title="Painel de Construção"
-        >
-          <i className="fa-solid fa-hammer"></i>
-        </button>
-        <button
-          onClick={() => setShowResourcePanel(!showResourcePanel)}
-          className="bg-black/80 text-white p-2 rounded-lg"
-          title="Painel de Recursos"
-        >
-          <i className="fa-solid fa-box"></i>
-        </button>
-      </div>
-      <ResourcePanel isVisible={showResourcePanel} />
-      <div className="pointer-events-auto">
-        <BuildingPanel isVisible={showBuildingPanel} />
-      </div>
-      <div className="absolute top-4 right-4 pointer-events-auto">
-        {/* Time display panel */}
-        <div className="bg-black/80 rounded-lg p-2 text-white mb-2">
-          <div>Dia {dayCount}</div>
-          <div>{getTimeString()} ({getTimeOfDayName()})</div>
-        </div>
-
-        {/* Time control buttons */}
-        <div className="bg-black/80 rounded-lg p-2 text-white flex gap-1">
-          <button
-            onClick={() => {
-              const gameStore = useGameStore.getState();
-              if (gameStore.isPaused) {
-                gameStore.resumeTime();
-              } else {
-                gameStore.pauseTime();
-              }
-            }}
-            className={`${isPaused ? 'bg-green-500 hover:bg-green-600' : 'bg-yellow-500 hover:bg-yellow-600'} px-2 py-1 rounded text-sm transition-colors`}
-            title={isPaused ? "Continuar (P)" : "Pausar (P)"}
-          >
-            {isPaused ? "▶️" : "⏸️"}
-          </button>
-
-          <button
-            onClick={() => useGameStore.getState().decreaseTimeSpeed()}
-            className="bg-blue-500 hover:bg-blue-600 px-2 py-1 rounded text-sm transition-colors"
-            title="Diminuir velocidade ([)"
-          >
-            ⬇️
-          </button>
-
-          <button
-            onClick={() => useGameStore.getState().increaseTimeSpeed()}
-            className="bg-blue-500 hover:bg-blue-600 px-2 py-1 rounded text-sm transition-colors"
-            title="Aumentar velocidade (])"
-          >
-            ⬆️
-          </button>
-        </div>
-
-        {/* Speed indicator */}
-        <div className="bg-black/80 rounded-lg p-2 text-white text-center text-sm mt-1">
-          {isPaused ? "PAUSADO" : `${timeSpeed}x`}
-        </div>
-      </div>
-
-      <div className="absolute bottom-4 right-4 pointer-events-auto">
-        <button 
-          className="bg-black/80 text-white p-2 rounded-full"
-          onClick={() => setShowControls(!showControls)}
-        >
-          <i className="fa-solid fa-keyboard"></i>
-        </button>
-        {showControls && (
-          <div className="absolute bottom-12 right-0 bg-black/80 rounded-lg p-3 text-white w-64">
-            <h3 className="font-bold mb-2">Controles</h3>
-            <div className="grid grid-cols-2 gap-1 text-sm">
-              <div>Mover Câmera:</div>
-              <div>W,A,S,D / Setas</div>
-              <div>Girar Câmera:</div>
-              <div>Q, E</div>
-              <div>Zoom:</div>
-              <div>+, -</div>
-              <div>Colocar Edifício:</div>
-              <div>Espaço</div>
-              <div>Cancelar:</div>
-              <div>Esc</div>
-              <div>Pausar/Continuar:</div>
-              <div>P</div>
-              <div>Velocidade Tempo:</div>
-              <div>[ ]</div>
-            </div>
-          </div>
-        )}
-      </div>
-
-      <div className="absolute top-4 left-64 flex gap-2 pointer-events-auto">
-        <button 
-          onClick={toggleMute}
-          className="bg-black/80 p-2 rounded-lg text-white"
-          title={isMuted ? "Ativar som" : "Silenciar"}
-        >
-          <i className={`fa-solid ${isMuted ? 'fa-volume-xmark' : 'fa-volume-high'}`}></i>
-        </button>
-        <button 
-          onClick={() => window.dispatchEvent(new KeyboardEvent('keydown', { code: 'KeyG' }))}
-          className="bg-black/80 p-2 rounded-lg text-white"
-          title="Alternar Grid (G)"
-        >
-          <i className="fa-solid fa-grid-2"></i>
-        </button>
-
-          <button
-            onClick={() => setShowMarket(!showMarket)}
-            className="bg-yellow-600 hover:bg-yellow-700 text-white px-4 py-2 rounded-lg font-medium transition-colors"
-          >
-            <i className="fa-solid fa-store mr-2"></i>
-            Mercado
-          </button>
-
-          <button
-            onClick={() => setShowMetrics(!showMetrics)}
-            className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg font-medium transition-colors"
-          >
-            <i className="fa-solid fa-chart-line mr-2"></i>
-            Métricas
-          </button>
-
-          <button
-            onClick={() => {
-              console.log("Toggling map editor:", !showMapEditor);
-              setShowMapEditor(!showMapEditor);
-            }}
-            className={`${showMapEditor ? 'bg-indigo-600' : 'bg-gray-600'} hover:bg-indigo-700 text-white px-4 py-2 rounded-lg font-medium transition-colors shadow-lg`}
-          >
-            <i className="fa-solid fa-map mr-2"></i>
-            Editor {showMapEditor ? '(Ativo)' : ''}
-          </button>
-
-          <button
-            onClick={() => setShowEconomyPanel(!showEconomyPanel)}
-            className={`${showEconomyPanel ? 'bg-yellow-600' : 'bg-gray-600'} hover:bg-yellow-700 text-white px-3 py-2 rounded transition-colors flex items-center gap-2`}
-          >
-            <i className="fa-solid fa-coins"></i>
-            Economia
-          </button>
-
-          <button
-            onClick={() => setShowResearchPanel(!showResearchPanel)}
-            className={`${showResearchPanel ? 'bg-blue-600' : 'bg-gray-600'} hover:bg-blue-700 text-white px-3 py-2 rounded transition-colors flex items-center gap-2`}
-          >
-            <i className="fa-solid fa-flask"></i>
-            Pesquisa
-          </button>
-      </div>
-      {selectedNpc && (
-        <NpcPanel npc={selectedNpc} onClose={() => setSelectedNpc(null)} />
-      )}
       {/* Market Window */}
       {showMarket && (
         <div className="absolute top-16 left-4 z-20">
@@ -431,11 +240,9 @@ export default GameUI;
         </div>
       )}
 
-      {/* Metrics Panel */}
-      {showMetrics && (
-        <div className="absolute top-16 right-4 z-20">
-          <NpcMetricsPanel />
-        </div>
+      {/* Other UI components */}
+      {selectedNpc && (
+        <NpcPanel npc={selectedNpc} onClose={() => setSelectedNpc(null)} />
       )}
 
       {showSeedSelection && (
@@ -466,22 +273,7 @@ export default GameUI;
           siloId={selectedSiloId}
         />
       )}
-
-      <MapEditorPanel isVisible={showMapEditor} />
-
-      {showEconomyPanel && (
-        <div className="absolute top-16 left-4 z-20">
-          <EconomyPanel />
-        </div>
-      )}
-
-      {showResearchPanel && (
-        <div className="absolute top-16 left-4 z-20" style={{ marginTop: showEconomyPanel ? '400px' : '0' }}>
-          <ResearchPanel />
-        </div>
-      )}
-
-    </div>
+    </>
   );
 };
 
