@@ -31,7 +31,7 @@ const MapEditorPanel = ({ isVisible }: { isVisible: boolean }) => {
   const [importData, setImportData] = useState("");
   const [exportData, setExportData] = useState("");
 
-  const { dragRef, position } = useDraggable({
+  const { dragRef, position, isDragging } = useDraggable({
     initialPosition: { x: Math.max(10, window.innerWidth - 330), y: 100 }
   });
 
@@ -78,16 +78,20 @@ const MapEditorPanel = ({ isVisible }: { isVisible: boolean }) => {
         ref={dragRef}
         className="fixed bg-gray-900 text-white rounded-lg shadow-2xl border border-gray-700 w-80 max-h-[80vh] overflow-hidden"
         style={{
-          left: Math.max(10, Math.min(position.x, window.innerWidth - 330)),
-          top: Math.max(10, Math.min(position.y, window.innerHeight - 100)),
+          left: `${Math.max(10, Math.min(position.x, window.innerWidth - 330))}px`,
+          top: `${Math.max(10, Math.min(position.y, window.innerHeight - 100))}px`,
           zIndex: 1000,
           backdropFilter: 'blur(10px)',
           backgroundColor: 'rgba(17, 24, 39, 0.95)',
+          cursor: isDragging ? 'grabbing' : 'default',
         }}
       >
         {/* Header */}
-        <div className="bg-gray-800 p-3 border-b border-gray-700 cursor-move">
-          <h2 className="text-lg font-bold flex items-center gap-2">
+        <div 
+          className="bg-gray-800 p-3 border-b border-gray-700 cursor-move select-none"
+          style={{ cursor: isDragging ? 'grabbing' : 'grab' }}
+        >
+          <h2 className="text-lg font-bold flex items-center gap-2 pointer-events-none">
             <i className="fa-solid fa-map text-green-400"></i>
             Editor de Mapas
           </h2>
