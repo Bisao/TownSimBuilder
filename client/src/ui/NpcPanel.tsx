@@ -49,72 +49,76 @@ const NpcPanel = ({ npc, onClose }: NpcPanelProps) => {
       return;
     }
 
-    // Iniciar trabalho específico baseado no tipo de NPC
-    const npcStore = useNpcStore.getState();
-    const updatedNpcs = npcStore.npcs.map(n => {
-      if (n.id !== npc.id) return n;
+    // Forçar início do trabalho independente do horário
+    useNpcStore.setState(state => ({
+      npcs: state.npcs.map(n => {
+        if (n.id !== npc.id) return n;
 
-      console.log(`Iniciando trabalho manual para NPC ${n.type}`);
+        console.log(`FORÇANDO início de trabalho manual para NPC ${n.type} - mudando de ${n.state} para searching/moving`);
 
-      // Para mineiros e lenhadores: buscar recursos
-      if (n.type === "miner" || n.type === "lumberjack") {
-        return {
-          ...n,
-          state: "searching" as const, // Começar procurando recursos
-          workProgress: 0,
-          targetResource: null,
-          targetPosition: null,
-          targetBuildingId: null,
-          needs: {
-            energy: Math.max(n.needs.energy, 70),
-            satisfaction: Math.max(n.needs.satisfaction, 70)
-          }
-        };
-      }
-
-      // Para fazendeiros: iniciar ciclo de farming
-      if (n.type === "farmer") {
-        return {
-          ...n,
-          state: "idle" as const,
-          workProgress: 0,
-          targetResource: null,
-          targetPosition: null,
-          targetBuildingId: null,
-          farmerData: {
-            ...n.farmerData!,
-            currentTask: "waiting"
-          },
-          needs: {
-            energy: Math.max(n.needs.energy, 70),
-            satisfaction: Math.max(n.needs.satisfaction, 70)
-          }
-        };
-      }
-
-      // Para padeiros: encontrar workplace
-      if (n.type === "baker") {
-        const bakery = buildings.find(b => b.type === "bakery");
-        if (bakery) {
+        // Para mineiros e lenhadores: buscar recursos IMEDIATAMENTE
+        if (n.type === "miner" || n.type === "lumberjack") {
+          // Marcar como trabalhando manualmente para bypass das verificações de horário
           return {
             ...n,
-            state: "moving" as const,
-            targetPosition: [bakery.position[0] + 0.5, 0, bakery.position[1] + 0.5],
-            targetBuildingId: bakery.id,
+            state: "searching" as const,
             workProgress: 0,
+            targetResource: null,
+            targetPosition: null,
+            targetBuildingId: null,
+            isWorkingManually: true, // Flag para indicar trabalho manual
             needs: {
               energy: Math.max(n.needs.energy, 70),
               satisfaction: Math.max(n.needs.satisfaction, 70)
             }
           };
         }
-      }
 
-      return n;
-    });
+        // Para fazendeiros: iniciar ciclo de farming
+        if (n.type === "farmer") {
+          return {
+            ...n,
+            state: "idle" as const,
+            workProgress: 0,
+            targetResource: null,
+            targetPosition: null,
+            targetBuildingId: null,
+            isWorkingManually: true,
+            farmerData: {
+              ...n.farmerData!,
+              currentTask: "waiting"
+            },
+            needs: {
+              energy: Math.max(n.needs.energy, 70),
+              satisfaction: Math.max(n.needs.satisfaction, 70)
+            }
+          };
+        }
 
-    useNpcStore.setState({ npcs: updatedNpcs });
-    console.log(`Trabalho manual iniciado para NPC ${npc.type}`);
+        // Para padeiros: encontrar workplace
+        if (n.type === "baker") {
+          const bakery = buildings.find(b => b.type === "bakery");
+          if (bakery) {
+            return {
+              ...n,
+              state: "moving" as const,
+              targetPosition: [bakery.position[0] + 0.5, 0, bakery.position[1] + 0.5],
+              targetBuildingId: bakery.id,
+              workProgress: 0,
+              isWorkingManually: true,
+              needs: {
+                energy: Math.max(n.needs.energy, 70),
+                satisfaction: Math.max(n.needs.satisfaction, 70)
+              }
+            };
+          }
+        }
+
+        return n;
+      })
+    }));
+    
+    console.log(`Trabalho manual FORÇADO para NPC ${npc.type}`);
   };
 
   return (

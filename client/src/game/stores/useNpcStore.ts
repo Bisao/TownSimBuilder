@@ -52,6 +52,7 @@ export interface NPC {
   lastResourceTime: number;
   lastMoveTime: number;
   stuckTimer: number;
+  isWorkingManually?: boolean;
   inventory: {
     type: string;
     amount: number;
@@ -320,6 +321,32 @@ class NPCStateHandlers {
     if (currentSchedule !== "working") {
       console.log(`NPC ${npc.type} aguardando horário de trabalho`);
       return { state: "resting" };
+    }
+
+    // Se NPC foi ativado manualmente, permitir trabalho independente do horário
+    if (npc.isWorkingManually) {
+      console.log(`NPC ${npc.type} trabalhando manualmente - ignorando horário`);
+      
+      // Se inventário estiver cheio, ir para silo automaticamente
+      if (npc.inventory.amount >= CONSTANTS.MAX_INVENTORY) {
+        console.log(`NPC ${npc.type} inventário cheio (${npc.inventory.amount}/${CONSTANTS.MAX_INVENTORY}), indo para silo`);
+        return NPCStateHandlers.handleInventoryFull(npc, buildings, npcs);
+      }
+
+      // Para mineiros e lenhadores: procurar recursos
+      if (npc.type === "miner" || npc.type === "lumberjack") {
+        return NPCStateHandlers.handleResourceGathering(npc, npcs, reservations, buildings);
+      }
+
+      // Para fazendeiros: continuar ciclo
+      if (npc.type === "farmer" && npc.farmerData?.currentTask && npc.farmerData.currentTask !== "waiting") {
+        return NPCStateHandlers.handleFarmerCycle(npc, buildings);
+      }
+
+      // Para padeiros: ir para workplace
+      if (npc.type === "baker") {
+        return NPCStateHandlers.handleWorkplaceSearch(npc, buildings);
+      }
     }
 
     // MODIFICADO: NPCs agora só trabalham quando ativados manualmente
