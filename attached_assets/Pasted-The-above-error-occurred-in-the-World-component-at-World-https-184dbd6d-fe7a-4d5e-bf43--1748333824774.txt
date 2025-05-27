@@ -1,0 +1,26 @@
+The above error occurred in the <World> component:
+
+    at World (https://184dbd6d-fe7a-4d5e-bf43-2559e8823f37-00-1bz8y42a5dkvu.janeway.replit.dev/src/game/components/World.tsx:29:18)
+    at Suspense
+    at Suspense
+    at ErrorBoundary (https://184dbd6d-fe7a-4d5e-bf43-2559e8823f37-00-1bz8y42a5dkvu.janeway.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-A3GN3WMN.js?v=cc8441ba:16490:5)
+    at FiberProvider (https://184dbd6d-fe7a-4d5e-bf43-2559e8823f37-00-1bz8y42a5dkvu.janeway.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-A3GN3WMN.js?v=cc8441ba:18170:21)
+    at Provider (https://184dbd6d-fe7a-4d5e-bf43-2559e8823f37-00-1bz8y42a5dkvu.janeway.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-A3GN3WMN.js?v=cc8441ba:17779:3)
+
+React will try to recreate this component tree from scratch using the error boundary you provided, ErrorBoundary.
+useResourceStore is not defined
+useResourceStore is not defined
+The above error occurred in the <ForwardRef(Canvas)> component:
+
+    at Canvas (https://184dbd6d-fe7a-4d5e-bf43-2559e8823f37-00-1bz8y42a5dkvu.janeway.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-A3GN3WMN.js?v=cc8441ba:18236:3)
+    at FiberProvider (https://184dbd6d-fe7a-4d5e-bf43-2559e8823f37-00-1bz8y42a5dkvu.janeway.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-A3GN3WMN.js?v=cc8441ba:18170:21)
+    at CanvasWrapper
+    at KeyboardControls (https://184dbd6d-fe7a-4d5e-bf43-2559e8823f37-00-1bz8y42a5dkvu.janeway.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@react-three_drei.js?v=cc8441ba:9151:8)
+    at div
+    at App (https://184dbd6d-fe7a-4d5e-bf43-2559e8823f37-00-1bz8y42a5dkvu.janeway.replit.dev/src/App.tsx?v=BO8acZBu9qG_xyhLsjam7:29:39)
+    at QueryClientProvider (https://184dbd6d-fe7a-4d5e-bf43-2559e8823f37-00-1bz8y42a5dkvu.janeway.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=cc8441ba:2805:3)
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+useResourceStore is not defined
+THREE.WebGLRenderer: Context Lost.
