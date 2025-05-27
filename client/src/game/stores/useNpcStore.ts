@@ -322,21 +322,23 @@ class NPCStateHandlers {
       return { state: "resting" };
     }
 
-    // Comportamento específico do fazendeiro
-    if (npc.type === "farmer") {
+    // MODIFICADO: NPCs agora só trabalham quando ativados manualmente
+    // Não iniciar trabalho automaticamente - aguardar comando manual
+    console.log(`NPC ${npc.type} aguardando comando manual para trabalhar`);
+
+    // Se inventário estiver cheio, ir para silo automaticamente
+    if (npc.inventory.amount >= CONSTANTS.MAX_INVENTORY) {
+      console.log(`NPC ${npc.type} inventário cheio (${npc.inventory.amount}/${CONSTANTS.MAX_INVENTORY}), indo para silo`);
+      return NPCStateHandlers.handleInventoryFull(npc, buildings, npcs);
+    }
+
+    // Comportamento especial para fazendeiro apenas se já estiver trabalhando
+    if (npc.type === "farmer" && npc.farmerData?.currentTask && npc.farmerData.currentTask !== "waiting") {
       return NPCStateHandlers.handleFarmerCycle(npc, buildings);
     }
 
-    // Durante horário de trabalho, trabalhar normalmente para outros NPCs
-    const hasSpaceInInventory = npc.inventory.amount < CONSTANTS.MAX_INVENTORY;
-
-    if (hasSpaceInInventory) {
-      console.log(`NPC ${npc.type} inventário disponível (${npc.inventory.amount}/${CONSTANTS.MAX_INVENTORY}), procurando recursos`);
-      return NPCStateHandlers.handleResourceGathering(npc, npcs, reservations, buildings);
-    } else {
-      console.log(`NPC ${npc.type} inventário cheio (${npc.inventory.amount}/${CONSTANTS.MAX_INVENTORY}), procurando silo`);
-      return NPCStateHandlers.handleInventoryFull(npc, buildings, npcs);
-    }
+    // Ficar idle até receber comando manual
+    return {};
   }
 
   static handleResourceGathering(npc: NPC, npcs: NPC[], reservations: ResourceReservation[], buildings: any[]): Partial<NPC> {

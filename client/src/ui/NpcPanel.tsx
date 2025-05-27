@@ -15,34 +15,7 @@ const NpcPanel = ({ npc, onClose }: NpcPanelProps) => {
   
   if (!npc) return null;
 
-  // Inicia ciclo de trabalho automaticamente se estiver idle
-  React.useEffect(() => {
-    if (npc.state === "idle") {
-      const buildings = useBuildingStore.getState().buildings;
-      const home = buildings.find(b => b.id === npc.homeId);
-
-      if (home) {
-        useNpcStore.setState(state => ({
-          npcs: state.npcs.map(n => {
-            if (n.id !== npc.id) return n;
-
-            return {
-              ...n,
-              position: [home.position[0] + 0.5, 0, home.position[1] + 0.5],
-              state: "searching",
-              workProgress: 0,
-              targetResource: null,
-              targetPosition: null,
-              needs: {
-                energy: Math.max(n.needs.energy, 50),
-                satisfaction: Math.max(n.needs.satisfaction, 50)
-              }
-            };
-          })
-        }));
-      }
-    }
-  }, [npc.state, npc.id]);
+  // Removido: auto-start de trabalho - agora só inicia manualmente via botão
 
   const npcType = npcTypes[npc.type];
   const stateTranslations = {
@@ -66,7 +39,7 @@ const NpcPanel = ({ npc, onClose }: NpcPanelProps) => {
   });
 
   const handleWorkClick = () => {
-    console.log(`Iniciando trabalho para NPC ${npc.type} - Estado atual: ${npc.state}`);
+    console.log(`Iniciando trabalho manual para NPC ${npc.type} - Estado atual: ${npc.state}`);
 
     const buildings = useBuildingStore.getState().buildings;
     const home = buildings.find(b => b.id === npc.homeId);
@@ -76,30 +49,72 @@ const NpcPanel = ({ npc, onClose }: NpcPanelProps) => {
       return;
     }
 
-    // Usar getState e setState separadamente para garantir a atualização
+    // Iniciar trabalho específico baseado no tipo de NPC
     const npcStore = useNpcStore.getState();
     const updatedNpcs = npcStore.npcs.map(n => {
       if (n.id !== npc.id) return n;
 
-      console.log(`Atualizando NPC ${n.type}: estado ${n.state} -> idle para buscar recursos`);
+      console.log(`Iniciando trabalho manual para NPC ${n.type}`);
 
-      return {
-        ...n,
-        position: [home.position[0], 0, home.position[1]], // Posição exata da casa
-        state: "idle" as const, // Força para idle para que a lógica de busca de recursos funcione
-        workProgress: 0,
-        targetResource: null,
-        targetPosition: null,
-        targetBuildingId: null,
-        needs: {
-          energy: Math.max(n.needs.energy, 70), // Aumenta energia para trabalhar
-          satisfaction: Math.max(n.needs.satisfaction, 70)
+      // Para mineiros e lenhadores: buscar recursos
+      if (n.type === "miner" || n.type === "lumberjack") {
+        return {
+          ...n,
+          state: "searching" as const, // Começar procurando recursos
+          workProgress: 0,
+          targetResource: null,
+          targetPosition: null,
+          targetBuildingId: null,
+          needs: {
+            energy: Math.max(n.needs.energy, 70),
+            satisfaction: Math.max(n.needs.satisfaction, 70)
+          }
+        };
+      }
+
+      // Para fazendeiros: iniciar ciclo de farming
+      if (n.type === "farmer") {
+        return {
+          ...n,
+          state: "idle" as const,
+          workProgress: 0,
+          targetResource: null,
+          targetPosition: null,
+          targetBuildingId: null,
+          farmerData: {
+            ...n.farmerData!,
+            currentTask: "waiting"
+          },
+          needs: {
+            energy: Math.max(n.needs.energy, 70),
+            satisfaction: Math.max(n.needs.satisfaction, 70)
+          }
+        };
+      }
+
+      // Para padeiros: encontrar workplace
+      if (n.type === "baker") {
+        const bakery = buildings.find(b => b.type === "bakery");
+        if (bakery) {
+          return {
+            ...n,
+            state: "moving" as const,
+            targetPosition: [bakery.position[0] + 0.5, 0, bakery.position[1] + 0.5],
+            targetBuildingId: bakery.id,
+            workProgress: 0,
+            needs: {
+              energy: Math.max(n.needs.energy, 70),
+              satisfaction: Math.max(n.needs.satisfaction, 70)
+            }
+          };
         }
-      };
+      }
+
+      return n;
     });
 
     useNpcStore.setState({ npcs: updatedNpcs });
-    console.log(`Trabalho iniciado para NPC ${npc.type}`);
+    console.log(`Trabalho manual iniciado para NPC ${npc.type}`);
   };
 
   return (
@@ -298,12 +313,17 @@ const NpcPanel = ({ npc, onClose }: NpcPanelProps) => {
                       return;
                     }
                     
+                    // Iniciar trabalho manual do fazendeiro
                     const updatedNpc = {
                       ...npc,
-                      state: npc.state === "idle" ? "idle" : "idle", // Force idle to restart cycle
+                      state: "idle" as const,
                       workProgress: 0,
                       targetResource: null,
                       targetPosition: null,
+                      farmerData: {
+                        ...npc.farmerData,
+                        currentTask: "waiting" as const
+                      },
                       needs: {
                         ...npc.needs,
                         energy: Math.max(npc.needs.energy, 70),
@@ -314,6 +334,8 @@ const NpcPanel = ({ npc, onClose }: NpcPanelProps) => {
                     useNpcStore.setState(state => ({
                       npcs: state.npcs.map(n => n.id === npc.id ? updatedNpc : n)
                     }));
+                    
+                    console.log(`Fazendeiro iniciado manualmente com semente: ${npc.farmerData.selectedSeed}`);
                   }}
                   className={`w-full px-4 py-2 rounded-lg ${
                     npc.state === "working" || npc.state === "planting" || npc.state === "harvesting"
