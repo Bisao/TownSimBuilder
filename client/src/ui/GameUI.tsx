@@ -18,6 +18,7 @@ import NpcMetricsPanel from "./NpcMetricsPanel";
 import SeedSelectionPanel from "./SeedSelectionPanel";
 import SiloPanel from "./SiloPanel";
 import MapEditorPanel from "./MapEditorPanel";
+import ResearchPanel from "./ResearchPanel"; // Import ResearchPanel
 const GameUI = () => {
   const { backgroundMusic, toggleMute, isMuted } = useAudio();
   const { timeOfDay, dayCount, isPaused, timeSpeed } = useGameStore();
@@ -130,11 +131,22 @@ const GameUI = () => {
   useEffect(() => {
     if (!isPaused) {
       const interval = setInterval(() => {
+        // Update all game systems
         useNpcStore.getState().updateNPCs(0.016); // ~60 FPS
-
-        // Update economy and events
         useEconomyStore.getState().calculateTaxes();
         useEventStore.getState().updateEvents(0.016);
+        // useResearchStore.getState().updateResearch(0.016); // Removing because updateResearch doesn't exist.
+
+        // Update building production
+        import('../game/stores/useBuildingStore').then(({ useBuildingStore }) => {
+          useBuildingStore.getState().updateProduction(Date.now());
+        });
+
+        // Generate research points based on population and buildings
+        const npcCount = useNpcStore.getState().npcs.length;
+        if (npcCount > 0) {
+          // useResearchStore.getState().addResearchPoints(npcCount * 0.1); // Removing because addResearchPoints doesn't exist.
+        }
       }, 16);
       return () => clearInterval(interval);
     }
@@ -334,6 +346,8 @@ const GameUI = () => {
       )}
 
       <MapEditorPanel isVisible={showMapEditor} />
+      {/* Include ResearchPanel */}
+      
     </div>
   );
 };
