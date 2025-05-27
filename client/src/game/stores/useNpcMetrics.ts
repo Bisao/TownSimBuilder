@@ -1,145 +1,146 @@
+
 import { create } from "zustand";
 import { subscribeWithSelector } from "zustand/middleware";
 
-interface NPCMetrics {
-  id: string;
-  name: string;
-  type: string;
+export interface NPCMetrics {
+  npcId: string;
   totalResourcesCollected: Record<string, number>;
-  workTime: number; // total time spent working
-  idleTime: number; // total time spent idle
-  efficiency: number; // 0-100
-  lastActivity: string;
-  activityStartTime: number;
+  totalWorkTime: number;
+  efficiency: number;
+  currentActivity: string;
+  lastActivityChange: number;
+  workSessions: number;
+  idleTime: number;
 }
 
 interface NPCMetricsState {
-  npcMetrics: Record<string, NPCMetrics>;
+  metrics: Record<string, NPCMetrics>;
 
   // Actions
-  initializeNPC: (npcId: string, type?: string, name?: string) => void;
-  updateActivity: (npcId: string, activity: string) => void;
+  initializeNPC: (npcId: string) => void;
   recordResourceCollection: (npcId: string, resourceType: string, amount: number) => void;
+  updateActivity: (npcId: string, activity: string) => void;
+  updateWorkTime: (npcId: string, deltaTime: number) => void;
   updateEfficiency: (npcId: string, efficiency: number) => void;
-  removeNPC: (npcId: string) => void;
-  getTopPerformers: () => NPCMetrics[];
-  getTotalResourcesCollected: () => Record<string, number>;
+  getMetrics: (npcId: string) => NPCMetrics | null;
+  getAllMetrics: () => NPCMetrics[];
 }
 
 export const useNpcMetrics = create<NPCMetricsState>()(
   subscribeWithSelector((set, get) => ({
-    npcMetrics: {},
+    metrics: {},
 
-    initializeNPC: (npcId, type = "unknown", name = "NPC") => {
+    initializeNPC: (npcId) => {
       set((state) => ({
-        npcMetrics: {
-          ...state.npcMetrics,
+        metrics: {
+          ...state.metrics,
           [npcId]: {
-            id: npcId,
-            name,
-            type,
+            npcId,
             totalResourcesCollected: {},
-            workTime: 0,
-            idleTime: 0,
+            totalWorkTime: 0,
             efficiency: 50,
-            lastActivity: "idle",
-            activityStartTime: Date.now(),
+            currentActivity: "idle",
+            lastActivityChange: Date.now(),
+            workSessions: 0,
+            idleTime: 0
           }
-        }
-      }));
-    },
-
-    updateActivity: (npcId, activity) => {
-      const state = get();
-      const metrics = state.npcMetrics[npcId];
-
-      if (!metrics) return;
-
-      const now = Date.now();
-      const timeDiff = (now - metrics.activityStartTime) / 1000; // seconds
-
-      // Update time spent in previous activity
-      const updates: Partial<NPCMetrics> = {
-        lastActivity: activity,
-        activityStartTime: now,
-      };
-
-      if (metrics.lastActivity === "working" || metrics.lastActivity === "gathering") {
-        updates.workTime = metrics.workTime + timeDiff;
-      } else if (metrics.lastActivity === "idle") {
-        updates.idleTime = metrics.idleTime + timeDiff;
-      }
-
-      set((state) => ({
-        npcMetrics: {
-          ...state.npcMetrics,
-          [npcId]: { ...metrics, ...updates }
         }
       }));
     },
 
     recordResourceCollection: (npcId, resourceType, amount) => {
-      const state = get();
-      const metrics = state.npcMetrics[npcId];
+      set((state) => {
+        const currentMetrics = state.metrics[npcId];
+        if (!currentMetrics) return state;
 
-      if (!metrics) return;
-
-      const currentAmount = metrics.totalResourcesCollected[resourceType] || 0;
-
-      set((state) => ({
-        npcMetrics: {
-          ...state.npcMetrics,
-          [npcId]: {
-            ...metrics,
-            totalResourcesCollected: {
-              ...metrics.totalResourcesCollected,
-              [resourceType]: currentAmount + amount
+        return {
+          metrics: {
+            ...state.metrics,
+            [npcId]: {
+              ...currentMetrics,
+              totalResourcesCollected: {
+                ...currentMetrics.totalResourcesCollected,
+                [resourceType]: (currentMetrics.totalResourcesCollected[resourceType] || 0) + amount
+              }
             }
           }
-        }
-      }));
+        };
+      });
+    },
+
+    updateActivity: (npcId, activity) => {
+      set((state) => {
+        const currentMetrics = state.metrics[npcId];
+        if (!currentMetrics) return state;
+
+        const now = Date.now();
+        const timeDiff = now - currentMetrics.lastActivityChange;
+
+        // Se estava trabalhando, incrementar sessões de trabalho
+        const workSessions = currentMetrics.currentActivity === "working" && activity !== "working"
+          ? currentMetrics.workSessions + 1
+          : currentMetrics.workSessions;
+
+        // Atualizar tempo idle
+        const idleTime = currentMetrics.currentActivity === "idle"
+          ? currentMetrics.idleTime + timeDiff
+          : currentMetrics.idleTime;
+
+        return {
+          metrics: {
+            ...state.metrics,
+            [npcId]: {
+              ...currentMetrics,
+              currentActivity: activity,
+              lastActivityChange: now,
+              workSessions,
+              idleTime
+            }
+          }
+        };
+      });
+    },
+
+    updateWorkTime: (npcId, deltaTime) => {
+      set((state) => {
+        const currentMetrics = state.metrics[npcId];
+        if (!currentMetrics || currentMetrics.currentActivity !== "working") return state;
+
+        return {
+          metrics: {
+            ...state.metrics,
+            [npcId]: {
+              ...currentMetrics,
+              totalWorkTime: currentMetrics.totalWorkTime + deltaTime
+            }
+          }
+        };
+      });
     },
 
     updateEfficiency: (npcId, efficiency) => {
-      const state = get();
-      const metrics = state.npcMetrics[npcId];
-
-      if (!metrics) return;
-
-      set((state) => ({
-        npcMetrics: {
-          ...state.npcMetrics,
-          [npcId]: { ...metrics, efficiency }
-        }
-      }));
-    },
-
-    removeNPC: (npcId) => {
       set((state) => {
-        const newMetrics = { ...state.npcMetrics };
-        delete newMetrics[npcId];
-        return { npcMetrics: newMetrics };
+        const currentMetrics = state.metrics[npcId];
+        if (!currentMetrics) return state;
+
+        return {
+          metrics: {
+            ...state.metrics,
+            [npcId]: {
+              ...currentMetrics,
+              efficiency: Math.max(0, Math.min(100, efficiency))
+            }
+          }
+        };
       });
     },
 
-    getTopPerformers: () => {
-      const state = get();
-      return Object.values(state.npcMetrics)
-        .sort((a, b) => b.efficiency - a.efficiency)
-        .slice(0, 5);
+    getMetrics: (npcId) => {
+      return get().metrics[npcId] || null;
     },
 
-    getTotalResourcesCollected: () => {
-      const state = get();
-      const totals: Record<string, number> = {};
-
-      Object.values(state.npcMetrics).forEach(metrics => {
-        Object.entries(metrics.totalResourcesCollected).forEach(([resource, amount]) => {
-          totals[resource] = (totals[resource] || 0) + amount;
-        });
-      });
-
-      return totals;
-    },
+    getAllMetrics: () => {
+      return Object.values(get().metrics);
+    }
   }))
 );

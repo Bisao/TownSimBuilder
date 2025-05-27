@@ -2,173 +2,164 @@
 import { create } from "zustand";
 import { subscribeWithSelector } from "zustand/middleware";
 
-export interface Technology {
+export interface Research {
   id: string;
   name: string;
   description: string;
   cost: number;
   requirements: string[];
   unlocks: string[];
-  researched: boolean;
-  category: "farming" | "mining" | "construction" | "economy";
+  completed: boolean;
+  progress: number;
 }
 
 interface ResearchState {
-  researchPoints: number;
-  technologies: Record<string, Technology>;
-  completedResearch: Set<string>;
+  researches: Record<string, Research>;
   currentResearch: string | null;
-  researchProgress: number;
+  researchPoints: number;
 
   // Actions
+  initResearches: () => void;
+  startResearch: (researchId: string) => boolean;
+  updateResearch: (deltaTime: number) => void;
+  completeResearch: (researchId: string) => void;
   addResearchPoints: (amount: number) => void;
-  spendResearchPoints: (amount: number) => boolean;
-  startResearch: (technologyId: string) => void;
-  completeResearch: (technologyId: string) => void;
-  canResearch: (technologyId: string) => boolean;
-  getAvailableResearch: () => Technology[];
-  resetResearch: () => void;
+  canResearch: (researchId: string) => boolean;
 }
 
-const DEFAULT_TECHNOLOGIES: Record<string, Technology> = {
-  improved_farming: {
-    id: "improved_farming",
-    name: "Agricultura Melhorada",
-    description: "Aumenta a produção de culturas em 25%",
+const DEFAULT_RESEARCHES: Record<string, Research> = {
+  farming: {
+    id: "farming",
+    name: "Agricultura Avançada",
+    description: "Melhora a eficiência das fazendas",
     cost: 100,
-    category: "farming",
     requirements: [],
     unlocks: ["irrigation"],
-    researched: false
+    completed: false,
+    progress: 0
   },
   irrigation: {
     id: "irrigation",
-    name: "Irrigação",
-    description: "Permite cultivo em terrenos áridos",
-    cost: 150,
-    category: "farming",
-    requirements: ["improved_farming"],
-    unlocks: [],
-    researched: false
-  },
-  advanced_materials: {
-    id: "advanced_materials",
-    name: "Materiais Avançados",
-    description: "Reduz custo de construção em 20%",
-    cost: 120,
-    category: "construction",
-    requirements: [],
-    unlocks: ["architecture"],
-    researched: false
-  },
-  architecture: {
-    id: "architecture",
-    name: "Arquitetura",
-    description: "Desbloqueia novos tipos de edifícios",
+    name: "Sistema de Irrigação",
+    description: "Fazendas crescem 50% mais rápido",
     cost: 200,
-    category: "construction",
-    requirements: ["advanced_materials"],
-    unlocks: [],
-    researched: false
+    requirements: ["farming"],
+    unlocks: ["greenhouse"],
+    completed: false,
+    progress: 0
   },
-  trade_routes: {
-    id: "trade_routes",
-    name: "Rotas Comerciais",
-    description: "Aumenta rendimento do comércio em 30%",
-    cost: 80,
-    category: "economy",
+  mining: {
+    id: "mining",
+    name: "Mineração Avançada",
+    description: "Mineiros coletam mais recursos",
+    cost: 150,
     requirements: [],
-    unlocks: ["banking"],
-    researched: false
+    unlocks: ["steel"],
+    completed: false,
+    progress: 0
   },
-  banking: {
-    id: "banking",
-    name: "Sistema Bancário",
-    description: "Gera renda passiva de juros",
-    cost: 250,
-    category: "economy",
-    requirements: ["trade_routes"],
+  steel: {
+    id: "steel",
+    name: "Produção de Aço",
+    description: "Desbloqueia construções avançadas",
+    cost: 300,
+    requirements: ["mining"],
     unlocks: [],
-    researched: false
+    completed: false,
+    progress: 0
   }
 };
 
 export const useResearchStore = create<ResearchState>()(
   subscribeWithSelector((set, get) => ({
-    researchPoints: 50,
-    technologies: DEFAULT_TECHNOLOGIES,
-    completedResearch: new Set(),
+    researches: {},
     currentResearch: null,
-    researchProgress: 0,
+    researchPoints: 50,
 
-    addResearchPoints: (amount) => set((state) => ({
-      researchPoints: state.researchPoints + amount
-    })),
-
-    spendResearchPoints: (amount) => {
-      const state = get();
-      if (state.researchPoints >= amount) {
-        set({ researchPoints: state.researchPoints - amount });
-        return true;
-      }
-      return false;
+    initResearches: () => {
+      set({ researches: { ...DEFAULT_RESEARCHES } });
     },
 
-    startResearch: (technologyId) => {
+    startResearch: (researchId) => {
       const state = get();
-      const tech = state.technologies[technologyId];
+      const research = state.researches[researchId];
       
-      if (!tech || !get().canResearch(technologyId) || state.currentResearch) {
-        return;
+      if (!research || !state.canResearch(researchId) || state.currentResearch) {
+        return false;
       }
 
-      if (get().spendResearchPoints(tech.cost)) {
-        set({
-          currentResearch: technologyId,
-          researchProgress: 0
-        });
+      if (state.researchPoints < research.cost) {
+        return false;
+      }
+
+      set({
+        currentResearch: researchId,
+        researchPoints: state.researchPoints - research.cost
+      });
+
+      return true;
+    },
+
+    updateResearch: (deltaTime) => {
+      const state = get();
+      if (!state.currentResearch) return;
+
+      const research = state.researches[state.currentResearch];
+      if (!research || research.completed) return;
+
+      const newProgress = Math.min(1, research.progress + deltaTime * 0.1);
+      
+      set((state) => ({
+        researches: {
+          ...state.researches,
+          [state.currentResearch!]: {
+            ...research,
+            progress: newProgress
+          }
+        }
+      }));
+
+      if (newProgress >= 1) {
+        get().completeResearch(state.currentResearch);
       }
     },
 
-    completeResearch: (technologyId) => {
+    completeResearch: (researchId) => {
       const state = get();
-      const tech = state.technologies[technologyId];
+      const research = state.researches[researchId];
       
-      if (!tech) return;
+      if (!research) return;
 
       set((state) => ({
-        technologies: {
-          ...state.technologies,
-          [technologyId]: { ...tech, researched: true }
+        researches: {
+          ...state.researches,
+          [researchId]: {
+            ...research,
+            completed: true,
+            progress: 1
+          }
         },
-        completedResearch: new Set([...state.completedResearch, technologyId]),
-        currentResearch: null,
-        researchProgress: 0
+        currentResearch: null
+      }));
+
+      console.log(`Pesquisa ${research.name} concluída!`);
+    },
+
+    addResearchPoints: (amount) => {
+      set((state) => ({
+        researchPoints: state.researchPoints + amount
       }));
     },
 
-    canResearch: (technologyId) => {
+    canResearch: (researchId) => {
       const state = get();
-      const tech = state.technologies[technologyId];
+      const research = state.researches[researchId];
       
-      if (!tech || tech.researched) return false;
-      
-      return tech.requirements.every(req => state.completedResearch.has(req));
-    },
+      if (!research || research.completed) return false;
 
-    getAvailableResearch: () => {
-      const state = get();
-      return Object.values(state.technologies).filter(tech => 
-        !tech.researched && get().canResearch(tech.id)
+      return research.requirements.every(req => 
+        state.researches[req]?.completed
       );
-    },
-
-    resetResearch: () => set({
-      researchPoints: 50,
-      technologies: DEFAULT_TECHNOLOGIES,
-      completedResearch: new Set(),
-      currentResearch: null,
-      researchProgress: 0
-    })
+    }
   }))
 );

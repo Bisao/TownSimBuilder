@@ -21,6 +21,7 @@ import SiloPanel from "./SiloPanel";
 import MapEditorPanel from "./MapEditorPanel";
 import ResearchPanel from "./ResearchPanel";
 import EconomyPanel from "./EconomyPanel";
+import EventPanel from "./EventPanel";
 const GameUI = () => {
   const { backgroundMusic, toggleMute, isMuted } = useAudio();
   const { timeOfDay, dayCount, isPaused, timeSpeed } = useGameStore();
@@ -138,7 +139,114 @@ const GameUI = () => {
         useNpcStore.getState().updateNPCs(0.016); // ~60 FPS
         useEconomyStore.getState().calculateTaxes();
         useEventStore.getState().updateEvents(0.016);
-        // useResearchStore.getState().updateResearch(0.016); // Removing because updateResearch doesn't exist.
+        useResearchStore.getState().updateResearch(0.016);
+      }, 16);
+
+      return () => clearInterval(interval);
+    }
+  }, [isPaused]);
+
+  // Initialize systems
+  useEffect(() => {
+    useResourceStore.getState().initResources();
+    useResearchStore.getState().initResearches();
+  }, []);
+
+  const [showResearchPanel, setShowResearchPanel] = useState(false);
+  const [showEventPanel, setShowEventPanel] = useState(false);
+  const [showEconomyPanel, setShowEconomyPanel] = useState(false);
+  const [showNpcMetrics, setShowNpcMetrics] = useState(false);
+  const [showMapEditor, setShowMapEditor] = useState(false);
+
+  return (
+    <>
+      {/* Time Control */}
+      <div className="absolute top-4 left-4 bg-black/50 text-white p-3 rounded-lg">
+        <div className="text-sm">
+          Dia {dayCount} - {getTimeString()} ({getTimeOfDayName()})
+        </div>
+        <div className="flex gap-2 mt-2">
+          <button
+            onClick={() => isPaused ? resumeTime() : pauseTime()}
+            className="px-2 py-1 bg-blue-600 hover:bg-blue-700 rounded text-xs"
+          >
+            {isPaused ? "▶️" : "⏸️"}
+          </button>
+          <button
+            onClick={decreaseTimeSpeed}
+            className="px-2 py-1 bg-gray-600 hover:bg-gray-700 rounded text-xs"
+          >
+            -
+          </button>
+          <span className="px-2 py-1 text-xs">{timeSpeed}x</span>
+          <button
+            onClick={increaseTimeSpeed}
+            className="px-2 py-1 bg-gray-600 hover:bg-gray-700 rounded text-xs"
+          >
+            +
+          </button>
+        </div>
+      </div>
+
+      {/* UI Panels */}
+      <div className="absolute top-4 right-4 flex flex-col gap-2">
+        <button
+          onClick={() => setShowResearchPanel(!showResearchPanel)}
+          className="px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded text-sm"
+        >
+          Pesquisa
+        </button>
+        <button
+          onClick={() => setShowEventPanel(!showEventPanel)}
+          className="px-3 py-2 bg-green-600 hover:bg-green-700 text-white rounded text-sm"
+        >
+          Eventos
+        </button>
+        <button
+          onClick={() => setShowEconomyPanel(!showEconomyPanel)}
+          className="px-3 py-2 bg-yellow-600 hover:bg-yellow-700 text-white rounded text-sm"
+        >
+          Economia
+        </button>
+        <button
+          onClick={() => setShowNpcMetrics(!showNpcMetrics)}
+          className="px-3 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded text-sm"
+        >
+          Métricas NPCs
+        </button>
+        <button
+          onClick={() => setShowMapEditor(!showMapEditor)}
+          className="px-3 py-2 bg-red-600 hover:bg-red-700 text-white rounded text-sm"
+        >
+          Editor Mapa
+        </button>
+      </div>
+
+      {/* Panels */}
+      <ResourcePanel />
+      <BuildingPanel />
+      <NpcPanel />
+      
+      {showResearchPanel && <ResearchPanel />}
+      {showEventPanel && <EventPanel />}
+      {showEconomyPanel && <EconomyPanel />}
+      {showNpcMetrics && <NpcMetricsPanel />}
+      {showMapEditor && <MapEditorPanel />}
+
+      {/* Other UI components */}
+      {selectedNpc && (
+        <SeedSelectionPanel
+          npc={selectedNpc}
+          onClose={() => setSelectedNpc(null)}
+        />
+      )}
+      
+      <SiloPanel />
+    </>
+  );
+};
+
+export default GameUI;
 
         // Update building production
         import('../game/stores/useBuildingStore').then(({ useBuildingStore }) => {

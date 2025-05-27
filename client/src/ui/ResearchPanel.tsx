@@ -1,140 +1,102 @@
-
 import React from "react";
 import { useResearchStore } from "../game/stores/useResearchStore";
 import { useDraggable } from "../hooks/useDraggable";
 
 const ResearchPanel: React.FC = () => {
-  const {
-    researchPoints,
-    technologies,
-    currentResearch,
-    researchProgress,
-    startResearch,
-    canResearch,
+  const { 
+    researches, 
+    currentResearch, 
+    researchPoints, 
+    startResearch, 
+    canResearch 
   } = useResearchStore();
 
-  const { isDragging, position, handleMouseDown } = useDraggable("research-panel");
+  const {
+    position,
+    isDragging,
+    dragRef,
+    handleMouseDown
+  } = useDraggable({ x: 100, y: 100 });
 
-  const currentTech = currentResearch ? technologies[currentResearch] : null;
-
-  // Group technologies by category
-  const categorizedTechs = Object.values(technologies).reduce((acc, tech) => {
-    if (!acc[tech.category]) {
-      acc[tech.category] = [];
-    }
-    acc[tech.category].push(tech);
-    return acc;
-  }, {} as Record<string, typeof technologies[string][]>);
-
-  const categoryNames = {
-    farming: "🌾 Agricultura",
-    construction: "🏗️ Construção",
-    economy: "💰 Economia",
-    mining: "⛏️ Mineração"
-  };
+  const researchList = Object.values(researches);
 
   return (
     <div
-      className={`absolute bg-gray-800 text-white p-4 rounded-lg shadow-lg w-96 ${
-        isDragging ? "z-50" : "z-10"
-      }`}
+      ref={dragRef}
+      className="absolute bg-gray-800 text-white p-4 rounded-lg shadow-lg w-80 select-none"
       style={{
         left: position.x,
         top: position.y,
-        pointerEvents: "auto",
+        cursor: isDragging ? 'grabbing' : 'grab',
+        zIndex: 1000,
       }}
     >
       <div
-        className="cursor-move mb-3 font-bold text-lg border-b border-gray-600 pb-2"
+        className="flex justify-between items-center mb-3 cursor-grab active:cursor-grabbing"
         onMouseDown={handleMouseDown}
       >
-        🔬 Centro de Pesquisa
+        <h3 className="text-lg font-bold">Pesquisa</h3>
+        <div className="text-sm">
+          Pontos: {researchPoints}
+        </div>
       </div>
 
-      <div className="space-y-4">
-        {/* Research Points */}
-        <div className="bg-gray-700 p-3 rounded">
-          <div className="flex justify-between items-center">
-            <span className="text-blue-400 font-semibold">Pontos de Pesquisa</span>
-            <span className="text-xl font-bold">{researchPoints.toFixed(1)}</span>
+      {currentResearch && (
+        <div className="mb-4 p-2 bg-blue-900 rounded">
+          <div className="text-sm font-semibold">Pesquisando:</div>
+          <div className="text-xs">{researches[currentResearch]?.name}</div>
+          <div className="w-full bg-gray-700 rounded-full h-2 mt-1">
+            <div 
+              className="bg-blue-500 h-2 rounded-full transition-all"
+              style={{ 
+                width: `${(researches[currentResearch]?.progress || 0) * 100}%` 
+              }}
+            />
           </div>
-          {currentTech && (
-            <div className="mt-2">
-              <div className="text-sm text-gray-300 mb-1">
-                Pesquisando: {currentTech.name}
-              </div>
-              <div className="w-full bg-gray-600 rounded-full h-2">
-                <div
-                  className="bg-blue-500 h-2 rounded-full transition-all duration-300"
-                  style={{ width: `${(researchProgress / currentTech.cost) * 100}%` }}
-                />
-              </div>
-              <div className="text-xs text-gray-400 mt-1">
-                {researchProgress.toFixed(1)} / {currentTech.cost}
-              </div>
-            </div>
-          )}
         </div>
+      )}
 
-        {/* Technologies by Category */}
-        {Object.entries(categorizedTechs).map(([category, techs]) => (
-          <div key={category} className="bg-gray-700 p-3 rounded">
-            <h3 className="text-sm font-semibold text-gray-300 mb-2">
-              {categoryNames[category as keyof typeof categoryNames] || category}
-            </h3>
-            <div className="space-y-2">
-              {techs.map((tech) => (
-                <div
-                  key={tech.id}
-                  className={`p-2 rounded border ${
-                    tech.researched
-                      ? "border-green-600 bg-green-900/20"
-                      : currentResearch === tech.id
-                      ? "border-blue-600 bg-blue-900/20"
-                      : canResearch(tech.id)
-                      ? "border-gray-500 bg-gray-600/20"
-                      : "border-gray-600 bg-gray-700/20 opacity-60"
-                  }`}
-                >
-                  <div className="flex justify-between items-start">
-                    <div className="flex-1">
-                      <div className="font-medium text-sm">{tech.name}</div>
-                      <div className="text-xs text-gray-400 mt-1">
-                        {tech.description}
-                      </div>
-                      {tech.requirements.length > 0 && (
-                        <div className="text-xs text-gray-500 mt-1">
-                          Requer: {tech.requirements.join(", ")}
-                        </div>
-                      )}
-                    </div>
-                    <div className="ml-3 text-right">
-                      {tech.researched ? (
-                        <span className="text-green-400 text-xs">✓ Pesquisado</span>
-                      ) : currentResearch === tech.id ? (
-                        <span className="text-blue-400 text-xs">Em progresso...</span>
-                      ) : (
-                        <div>
-                          <div className="text-yellow-400 font-semibold text-sm">
-                            {tech.cost}
-                          </div>
-                          <button
-                            onClick={() => startResearch(tech.id)}
-                            disabled={!canResearch(tech.id) || !!currentResearch}
-                            className={`text-xs px-2 py-1 rounded mt-1 ${
-                              canResearch(tech.id) && !currentResearch
-                                ? "bg-blue-600 hover:bg-blue-500"
-                                : "bg-gray-600 cursor-not-allowed"
-                            }`}
-                          >
-                            Pesquisar
-                          </button>
-                        </div>
-                      )}
-                    </div>
-                  </div>
+      <div className="space-y-2 max-h-64 overflow-y-auto">
+        {researchList.map((research) => (
+          <div
+            key={research.id}
+            className={`p-2 rounded border ${
+              research.completed
+                ? 'bg-green-900 border-green-600'
+                : canResearch(research.id)
+                ? 'bg-gray-700 border-gray-500 hover:bg-gray-600'
+                : 'bg-gray-800 border-gray-600 opacity-50'
+            }`}
+          >
+            <div className="flex justify-between items-start">
+              <div className="flex-1">
+                <div className="font-semibold text-sm">{research.name}</div>
+                <div className="text-xs text-gray-300 mb-1">
+                  {research.description}
                 </div>
-              ))}
+                <div className="text-xs text-gray-400">
+                  Custo: {research.cost} pontos
+                </div>
+                {research.requirements.length > 0 && (
+                  <div className="text-xs text-gray-400">
+                    Requer: {research.requirements.join(", ")}
+                  </div>
+                )}
+              </div>
+
+              {!research.completed && canResearch(research.id) && !currentResearch && (
+                <button
+                  onClick={() => startResearch(research.id)}
+                  disabled={researchPoints < research.cost}
+                  className="ml-2 px-2 py-1 text-xs bg-blue-600 hover:bg-blue-700 disabled:bg-gray-600 disabled:cursor-not-allowed rounded"
+                >
+                  Pesquisar
+                </button>
+              )}
+
+              {research.completed && (
+                <div className="ml-2 text-xs text-green-400">✓</div>
+              )}
             </div>
           </div>
         ))}
