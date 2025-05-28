@@ -1,4 +1,3 @@
-
 import { Canvas } from '@react-three/fiber';
 import { Suspense, useEffect, useState } from "react";
 import { KeyboardControls } from '@react-three/drei';
@@ -9,7 +8,7 @@ import GameUI from './ui/GameUI';
 import MarketWindow from './ui/MarketWindow';
 import { Controls } from './game/stores/useGameStore';
 import { buildingTypes, BuildingType } from './game/constants/buildings';
-import { LoginForm } from './components/ui/login';
+import { Login } from '@/components/ui/login';
 import { CharacterCreation } from './components/ui/character-creation';
 import { CharacterSelection } from './components/ui/character-selection';
 import { Interface } from './components/ui/interface';
@@ -19,7 +18,7 @@ function App() {
   const [showCanvas, setShowCanvas] = useState(false);
   const { setBackgroundMusic } = useAudio();
   const [selectedMarket, setSelectedMarket] = useState<BuildingType | null>(null);
-  const { phase, playerData } = useGame();
+  const { phase, playerData, login } = useGame();
 
   // Define keyboard controls mapping
   const keyboardMap = [
@@ -75,17 +74,17 @@ function App() {
   const renderGamePhase = () => {
     switch (phase) {
       case "login":
-        return <LoginForm />;
-      
+        return <Login onLogin={login} />;
+
       case "character-creation":
         return <CharacterCreation />;
-      
+
       case "character-selection":
         return <CharacterSelection />;
-      
+
       case "ready":
         return <Interface />;
-      
+
       case "playing":
         return (
           <div className="w-full h-screen">
@@ -113,16 +112,16 @@ function App() {
             </KeyboardControls>
           </div>
         );
-      
+
       case "ended":
         return (
           <div className="w-full h-screen flex items-center justify-center bg-background text-foreground">
             <div className="text-xl">Game Ended</div>
           </div>
         );
-      
+
       default:
-        return <LoginForm />;
+        return <Login onLogin={login} />;
     }
   };
 
