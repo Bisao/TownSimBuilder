@@ -77,8 +77,7 @@ const PlacementIndicator = () => {
 
         if (success) {
           console.log(`Building ${selectedBuildingType} placed at ${placementPosition}`);
-          // Manter o modo de construção para continuar colocando edifícios
-          // selectBuilding(null); // Removido para manter o modo de construção
+          // O GameStore será notificado automaticamente via useBuildingStore
         }
       }
     };
@@ -120,8 +119,7 @@ const PlacementIndicator = () => {
 
         if (success) {
           console.log(`Building ${selectedBuildingType} placed at ${placementPosition}`);
-          // Não sair do modo de construção para permitir colocar vários edifícios
-          // selectBuilding(null);
+          // O GameStore será notificado automaticamente via useBuildingStore
         }
       }
     } else if (!placeKey && keyState.current.placePressed) {

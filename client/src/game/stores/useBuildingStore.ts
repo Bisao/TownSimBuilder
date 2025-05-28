@@ -88,6 +88,14 @@ export const useBuildingStore = create<BuildingState>()(
         buildingIdCounter: state.buildingIdCounter + 1,
       }));
       
+      // Notificar o GameStore que um edifício foi posicionado
+      try {
+        const { useGameStore } = await import('./useGameStore');
+        useGameStore.getState().onBuildingPlaced();
+      } catch (error) {
+        console.error("Error notifying building placement:", error);
+      }
+      
       console.log(`Building ${type} placed at [${position[0]}, ${position[1]}]`);
       return true;
     },
