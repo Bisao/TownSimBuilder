@@ -5,6 +5,7 @@ import { useBuildingStore } from "../game/stores/useBuildingStore";
 import { useGameStore } from "../game/stores/useGameStore";
 import { useDraggable } from "../hooks/useDraggable";
 import SeedSelectionPanel from "./SeedSelectionPanel";
+import SkillTreePanel from "./SkillTreePanel";
 
 interface NpcPanelProps {
   npc: NPC | null;
@@ -13,6 +14,7 @@ interface NpcPanelProps {
 
 const NpcPanel = ({ npc, onClose }: NpcPanelProps) => {
   const [showSeedSelection, setShowSeedSelection] = useState(false);
+  const [showSkillTree, setShowSkillTree] = useState(false);
 
   if (!npc) return null;
 
@@ -173,6 +175,21 @@ const NpcPanel = ({ npc, onClose }: NpcPanelProps) => {
 
           <div className="bg-gray-50 p-4 rounded-lg">
             <h3 className="font-semibold mb-2 text-gray-700">Modo de Controle</h3>
+            
+            {/* Skill Tree Button */}
+            <div className="mb-4">
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setShowSkillTree(true);
+                }}
+                className="w-full px-4 py-2 bg-purple-500 hover:bg-purple-600 text-white rounded-lg font-medium transition-colors flex items-center justify-center gap-2"
+              >
+                <i className="fa-solid fa-sitemap"></i>
+                🌟 Árvore de Habilidades
+              </button>
+            </div>
+
             <div className="flex gap-2 mb-4">
               <button
                 onClick={(e) => {
@@ -504,6 +521,13 @@ const NpcPanel = ({ npc, onClose }: NpcPanelProps) => {
             setShowSeedSelection(false);
           }}
           onClose={() => setShowSeedSelection(false)}
+        />
+      )}
+
+      {showSkillTree && (
+        <SkillTreePanel
+          npc={npc}
+          onClose={() => setShowSkillTree(false)}
         />
       )}
     </div>

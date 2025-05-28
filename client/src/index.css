@@ -16,6 +16,11 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Custom utilities for skill tree */
+.bg-gradient-radial {
+  background: radial-gradient(circle, var(--tw-gradient-stops));
+}
+
 @layer base {
   * {
     @apply border-border;
