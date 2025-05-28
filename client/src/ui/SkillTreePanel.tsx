@@ -48,7 +48,7 @@ const SkillTreePanel = ({ npc, onClose }: SkillTreePanelProps) => {
         cost: 0,
         requirements: [],
         category: 'adventurer' as const,
-        position: { x: 400, y: 50 },
+        position: { x: 800, y: 100 },
         connections: ['journeyman_adventurer'],
         tier: 1
       },
@@ -61,7 +61,7 @@ const SkillTreePanel = ({ npc, onClose }: SkillTreePanelProps) => {
         cost: 50,
         requirements: ['novice_adventurer'],
         category: 'adventurer' as const,
-        position: { x: 400, y: 100 },
+        position: { x: 800, y: 200 },
         connections: ['adept_adventurer'],
         tier: 2
       },
@@ -74,7 +74,7 @@ const SkillTreePanel = ({ npc, onClose }: SkillTreePanelProps) => {
         cost: 100,
         requirements: ['journeyman_adventurer'],
         category: 'adventurer' as const,
-        position: { x: 400, y: 150 },
+        position: { x: 800, y: 300 },
         connections: ['expert_adventurer', 'crafting_branch', 'gathering_branch', 'combat_branch'],
         tier: 3
       },
@@ -87,7 +87,7 @@ const SkillTreePanel = ({ npc, onClose }: SkillTreePanelProps) => {
         cost: 200,
         requirements: ['adept_adventurer'],
         category: 'adventurer' as const,
-        position: { x: 400, y: 200 },
+        position: { x: 800, y: 400 },
         connections: ['master_adventurer'],
         tier: 4
       },
@@ -100,7 +100,7 @@ const SkillTreePanel = ({ npc, onClose }: SkillTreePanelProps) => {
         cost: 400,
         requirements: ['expert_adventurer'],
         category: 'adventurer' as const,
-        position: { x: 400, y: 250 },
+        position: { x: 800, y: 500 },
         connections: ['grandmaster_adventurer'],
         tier: 5
       },
@@ -113,7 +113,7 @@ const SkillTreePanel = ({ npc, onClose }: SkillTreePanelProps) => {
         cost: 800,
         requirements: ['master_adventurer'],
         category: 'adventurer' as const,
-        position: { x: 400, y: 300 },
+        position: { x: 800, y: 600 },
         connections: ['elder_adventurer'],
         tier: 6
       },
@@ -126,7 +126,7 @@ const SkillTreePanel = ({ npc, onClose }: SkillTreePanelProps) => {
         cost: 1600,
         requirements: ['grandmaster_adventurer'],
         category: 'adventurer' as const,
-        position: { x: 400, y: 350 },
+        position: { x: 800, y: 700 },
         connections: [],
         tier: 7
       }
@@ -144,7 +144,7 @@ const SkillTreePanel = ({ npc, onClose }: SkillTreePanelProps) => {
         cost: 100,
         requirements: ['adept_adventurer'],
         category: 'crafting' as const,
-        position: { x: 150, y: 200 },
+        position: { x: 300, y: 300 },
         connections: ['warrior_forge', 'hunter_lodge', 'mage_tower', 'toolmaker', 'alchemist', 'cook'],
         tier: 3
       },
@@ -160,7 +160,7 @@ const SkillTreePanel = ({ npc, onClose }: SkillTreePanelProps) => {
         requirements: ['crafting_branch'],
         category: 'crafting' as const,
         subcategory: 'warrior_forge',
-        position: { x: 50, y: 300 },
+        position: { x: 100, y: 450 },
         connections: ['plate_armor_crafter', 'sword_crafter', 'axe_crafter', 'mace_crafter', 'hammer_crafter', 'war_gloves_crafter', 'crossbow_crafter', 'shield_crafter'],
         tier: 4
       },
@@ -176,7 +176,7 @@ const SkillTreePanel = ({ npc, onClose }: SkillTreePanelProps) => {
         requirements: ['warrior_forge'],
         category: 'crafting' as const,
         subcategory: 'warrior_forge',
-        position: { x: 20, y: 400 },
+        position: { x: 50, y: 600 },
         connections: ['plate_helmet_specialist', 'plate_armor_specialist', 'plate_boots_specialist'],
         tier: 5
       },
@@ -190,7 +190,7 @@ const SkillTreePanel = ({ npc, onClose }: SkillTreePanelProps) => {
         requirements: ['plate_armor_crafter'],
         category: 'crafting' as const,
         subcategory: 'warrior_forge',
-        position: { x: 10, y: 450 },
+        position: { x: 20, y: 750 },
         connections: [],
         tier: 6
       },
@@ -204,7 +204,7 @@ const SkillTreePanel = ({ npc, onClose }: SkillTreePanelProps) => {
         requirements: ['plate_armor_crafter'],
         category: 'crafting' as const,
         subcategory: 'warrior_forge',
-        position: { x: 30, y: 450 },
+        position: { x: 50, y: 750 },
         connections: [],
         tier: 6
       },
@@ -218,7 +218,7 @@ const SkillTreePanel = ({ npc, onClose }: SkillTreePanelProps) => {
         requirements: ['plate_armor_crafter'],
         category: 'crafting' as const,
         subcategory: 'warrior_forge',
-        position: { x: 50, y: 450 },
+        position: { x: 80, y: 750 },
         connections: [],
         tier: 6
       },
@@ -234,7 +234,7 @@ const SkillTreePanel = ({ npc, onClose }: SkillTreePanelProps) => {
         requirements: ['warrior_forge'],
         category: 'crafting' as const,
         subcategory: 'warrior_forge',
-        position: { x: 70, y: 400 },
+        position: { x: 120, y: 600 },
         connections: ['claymore_specialist', 'dual_swords_specialist'],
         tier: 5
       },
@@ -248,7 +248,7 @@ const SkillTreePanel = ({ npc, onClose }: SkillTreePanelProps) => {
         requirements: ['warrior_forge'],
         category: 'crafting' as const,
         subcategory: 'warrior_forge',
-        position: { x: 90, y: 400 },
+        position: { x: 150, y: 600 },
         connections: ['greataxe_specialist', 'halberd_specialist'],
         tier: 5
       },
@@ -264,7 +264,7 @@ const SkillTreePanel = ({ npc, onClose }: SkillTreePanelProps) => {
         requirements: ['crafting_branch'],
         category: 'crafting' as const,
         subcategory: 'hunter_lodge',
-        position: { x: 150, y: 300 },
+        position: { x: 300, y: 450 },
         connections: ['leather_armor_crafter', 'bow_crafter', 'spear_crafter', 'nature_staff_crafter', 'dagger_crafter', 'quarterstaff_crafter'],
         tier: 4
       },
@@ -280,7 +280,7 @@ const SkillTreePanel = ({ npc, onClose }: SkillTreePanelProps) => {
         requirements: ['crafting_branch'],
         category: 'crafting' as const,
         subcategory: 'mage_tower',
-        position: { x: 250, y: 300 },
+        position: { x: 500, y: 450 },
         connections: ['cloth_armor_crafter', 'fire_staff_crafter', 'holy_staff_crafter', 'arcane_staff_crafter', 'frost_staff_crafter', 'cursed_staff_crafter', 'tome_crafter'],
         tier: 4
       },
@@ -296,7 +296,7 @@ const SkillTreePanel = ({ npc, onClose }: SkillTreePanelProps) => {
         requirements: ['crafting_branch'],
         category: 'crafting' as const,
         subcategory: 'toolmaker',
-        position: { x: 350, y: 300 },
+        position: { x: 700, y: 450 },
         connections: ['gathering_tools_specialist', 'accessories_specialist'],
         tier: 4
       }
@@ -313,7 +313,7 @@ const SkillTreePanel = ({ npc, onClose }: SkillTreePanelProps) => {
         cost: 100,
         requirements: ['adept_adventurer'],
         category: 'gathering' as const,
-        position: { x: 650, y: 200 },
+        position: { x: 1300, y: 300 },
         connections: ['lumberjack', 'quarrier', 'miner', 'harvester', 'skinner', 'fisherman'],
         tier: 3
       },
@@ -328,7 +328,7 @@ const SkillTreePanel = ({ npc, onClose }: SkillTreePanelProps) => {
         cost: 150,
         requirements: ['gathering_branch'],
         category: 'gathering' as const,
-        position: { x: 550, y: 300 },
+        position: { x: 1100, y: 450 },
         connections: ['adept_lumberjack', 'lumberjack_tools', 'wood_specialist'],
         tier: 4
       },
@@ -341,7 +341,7 @@ const SkillTreePanel = ({ npc, onClose }: SkillTreePanelProps) => {
         cost: 150,
         requirements: ['gathering_branch'],
         category: 'gathering' as const,
-        position: { x: 650, y: 300 },
+        position: { x: 1300, y: 450 },
         connections: ['adept_miner', 'miner_tools', 'ore_specialist'],
         tier: 4
       },
@@ -354,7 +354,7 @@ const SkillTreePanel = ({ npc, onClose }: SkillTreePanelProps) => {
         cost: 150,
         requirements: ['gathering_branch'],
         category: 'gathering' as const,
-        position: { x: 750, y: 300 },
+        position: { x: 1500, y: 450 },
         connections: ['adept_quarrier', 'quarrier_tools', 'stone_specialist'],
         tier: 4
       },
@@ -367,7 +367,7 @@ const SkillTreePanel = ({ npc, onClose }: SkillTreePanelProps) => {
         cost: 150,
         requirements: ['gathering_branch'],
         category: 'gathering' as const,
-        position: { x: 600, y: 350 },
+        position: { x: 1200, y: 600 },
         connections: ['adept_harvester', 'harvester_tools', 'fiber_specialist'],
         tier: 4
       },
@@ -380,7 +380,7 @@ const SkillTreePanel = ({ npc, onClose }: SkillTreePanelProps) => {
         cost: 150,
         requirements: ['gathering_branch'],
         category: 'gathering' as const,
-        position: { x: 700, y: 350 },
+        position: { x: 1400, y: 600 },
         connections: ['adept_skinner', 'skinner_tools', 'hide_specialist'],
         tier: 4
       },
@@ -393,7 +393,7 @@ const SkillTreePanel = ({ npc, onClose }: SkillTreePanelProps) => {
         cost: 150,
         requirements: ['gathering_branch'],
         category: 'gathering' as const,
-        position: { x: 650, y: 400 },
+        position: { x: 1300, y: 750 },
         connections: ['adept_fisherman', 'fishing_gear', 'fish_specialist'],
         tier: 4
       }
@@ -410,7 +410,7 @@ const SkillTreePanel = ({ npc, onClose }: SkillTreePanelProps) => {
         cost: 100,
         requirements: ['adept_adventurer'],
         category: 'farming' as const,
-        position: { x: 400, y: 450 },
+        position: { x: 800, y: 900 },
         connections: ['crop_farmer', 'herb_grower', 'animal_breeder'],
         tier: 3
       },
@@ -423,7 +423,7 @@ const SkillTreePanel = ({ npc, onClose }: SkillTreePanelProps) => {
         cost: 150,
         requirements: ['farming_branch'],
         category: 'farming' as const,
-        position: { x: 300, y: 550 },
+        position: { x: 600, y: 1000 },
         connections: ['adept_crop_farmer', 'crop_specialist'],
         tier: 4
       },
@@ -436,7 +436,7 @@ const SkillTreePanel = ({ npc, onClose }: SkillTreePanelProps) => {
         cost: 150,
         requirements: ['farming_branch'],
         category: 'farming' as const,
-        position: { x: 400, y: 550 },
+        position: { x: 800, y: 1000 },
         connections: ['adept_herb_grower', 'herb_specialist'],
         tier: 4
       },
@@ -449,7 +449,7 @@ const SkillTreePanel = ({ npc, onClose }: SkillTreePanelProps) => {
         cost: 150,
         requirements: ['farming_branch'],
         category: 'farming' as const,
-        position: { x: 500, y: 550 },
+        position: { x: 1000, y: 1000 },
         connections: ['adept_animal_breeder', 'animal_specialist'],
         tier: 4
       }
@@ -466,7 +466,7 @@ const SkillTreePanel = ({ npc, onClose }: SkillTreePanelProps) => {
         cost: 100,
         requirements: ['adept_adventurer'],
         category: 'combat' as const,
-        position: { x: 400, y: 600 },
+        position: { x: 400, y: 1200 },
         connections: ['warrior_combat', 'hunter_combat', 'mage_combat', 'reaver'],
         tier: 3
       },
@@ -479,7 +479,7 @@ const SkillTreePanel = ({ npc, onClose }: SkillTreePanelProps) => {
         cost: 150,
         requirements: ['combat_branch'],
         category: 'combat' as const,
-        position: { x: 300, y: 700 },
+        position: { x: 200, y: 1350 },
         connections: ['adept_reaver'],
         tier: 4
       },
@@ -492,7 +492,7 @@ const SkillTreePanel = ({ npc, onClose }: SkillTreePanelProps) => {
         cost: 150,
         requirements: ['combat_branch'],
         category: 'combat' as const,
-        position: { x: 350, y: 700 },
+        position: { x: 300, y: 1350 },
         connections: ['plate_fighter', 'sword_fighter', 'axe_fighter'],
         tier: 4
       },
@@ -505,7 +505,7 @@ const SkillTreePanel = ({ npc, onClose }: SkillTreePanelProps) => {
         cost: 150,
         requirements: ['combat_branch'],
         category: 'combat' as const,
-        position: { x: 450, y: 700 },
+        position: { x: 500, y: 1350 },
         connections: ['leather_fighter', 'bow_fighter', 'spear_fighter'],
         tier: 4
       },
@@ -518,7 +518,7 @@ const SkillTreePanel = ({ npc, onClose }: SkillTreePanelProps) => {
         cost: 150,
         requirements: ['combat_branch'],
         category: 'combat' as const,
-        position: { x: 500, y: 700 },
+        position: { x: 600, y: 1350 },
         connections: ['cloth_fighter', 'fire_fighter', 'holy_fighter'],
         tier: 4
       }
@@ -535,7 +535,7 @@ const SkillTreePanel = ({ npc, onClose }: SkillTreePanelProps) => {
         cost: 100,
         requirements: ['adept_adventurer'],
         category: 'refining' as const,
-        position: { x: 800, y: 200 },
+        position: { x: 1800, y: 300 },
         connections: ['wood_refiner', 'stone_refiner', 'ore_refiner', 'leather_refiner', 'fiber_refiner'],
         tier: 3
       },
@@ -548,7 +548,7 @@ const SkillTreePanel = ({ npc, onClose }: SkillTreePanelProps) => {
         cost: 150,
         requirements: ['refining_branch'],
         category: 'refining' as const,
-        position: { x: 750, y: 300 },
+        position: { x: 1650, y: 450 },
         connections: ['adept_wood_refiner', 'planks_specialist'],
         tier: 4
       },
@@ -561,7 +561,7 @@ const SkillTreePanel = ({ npc, onClose }: SkillTreePanelProps) => {
         cost: 150,
         requirements: ['refining_branch'],
         category: 'refining' as const,
-        position: { x: 850, y: 300 },
+        position: { x: 1950, y: 450 },
         connections: ['adept_ore_refiner', 'metal_bar_specialist'],
         tier: 4
       }
@@ -627,22 +627,14 @@ const SkillTreePanel = ({ npc, onClose }: SkillTreePanelProps) => {
 
   return (
     <div 
-      className="fixed inset-0 bg-black/70 flex items-center justify-center z-[9999] pointer-events-auto"
+      className="fixed inset-0 bg-black/90 z-[9999] pointer-events-auto"
       onClick={(e) => {
         if (e.target === e.currentTarget) onClose();
         e.stopPropagation();
       }}
     >
       <div 
-        className="bg-gray-900 rounded-xl border border-gray-600 w-[1200px] h-[900px] relative overflow-hidden"
-        style={{
-          position: 'absolute',
-          left: `${position.x}px`,
-          top: `${position.y}px`,
-          cursor: isDragging ? 'grabbing' : 'grab',
-        }}
-        ref={dragRef}
-        onMouseDown={handleMouseDown}
+        className="bg-gray-900 w-full h-full relative overflow-hidden"
       >
         {/* Header */}
         <div className="flex justify-between items-center p-4 border-b border-gray-600 bg-gray-800">
@@ -702,7 +694,7 @@ const SkillTreePanel = ({ npc, onClose }: SkillTreePanelProps) => {
         <div className="flex h-[calc(100%-140px)]">
           {/* Skill Tree Visualization */}
           <div className="flex-1 relative bg-gray-800 overflow-auto">
-            <div className="absolute inset-0 bg-gradient-to-br from-gray-700 via-gray-800 to-gray-900" style={{ width: '2000px', height: '1500px' }}>
+            <div className="absolute inset-0 bg-gradient-to-br from-gray-700 via-gray-800 to-gray-900" style={{ width: '2500px', height: '2000px' }}>
               <svg className="absolute inset-0 w-full h-full">
                 {/* Render connections */}
                 {filteredSkills.map(skill => 
