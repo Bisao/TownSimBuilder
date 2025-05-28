@@ -37,12 +37,17 @@ const SkillTreePanel = ({ npc, onClose }: SkillTreePanelProps) => {
   const getAllSkills = (): SkillNode[] => {
     const skills: SkillNode[] = [];
 
-    // Definindo espaçamento padrão
-    const NODE_SPACING_X = 200;
-    const NODE_SPACING_Y = 150;
-    const SECTION_SPACING_X = 400;
+    // Centro da árvore
+    const centerX = 1250;
+    const centerY = 900;
+    
+    // Distâncias radiais
+    const innerRadius = 120;
+    const middleRadius = 220;
+    const outerRadius = 320;
+    const farRadius = 420;
 
-    // CAMINHO DO AVENTUREIRO - Centro (coluna 6)
+    // CAMINHO DO AVENTUREIRO - Centro
     const adventurerSkills = [
       {
         id: 'novice_adventurer',
@@ -53,7 +58,7 @@ const SkillTreePanel = ({ npc, onClose }: SkillTreePanelProps) => {
         cost: 0,
         requirements: [],
         category: 'adventurer' as const,
-        position: { x: 1200, y: 100 },
+        position: { x: centerX, y: centerY - 200 },
         connections: ['journeyman_adventurer'],
         tier: 1
       },
@@ -66,20 +71,20 @@ const SkillTreePanel = ({ npc, onClose }: SkillTreePanelProps) => {
         cost: 50,
         requirements: ['novice_adventurer'],
         category: 'adventurer' as const,
-        position: { x: 1200, y: 250 },
+        position: { x: centerX, y: centerY - 100 },
         connections: ['adept_adventurer'],
         tier: 2
       },
       {
         id: 'adept_adventurer',
         name: 'Aventureiro Adepto',
-        description: 'Aventureiro competente',
+        description: 'Aventureiro competente - Centro da árvore',
         maxLevel: 100,
         currentLevel: 0,
         cost: 100,
         requirements: ['journeyman_adventurer'],
         category: 'adventurer' as const,
-        position: { x: 1200, y: 400 },
+        position: { x: centerX, y: centerY },
         connections: ['expert_adventurer', 'crafting_branch', 'gathering_branch', 'farming_branch', 'combat_branch', 'refining_branch'],
         tier: 3
       },
@@ -92,7 +97,7 @@ const SkillTreePanel = ({ npc, onClose }: SkillTreePanelProps) => {
         cost: 200,
         requirements: ['adept_adventurer'],
         category: 'adventurer' as const,
-        position: { x: 1200, y: 550 },
+        position: { x: centerX, y: centerY + 100 },
         connections: ['master_adventurer'],
         tier: 4
       },
@@ -105,7 +110,7 @@ const SkillTreePanel = ({ npc, onClose }: SkillTreePanelProps) => {
         cost: 400,
         requirements: ['expert_adventurer'],
         category: 'adventurer' as const,
-        position: { x: 1200, y: 700 },
+        position: { x: centerX, y: centerY + 200 },
         connections: ['grandmaster_adventurer'],
         tier: 5
       },
@@ -118,7 +123,7 @@ const SkillTreePanel = ({ npc, onClose }: SkillTreePanelProps) => {
         cost: 800,
         requirements: ['master_adventurer'],
         category: 'adventurer' as const,
-        position: { x: 1200, y: 850 },
+        position: { x: centerX, y: centerY + 300 },
         connections: ['elder_adventurer'],
         tier: 6
       },
@@ -131,13 +136,14 @@ const SkillTreePanel = ({ npc, onClose }: SkillTreePanelProps) => {
         cost: 1600,
         requirements: ['grandmaster_adventurer'],
         category: 'adventurer' as const,
-        position: { x: 1200, y: 1000 },
+        position: { x: centerX, y: centerY + 400 },
         connections: [],
         tier: 7
       }
     ];
 
-    // CRAFTING BRANCH - Lado esquerdo (colunas 1-3)
+    // CRAFTING BRANCH - Noroeste (45 graus)
+    const craftingAngle = -Math.PI / 4; // -45 graus
     const craftingSkills = [
       // Crafting Root
       {
@@ -149,12 +155,15 @@ const SkillTreePanel = ({ npc, onClose }: SkillTreePanelProps) => {
         cost: 100,
         requirements: ['adept_adventurer'],
         category: 'crafting' as const,
-        position: { x: 400, y: 400 },
+        position: { 
+          x: centerX + Math.cos(craftingAngle) * innerRadius, 
+          y: centerY + Math.sin(craftingAngle) * innerRadius 
+        },
         connections: ['warrior_forge', 'hunter_lodge', 'mage_tower', 'toolmaker'],
         tier: 3
       },
 
-      // WARRIOR'S FORGE - Coluna 1
+      // WARRIOR'S FORGE - Ramo principal
       {
         id: 'warrior_forge',
         name: 'Forja do Guerreiro',
@@ -165,7 +174,10 @@ const SkillTreePanel = ({ npc, onClose }: SkillTreePanelProps) => {
         requirements: ['crafting_branch'],
         category: 'crafting' as const,
         subcategory: 'warrior_forge',
-        position: { x: 200, y: 250 },
+        position: { 
+          x: centerX + Math.cos(craftingAngle) * middleRadius, 
+          y: centerY + Math.sin(craftingAngle) * middleRadius 
+        },
         connections: ['plate_armor_crafter', 'sword_crafter', 'axe_crafter', 'mace_crafter'],
         tier: 4
       },
@@ -181,7 +193,10 @@ const SkillTreePanel = ({ npc, onClose }: SkillTreePanelProps) => {
         requirements: ['warrior_forge'],
         category: 'crafting' as const,
         subcategory: 'warrior_forge',
-        position: { x: 200, y: 100 },
+        position: { 
+          x: centerX + Math.cos(craftingAngle) * outerRadius, 
+          y: centerY + Math.sin(craftingAngle) * outerRadius 
+        },
         connections: ['plate_helmet_specialist', 'plate_armor_specialist', 'plate_boots_specialist'],
         tier: 5
       },
@@ -195,7 +210,10 @@ const SkillTreePanel = ({ npc, onClose }: SkillTreePanelProps) => {
         requirements: ['plate_armor_crafter'],
         category: 'crafting' as const,
         subcategory: 'warrior_forge',
-        position: { x: 50, y: 50 },
+        position: { 
+          x: centerX + Math.cos(craftingAngle - 0.3) * farRadius, 
+          y: centerY + Math.sin(craftingAngle - 0.3) * farRadius 
+        },
         connections: [],
         tier: 6
       },
@@ -209,7 +227,10 @@ const SkillTreePanel = ({ npc, onClose }: SkillTreePanelProps) => {
         requirements: ['plate_armor_crafter'],
         category: 'crafting' as const,
         subcategory: 'warrior_forge',
-        position: { x: 200, y: 50 },
+        position: { 
+          x: centerX + Math.cos(craftingAngle) * farRadius, 
+          y: centerY + Math.sin(craftingAngle) * farRadius 
+        },
         connections: [],
         tier: 6
       },
@@ -223,12 +244,15 @@ const SkillTreePanel = ({ npc, onClose }: SkillTreePanelProps) => {
         requirements: ['plate_armor_crafter'],
         category: 'crafting' as const,
         subcategory: 'warrior_forge',
-        position: { x: 350, y: 50 },
+        position: { 
+          x: centerX + Math.cos(craftingAngle + 0.3) * farRadius, 
+          y: centerY + Math.sin(craftingAngle + 0.3) * farRadius 
+        },
         connections: [],
         tier: 6
       },
 
-      // Weapon Specialists
+      // Weapon Specialists - Ramos laterais
       {
         id: 'sword_crafter',
         name: 'Ferreiro de Espadas',
@@ -239,7 +263,10 @@ const SkillTreePanel = ({ npc, onClose }: SkillTreePanelProps) => {
         requirements: ['warrior_forge'],
         category: 'crafting' as const,
         subcategory: 'warrior_forge',
-        position: { x: 50, y: 250 },
+        position: { 
+          x: centerX + Math.cos(craftingAngle - 0.5) * outerRadius, 
+          y: centerY + Math.sin(craftingAngle - 0.5) * outerRadius 
+        },
         connections: [],
         tier: 5
       },
@@ -253,7 +280,10 @@ const SkillTreePanel = ({ npc, onClose }: SkillTreePanelProps) => {
         requirements: ['warrior_forge'],
         category: 'crafting' as const,
         subcategory: 'warrior_forge',
-        position: { x: 350, y: 250 },
+        position: { 
+          x: centerX + Math.cos(craftingAngle + 0.5) * outerRadius, 
+          y: centerY + Math.sin(craftingAngle + 0.5) * outerRadius 
+        },
         connections: [],
         tier: 5
       },
@@ -267,12 +297,15 @@ const SkillTreePanel = ({ npc, onClose }: SkillTreePanelProps) => {
         requirements: ['warrior_forge'],
         category: 'crafting' as const,
         subcategory: 'warrior_forge',
-        position: { x: 200, y: 400 },
+        position: { 
+          x: centerX + Math.cos(craftingAngle - 0.8) * middleRadius, 
+          y: centerY + Math.sin(craftingAngle - 0.8) * middleRadius 
+        },
         connections: [],
         tier: 5
       },
 
-      // HUNTER'S LODGE - Coluna 2
+      // HUNTER'S LODGE - Ramo secundário
       {
         id: 'hunter_lodge',
         name: 'Cabana do Caçador',
@@ -283,7 +316,10 @@ const SkillTreePanel = ({ npc, onClose }: SkillTreePanelProps) => {
         requirements: ['crafting_branch'],
         category: 'crafting' as const,
         subcategory: 'hunter_lodge',
-        position: { x: 400, y: 550 },
+        position: { 
+          x: centerX + Math.cos(craftingAngle + 0.8) * middleRadius, 
+          y: centerY + Math.sin(craftingAngle + 0.8) * middleRadius 
+        },
         connections: ['leather_armor_crafter', 'bow_crafter', 'spear_crafter'],
         tier: 4
       },
@@ -297,7 +333,10 @@ const SkillTreePanel = ({ npc, onClose }: SkillTreePanelProps) => {
         requirements: ['hunter_lodge'],
         category: 'crafting' as const,
         subcategory: 'hunter_lodge',
-        position: { x: 250, y: 700 },
+        position: { 
+          x: centerX + Math.cos(craftingAngle + 0.6) * outerRadius, 
+          y: centerY + Math.sin(craftingAngle + 0.6) * outerRadius 
+        },
         connections: [],
         tier: 5
       },
@@ -311,7 +350,10 @@ const SkillTreePanel = ({ npc, onClose }: SkillTreePanelProps) => {
         requirements: ['hunter_lodge'],
         category: 'crafting' as const,
         subcategory: 'hunter_lodge',
-        position: { x: 400, y: 700 },
+        position: { 
+          x: centerX + Math.cos(craftingAngle + 0.8) * outerRadius, 
+          y: centerY + Math.sin(craftingAngle + 0.8) * outerRadius 
+        },
         connections: [],
         tier: 5
       },
@@ -325,12 +367,15 @@ const SkillTreePanel = ({ npc, onClose }: SkillTreePanelProps) => {
         requirements: ['hunter_lodge'],
         category: 'crafting' as const,
         subcategory: 'hunter_lodge',
-        position: { x: 550, y: 700 },
+        position: { 
+          x: centerX + Math.cos(craftingAngle + 1.0) * outerRadius, 
+          y: centerY + Math.sin(craftingAngle + 1.0) * outerRadius 
+        },
         connections: [],
         tier: 5
       },
 
-      // MAGE'S TOWER - Coluna 3
+      // MAGE'S TOWER - Outro ramo secundário
       {
         id: 'mage_tower',
         name: 'Torre do Mago',
@@ -341,7 +386,10 @@ const SkillTreePanel = ({ npc, onClose }: SkillTreePanelProps) => {
         requirements: ['crafting_branch'],
         category: 'crafting' as const,
         subcategory: 'mage_tower',
-        position: { x: 600, y: 250 },
+        position: { 
+          x: centerX + Math.cos(craftingAngle - 0.8) * middleRadius, 
+          y: centerY + Math.sin(craftingAngle - 0.8) * middleRadius 
+        },
         connections: ['cloth_armor_crafter', 'fire_staff_crafter', 'holy_staff_crafter'],
         tier: 4
       },
@@ -355,7 +403,10 @@ const SkillTreePanel = ({ npc, onClose }: SkillTreePanelProps) => {
         requirements: ['mage_tower'],
         category: 'crafting' as const,
         subcategory: 'mage_tower',
-        position: { x: 600, y: 100 },
+        position: { 
+          x: centerX + Math.cos(craftingAngle - 0.8) * outerRadius, 
+          y: centerY + Math.sin(craftingAngle - 0.8) * outerRadius 
+        },
         connections: [],
         tier: 5
       },
@@ -369,7 +420,10 @@ const SkillTreePanel = ({ npc, onClose }: SkillTreePanelProps) => {
         requirements: ['mage_tower'],
         category: 'crafting' as const,
         subcategory: 'mage_tower',
-        position: { x: 450, y: 250 },
+        position: { 
+          x: centerX + Math.cos(craftingAngle - 0.6) * outerRadius, 
+          y: centerY + Math.sin(craftingAngle - 0.6) * outerRadius 
+        },
         connections: [],
         tier: 5
       },
@@ -383,7 +437,10 @@ const SkillTreePanel = ({ npc, onClose }: SkillTreePanelProps) => {
         requirements: ['mage_tower'],
         category: 'crafting' as const,
         subcategory: 'mage_tower',
-        position: { x: 750, y: 250 },
+        position: { 
+          x: centerX + Math.cos(craftingAngle - 1.0) * outerRadius, 
+          y: centerY + Math.sin(craftingAngle - 1.0) * outerRadius 
+        },
         connections: [],
         tier: 5
       },
@@ -399,7 +456,10 @@ const SkillTreePanel = ({ npc, onClose }: SkillTreePanelProps) => {
         requirements: ['crafting_branch'],
         category: 'crafting' as const,
         subcategory: 'toolmaker',
-        position: { x: 600, y: 550 },
+        position: { 
+          x: centerX + Math.cos(craftingAngle) * (innerRadius + 40), 
+          y: centerY + Math.sin(craftingAngle) * (innerRadius + 40) 
+        },
         connections: ['gathering_tools_specialist', 'accessories_specialist'],
         tier: 4
       },
@@ -413,7 +473,10 @@ const SkillTreePanel = ({ npc, onClose }: SkillTreePanelProps) => {
         requirements: ['toolmaker'],
         category: 'crafting' as const,
         subcategory: 'toolmaker',
-        position: { x: 450, y: 700 },
+        position: { 
+          x: centerX + Math.cos(craftingAngle + 0.2) * (middleRadius - 40), 
+          y: centerY + Math.sin(craftingAngle + 0.2) * (middleRadius - 40) 
+        },
         connections: [],
         tier: 5
       },
@@ -427,13 +490,17 @@ const SkillTreePanel = ({ npc, onClose }: SkillTreePanelProps) => {
         requirements: ['toolmaker'],
         category: 'crafting' as const,
         subcategory: 'toolmaker',
-        position: { x: 750, y: 700 },
+        position: { 
+          x: centerX + Math.cos(craftingAngle - 0.2) * (middleRadius - 40), 
+          y: centerY + Math.sin(craftingAngle - 0.2) * (middleRadius - 40) 
+        },
         connections: [],
         tier: 5
       }
     ];
 
-    // GATHERING BRANCH - Lado direito (colunas 8-10)
+    // GATHERING BRANCH - Nordeste (45 graus)
+    const gatheringAngle = Math.PI / 4; // 45 graus
     const gatheringSkills = [
       {
         id: 'gathering_branch',
@@ -444,12 +511,15 @@ const SkillTreePanel = ({ npc, onClose }: SkillTreePanelProps) => {
         cost: 100,
         requirements: ['adept_adventurer'],
         category: 'gathering' as const,
-        position: { x: 2000, y: 400 },
+        position: { 
+          x: centerX + Math.cos(gatheringAngle) * innerRadius, 
+          y: centerY + Math.sin(gatheringAngle) * innerRadius 
+        },
         connections: ['lumberjack', 'miner', 'quarrier', 'harvester', 'skinner', 'fisherman'],
         tier: 3
       },
 
-      // Gathering Professions - Superior
+      // Gathering Professions - Ramo principal
       {
         id: 'lumberjack',
         name: 'Lenhador',
@@ -459,7 +529,10 @@ const SkillTreePanel = ({ npc, onClose }: SkillTreePanelProps) => {
         cost: 150,
         requirements: ['gathering_branch'],
         category: 'gathering' as const,
-        position: { x: 1800, y: 250 },
+        position: { 
+          x: centerX + Math.cos(gatheringAngle) * middleRadius, 
+          y: centerY + Math.sin(gatheringAngle) * middleRadius 
+        },
         connections: ['adept_lumberjack'],
         tier: 4
       },
@@ -472,7 +545,10 @@ const SkillTreePanel = ({ npc, onClose }: SkillTreePanelProps) => {
         cost: 200,
         requirements: ['lumberjack'],
         category: 'gathering' as const,
-        position: { x: 1800, y: 100 },
+        position: { 
+          x: centerX + Math.cos(gatheringAngle) * outerRadius, 
+          y: centerY + Math.sin(gatheringAngle) * outerRadius 
+        },
         connections: [],
         tier: 5
       },
@@ -485,7 +561,10 @@ const SkillTreePanel = ({ npc, onClose }: SkillTreePanelProps) => {
         cost: 150,
         requirements: ['gathering_branch'],
         category: 'gathering' as const,
-        position: { x: 2000, y: 250 },
+        position: { 
+          x: centerX + Math.cos(gatheringAngle - 0.5) * middleRadius, 
+          y: centerY + Math.sin(gatheringAngle - 0.5) * middleRadius 
+        },
         connections: ['adept_miner'],
         tier: 4
       },
@@ -498,7 +577,10 @@ const SkillTreePanel = ({ npc, onClose }: SkillTreePanelProps) => {
         cost: 200,
         requirements: ['miner'],
         category: 'gathering' as const,
-        position: { x: 2000, y: 100 },
+        position: { 
+          x: centerX + Math.cos(gatheringAngle - 0.5) * outerRadius, 
+          y: centerY + Math.sin(gatheringAngle - 0.5) * outerRadius 
+        },
         connections: [],
         tier: 5
       },
@@ -511,7 +593,10 @@ const SkillTreePanel = ({ npc, onClose }: SkillTreePanelProps) => {
         cost: 150,
         requirements: ['gathering_branch'],
         category: 'gathering' as const,
-        position: { x: 2200, y: 250 },
+        position: { 
+          x: centerX + Math.cos(gatheringAngle + 0.5) * middleRadius, 
+          y: centerY + Math.sin(gatheringAngle + 0.5) * middleRadius 
+        },
         connections: ['adept_quarrier'],
         tier: 4
       },
@@ -524,12 +609,15 @@ const SkillTreePanel = ({ npc, onClose }: SkillTreePanelProps) => {
         cost: 200,
         requirements: ['quarrier'],
         category: 'gathering' as const,
-        position: { x: 2200, y: 100 },
+        position: { 
+          x: centerX + Math.cos(gatheringAngle + 0.5) * outerRadius, 
+          y: centerY + Math.sin(gatheringAngle + 0.5) * outerRadius 
+        },
         connections: [],
         tier: 5
       },
 
-      // Gathering Professions - Inferior
+      // Gathering Professions - Ramos secundários
       {
         id: 'harvester',
         name: 'Ceifador',
@@ -539,7 +627,10 @@ const SkillTreePanel = ({ npc, onClose }: SkillTreePanelProps) => {
         cost: 150,
         requirements: ['gathering_branch'],
         category: 'gathering' as const,
-        position: { x: 1800, y: 550 },
+        position: { 
+          x: centerX + Math.cos(gatheringAngle - 0.8) * middleRadius, 
+          y: centerY + Math.sin(gatheringAngle - 0.8) * middleRadius 
+        },
         connections: ['adept_harvester'],
         tier: 4
       },
@@ -552,7 +643,10 @@ const SkillTreePanel = ({ npc, onClose }: SkillTreePanelProps) => {
         cost: 200,
         requirements: ['harvester'],
         category: 'gathering' as const,
-        position: { x: 1800, y: 700 },
+        position: { 
+          x: centerX + Math.cos(gatheringAngle - 0.8) * outerRadius, 
+          y: centerY + Math.sin(gatheringAngle - 0.8) * outerRadius 
+        },
         connections: [],
         tier: 5
       },
@@ -565,7 +659,10 @@ const SkillTreePanel = ({ npc, onClose }: SkillTreePanelProps) => {
         cost: 150,
         requirements: ['gathering_branch'],
         category: 'gathering' as const,
-        position: { x: 2000, y: 550 },
+        position: { 
+          x: centerX + Math.cos(gatheringAngle + 0.8) * middleRadius, 
+          y: centerY + Math.sin(gatheringAngle + 0.8) * middleRadius 
+        },
         connections: ['adept_skinner'],
         tier: 4
       },
@@ -578,7 +675,10 @@ const SkillTreePanel = ({ npc, onClose }: SkillTreePanelProps) => {
         cost: 200,
         requirements: ['skinner'],
         category: 'gathering' as const,
-        position: { x: 2000, y: 700 },
+        position: { 
+          x: centerX + Math.cos(gatheringAngle + 0.8) * outerRadius, 
+          y: centerY + Math.sin(gatheringAngle + 0.8) * outerRadius 
+        },
         connections: [],
         tier: 5
       },
@@ -591,7 +691,10 @@ const SkillTreePanel = ({ npc, onClose }: SkillTreePanelProps) => {
         cost: 150,
         requirements: ['gathering_branch'],
         category: 'gathering' as const,
-        position: { x: 2200, y: 550 },
+        position: { 
+          x: centerX + Math.cos(gatheringAngle + 0.2) * (innerRadius + 60), 
+          y: centerY + Math.sin(gatheringAngle + 0.2) * (innerRadius + 60) 
+        },
         connections: ['adept_fisherman'],
         tier: 4
       },
@@ -604,13 +707,17 @@ const SkillTreePanel = ({ npc, onClose }: SkillTreePanelProps) => {
         cost: 200,
         requirements: ['fisherman'],
         category: 'gathering' as const,
-        position: { x: 2200, y: 700 },
+        position: { 
+          x: centerX + Math.cos(gatheringAngle + 0.2) * (middleRadius - 20), 
+          y: centerY + Math.sin(gatheringAngle + 0.2) * (middleRadius - 20) 
+        },
         connections: [],
         tier: 5
       }
     ];
 
-    // FARMING BRANCH - Inferior esquerda
+    // FARMING BRANCH - Sudoeste (-135 graus)
+    const farmingAngle = -3 * Math.PI / 4; // -135 graus
     const farmingSkills = [
       {
         id: 'farming_branch',
@@ -621,7 +728,10 @@ const SkillTreePanel = ({ npc, onClose }: SkillTreePanelProps) => {
         cost: 100,
         requirements: ['adept_adventurer'],
         category: 'farming' as const,
-        position: { x: 600, y: 1200 },
+        position: { 
+          x: centerX + Math.cos(farmingAngle) * innerRadius, 
+          y: centerY + Math.sin(farmingAngle) * innerRadius 
+        },
         connections: ['crop_farmer', 'herb_grower', 'animal_breeder'],
         tier: 3
       },
@@ -634,7 +744,10 @@ const SkillTreePanel = ({ npc, onClose }: SkillTreePanelProps) => {
         cost: 150,
         requirements: ['farming_branch'],
         category: 'farming' as const,
-        position: { x: 400, y: 1350 },
+        position: { 
+          x: centerX + Math.cos(farmingAngle) * middleRadius, 
+          y: centerY + Math.sin(farmingAngle) * middleRadius 
+        },
         connections: ['adept_crop_farmer'],
         tier: 4
       },
@@ -647,7 +760,10 @@ const SkillTreePanel = ({ npc, onClose }: SkillTreePanelProps) => {
         cost: 200,
         requirements: ['crop_farmer'],
         category: 'farming' as const,
-        position: { x: 400, y: 1500 },
+        position: { 
+          x: centerX + Math.cos(farmingAngle) * outerRadius, 
+          y: centerY + Math.sin(farmingAngle) * outerRadius 
+        },
         connections: [],
         tier: 5
       },
@@ -660,7 +776,10 @@ const SkillTreePanel = ({ npc, onClose }: SkillTreePanelProps) => {
         cost: 150,
         requirements: ['farming_branch'],
         category: 'farming' as const,
-        position: { x: 600, y: 1350 },
+        position: { 
+          x: centerX + Math.cos(farmingAngle - 0.5) * middleRadius, 
+          y: centerY + Math.sin(farmingAngle - 0.5) * middleRadius 
+        },
         connections: ['adept_herb_grower'],
         tier: 4
       },
@@ -673,7 +792,10 @@ const SkillTreePanel = ({ npc, onClose }: SkillTreePanelProps) => {
         cost: 200,
         requirements: ['herb_grower'],
         category: 'farming' as const,
-        position: { x: 600, y: 1500 },
+        position: { 
+          x: centerX + Math.cos(farmingAngle - 0.5) * outerRadius, 
+          y: centerY + Math.sin(farmingAngle - 0.5) * outerRadius 
+        },
         connections: [],
         tier: 5
       },
@@ -686,7 +808,10 @@ const SkillTreePanel = ({ npc, onClose }: SkillTreePanelProps) => {
         cost: 150,
         requirements: ['farming_branch'],
         category: 'farming' as const,
-        position: { x: 800, y: 1350 },
+        position: { 
+          x: centerX + Math.cos(farmingAngle + 0.5) * middleRadius, 
+          y: centerY + Math.sin(farmingAngle + 0.5) * middleRadius 
+        },
         connections: ['adept_animal_breeder'],
         tier: 4
       },
@@ -699,13 +824,17 @@ const SkillTreePanel = ({ npc, onClose }: SkillTreePanelProps) => {
         cost: 200,
         requirements: ['animal_breeder'],
         category: 'farming' as const,
-        position: { x: 800, y: 1500 },
+        position: { 
+          x: centerX + Math.cos(farmingAngle + 0.5) * outerRadius, 
+          y: centerY + Math.sin(farmingAngle + 0.5) * outerRadius 
+        },
         connections: [],
         tier: 5
       }
     ];
 
-    // COMBAT BRANCH - Inferior central
+    // COMBAT BRANCH - Oeste (180 graus)
+    const combatAngle = Math.PI; // 180 graus
     const combatSkills = [
       {
         id: 'combat_branch',
@@ -716,7 +845,10 @@ const SkillTreePanel = ({ npc, onClose }: SkillTreePanelProps) => {
         cost: 100,
         requirements: ['adept_adventurer'],
         category: 'combat' as const,
-        position: { x: 1200, y: 1200 },
+        position: { 
+          x: centerX + Math.cos(combatAngle) * innerRadius, 
+          y: centerY + Math.sin(combatAngle) * innerRadius 
+        },
         connections: ['warrior_combat', 'hunter_combat', 'mage_combat', 'reaver'],
         tier: 3
       },
@@ -729,7 +861,10 @@ const SkillTreePanel = ({ npc, onClose }: SkillTreePanelProps) => {
         cost: 150,
         requirements: ['combat_branch'],
         category: 'combat' as const,
-        position: { x: 1000, y: 1350 },
+        position: { 
+          x: centerX + Math.cos(combatAngle) * middleRadius, 
+          y: centerY + Math.sin(combatAngle) * middleRadius 
+        },
         connections: ['plate_fighter'],
         tier: 4
       },
@@ -742,7 +877,10 @@ const SkillTreePanel = ({ npc, onClose }: SkillTreePanelProps) => {
         cost: 200,
         requirements: ['warrior_combat'],
         category: 'combat' as const,
-        position: { x: 1000, y: 1500 },
+        position: { 
+          x: centerX + Math.cos(combatAngle) * outerRadius, 
+          y: centerY + Math.sin(combatAngle) * outerRadius 
+        },
         connections: [],
         tier: 5
       },
@@ -755,7 +893,10 @@ const SkillTreePanel = ({ npc, onClose }: SkillTreePanelProps) => {
         cost: 150,
         requirements: ['combat_branch'],
         category: 'combat' as const,
-        position: { x: 1200, y: 1350 },
+        position: { 
+          x: centerX + Math.cos(combatAngle - 0.5) * middleRadius, 
+          y: centerY + Math.sin(combatAngle - 0.5) * middleRadius 
+        },
         connections: ['bow_fighter'],
         tier: 4
       },
@@ -768,7 +909,10 @@ const SkillTreePanel = ({ npc, onClose }: SkillTreePanelProps) => {
         cost: 200,
         requirements: ['hunter_combat'],
         category: 'combat' as const,
-        position: { x: 1200, y: 1500 },
+        position: { 
+          x: centerX + Math.cos(combatAngle - 0.5) * outerRadius, 
+          y: centerY + Math.sin(combatAngle - 0.5) * outerRadius 
+        },
         connections: [],
         tier: 5
       },
@@ -781,7 +925,10 @@ const SkillTreePanel = ({ npc, onClose }: SkillTreePanelProps) => {
         cost: 150,
         requirements: ['combat_branch'],
         category: 'combat' as const,
-        position: { x: 1400, y: 1350 },
+        position: { 
+          x: centerX + Math.cos(combatAngle + 0.5) * middleRadius, 
+          y: centerY + Math.sin(combatAngle + 0.5) * middleRadius 
+        },
         connections: ['staff_fighter'],
         tier: 4
       },
@@ -794,7 +941,10 @@ const SkillTreePanel = ({ npc, onClose }: SkillTreePanelProps) => {
         cost: 200,
         requirements: ['mage_combat'],
         category: 'combat' as const,
-        position: { x: 1400, y: 1500 },
+        position: { 
+          x: centerX + Math.cos(combatAngle + 0.5) * outerRadius, 
+          y: centerY + Math.sin(combatAngle + 0.5) * outerRadius 
+        },
         connections: [],
         tier: 5
       },
@@ -807,7 +957,10 @@ const SkillTreePanel = ({ npc, onClose }: SkillTreePanelProps) => {
         cost: 150,
         requirements: ['combat_branch'],
         category: 'combat' as const,
-        position: { x: 1100, y: 1350 },
+        position: { 
+          x: centerX + Math.cos(combatAngle + 0.8) * middleRadius, 
+          y: centerY + Math.sin(combatAngle + 0.8) * middleRadius 
+        },
         connections: ['adept_reaver'],
         tier: 4
       },
@@ -820,13 +973,17 @@ const SkillTreePanel = ({ npc, onClose }: SkillTreePanelProps) => {
         cost: 200,
         requirements: ['reaver'],
         category: 'combat' as const,
-        position: { x: 1100, y: 1500 },
+        position: { 
+          x: centerX + Math.cos(combatAngle + 0.8) * outerRadius, 
+          y: centerY + Math.sin(combatAngle + 0.8) * outerRadius 
+        },
         connections: [],
         tier: 5
       }
     ];
 
-    // REFINING BRANCH - Inferior direita
+    // REFINING BRANCH - Sudeste (135 graus)
+    const refiningAngle = 3 * Math.PI / 4; // 135 graus
     const refiningSkills = [
       {
         id: 'refining_branch',
@@ -837,7 +994,10 @@ const SkillTreePanel = ({ npc, onClose }: SkillTreePanelProps) => {
         cost: 100,
         requirements: ['adept_adventurer'],
         category: 'refining' as const,
-        position: { x: 1800, y: 1200 },
+        position: { 
+          x: centerX + Math.cos(refiningAngle) * innerRadius, 
+          y: centerY + Math.sin(refiningAngle) * innerRadius 
+        },
         connections: ['wood_refiner', 'ore_refiner', 'leather_refiner', 'fiber_refiner'],
         tier: 3
       },
@@ -850,7 +1010,10 @@ const SkillTreePanel = ({ npc, onClose }: SkillTreePanelProps) => {
         cost: 150,
         requirements: ['refining_branch'],
         category: 'refining' as const,
-        position: { x: 1600, y: 1350 },
+        position: { 
+          x: centerX + Math.cos(refiningAngle) * middleRadius, 
+          y: centerY + Math.sin(refiningAngle) * middleRadius 
+        },
         connections: ['adept_wood_refiner'],
         tier: 4
       },
@@ -863,7 +1026,10 @@ const SkillTreePanel = ({ npc, onClose }: SkillTreePanelProps) => {
         cost: 200,
         requirements: ['wood_refiner'],
         category: 'refining' as const,
-        position: { x: 1600, y: 1500 },
+        position: { 
+          x: centerX + Math.cos(refiningAngle) * outerRadius, 
+          y: centerY + Math.sin(refiningAngle) * outerRadius 
+        },
         connections: [],
         tier: 5
       },
@@ -876,7 +1042,10 @@ const SkillTreePanel = ({ npc, onClose }: SkillTreePanelProps) => {
         cost: 150,
         requirements: ['refining_branch'],
         category: 'refining' as const,
-        position: { x: 1800, y: 1350 },
+        position: { 
+          x: centerX + Math.cos(refiningAngle - 0.5) * middleRadius, 
+          y: centerY + Math.sin(refiningAngle - 0.5) * middleRadius 
+        },
         connections: ['adept_ore_refiner'],
         tier: 4
       },
@@ -889,7 +1058,10 @@ const SkillTreePanel = ({ npc, onClose }: SkillTreePanelProps) => {
         cost: 200,
         requirements: ['ore_refiner'],
         category: 'refining' as const,
-        position: { x: 1800, y: 1500 },
+        position: { 
+          x: centerX + Math.cos(refiningAngle - 0.5) * outerRadius, 
+          y: centerY + Math.sin(refiningAngle - 0.5) * outerRadius 
+        },
         connections: [],
         tier: 5
       },
@@ -902,7 +1074,10 @@ const SkillTreePanel = ({ npc, onClose }: SkillTreePanelProps) => {
         cost: 150,
         requirements: ['refining_branch'],
         category: 'refining' as const,
-        position: { x: 2000, y: 1350 },
+        position: { 
+          x: centerX + Math.cos(refiningAngle + 0.5) * middleRadius, 
+          y: centerY + Math.sin(refiningAngle + 0.5) * middleRadius 
+        },
         connections: ['adept_leather_refiner'],
         tier: 4
       },
@@ -915,7 +1090,10 @@ const SkillTreePanel = ({ npc, onClose }: SkillTreePanelProps) => {
         cost: 200,
         requirements: ['leather_refiner'],
         category: 'refining' as const,
-        position: { x: 2000, y: 1500 },
+        position: { 
+          x: centerX + Math.cos(refiningAngle + 0.5) * outerRadius, 
+          y: centerY + Math.sin(refiningAngle + 0.5) * outerRadius 
+        },
         connections: [],
         tier: 5
       },
@@ -928,7 +1106,10 @@ const SkillTreePanel = ({ npc, onClose }: SkillTreePanelProps) => {
         cost: 150,
         requirements: ['refining_branch'],
         category: 'refining' as const,
-        position: { x: 2200, y: 1350 },
+        position: { 
+          x: centerX + Math.cos(refiningAngle + 0.8) * middleRadius, 
+          y: centerY + Math.sin(refiningAngle + 0.8) * middleRadius 
+        },
         connections: ['adept_fiber_refiner'],
         tier: 4
       },
@@ -941,7 +1122,10 @@ const SkillTreePanel = ({ npc, onClose }: SkillTreePanelProps) => {
         cost: 200,
         requirements: ['fiber_refiner'],
         category: 'refining' as const,
-        position: { x: 2200, y: 1500 },
+        position: { 
+          x: centerX + Math.cos(refiningAngle + 0.8) * outerRadius, 
+          y: centerY + Math.sin(refiningAngle + 0.8) * outerRadius 
+        },
         connections: [],
         tier: 5
       }
