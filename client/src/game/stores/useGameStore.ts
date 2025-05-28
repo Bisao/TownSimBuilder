@@ -69,10 +69,19 @@ interface GameState {
     action: boolean;
     sprint: boolean;
   };
+  controlSettings: {
+    sensitivity: 1.0;
+    smoothing: 0.8;
+    sprintMultiplier: 2.0;
+    actionCooldown: 300;
+    autoSwitchNpc: false;
+    gamepadEnabled: true;
+    keyboardEnabled: true;
+  };
 }
 
 export const useGameStore = create<GameState>()(
-  subscribeWithSelector((set) => ({
+  subscribeWithSelector((set, get) => ({
     // Initial state
     gameMode: "play",
     timeOfDay: "day",
@@ -101,6 +110,15 @@ export const useGameStore = create<GameState>()(
       right: false,
       action: false,
       sprint: false,
+    },
+    controlSettings: {
+      sensitivity: 1.0,
+      smoothing: 0.8,
+      sprintMultiplier: 2.0,
+      actionCooldown: 300,
+      autoSwitchNpc: false,
+      gamepadEnabled: true,
+      keyboardEnabled: true,
     },
 
     // Actions
@@ -189,8 +207,16 @@ export const useGameStore = create<GameState>()(
       controlledNpcId: enabled ? get().controlledNpcId : null 
     }),
 
-    updateManualControlKeys: (keys) => set((state) => ({
-      manualControlKeys: { ...state.manualControlKeys, ...keys }
-    })),
+    updateManualControlKeys: (keys) => {
+    set((state) => ({
+      manualControlKeys: { ...state.manualControlKeys, ...keys },
+    }));
+  },
+
+  updateControlSettings: (settings) => {
+    set((state) => ({
+      controlSettings: { ...state.controlSettings, ...settings },
+    }));
+  },
   }))
 );
