@@ -6,6 +6,7 @@ export interface GameState {
   // Game state
   phase: "login" | "character-creation" | "playing";
   selectedBuildingType: string | null;
+  isInitialized: boolean;
   
   // Time system
   isPaused: boolean;
@@ -36,6 +37,7 @@ export interface GameState {
   selectedSilo: any | null;
 
   // Methods
+  initialize: () => void;
   setPhase: (phase: "login" | "character-creation" | "playing") => void;
   selectBuildingType: (type: string | null) => void;
   setPlacementPosition: (position: [number, number] | null) => void;
@@ -68,6 +70,7 @@ export const useGameStore = create<GameState>()(
     // Initial state
     phase: "login",
     selectedBuildingType: null,
+    isInitialized: false,
     placementPosition: null,
     placementValid: false,
     
@@ -98,6 +101,11 @@ export const useGameStore = create<GameState>()(
     selectedSilo: null,
 
     // Methods
+    initialize: () => {
+      console.log("Initializing game store");
+      set({ isInitialized: true });
+    },
+    
     setPhase: (phase) => set({ phase }),
     
     // Time control methods
