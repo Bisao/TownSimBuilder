@@ -36,16 +36,9 @@ interface GameState {
 
 export const useGame = create<GameState>()(
   subscribeWithSelector((set, get) => {
-    // Verificar se há auto-login ativo
-    const autoLogin = getLocalStorage("autoLogin");
-    const currentPlayer = getLocalStorage("currentPlayer");
-    const characterData = getLocalStorage("characterData");
-    
-    const initialPhase: GamePhase = autoLogin && currentPlayer && characterData ? "character-selection" : "login";
-    const initialPlayerData = autoLogin && currentPlayer ? {
-      ...currentPlayer,
-      character: characterData
-    } : null;
+    // Sempre começar na tela de login, independente dos dados salvos
+    const initialPhase: GamePhase = "login";
+    const initialPlayerData = null;
 
     return {
       phase: initialPhase,
@@ -61,8 +54,11 @@ export const useGame = create<GameState>()(
         
         setLocalStorage("currentPlayer", playerData);
         
+        // Se o jogador tem um personagem, vai para seleção, senão vai para criação
+        const nextPhase: GamePhase = existingCharacter ? "character-selection" : "character-creation";
+        
         set(() => ({
-          phase: existingCharacter ? "character-selection" : "character-creation",
+          phase: nextPhase,
           playerData
         }));
       },

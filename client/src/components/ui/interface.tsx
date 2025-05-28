@@ -29,6 +29,11 @@ export function Interface() {
     }
   }, [phase]);
 
+  // Debug: log current phase
+  useEffect(() => {
+    console.log("Current game phase:", phase);
+  }, [phase]);
+
 
   if (phase === "login") {
     return <Login onLogin={login} />;
