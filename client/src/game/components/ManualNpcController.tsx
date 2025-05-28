@@ -5,11 +5,23 @@ import { useNpcStore } from '../stores/useNpcStore';
 import { useBuildingStore } from '../stores/useBuildingStore';
 import { npcTypes, workplaceMapping } from '../constants/npcs';
 
+// Constants for manual control
+const CONSTANTS = {
+  MOVEMENT_SPEED: 5,
+  MAX_INVENTORY: 20,
+  ENERGY_CONSUMPTION: {
+    MOVING: 10
+  },
+  SATISFACTION_CONSUMPTION: {
+    MOVING: 5
+  }
+};
+
 interface ManualNpcControllerProps {
   npcId: string;
 }
 
-export const ManualNpcController: React.FC<ManualNpcControllerProps> = ({ npcId }) => {
+const ManualNpcController: React.FC<ManualNpcControllerProps> = ({ npcId }) => {
   const keysRef = useRef({
     w: false,
     a: false,
@@ -216,13 +228,7 @@ export const ManualNpcController: React.FC<ManualNpcControllerProps> = ({ npcId 
       }
 
       // Workplace - trabalhar no edifício
-      const WORKPLACE_MAPPING = {
-        bakery: 'baker',
-        blacksmith: 'blacksmith',
-        mill: 'miller'
-      };
-
-      const workplaceType = Object.entries(WORKPLACE_MAPPING).find(([_, npcTypeId]) => npcTypeId === npc.type)?.[0];
+      const workplaceType = Object.entries(workplaceMapping).find(([_, npcTypeId]) => npcTypeId === npc.type)?.[0];
       if (building.type === workplaceType) {
         const newWorkProgress = npc.workProgress + deltaTime * 2; // Trabalho manual mais rápido
 
@@ -386,3 +392,5 @@ export const ManualNpcController: React.FC<ManualNpcControllerProps> = ({ npcId 
     </>
   );
 };
+
+export default ManualNpcController;
