@@ -11,10 +11,12 @@ interface SkillNode {
   currentLevel: number;
   cost: number;
   requirements: string[];
-  category: 'warrior' | 'mage' | 'hunter' | 'gathering' | 'crafting' | 'farming' | 'cooking' | 'utility';
+  category: 'adventurer' | 'crafting' | 'gathering' | 'farming' | 'combat' | 'refining';
+  subcategory?: string;
   position: { x: number; y: number };
   connections: string[];
-  tier?: number;
+  tier: number;
+  unlocks?: string[];
 }
 
 interface SkillTreePanelProps {
@@ -25,537 +27,553 @@ interface SkillTreePanelProps {
 const SkillTreePanel = ({ npc, onClose }: SkillTreePanelProps) => {
   const [selectedNode, setSelectedNode] = useState<string | null>(null);
   const [activeCategory, setActiveCategory] = useState<string>('all');
+  const [viewMode, setViewMode] = useState<'overview' | 'detailed'>('overview');
   const { dragRef, position, isDragging, handleMouseDown } = useDraggable({
-    initialPosition: { x: window.innerWidth / 2 - 500, y: window.innerHeight / 2 - 400 }
+    initialPosition: { x: window.innerWidth / 2 - 600, y: window.innerHeight / 2 - 400 }
   });
 
   if (!npc) return null;
 
-  // Complete Albion Online skill tree system
   const getAllSkills = (): SkillNode[] => {
-    return [
-      // CORE SKILLS (Center)
+    const skills: SkillNode[] = [];
+
+    // CAMINHO DO AVENTUREIRO
+    const adventurerSkills = [
       {
-        id: 'core',
-        name: 'Núcleo',
-        description: 'Habilidades básicas para todos os NPCs',
+        id: 'novice_adventurer',
+        name: 'Aventureiro Novato',
+        description: 'Primeiro passo na jornada de aventura',
         maxLevel: 100,
-        currentLevel: Math.max(1, Math.floor((npc.skills?.efficiency || 10) / 10)),
+        currentLevel: 1,
         cost: 0,
         requirements: [],
-        category: 'utility',
-        position: { x: 400, y: 400 },
-        connections: ['warrior_path', 'mage_path', 'hunter_path', 'gathering_path', 'crafting_path'],
+        category: 'adventurer' as const,
+        position: { x: 400, y: 50 },
+        connections: ['journeyman_adventurer'],
         tier: 1
       },
-
-      // WARRIOR PATH (Red - Top Left)
       {
-        id: 'warrior_path',
-        name: 'Caminho do Guerreiro',
-        description: 'Desbloqueia habilidades de combate corpo a corpo',
+        id: 'journeyman_adventurer',
+        name: 'Aventureiro Oficial',
+        description: 'Aventureiro com experiência básica',
         maxLevel: 100,
-        currentLevel: 1,
-        cost: 100,
-        requirements: ['core'],
-        category: 'warrior',
-        position: { x: 200, y: 200 },
-        connections: ['sword_mastery', 'axe_mastery', 'mace_mastery', 'spear_mastery', 'heavy_armor'],
+        currentLevel: 0,
+        cost: 50,
+        requirements: ['novice_adventurer'],
+        category: 'adventurer' as const,
+        position: { x: 400, y: 100 },
+        connections: ['adept_adventurer'],
         tier: 2
       },
       {
-        id: 'sword_mastery',
-        name: 'Domínio de Espada',
-        description: 'Especialização em espadas',
+        id: 'adept_adventurer',
+        name: 'Aventureiro Adepto',
+        description: 'Aventureiro competente',
         maxLevel: 100,
         currentLevel: 0,
-        cost: 200,
-        requirements: ['warrior_path'],
-        category: 'warrior',
-        position: { x: 100, y: 100 },
-        connections: ['broadsword', 'claymore', 'dual_swords'],
-        tier: 3
-      },
-      {
-        id: 'broadsword',
-        name: 'Espada Larga',
-        description: 'Espada básica de uma mão',
-        maxLevel: 100,
-        currentLevel: 0,
-        cost: 300,
-        requirements: ['sword_mastery'],
-        category: 'warrior',
-        position: { x: 50, y: 50 },
-        connections: ['kingmaker'],
-        tier: 4
-      },
-      {
-        id: 'claymore',
-        name: 'Montante',
-        description: 'Espada pesada de duas mãos',
-        maxLevel: 100,
-        currentLevel: 0,
-        cost: 300,
-        requirements: ['sword_mastery'],
-        category: 'warrior',
-        position: { x: 100, y: 30 },
-        connections: ['galatine'],
-        tier: 4
-      },
-      {
-        id: 'dual_swords',
-        name: 'Espadas Duplas',
-        description: 'Duas espadas para combate ágil',
-        maxLevel: 100,
-        currentLevel: 0,
-        cost: 300,
-        requirements: ['sword_mastery'],
-        category: 'warrior',
-        position: { x: 150, y: 50 },
-        connections: ['bridled_fury'],
-        tier: 4
-      },
-      {
-        id: 'axe_mastery',
-        name: 'Domínio de Machado',
-        description: 'Especialização em machados',
-        maxLevel: 100,
-        currentLevel: 0,
-        cost: 200,
-        requirements: ['warrior_path'],
-        category: 'warrior',
-        position: { x: 150, y: 120 },
-        connections: ['battle_axe', 'great_axe', 'halberd'],
-        tier: 3
-      },
-      {
-        id: 'mace_mastery',
-        name: 'Domínio de Maça',
-        description: 'Especialização em maças',
-        maxLevel: 100,
-        currentLevel: 0,
-        cost: 200,
-        requirements: ['warrior_path'],
-        category: 'warrior',
-        position: { x: 200, y: 120 },
-        connections: ['mace', 'morning_star', 'polehammer'],
-        tier: 3
-      },
-      {
-        id: 'spear_mastery',
-        name: 'Domínio de Lança',
-        description: 'Especialização em lanças',
-        maxLevel: 100,
-        currentLevel: 0,
-        cost: 200,
-        requirements: ['warrior_path'],
-        category: 'warrior',
-        position: { x: 250, y: 120 },
-        connections: ['spear', 'pike', 'glaive'],
-        tier: 3
-      },
-
-      // MAGE PATH (Blue - Top)
-      {
-        id: 'mage_path',
-        name: 'Caminho do Mago',
-        description: 'Desbloqueia habilidades mágicas',
-        maxLevel: 100,
-        currentLevel: 1,
         cost: 100,
-        requirements: ['core'],
-        category: 'mage',
+        requirements: ['journeyman_adventurer'],
+        category: 'adventurer' as const,
+        position: { x: 400, y: 150 },
+        connections: ['expert_adventurer', 'crafting_branch', 'gathering_branch', 'combat_branch'],
+        tier: 3
+      },
+      {
+        id: 'expert_adventurer',
+        name: 'Aventureiro Expert',
+        description: 'Aventureiro experiente',
+        maxLevel: 100,
+        currentLevel: 0,
+        cost: 200,
+        requirements: ['adept_adventurer'],
+        category: 'adventurer' as const,
         position: { x: 400, y: 200 },
-        connections: ['fire_staff', 'frost_staff', 'arcane_staff', 'holy_staff', 'nature_staff'],
-        tier: 2
+        connections: ['master_adventurer'],
+        tier: 4
       },
       {
-        id: 'fire_staff',
-        name: 'Cajado de Fogo',
-        description: 'Magia de fogo destrutiva',
+        id: 'master_adventurer',
+        name: 'Aventureiro Mestre',
+        description: 'Aventureiro mestre em sua arte',
         maxLevel: 100,
         currentLevel: 0,
-        cost: 200,
-        requirements: ['mage_path'],
-        category: 'mage',
-        position: { x: 300, y: 100 },
-        connections: ['great_fire_staff', 'infernal_staff', 'blazing_staff'],
-        tier: 3
+        cost: 400,
+        requirements: ['expert_adventurer'],
+        category: 'adventurer' as const,
+        position: { x: 400, y: 250 },
+        connections: ['grandmaster_adventurer'],
+        tier: 5
       },
       {
-        id: 'frost_staff',
-        name: 'Cajado de Gelo',
-        description: 'Magia de gelo e controle',
+        id: 'grandmaster_adventurer',
+        name: 'Grão-Mestre Aventureiro',
+        description: 'Aventureiro de elite',
         maxLevel: 100,
         currentLevel: 0,
-        cost: 200,
-        requirements: ['mage_path'],
-        category: 'mage',
-        position: { x: 350, y: 80 },
-        connections: ['great_frost_staff', 'glacial_staff', 'hoarfrost_staff'],
-        tier: 3
+        cost: 800,
+        requirements: ['master_adventurer'],
+        category: 'adventurer' as const,
+        position: { x: 400, y: 300 },
+        connections: ['elder_adventurer'],
+        tier: 6
       },
       {
-        id: 'arcane_staff',
-        name: 'Cajado Arcano',
-        description: 'Magia arcana pura',
+        id: 'elder_adventurer',
+        name: 'Aventureiro Ancião',
+        description: 'O mais alto nível de aventureiro',
         maxLevel: 100,
         currentLevel: 0,
-        cost: 200,
-        requirements: ['mage_path'],
-        category: 'mage',
-        position: { x: 400, y: 80 },
-        connections: ['great_arcane_staff', 'enigmatic_staff', 'occult_staff'],
-        tier: 3
-      },
+        cost: 1600,
+        requirements: ['grandmaster_adventurer'],
+        category: 'adventurer' as const,
+        position: { x: 400, y: 350 },
+        connections: [],
+        tier: 7
+      }
+    ];
+
+    // CRAFTING BRANCH
+    const craftingSkills = [
+      // Crafting Root
       {
-        id: 'holy_staff',
-        name: 'Cajado Sagrado',
-        description: 'Magia de cura e proteção',
+        id: 'crafting_branch',
+        name: 'Ramo da Criação',
+        description: 'Desbloqueia as habilidades de criação',
         maxLevel: 100,
         currentLevel: 0,
-        cost: 200,
-        requirements: ['mage_path'],
-        category: 'mage',
-        position: { x: 450, y: 80 },
-        connections: ['great_holy_staff', 'divine_staff', 'redemption_staff'],
-        tier: 3
-      },
-      {
-        id: 'nature_staff',
-        name: 'Cajado da Natureza',
-        description: 'Magia da natureza e cura',
-        maxLevel: 100,
-        currentLevel: 0,
-        cost: 200,
-        requirements: ['mage_path'],
-        category: 'mage',
-        position: { x: 500, y: 100 },
-        connections: ['great_nature_staff', 'wild_staff', 'druidic_staff'],
+        cost: 100,
+        requirements: ['adept_adventurer'],
+        category: 'crafting' as const,
+        position: { x: 150, y: 200 },
+        connections: ['warrior_forge', 'hunter_lodge', 'mage_tower', 'toolmaker', 'alchemist', 'cook'],
         tier: 3
       },
 
-      // HUNTER PATH (Green - Top Right)
+      // WARRIOR'S FORGE
       {
-        id: 'hunter_path',
-        name: 'Caminho do Caçador',
-        description: 'Desbloqueia habilidades de combate à distância',
-        maxLevel: 100,
-        currentLevel: 1,
-        cost: 100,
-        requirements: ['core'],
-        category: 'hunter',
-        position: { x: 600, y: 200 },
-        connections: ['bow_mastery', 'crossbow_mastery', 'throwing_mastery'],
-        tier: 2
-      },
-      {
-        id: 'bow_mastery',
-        name: 'Domínio de Arco',
-        description: 'Especialização em arcos',
+        id: 'warrior_forge',
+        name: 'Forja do Guerreiro',
+        description: 'Criação de equipamentos de guerreiro',
         maxLevel: 100,
         currentLevel: 0,
-        cost: 200,
-        requirements: ['hunter_path'],
-        category: 'hunter',
-        position: { x: 550, y: 120 },
-        connections: ['bow', 'warbow', 'longbow'],
-        tier: 3
-      },
-      {
-        id: 'crossbow_mastery',
-        name: 'Domínio de Besta',
-        description: 'Especialização em bestas',
-        maxLevel: 100,
-        currentLevel: 0,
-        cost: 200,
-        requirements: ['hunter_path'],
-        category: 'hunter',
-        position: { x: 600, y: 120 },
-        connections: ['light_crossbow', 'heavy_crossbow', 'siegebow'],
-        tier: 3
-      },
-      {
-        id: 'throwing_mastery',
-        name: 'Domínio de Arremesso',
-        description: 'Especialização em armas de arremesso',
-        maxLevel: 100,
-        currentLevel: 0,
-        cost: 200,
-        requirements: ['hunter_path'],
-        category: 'hunter',
-        position: { x: 650, y: 120 },
-        connections: ['dagger_pair', 'claws', 'quarterstaff'],
-        tier: 3
+        cost: 150,
+        requirements: ['crafting_branch'],
+        category: 'crafting' as const,
+        subcategory: 'warrior_forge',
+        position: { x: 50, y: 300 },
+        connections: ['plate_armor_crafter', 'sword_crafter', 'axe_crafter', 'mace_crafter', 'hammer_crafter', 'war_gloves_crafter', 'crossbow_crafter', 'shield_crafter'],
+        tier: 4
       },
 
-      // GATHERING PATH (Orange - Left)
+      // Plate Armor
       {
-        id: 'gathering_path',
-        name: 'Caminho da Coleta',
-        description: 'Desbloqueia habilidades de coleta de recursos',
-        maxLevel: 100,
-        currentLevel: Math.max(1, Math.floor((npc.skills?.gathering || 10) / 10)),
-        cost: 100,
-        requirements: ['core'],
-        category: 'gathering',
-        position: { x: 200, y: 400 },
-        connections: ['mining', 'lumberjacking', 'skinning', 'quarrying', 'fiber_gathering'],
-        tier: 2
-      },
-      {
-        id: 'mining',
-        name: 'Mineração',
-        description: 'Coleta de minérios e metais',
-        maxLevel: 100,
-        currentLevel: npc.type === 'miner' ? Math.max(1, Math.floor((npc.skills?.gathering || 10) / 5)) : 0,
-        cost: 200,
-        requirements: ['gathering_path'],
-        category: 'gathering',
-        position: { x: 100, y: 350 },
-        connections: ['copper_mining', 'iron_mining', 'precious_mining'],
-        tier: 3
-      },
-      {
-        id: 'lumberjacking',
-        name: 'Lenhador',
-        description: 'Coleta de madeira',
-        maxLevel: 100,
-        currentLevel: npc.type === 'lumberjack' ? Math.max(1, Math.floor((npc.skills?.gathering || 10) / 5)) : 0,
-        cost: 200,
-        requirements: ['gathering_path'],
-        category: 'gathering',
-        position: { x: 150, y: 350 },
-        connections: ['normal_wood', 'hardwood', 'exotic_wood'],
-        tier: 3
-      },
-      {
-        id: 'skinning',
-        name: 'Esfolamento',
-        description: 'Coleta de couro de animais',
+        id: 'plate_armor_crafter',
+        name: 'Criador de Armadura de Placa',
+        description: 'Especialista em armaduras pesadas',
         maxLevel: 100,
         currentLevel: 0,
         cost: 200,
-        requirements: ['gathering_path'],
-        category: 'gathering',
-        position: { x: 200, y: 350 },
-        connections: ['hide_skinning', 'leather_skinning', 'scale_skinning'],
-        tier: 3
+        requirements: ['warrior_forge'],
+        category: 'crafting' as const,
+        subcategory: 'warrior_forge',
+        position: { x: 20, y: 400 },
+        connections: ['plate_helmet_specialist', 'plate_armor_specialist', 'plate_boots_specialist'],
+        tier: 5
       },
       {
-        id: 'quarrying',
-        name: 'Pedreira',
-        description: 'Coleta de pedra',
+        id: 'plate_helmet_specialist',
+        name: 'Especialista em Elmos de Placa',
+        description: 'Cria elmos de placa avançados',
         maxLevel: 100,
         currentLevel: 0,
-        cost: 200,
-        requirements: ['gathering_path'],
-        category: 'gathering',
-        position: { x: 250, y: 350 },
-        connections: ['sandstone', 'limestone', 'marble'],
-        tier: 3
+        cost: 300,
+        requirements: ['plate_armor_crafter'],
+        category: 'crafting' as const,
+        subcategory: 'warrior_forge',
+        position: { x: 10, y: 450 },
+        connections: [],
+        tier: 6
       },
       {
-        id: 'fiber_gathering',
-        name: 'Coleta de Fibras',
-        description: 'Coleta de fibras têxteis',
+        id: 'plate_armor_specialist',
+        name: 'Especialista em Armadura de Placa',
+        description: 'Cria armaduras de placa avançadas',
         maxLevel: 100,
         currentLevel: 0,
-        cost: 200,
-        requirements: ['gathering_path'],
-        category: 'gathering',
-        position: { x: 100, y: 400 },
-        connections: ['cotton', 'flax', 'hemp'],
-        tier: 3
+        cost: 300,
+        requirements: ['plate_armor_crafter'],
+        category: 'crafting' as const,
+        subcategory: 'warrior_forge',
+        position: { x: 30, y: 450 },
+        connections: [],
+        tier: 6
+      },
+      {
+        id: 'plate_boots_specialist',
+        name: 'Especialista em Botas de Placa',
+        description: 'Cria botas de placa avançadas',
+        maxLevel: 100,
+        currentLevel: 0,
+        cost: 300,
+        requirements: ['plate_armor_crafter'],
+        category: 'crafting' as const,
+        subcategory: 'warrior_forge',
+        position: { x: 50, y: 450 },
+        connections: [],
+        tier: 6
       },
 
-      // CRAFTING PATH (Yellow - Right)
+      // Weapons
       {
-        id: 'crafting_path',
-        name: 'Caminho da Criação',
-        description: 'Desbloqueia habilidades de criação',
-        maxLevel: 100,
-        currentLevel: Math.max(1, Math.floor((npc.skills?.working || 10) / 10)),
-        cost: 100,
-        requirements: ['core'],
-        category: 'crafting',
-        position: { x: 600, y: 400 },
-        connections: ['weaponsmith', 'armorsmith', 'toolmaker', 'scholar', 'tanner'],
-        tier: 2
-      },
-      {
-        id: 'weaponsmith',
-        name: 'Armeiro',
-        description: 'Criação de armas',
+        id: 'sword_crafter',
+        name: 'Ferreiro de Espadas',
+        description: 'Especialista em espadas',
         maxLevel: 100,
         currentLevel: 0,
         cost: 200,
-        requirements: ['crafting_path'],
-        category: 'crafting',
-        position: { x: 550, y: 350 },
-        connections: ['melee_weapons', 'ranged_weapons', 'magic_weapons'],
-        tier: 3
+        requirements: ['warrior_forge'],
+        category: 'crafting' as const,
+        subcategory: 'warrior_forge',
+        position: { x: 70, y: 400 },
+        connections: ['claymore_specialist', 'dual_swords_specialist'],
+        tier: 5
       },
       {
-        id: 'armorsmith',
-        name: 'Armadureiro',
-        description: 'Criação de armaduras',
+        id: 'axe_crafter',
+        name: 'Ferreiro de Machados',
+        description: 'Especialista em machados',
         maxLevel: 100,
         currentLevel: 0,
         cost: 200,
-        requirements: ['crafting_path'],
-        category: 'crafting',
-        position: { x: 600, y: 350 },
-        connections: ['cloth_armor', 'leather_armor', 'plate_armor'],
-        tier: 3
+        requirements: ['warrior_forge'],
+        category: 'crafting' as const,
+        subcategory: 'warrior_forge',
+        position: { x: 90, y: 400 },
+        connections: ['greataxe_specialist', 'halberd_specialist'],
+        tier: 5
       },
+
+      // HUNTER'S LODGE
+      {
+        id: 'hunter_lodge',
+        name: 'Cabana do Caçador',
+        description: 'Criação de equipamentos de caçador',
+        maxLevel: 100,
+        currentLevel: 0,
+        cost: 150,
+        requirements: ['crafting_branch'],
+        category: 'crafting' as const,
+        subcategory: 'hunter_lodge',
+        position: { x: 150, y: 300 },
+        connections: ['leather_armor_crafter', 'bow_crafter', 'spear_crafter', 'nature_staff_crafter', 'dagger_crafter', 'quarterstaff_crafter'],
+        tier: 4
+      },
+
+      // MAGE'S TOWER
+      {
+        id: 'mage_tower',
+        name: 'Torre do Mago',
+        description: 'Criação de equipamentos mágicos',
+        maxLevel: 100,
+        currentLevel: 0,
+        cost: 150,
+        requirements: ['crafting_branch'],
+        category: 'crafting' as const,
+        subcategory: 'mage_tower',
+        position: { x: 250, y: 300 },
+        connections: ['cloth_armor_crafter', 'fire_staff_crafter', 'holy_staff_crafter', 'arcane_staff_crafter', 'frost_staff_crafter', 'cursed_staff_crafter', 'tome_crafter'],
+        tier: 4
+      },
+
+      // TOOLMAKER
       {
         id: 'toolmaker',
-        name: 'Fabricante de Ferramentas',
+        name: 'Ferramenteiro',
         description: 'Criação de ferramentas',
         maxLevel: 100,
         currentLevel: 0,
-        cost: 200,
-        requirements: ['crafting_path'],
-        category: 'crafting',
-        position: { x: 650, y: 350 },
-        connections: ['gathering_tools', 'building_tools', 'special_tools'],
-        tier: 3
-      },
+        cost: 150,
+        requirements: ['crafting_branch'],
+        category: 'crafting' as const,
+        subcategory: 'toolmaker',
+        position: { x: 350, y: 300 },
+        connections: ['gathering_tools_specialist', 'accessories_specialist'],
+        tier: 4
+      }
+    ];
+
+    // GATHERING BRANCH
+    const gatheringSkills = [
       {
-        id: 'scholar',
-        name: 'Erudito',
-        description: 'Criação de itens mágicos',
+        id: 'gathering_branch',
+        name: 'Ramo da Coleta',
+        description: 'Desbloqueia habilidades de coleta',
         maxLevel: 100,
-        currentLevel: 0,
-        cost: 200,
-        requirements: ['crafting_path'],
-        category: 'crafting',
-        position: { x: 700, y: 350 },
-        connections: ['tomes', 'orbs', 'totems'],
-        tier: 3
-      },
-      {
-        id: 'tanner',
-        name: 'Curtidor',
-        description: 'Processamento de couro',
-        maxLevel: 100,
-        currentLevel: 0,
-        cost: 200,
-        requirements: ['crafting_path'],
-        category: 'crafting',
-        position: { x: 550, y: 400 },
-        connections: ['basic_leather', 'hardened_leather', 'reinforced_leather'],
+        currentLevel: Math.max(1, Math.floor((npc.skills?.gathering || 10) / 10)),
+        cost: 100,
+        requirements: ['adept_adventurer'],
+        category: 'gathering' as const,
+        position: { x: 650, y: 200 },
+        connections: ['lumberjack', 'quarrier', 'miner', 'harvester', 'skinner', 'fisherman'],
         tier: 3
       },
 
-      // FARMING PATH (Green - Bottom)
+      // Gathering Professions
       {
-        id: 'farming_path',
-        name: 'Caminho da Agricultura',
-        description: 'Desbloqueia habilidades de agricultura',
+        id: 'lumberjack',
+        name: 'Lenhador',
+        description: 'Especialista em coleta de madeira',
+        maxLevel: 100,
+        currentLevel: npc.type === 'lumberjack' ? Math.max(1, Math.floor((npc.skills?.gathering || 10) / 5)) : 0,
+        cost: 150,
+        requirements: ['gathering_branch'],
+        category: 'gathering' as const,
+        position: { x: 550, y: 300 },
+        connections: ['adept_lumberjack', 'lumberjack_tools', 'wood_specialist'],
+        tier: 4
+      },
+      {
+        id: 'miner',
+        name: 'Minerador',
+        description: 'Especialista em mineração',
+        maxLevel: 100,
+        currentLevel: npc.type === 'miner' ? Math.max(1, Math.floor((npc.skills?.gathering || 10) / 5)) : 0,
+        cost: 150,
+        requirements: ['gathering_branch'],
+        category: 'gathering' as const,
+        position: { x: 650, y: 300 },
+        connections: ['adept_miner', 'miner_tools', 'ore_specialist'],
+        tier: 4
+      },
+      {
+        id: 'quarrier',
+        name: 'Extrator de Pedra',
+        description: 'Especialista em extração de pedra',
+        maxLevel: 100,
+        currentLevel: 0,
+        cost: 150,
+        requirements: ['gathering_branch'],
+        category: 'gathering' as const,
+        position: { x: 750, y: 300 },
+        connections: ['adept_quarrier', 'quarrier_tools', 'stone_specialist'],
+        tier: 4
+      },
+      {
+        id: 'harvester',
+        name: 'Ceifador',
+        description: 'Especialista em coleta de fibras',
+        maxLevel: 100,
+        currentLevel: 0,
+        cost: 150,
+        requirements: ['gathering_branch'],
+        category: 'gathering' as const,
+        position: { x: 600, y: 350 },
+        connections: ['adept_harvester', 'harvester_tools', 'fiber_specialist'],
+        tier: 4
+      },
+      {
+        id: 'skinner',
+        name: 'Esfolador',
+        description: 'Especialista em esfolamento',
+        maxLevel: 100,
+        currentLevel: 0,
+        cost: 150,
+        requirements: ['gathering_branch'],
+        category: 'gathering' as const,
+        position: { x: 700, y: 350 },
+        connections: ['adept_skinner', 'skinner_tools', 'hide_specialist'],
+        tier: 4
+      },
+      {
+        id: 'fisherman',
+        name: 'Pescador',
+        description: 'Especialista em pesca',
+        maxLevel: 100,
+        currentLevel: 0,
+        cost: 150,
+        requirements: ['gathering_branch'],
+        category: 'gathering' as const,
+        position: { x: 650, y: 400 },
+        connections: ['adept_fisherman', 'fishing_gear', 'fish_specialist'],
+        tier: 4
+      }
+    ];
+
+    // FARMING BRANCH
+    const farmingSkills = [
+      {
+        id: 'farming_branch',
+        name: 'Ramo da Agricultura',
+        description: 'Habilidades de agricultura e criação',
         maxLevel: 100,
         currentLevel: npc.type === 'farmer' ? Math.max(1, Math.floor((npc.skills?.working || 10) / 5)) : 0,
         cost: 100,
-        requirements: ['core'],
-        category: 'farming',
-        position: { x: 400, y: 600 },
-        connections: ['crop_farming', 'animal_breeding', 'herb_growing'],
-        tier: 2
+        requirements: ['adept_adventurer'],
+        category: 'farming' as const,
+        position: { x: 400, y: 450 },
+        connections: ['crop_farmer', 'herb_grower', 'animal_breeder'],
+        tier: 3
       },
       {
-        id: 'crop_farming',
-        name: 'Cultivo de Grãos',
-        description: 'Plantio e colheita de grãos',
+        id: 'crop_farmer',
+        name: 'Fazendeiro de Grãos',
+        description: 'Especialista em cultivo de grãos',
         maxLevel: 100,
         currentLevel: npc.type === 'farmer' ? Math.max(1, Math.floor((npc.skills?.working || 10) / 7)) : 0,
-        cost: 200,
-        requirements: ['farming_path'],
-        category: 'farming',
+        cost: 150,
+        requirements: ['farming_branch'],
+        category: 'farming' as const,
         position: { x: 300, y: 550 },
-        connections: ['wheat_farming', 'corn_farming', 'bean_farming'],
-        tier: 3
+        connections: ['adept_crop_farmer', 'crop_specialist'],
+        tier: 4
       },
       {
-        id: 'animal_breeding',
-        name: 'Criação de Animais',
-        description: 'Criação e cuidado de animais',
+        id: 'herb_grower',
+        name: 'Cultivador de Ervas',
+        description: 'Especialista em cultivo de ervas',
         maxLevel: 100,
         currentLevel: 0,
-        cost: 200,
-        requirements: ['farming_path'],
-        category: 'farming',
+        cost: 150,
+        requirements: ['farming_branch'],
+        category: 'farming' as const,
         position: { x: 400, y: 550 },
-        connections: ['poultry', 'livestock', 'mounts'],
-        tier: 3
+        connections: ['adept_herb_grower', 'herb_specialist'],
+        tier: 4
       },
       {
-        id: 'herb_growing',
-        name: 'Cultivo de Ervas',
-        description: 'Cultivo de plantas medicinais',
+        id: 'animal_breeder',
+        name: 'Criador de Animais',
+        description: 'Especialista em criação de animais',
         maxLevel: 100,
         currentLevel: 0,
-        cost: 200,
-        requirements: ['farming_path'],
-        category: 'farming',
+        cost: 150,
+        requirements: ['farming_branch'],
+        category: 'farming' as const,
         position: { x: 500, y: 550 },
-        connections: ['healing_herbs', 'poison_herbs', 'magic_herbs'],
-        tier: 3
-      },
-
-      // COOKING PATH (Purple - Bottom Left)
-      {
-        id: 'cooking_path',
-        name: 'Caminho da Culinária',
-        description: 'Desbloqueia habilidades culinárias',
-        maxLevel: 100,
-        currentLevel: npc.type === 'baker' ? Math.max(1, Math.floor((npc.skills?.working || 10) / 5)) : 0,
-        cost: 100,
-        requirements: ['core'],
-        category: 'cooking',
-        position: { x: 200, y: 600 },
-        connections: ['baking', 'brewing', 'butchering'],
-        tier: 2
-      },
-      {
-        id: 'baking',
-        name: 'Panificação',
-        description: 'Criação de pães e bolos',
-        maxLevel: 100,
-        currentLevel: npc.type === 'baker' ? Math.max(1, Math.floor((npc.skills?.working || 10) / 7)) : 0,
-        cost: 200,
-        requirements: ['cooking_path'],
-        category: 'cooking',
-        position: { x: 150, y: 550 },
-        connections: ['bread_baking', 'pastry_making', 'cake_crafting'],
-        tier: 3
-      },
-      {
-        id: 'brewing',
-        name: 'Cervejaria',
-        description: 'Produção de bebidas',
-        maxLevel: 100,
-        currentLevel: 0,
-        cost: 200,
-        requirements: ['cooking_path'],
-        category: 'cooking',
-        position: { x: 200, y: 550 },
-        connections: ['ale_brewing', 'wine_making', 'potion_brewing'],
-        tier: 3
-      },
-      {
-        id: 'butchering',
-        name: 'Açougue',
-        description: 'Processamento de carne',
-        maxLevel: 100,
-        currentLevel: 0,
-        cost: 200,
-        requirements: ['cooking_path'],
-        category: 'cooking',
-        position: { x: 250, y: 550 },
-        connections: ['meat_processing', 'sausage_making', 'preservation'],
-        tier: 3
+        connections: ['adept_animal_breeder', 'animal_specialist'],
+        tier: 4
       }
+    ];
+
+    // COMBAT BRANCH
+    const combatSkills = [
+      {
+        id: 'combat_branch',
+        name: 'Ramo do Combate',
+        description: 'Habilidades de combate',
+        maxLevel: 100,
+        currentLevel: 0,
+        cost: 100,
+        requirements: ['adept_adventurer'],
+        category: 'combat' as const,
+        position: { x: 400, y: 600 },
+        connections: ['warrior_combat', 'hunter_combat', 'mage_combat', 'reaver'],
+        tier: 3
+      },
+      {
+        id: 'reaver',
+        name: 'Ceifador',
+        description: 'Combatente versátil',
+        maxLevel: 100,
+        currentLevel: 0,
+        cost: 150,
+        requirements: ['combat_branch'],
+        category: 'combat' as const,
+        position: { x: 300, y: 700 },
+        connections: ['adept_reaver'],
+        tier: 4
+      },
+      {
+        id: 'warrior_combat',
+        name: 'Combate de Guerreiro',
+        description: 'Especialização em combate corpo a corpo',
+        maxLevel: 100,
+        currentLevel: 0,
+        cost: 150,
+        requirements: ['combat_branch'],
+        category: 'combat' as const,
+        position: { x: 350, y: 700 },
+        connections: ['plate_fighter', 'sword_fighter', 'axe_fighter'],
+        tier: 4
+      },
+      {
+        id: 'hunter_combat',
+        name: 'Combate de Caçador',
+        description: 'Especialização em combate à distância',
+        maxLevel: 100,
+        currentLevel: 0,
+        cost: 150,
+        requirements: ['combat_branch'],
+        category: 'combat' as const,
+        position: { x: 450, y: 700 },
+        connections: ['leather_fighter', 'bow_fighter', 'spear_fighter'],
+        tier: 4
+      },
+      {
+        id: 'mage_combat',
+        name: 'Combate de Mago',
+        description: 'Especialização em combate mágico',
+        maxLevel: 100,
+        currentLevel: 0,
+        cost: 150,
+        requirements: ['combat_branch'],
+        category: 'combat' as const,
+        position: { x: 500, y: 700 },
+        connections: ['cloth_fighter', 'fire_fighter', 'holy_fighter'],
+        tier: 4
+      }
+    ];
+
+    // REFINING BRANCH
+    const refiningSkills = [
+      {
+        id: 'refining_branch',
+        name: 'Ramo do Refinamento',
+        description: 'Habilidades de refinamento de recursos',
+        maxLevel: 100,
+        currentLevel: 0,
+        cost: 100,
+        requirements: ['adept_adventurer'],
+        category: 'refining' as const,
+        position: { x: 800, y: 200 },
+        connections: ['wood_refiner', 'stone_refiner', 'ore_refiner', 'leather_refiner', 'fiber_refiner'],
+        tier: 3
+      },
+      {
+        id: 'wood_refiner',
+        name: 'Refinador de Madeira',
+        description: 'Especialista em refinar madeira',
+        maxLevel: 100,
+        currentLevel: 0,
+        cost: 150,
+        requirements: ['refining_branch'],
+        category: 'refining' as const,
+        position: { x: 750, y: 300 },
+        connections: ['adept_wood_refiner', 'planks_specialist'],
+        tier: 4
+      },
+      {
+        id: 'ore_refiner',
+        name: 'Refinador de Minério',
+        description: 'Especialista em refinar minérios',
+        maxLevel: 100,
+        currentLevel: 0,
+        cost: 150,
+        requirements: ['refining_branch'],
+        category: 'refining' as const,
+        position: { x: 850, y: 300 },
+        connections: ['adept_ore_refiner', 'metal_bar_specialist'],
+        tier: 4
+      }
+    ];
+
+    return [
+      ...adventurerSkills,
+      ...craftingSkills,
+      ...gatheringSkills,
+      ...farmingSkills,
+      ...combatSkills,
+      ...refiningSkills
     ];
   };
 
@@ -568,14 +586,12 @@ const SkillTreePanel = ({ npc, onClose }: SkillTreePanelProps) => {
 
   const getCategoryColor = (category: string) => {
     switch (category) {
-      case 'warrior': return 'text-red-400 border-red-400 bg-red-900/20';
-      case 'mage': return 'text-blue-400 border-blue-400 bg-blue-900/20';
-      case 'hunter': return 'text-green-400 border-green-400 bg-green-900/20';
-      case 'gathering': return 'text-orange-400 border-orange-400 bg-orange-900/20';
+      case 'adventurer': return 'text-gray-400 border-gray-400 bg-gray-900/20';
       case 'crafting': return 'text-yellow-400 border-yellow-400 bg-yellow-900/20';
+      case 'gathering': return 'text-green-400 border-green-400 bg-green-900/20';
       case 'farming': return 'text-lime-400 border-lime-400 bg-lime-900/20';
-      case 'cooking': return 'text-purple-400 border-purple-400 bg-purple-900/20';
-      case 'utility': return 'text-gray-400 border-gray-400 bg-gray-900/20';
+      case 'combat': return 'text-red-400 border-red-400 bg-red-900/20';
+      case 'refining': return 'text-purple-400 border-purple-400 bg-purple-900/20';
       default: return 'text-gray-400 border-gray-400 bg-gray-900/20';
     }
   };
@@ -601,14 +617,12 @@ const SkillTreePanel = ({ npc, onClose }: SkillTreePanelProps) => {
 
   const categories = [
     { id: 'all', name: 'Todas', icon: 'fa-globe', color: 'text-white' },
-    { id: 'warrior', name: 'Guerreiro', icon: 'fa-sword', color: 'text-red-400' },
-    { id: 'mage', name: 'Mago', icon: 'fa-magic', color: 'text-blue-400' },
-    { id: 'hunter', name: 'Caçador', icon: 'fa-bow-arrow', color: 'text-green-400' },
-    { id: 'gathering', name: 'Coleta', icon: 'fa-hammer', color: 'text-orange-400' },
-    { id: 'crafting', name: 'Criação', icon: 'fa-cog', color: 'text-yellow-400' },
+    { id: 'adventurer', name: 'Aventureiro', icon: 'fa-user', color: 'text-gray-400' },
+    { id: 'crafting', name: 'Criação', icon: 'fa-hammer', color: 'text-yellow-400' },
+    { id: 'gathering', name: 'Coleta', icon: 'fa-tree', color: 'text-green-400' },
     { id: 'farming', name: 'Agricultura', icon: 'fa-wheat-awn', color: 'text-lime-400' },
-    { id: 'cooking', name: 'Culinária', icon: 'fa-utensils', color: 'text-purple-400' },
-    { id: 'utility', name: 'Utilidade', icon: 'fa-star', color: 'text-gray-400' }
+    { id: 'combat', name: 'Combate', icon: 'fa-sword', color: 'text-red-400' },
+    { id: 'refining', name: 'Refinamento', icon: 'fa-cog', color: 'text-purple-400' }
   ];
 
   return (
@@ -620,7 +634,7 @@ const SkillTreePanel = ({ npc, onClose }: SkillTreePanelProps) => {
       }}
     >
       <div 
-        className="bg-gray-900 rounded-xl border border-gray-600 w-[1000px] h-[800px] relative overflow-hidden"
+        className="bg-gray-900 rounded-xl border border-gray-600 w-[1200px] h-[900px] relative overflow-hidden"
         style={{
           position: 'absolute',
           left: `${position.x}px`,
@@ -648,15 +662,23 @@ const SkillTreePanel = ({ npc, onClose }: SkillTreePanelProps) => {
                 npc.type === "farmer" ? "text-yellow-600" : "text-blue-600"
               }`}></i>
             </div>
-            <h2 className="text-xl font-bold text-white">Árvore de Habilidades Completa</h2>
+            <h2 className="text-xl font-bold text-white">Tábua de Destinos - Albion Online</h2>
             <span className="text-gray-400">- {npc.name}</span>
           </div>
-          <button 
-            onClick={onClose}
-            className="text-gray-400 hover:text-white transition-colors p-2"
-          >
-            <i className="fa-solid fa-times"></i>
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setViewMode(viewMode === 'overview' ? 'detailed' : 'overview')}
+              className="px-3 py-1 bg-gray-700 hover:bg-gray-600 text-white rounded text-sm"
+            >
+              {viewMode === 'overview' ? 'Visão Detalhada' : 'Visão Geral'}
+            </button>
+            <button 
+              onClick={onClose}
+              className="text-gray-400 hover:text-white transition-colors p-2"
+            >
+              <i className="fa-solid fa-times"></i>
+            </button>
+          </div>
         </div>
 
         {/* Category Filter */}
@@ -677,10 +699,10 @@ const SkillTreePanel = ({ npc, onClose }: SkillTreePanelProps) => {
           ))}
         </div>
 
-        <div className="flex h-[calc(100%-128px)]">
+        <div className="flex h-[calc(100%-140px)]">
           {/* Skill Tree Visualization */}
-          <div className="flex-1 relative bg-gray-800 overflow-hidden">
-            <div className="absolute inset-0 bg-gradient-radial from-gray-700 via-gray-800 to-gray-900">
+          <div className="flex-1 relative bg-gray-800 overflow-auto">
+            <div className="absolute inset-0 bg-gradient-to-br from-gray-700 via-gray-800 to-gray-900" style={{ width: '2000px', height: '1500px' }}>
               <svg className="absolute inset-0 w-full h-full">
                 {/* Render connections */}
                 {filteredSkills.map(skill => 
@@ -718,7 +740,7 @@ const SkillTreePanel = ({ npc, onClose }: SkillTreePanelProps) => {
                   }}
                   onClick={() => setSelectedNode(skill.id)}
                 >
-                  <div className={`w-14 h-14 rounded-full border-3 flex items-center justify-center relative ${
+                  <div className={`w-16 h-16 rounded-full border-3 flex items-center justify-center relative ${
                     isSkillUnlocked(skill) 
                       ? getCategoryColor(skill.category)
                       : 'text-gray-600 border-gray-600 bg-gray-800'
@@ -728,13 +750,12 @@ const SkillTreePanel = ({ npc, onClose }: SkillTreePanelProps) => {
                       : ''
                   }`}>
                     <i className={`fa-solid ${
-                      skill.category === 'warrior' ? 'fa-sword' :
-                      skill.category === 'mage' ? 'fa-magic' :
-                      skill.category === 'hunter' ? 'fa-bow-arrow' :
-                      skill.category === 'gathering' ? 'fa-hammer' :
-                      skill.category === 'crafting' ? 'fa-cog' :
+                      skill.category === 'adventurer' ? 'fa-user' :
+                      skill.category === 'crafting' ? 'fa-hammer' :
+                      skill.category === 'gathering' ? 'fa-tree' :
                       skill.category === 'farming' ? 'fa-wheat-awn' :
-                      skill.category === 'cooking' ? 'fa-utensils' :
+                      skill.category === 'combat' ? 'fa-sword' :
+                      skill.category === 'refining' ? 'fa-cog' :
                       'fa-star'
                     } text-lg`}></i>
                     
@@ -746,15 +767,13 @@ const SkillTreePanel = ({ npc, onClose }: SkillTreePanelProps) => {
                     )}
 
                     {/* Tier indicator */}
-                    {skill.tier && (
-                      <div className="absolute -top-1 -left-1 w-5 h-5 bg-gray-600 rounded-full flex items-center justify-center text-xs font-bold text-white">
-                        {skill.tier}
-                      </div>
-                    )}
+                    <div className="absolute -top-1 -left-1 w-5 h-5 bg-blue-600 rounded-full flex items-center justify-center text-xs font-bold text-white border border-white">
+                      T{skill.tier}
+                    </div>
                   </div>
 
                   {/* Skill name */}
-                  <div className="absolute top-16 left-1/2 transform -translate-x-1/2 text-xs text-center text-gray-300 whitespace-nowrap max-w-20 leading-tight">
+                  <div className="absolute top-18 left-1/2 transform -translate-x-1/2 text-xs text-center text-gray-300 whitespace-nowrap max-w-24 leading-tight">
                     {skill.name}
                   </div>
                 </div>
@@ -769,13 +788,16 @@ const SkillTreePanel = ({ npc, onClose }: SkillTreePanelProps) => {
                 <div>
                   <div className="flex items-center gap-2 mb-2">
                     <h3 className="text-lg font-bold text-white">{selectedSkill.name}</h3>
-                    {selectedSkill.tier && (
-                      <span className="px-2 py-1 bg-gray-700 rounded text-xs text-gray-300">
-                        Tier {selectedSkill.tier}
-                      </span>
-                    )}
+                    <span className="px-2 py-1 bg-blue-700 rounded text-xs text-white">
+                      Tier {selectedSkill.tier}
+                    </span>
                   </div>
                   <p className="text-gray-300 text-sm mb-3">{selectedSkill.description}</p>
+                  {selectedSkill.subcategory && (
+                    <div className="text-xs text-gray-400 mb-2">
+                      Subcategoria: {selectedSkill.subcategory}
+                    </div>
+                  )}
                 </div>
 
                 <div className="space-y-2">
@@ -789,20 +811,19 @@ const SkillTreePanel = ({ npc, onClose }: SkillTreePanelProps) => {
                   <div className="flex justify-between">
                     <span className="text-gray-400">Categoria:</span>
                     <span className={`font-medium capitalize ${getCategoryColor(selectedSkill.category).split(' ')[0]}`}>
-                      {selectedSkill.category === 'warrior' ? 'Guerreiro' :
-                       selectedSkill.category === 'mage' ? 'Mago' :
-                       selectedSkill.category === 'hunter' ? 'Caçador' :
-                       selectedSkill.category === 'gathering' ? 'Coleta' :
+                      {selectedSkill.category === 'adventurer' ? 'Aventureiro' :
                        selectedSkill.category === 'crafting' ? 'Criação' :
+                       selectedSkill.category === 'gathering' ? 'Coleta' :
                        selectedSkill.category === 'farming' ? 'Agricultura' :
-                       selectedSkill.category === 'cooking' ? 'Culinária' :
-                       'Utilidade'}
+                       selectedSkill.category === 'combat' ? 'Combate' :
+                       selectedSkill.category === 'refining' ? 'Refinamento' :
+                       'Outro'}
                     </span>
                   </div>
 
                   <div className="flex justify-between">
                     <span className="text-gray-400">Custo:</span>
-                    <span className="text-yellow-400 font-medium">{selectedSkill.cost} XP</span>
+                    <span className="text-yellow-400 font-medium">{selectedSkill.cost} Fame</span>
                   </div>
                 </div>
 
@@ -817,13 +838,12 @@ const SkillTreePanel = ({ npc, onClose }: SkillTreePanelProps) => {
                   <div className="w-full bg-gray-700 rounded-full h-2">
                     <div 
                       className={`h-2 rounded-full transition-all duration-300 ${
-                        selectedSkill.category === 'warrior' ? 'bg-red-500' :
-                        selectedSkill.category === 'mage' ? 'bg-blue-500' :
-                        selectedSkill.category === 'hunter' ? 'bg-green-500' :
-                        selectedSkill.category === 'gathering' ? 'bg-orange-500' :
+                        selectedSkill.category === 'adventurer' ? 'bg-gray-500' :
                         selectedSkill.category === 'crafting' ? 'bg-yellow-500' :
+                        selectedSkill.category === 'gathering' ? 'bg-green-500' :
                         selectedSkill.category === 'farming' ? 'bg-lime-500' :
-                        selectedSkill.category === 'cooking' ? 'bg-purple-500' :
+                        selectedSkill.category === 'combat' ? 'bg-red-500' :
+                        selectedSkill.category === 'refining' ? 'bg-purple-500' :
                         'bg-gray-500'
                       }`}
                       style={{ width: `${(selectedSkill.currentLevel / selectedSkill.maxLevel) * 100}%` }}
@@ -868,6 +888,21 @@ const SkillTreePanel = ({ npc, onClose }: SkillTreePanelProps) => {
                   </div>
                 )}
 
+                {/* Unlocks */}
+                {selectedSkill.unlocks && selectedSkill.unlocks.length > 0 && (
+                  <div>
+                    <h4 className="text-sm font-medium text-gray-400 mb-2">Fornece Acesso a:</h4>
+                    <div className="space-y-1">
+                      {selectedSkill.unlocks.map(unlock => (
+                        <div key={unlock} className="text-sm text-purple-400">
+                          <i className="fa-solid fa-star mr-2"></i>
+                          {unlock}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
                 {/* Upgrade button */}
                 <button
                   onClick={() => upgradeSkill(selectedSkill.id)}
@@ -880,7 +915,7 @@ const SkillTreePanel = ({ npc, onClose }: SkillTreePanelProps) => {
                 >
                   {selectedSkill.currentLevel >= selectedSkill.maxLevel 
                     ? 'Maximizado' 
-                    : 'Melhorar Habilidade'
+                    : `Atualizar para Nível ${selectedSkill.currentLevel + 1}`
                   }
                 </button>
               </div>
@@ -891,6 +926,7 @@ const SkillTreePanel = ({ npc, onClose }: SkillTreePanelProps) => {
                 <div className="mt-4 text-sm text-gray-500">
                   <p>Total: {filteredSkills.length} habilidades</p>
                   <p>Desbloqueadas: {filteredSkills.filter(s => s.currentLevel > 0).length}</p>
+                  <p>Categoria: {activeCategory === 'all' ? 'Todas' : categories.find(c => c.id === activeCategory)?.name}</p>
                 </div>
               </div>
             )}
