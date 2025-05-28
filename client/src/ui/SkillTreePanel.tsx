@@ -1258,7 +1258,7 @@ const SkillTreePanel = ({ npc, onClose }: SkillTreePanelProps) => {
 
         <div className="flex h-[calc(100%-140px)]">
           {/* Skill Tree Visualization */}
-          <div className="flex-1 relative bg-gray-800 overflow-auto">
+          <div className="flex-1 relative bg-gray-800 overflow-auto scrollbar-hidden">
             <div className="absolute inset-0 bg-gradient-to-br from-gray-700 via-gray-800 to-gray-900" style={{ width: '3200px', height: '2200px' }}>
               <svg className="absolute inset-0 w-full h-full">
                 {/* Render connections */}
@@ -1339,7 +1339,7 @@ const SkillTreePanel = ({ npc, onClose }: SkillTreePanelProps) => {
           </div>
 
           {/* Skill Details Panel */}
-          <div className="w-80 bg-gray-900 border-l border-gray-600 p-4 overflow-y-auto">
+          <div className="w-80 bg-gray-900 border-l border-gray-600 p-4 overflow-y-auto scrollbar-hidden">
             {selectedSkill ? (
               <div className="space-y-4">
                 <div>

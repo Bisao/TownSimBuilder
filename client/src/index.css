@@ -21,6 +21,18 @@
   background: radial-gradient(circle, var(--tw-gradient-stops));
 }
 
+/* Hidden scrollbars - maintain functionality but hide visual scrollbars */
+.scrollbar-hidden {
+  /* Firefox */
+  scrollbar-width: none;
+  /* WebKit browsers (Chrome, Safari, Edge) */
+  -ms-overflow-style: none;
+}
+
+.scrollbar-hidden::-webkit-scrollbar {
+  display: none;
+}
+
 @layer base {
   * {
     @apply border-border;
