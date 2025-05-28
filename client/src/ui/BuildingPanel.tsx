@@ -6,7 +6,7 @@ import { cn } from "../lib/utils";
 import { useDraggable } from "../hooks/useDraggable";
 
 const BuildingPanel = ({ isVisible }: { isVisible: boolean }) => {
-  const { selectBuilding, selectedBuildingType } = useGameStore();
+  const { selectBuildingType, selectedBuildingType } = useGameStore();
   const { resources } = useResourceStore();
   const { dragRef, position, isDragging } = useDraggable({
     initialPosition: { x: window.innerWidth / 2 - 192, y: window.innerHeight / 2 - 200 }
@@ -17,10 +17,10 @@ const BuildingPanel = ({ isVisible }: { isVisible: boolean }) => {
   const handleSelectBuilding = (type: string) => {
     if (selectedBuildingType === type) {
       // Se já estiver selecionado, desmarque-o
-      selectBuilding(null);
+      selectBuildingType(null);
     } else {
       // Caso contrário, selecione o edifício
-      selectBuilding(type);
+      selectBuildingType(type);
     }
   };
 
