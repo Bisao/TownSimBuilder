@@ -97,6 +97,7 @@ interface NPCStoreState {
   toggleNpcControlMode: (npcId: string) => void;
   setNpcControlMode: (npcId: string, mode: "autonomous" | "manual") => void;
   startNpcWork: (npcId: string) => void;
+  updateNpc: (npcId: string, updates: Partial<NPC>) => void;
 }
 
 // ===== CONSTANTES =====
@@ -1395,9 +1396,9 @@ export const useNpcStore = create<NPCStoreState>()(
       useBuildingStore.getState().updatePlantations(Date.now());
 
       const updatedNPCs = get().npcs.map(npc => {
-        // Se este NPC está sendo controlado manualmente
+        // Se este NPC está sendo controlado manualmente, pular atualização automática
         if (isManualControl && controlledNpcId === npc.id && npc.controlMode === "manual") {
-          return NPCStateHandlers.handleManualControl(npc, adjustedDeltaTime, manualControlKeys);
+          return npc; // Retornar sem modificações - o ManualNpcController cuidará disso
         }
         const updates: Partial<NPC> = { currentSchedule };
         const oldState = npc.state;
@@ -1581,6 +1582,14 @@ export const useNpcStore = create<NPCStoreState>()(
                 state: "idle" as const,
               }
             : npc
+        ),
+      }));
+    },
+
+    updateNpc: (npcId: string, updates: Partial<NPC>) => {
+      set((state) => ({
+        npcs: state.npcs.map(npc =>
+          npc.id === npcId ? { ...npc, ...updates } : npc
         ),
       }));
     },

@@ -106,16 +106,16 @@ const CameraControls = () => {
   const isRotating = useRef(false);
   const lastMousePosition = useRef({ x: 0, y: 0 });
   const cameraAngle = useRef(0);
-  
+
   // Configurações de sensibilidade
   const MOUSE_SENSITIVITY = 0.003;
   const PAN_SENSITIVITY = 0.15;
-  
+
   useEffect(() => {
     const handleMouseDown = (event: MouseEvent) => {
       event.preventDefault();
       lastMousePosition.current = { x: event.clientX, y: event.clientY };
-      
+
       if (event.button === 2) { // Botão direito - Pan
         isDragging.current = true;
       }
@@ -124,18 +124,18 @@ const CameraControls = () => {
     const handleMouseMove = (event: MouseEvent) => {
       const deltaX = event.clientX - lastMousePosition.current.x;
       const deltaY = event.clientY - lastMousePosition.current.y;
-      
+
       if (isDragging.current) { // Pan
         const direction = new THREE.Vector3()
           .subVectors(positionRef.current, targetRef.current)
           .normalize();
         const right = new THREE.Vector3().crossVectors(direction, new THREE.Vector3(0, 1, 0));
         const forward = new THREE.Vector3().crossVectors(right, new THREE.Vector3(0, 1, 0));
-        
+
         targetRef.current.add(right.multiplyScalar(-deltaX * PAN_SENSITIVITY));
         targetRef.current.add(forward.multiplyScalar(-deltaY * PAN_SENSITIVITY));
       }
-      
+
       lastMousePosition.current = { x: event.clientX, y: event.clientY };
     };
 
@@ -226,25 +226,25 @@ const CameraControls = () => {
       if (controlledNpc) {
         const npcX = controlledNpc.position[0];
         const npcZ = controlledNpc.position[2];
-        
+
         // Posicionar câmera atrás do NPC
         const distance = 8; // Distância da câmera ao NPC
         const height = 5; // Altura da câmera
-        
+
         // Nova posição da câmera (atrás do NPC)
         const newCameraPosition = new THREE.Vector3(
           npcX,
           height,
           npcZ + distance
         );
-        
+
         // Novo alvo da câmera (ligeiramente à frente do NPC)
         const newTarget = new THREE.Vector3(npcX, 1.5, npcZ - 2);
-        
+
         // Suavizar movimento da câmera
         currentPosition.lerp(newCameraPosition, 0.15);
         currentTarget.lerp(newTarget, 0.15);
-        
+
         // Atualizar câmera
         camera.position.copy(currentPosition);
         camera.lookAt(currentTarget);
@@ -252,10 +252,19 @@ const CameraControls = () => {
         // Atualizar store
         updateCameraPosition([currentPosition.x, currentPosition.y, currentPosition.z]);
         updateCameraTarget([currentTarget.x, currentTarget.y, currentTarget.z]);
-        
+
         return; // Sair cedo para não executar a lógica normal
       }
     }
+
+    // Se estiver em modo manual, não processar controles de câmera
+    if (isManualControl && controlledNpcId) {
+      return;
+    }
+
+    // Movimento da câmera baseado nos controles
+    const moveSpeed = 0.5;
+    const rotSpeed = 0.02;
 
     // Rotação da câmera (só funciona se não estiver em controle manual do NPC)
     if (!isManualControl) {
@@ -285,7 +294,7 @@ const CameraControls = () => {
       }
       if (rightward) {
         moveDirection.x -= Math.cos(currentRotation) * MOVE_SPEED;
-        moveDirection.z += Math.sin(currentRotation) * MOVE_SPEED;
+        moveDirection.z -= Math.sin(currentRotation) * MOVE_SPEED;
       }
     }
 
