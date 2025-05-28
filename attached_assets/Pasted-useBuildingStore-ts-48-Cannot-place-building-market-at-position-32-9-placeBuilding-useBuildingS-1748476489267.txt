@@ -1,0 +1,128 @@
+useBuildingStore.ts:48 Cannot place building market at position [32, 9]
+placeBuilding @ useBuildingStore.ts:48
+createInitialMarket @ World.tsx:136
+(anonymous) @ World.tsx:73
+commitHookEffectListMount @ chunk-A3GN3WMN.js?v=a24d7128:10911
+commitPassiveMountOnFiber @ chunk-A3GN3WMN.js?v=a24d7128:12219
+commitPassiveMountEffects_complete @ chunk-A3GN3WMN.js?v=a24d7128:12191
+commitPassiveMountEffects_begin @ chunk-A3GN3WMN.js?v=a24d7128:12181
+commitPassiveMountEffects @ chunk-A3GN3WMN.js?v=a24d7128:12171
+flushPassiveEffectsImpl @ chunk-A3GN3WMN.js?v=a24d7128:13939
+flushPassiveEffects @ chunk-A3GN3WMN.js?v=a24d7128:13902
+(anonymous) @ chunk-A3GN3WMN.js?v=a24d7128:13793
+workLoop @ chunk-A3GN3WMN.js?v=a24d7128:274
+flushWork @ chunk-A3GN3WMN.js?v=a24d7128:253
+performWorkUntilDeadline @ chunk-A3GN3WMN.js?v=a24d7128:461
+CameraControls.tsx:35 Camera initialized: {position: Array(3), target: Array(3)}
+PlacementIndicator.tsx:79 Building house placed at 1,2
+useBuildingStore.ts:99 Building house placed at [1, 2]
+PlacementIndicator.tsx:79 Building silo placed at 4,2
+useBuildingStore.ts:99 Building silo placed at [4, 2]
+SiloPanel.tsx:73 Uncaught TypeError: Cannot read properties of undefined (reading 'icon')
+    at SiloPanel.tsx:73:45
+    at Array.map (<anonymous>)
+    at SiloPanel (SiloPanel.tsx:66:30)
+    at renderWithHooks (chunk-WERSD76P.js?v=a24d7128:11548:26)
+    at mountIndeterminateComponent (chunk-WERSD76P.js?v=a24d7128:14926:21)
+    at beginWork (chunk-WERSD76P.js?v=a24d7128:15914:22)
+    at HTMLUnknownElement.callCallback2 (chunk-WERSD76P.js?v=a24d7128:3674:22)
+    at Object.invokeGuardedCallbackDev (chunk-WERSD76P.js?v=a24d7128:3699:24)
+    at invokeGuardedCallback (chunk-WERSD76P.js?v=a24d7128:3733:39)
+    at beginWork$1 (chunk-WERSD76P.js?v=a24d7128:19765:15)
+(anonymous) @ SiloPanel.tsx:73
+SiloPanel @ SiloPanel.tsx:66
+renderWithHooks @ chunk-WERSD76P.js?v=a24d7128:11548
+mountIndeterminateComponent @ chunk-WERSD76P.js?v=a24d7128:14926
+beginWork @ chunk-WERSD76P.js?v=a24d7128:15914
+callCallback2 @ chunk-WERSD76P.js?v=a24d7128:3674
+invokeGuardedCallbackDev @ chunk-WERSD76P.js?v=a24d7128:3699
+invokeGuardedCallback @ chunk-WERSD76P.js?v=a24d7128:3733
+beginWork$1 @ chunk-WERSD76P.js?v=a24d7128:19765
+performUnitOfWork @ chunk-WERSD76P.js?v=a24d7128:19198
+workLoopSync @ chunk-WERSD76P.js?v=a24d7128:19137
+renderRootSync @ chunk-WERSD76P.js?v=a24d7128:19116
+performConcurrentWorkOnRoot @ chunk-WERSD76P.js?v=a24d7128:18678
+workLoop @ chunk-WERSD76P.js?v=a24d7128:197
+flushWork @ chunk-WERSD76P.js?v=a24d7128:176
+performWorkUntilDeadline @ chunk-WERSD76P.js?v=a24d7128:384
+SiloPanel.tsx:73 Uncaught TypeError: Cannot read properties of undefined (reading 'icon')
+    at SiloPanel.tsx:73:45
+    at Array.map (<anonymous>)
+    at SiloPanel (SiloPanel.tsx:66:30)
+    at renderWithHooks (chunk-WERSD76P.js?v=a24d7128:11548:26)
+    at mountIndeterminateComponent (chunk-WERSD76P.js?v=a24d7128:14926:21)
+    at beginWork (chunk-WERSD76P.js?v=a24d7128:15914:22)
+    at HTMLUnknownElement.callCallback2 (chunk-WERSD76P.js?v=a24d7128:3674:22)
+    at Object.invokeGuardedCallbackDev (chunk-WERSD76P.js?v=a24d7128:3699:24)
+    at invokeGuardedCallback (chunk-WERSD76P.js?v=a24d7128:3733:39)
+    at beginWork$1 (chunk-WERSD76P.js?v=a24d7128:19765:15)
+(anonymous) @ SiloPanel.tsx:73
+SiloPanel @ SiloPanel.tsx:66
+renderWithHooks @ chunk-WERSD76P.js?v=a24d7128:11548
+mountIndeterminateComponent @ chunk-WERSD76P.js?v=a24d7128:14926
+beginWork @ chunk-WERSD76P.js?v=a24d7128:15914
+callCallback2 @ chunk-WERSD76P.js?v=a24d7128:3674
+invokeGuardedCallbackDev @ chunk-WERSD76P.js?v=a24d7128:3699
+invokeGuardedCallback @ chunk-WERSD76P.js?v=a24d7128:3733
+beginWork$1 @ chunk-WERSD76P.js?v=a24d7128:19765
+performUnitOfWork @ chunk-WERSD76P.js?v=a24d7128:19198
+workLoopSync @ chunk-WERSD76P.js?v=a24d7128:19137
+renderRootSync @ chunk-WERSD76P.js?v=a24d7128:19116
+recoverFromConcurrentError @ chunk-WERSD76P.js?v=a24d7128:18736
+performConcurrentWorkOnRoot @ chunk-WERSD76P.js?v=a24d7128:18684
+workLoop @ chunk-WERSD76P.js?v=a24d7128:197
+flushWork @ chunk-WERSD76P.js?v=a24d7128:176
+performWorkUntilDeadline @ chunk-WERSD76P.js?v=a24d7128:384
+chunk-A3GN3WMN.js?v=a24d7128:18167 The above error occurred in the <SiloPanel> component:
+
+    at SiloPanel (https://29e9757e-ed02-450f-8db6-ef720aa3cb0f-00-1euuewvc2zjps.riker.replit.dev/src/ui/SiloPanel.tsx:21:22)
+    at GameUI (https://29e9757e-ed02-450f-8db6-ef720aa3cb0f-00-1euuewvc2zjps.riker.replit.dev/src/ui/GameUI.tsx:52:7)
+    at KeyboardControls (https://29e9757e-ed02-450f-8db6-ef720aa3cb0f-00-1euuewvc2zjps.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@react-three_drei.js?v=a24d7128:9151:8)
+    at div
+    at App (https://29e9757e-ed02-450f-8db6-ef720aa3cb0f-00-1euuewvc2zjps.riker.replit.dev/src/App.tsx?v=p-Ocfs9QiH0Y3B7Nrd29J:31:39)
+    at QueryClientProvider (https://29e9757e-ed02-450f-8db6-ef720aa3cb0f-00-1euuewvc2zjps.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=a24d7128:2805:3)
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+console.error @ chunk-A3GN3WMN.js?v=a24d7128:18167
+logCapturedError @ chunk-WERSD76P.js?v=a24d7128:14032
+update.callback @ chunk-WERSD76P.js?v=a24d7128:14052
+callCallback @ chunk-WERSD76P.js?v=a24d7128:11248
+commitUpdateQueue @ chunk-WERSD76P.js?v=a24d7128:11265
+commitLayoutEffectOnFiber @ chunk-WERSD76P.js?v=a24d7128:17093
+commitLayoutMountEffects_complete @ chunk-WERSD76P.js?v=a24d7128:17980
+commitLayoutEffects_begin @ chunk-WERSD76P.js?v=a24d7128:17969
+commitLayoutEffects @ chunk-WERSD76P.js?v=a24d7128:17920
+commitRootImpl @ chunk-WERSD76P.js?v=a24d7128:19353
+commitRoot @ chunk-WERSD76P.js?v=a24d7128:19277
+finishConcurrentRender @ chunk-WERSD76P.js?v=a24d7128:18760
+performConcurrentWorkOnRoot @ chunk-WERSD76P.js?v=a24d7128:18718
+workLoop @ chunk-WERSD76P.js?v=a24d7128:197
+flushWork @ chunk-WERSD76P.js?v=a24d7128:176
+performWorkUntilDeadline @ chunk-WERSD76P.js?v=a24d7128:384
+chunk-WERSD76P.js?v=a24d7128:19413 Uncaught TypeError: Cannot read properties of undefined (reading 'icon')
+    at SiloPanel.tsx:73:45
+    at Array.map (<anonymous>)
+    at SiloPanel (SiloPanel.tsx:66:30)
+    at renderWithHooks (chunk-WERSD76P.js?v=a24d7128:11548:26)
+    at mountIndeterminateComponent (chunk-WERSD76P.js?v=a24d7128:14926:21)
+    at beginWork (chunk-WERSD76P.js?v=a24d7128:15914:22)
+    at beginWork$1 (chunk-WERSD76P.js?v=a24d7128:19753:22)
+    at performUnitOfWork (chunk-WERSD76P.js?v=a24d7128:19198:20)
+    at workLoopSync (chunk-WERSD76P.js?v=a24d7128:19137:13)
+    at renderRootSync (chunk-WERSD76P.js?v=a24d7128:19116:15)
+(anonymous) @ SiloPanel.tsx:73
+SiloPanel @ SiloPanel.tsx:66
+renderWithHooks @ chunk-WERSD76P.js?v=a24d7128:11548
+mountIndeterminateComponent @ chunk-WERSD76P.js?v=a24d7128:14926
+beginWork @ chunk-WERSD76P.js?v=a24d7128:15914
+beginWork$1 @ chunk-WERSD76P.js?v=a24d7128:19753
+performUnitOfWork @ chunk-WERSD76P.js?v=a24d7128:19198
+workLoopSync @ chunk-WERSD76P.js?v=a24d7128:19137
+renderRootSync @ chunk-WERSD76P.js?v=a24d7128:19116
+recoverFromConcurrentError @ chunk-WERSD76P.js?v=a24d7128:18736
+performConcurrentWorkOnRoot @ chunk-WERSD76P.js?v=a24d7128:18684
+workLoop @ chunk-WERSD76P.js?v=a24d7128:197
+flushWork @ chunk-WERSD76P.js?v=a24d7128:176
+performWorkUntilDeadline @ chunk-WERSD76P.js?v=a24d7128:384
+chunk-664ZIH6C.js?v=a24d7128:17835 THREE.WebGLRenderer: Context Lost.
