@@ -6,6 +6,7 @@ import { useGameStore } from "../game/stores/useGameStore";
 import { useDraggable } from "../hooks/useDraggable";
 import SeedSelectionPanel from "./SeedSelectionPanel";
 import SkillTreePanel from "./SkillTreePanel";
+import InventoryPanel from "./InventoryPanel";
 
 interface NpcPanelProps {
   npc: NPC | null;
@@ -15,6 +16,7 @@ interface NpcPanelProps {
 const NpcPanel = ({ npc, onClose }: NpcPanelProps) => {
   const [showSeedSelection, setShowSeedSelection] = useState(false);
   const [showSkillTree, setShowSkillTree] = useState(false);
+  const [showInventory, setShowInventory] = useState(false);
 
   if (!npc) return null;
 
@@ -187,6 +189,20 @@ const NpcPanel = ({ npc, onClose }: NpcPanelProps) => {
               >
                 <i className="fa-solid fa-sitemap"></i>
                 🌟 Árvore de Habilidades
+              </button>
+            </div>
+
+            {/* Inventory Button */}
+            <div className="mb-4">
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setShowInventory(true);
+                }}
+                className="w-full px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white rounded-lg font-medium transition-colors flex items-center justify-center gap-2"
+              >
+                <i className="fa-solid fa-backpack"></i>
+                📦 Inventário
               </button>
             </div>
 
@@ -528,6 +544,13 @@ const NpcPanel = ({ npc, onClose }: NpcPanelProps) => {
         <SkillTreePanel
           npc={npc}
           onClose={() => setShowSkillTree(false)}
+        />
+      )}
+
+      {showInventory && (
+        <InventoryPanel
+          npc={npc}
+          onClose={() => setShowInventory(false)}
         />
       )}
     </div>
