@@ -41,11 +41,12 @@ const SkillTreePanel = ({ npc, onClose }: SkillTreePanelProps) => {
     const centerX = 1250;
     const centerY = 900;
     
-    // Distâncias radiais
-    const innerRadius = 120;
-    const middleRadius = 220;
-    const outerRadius = 320;
-    const farRadius = 420;
+    // Distâncias radiais aumentadas para evitar sobreposições
+    const innerRadius = 160;
+    const middleRadius = 280;
+    const outerRadius = 420;
+    const farRadius = 560;
+    const extraFarRadius = 700;
 
     // CAMINHO DO AVENTUREIRO - Centro
     const adventurerSkills = [
@@ -58,7 +59,7 @@ const SkillTreePanel = ({ npc, onClose }: SkillTreePanelProps) => {
         cost: 0,
         requirements: [],
         category: 'adventurer' as const,
-        position: { x: centerX, y: centerY - 200 },
+        position: { x: centerX, y: centerY - 260 },
         connections: ['journeyman_adventurer'],
         tier: 1
       },
@@ -71,7 +72,7 @@ const SkillTreePanel = ({ npc, onClose }: SkillTreePanelProps) => {
         cost: 50,
         requirements: ['novice_adventurer'],
         category: 'adventurer' as const,
-        position: { x: centerX, y: centerY - 100 },
+        position: { x: centerX, y: centerY - 130 },
         connections: ['adept_adventurer'],
         tier: 2
       },
@@ -97,7 +98,7 @@ const SkillTreePanel = ({ npc, onClose }: SkillTreePanelProps) => {
         cost: 200,
         requirements: ['adept_adventurer'],
         category: 'adventurer' as const,
-        position: { x: centerX, y: centerY + 100 },
+        position: { x: centerX, y: centerY + 130 },
         connections: ['master_adventurer'],
         tier: 4
       },
@@ -110,7 +111,7 @@ const SkillTreePanel = ({ npc, onClose }: SkillTreePanelProps) => {
         cost: 400,
         requirements: ['expert_adventurer'],
         category: 'adventurer' as const,
-        position: { x: centerX, y: centerY + 200 },
+        position: { x: centerX, y: centerY + 260 },
         connections: ['grandmaster_adventurer'],
         tier: 5
       },
@@ -123,7 +124,7 @@ const SkillTreePanel = ({ npc, onClose }: SkillTreePanelProps) => {
         cost: 800,
         requirements: ['master_adventurer'],
         category: 'adventurer' as const,
-        position: { x: centerX, y: centerY + 300 },
+        position: { x: centerX, y: centerY + 390 },
         connections: ['elder_adventurer'],
         tier: 6
       },
@@ -136,7 +137,7 @@ const SkillTreePanel = ({ npc, onClose }: SkillTreePanelProps) => {
         cost: 1600,
         requirements: ['grandmaster_adventurer'],
         category: 'adventurer' as const,
-        position: { x: centerX, y: centerY + 400 },
+        position: { x: centerX, y: centerY + 520 },
         connections: [],
         tier: 7
       }
@@ -211,8 +212,8 @@ const SkillTreePanel = ({ npc, onClose }: SkillTreePanelProps) => {
         category: 'crafting' as const,
         subcategory: 'warrior_forge',
         position: { 
-          x: centerX + Math.cos(craftingAngle - 0.3) * farRadius, 
-          y: centerY + Math.sin(craftingAngle - 0.3) * farRadius 
+          x: centerX + Math.cos(craftingAngle - 0.4) * farRadius, 
+          y: centerY + Math.sin(craftingAngle - 0.4) * farRadius 
         },
         connections: [],
         tier: 6
@@ -245,14 +246,14 @@ const SkillTreePanel = ({ npc, onClose }: SkillTreePanelProps) => {
         category: 'crafting' as const,
         subcategory: 'warrior_forge',
         position: { 
-          x: centerX + Math.cos(craftingAngle + 0.3) * farRadius, 
-          y: centerY + Math.sin(craftingAngle + 0.3) * farRadius 
+          x: centerX + Math.cos(craftingAngle + 0.4) * farRadius, 
+          y: centerY + Math.sin(craftingAngle + 0.4) * farRadius 
         },
         connections: [],
         tier: 6
       },
 
-      // Weapon Specialists - Ramos laterais
+      // Weapon Specialists - Ramos laterais com mais espaçamento
       {
         id: 'sword_crafter',
         name: 'Ferreiro de Espadas',
@@ -264,8 +265,8 @@ const SkillTreePanel = ({ npc, onClose }: SkillTreePanelProps) => {
         category: 'crafting' as const,
         subcategory: 'warrior_forge',
         position: { 
-          x: centerX + Math.cos(craftingAngle - 0.5) * outerRadius, 
-          y: centerY + Math.sin(craftingAngle - 0.5) * outerRadius 
+          x: centerX + Math.cos(craftingAngle - 0.6) * outerRadius, 
+          y: centerY + Math.sin(craftingAngle - 0.6) * outerRadius 
         },
         connections: [],
         tier: 5
@@ -281,8 +282,8 @@ const SkillTreePanel = ({ npc, onClose }: SkillTreePanelProps) => {
         category: 'crafting' as const,
         subcategory: 'warrior_forge',
         position: { 
-          x: centerX + Math.cos(craftingAngle + 0.5) * outerRadius, 
-          y: centerY + Math.sin(craftingAngle + 0.5) * outerRadius 
+          x: centerX + Math.cos(craftingAngle + 0.6) * outerRadius, 
+          y: centerY + Math.sin(craftingAngle + 0.6) * outerRadius 
         },
         connections: [],
         tier: 5
@@ -298,14 +299,14 @@ const SkillTreePanel = ({ npc, onClose }: SkillTreePanelProps) => {
         category: 'crafting' as const,
         subcategory: 'warrior_forge',
         position: { 
-          x: centerX + Math.cos(craftingAngle - 0.8) * middleRadius, 
-          y: centerY + Math.sin(craftingAngle - 0.8) * middleRadius 
+          x: centerX + Math.cos(craftingAngle - 0.9) * (middleRadius + 40), 
+          y: centerY + Math.sin(craftingAngle - 0.9) * (middleRadius + 40) 
         },
         connections: [],
         tier: 5
       },
 
-      // HUNTER'S LODGE - Ramo secundário
+      // HUNTER'S LODGE - Ramo secundário com mais espaçamento
       {
         id: 'hunter_lodge',
         name: 'Cabana do Caçador',
@@ -317,8 +318,8 @@ const SkillTreePanel = ({ npc, onClose }: SkillTreePanelProps) => {
         category: 'crafting' as const,
         subcategory: 'hunter_lodge',
         position: { 
-          x: centerX + Math.cos(craftingAngle + 0.8) * middleRadius, 
-          y: centerY + Math.sin(craftingAngle + 0.8) * middleRadius 
+          x: centerX + Math.cos(craftingAngle + 0.9) * (middleRadius + 20), 
+          y: centerY + Math.sin(craftingAngle + 0.9) * (middleRadius + 20) 
         },
         connections: ['leather_armor_crafter', 'bow_crafter', 'spear_crafter'],
         tier: 4
@@ -334,8 +335,8 @@ const SkillTreePanel = ({ npc, onClose }: SkillTreePanelProps) => {
         category: 'crafting' as const,
         subcategory: 'hunter_lodge',
         position: { 
-          x: centerX + Math.cos(craftingAngle + 0.6) * outerRadius, 
-          y: centerY + Math.sin(craftingAngle + 0.6) * outerRadius 
+          x: centerX + Math.cos(craftingAngle + 0.7) * (outerRadius + 30), 
+          y: centerY + Math.sin(craftingAngle + 0.7) * (outerRadius + 30) 
         },
         connections: [],
         tier: 5
@@ -351,8 +352,8 @@ const SkillTreePanel = ({ npc, onClose }: SkillTreePanelProps) => {
         category: 'crafting' as const,
         subcategory: 'hunter_lodge',
         position: { 
-          x: centerX + Math.cos(craftingAngle + 0.8) * outerRadius, 
-          y: centerY + Math.sin(craftingAngle + 0.8) * outerRadius 
+          x: centerX + Math.cos(craftingAngle + 0.9) * (outerRadius + 30), 
+          y: centerY + Math.sin(craftingAngle + 0.9) * (outerRadius + 30) 
         },
         connections: [],
         tier: 5
@@ -368,8 +369,8 @@ const SkillTreePanel = ({ npc, onClose }: SkillTreePanelProps) => {
         category: 'crafting' as const,
         subcategory: 'hunter_lodge',
         position: { 
-          x: centerX + Math.cos(craftingAngle + 1.0) * outerRadius, 
-          y: centerY + Math.sin(craftingAngle + 1.0) * outerRadius 
+          x: centerX + Math.cos(craftingAngle + 1.1) * (outerRadius + 30), 
+          y: centerY + Math.sin(craftingAngle + 1.1) * (outerRadius + 30) 
         },
         connections: [],
         tier: 5
@@ -1258,7 +1259,7 @@ const SkillTreePanel = ({ npc, onClose }: SkillTreePanelProps) => {
         <div className="flex h-[calc(100%-140px)]">
           {/* Skill Tree Visualization */}
           <div className="flex-1 relative bg-gray-800 overflow-auto">
-            <div className="absolute inset-0 bg-gradient-to-br from-gray-700 via-gray-800 to-gray-900" style={{ width: '2500px', height: '1800px' }}>
+            <div className="absolute inset-0 bg-gradient-to-br from-gray-700 via-gray-800 to-gray-900" style={{ width: '3200px', height: '2200px' }}>
               <svg className="absolute inset-0 w-full h-full">
                 {/* Render connections */}
                 {filteredSkills.map(skill => 
@@ -1296,7 +1297,7 @@ const SkillTreePanel = ({ npc, onClose }: SkillTreePanelProps) => {
                   }}
                   onClick={() => setSelectedNode(skill.id)}
                 >
-                  <div className={`w-16 h-16 rounded-full border-3 flex items-center justify-center relative ${
+                  <div className={`w-18 h-18 rounded-full border-3 flex items-center justify-center relative ${
                     isSkillUnlocked(skill) 
                       ? getCategoryColor(skill.category)
                       : 'text-gray-600 border-gray-600 bg-gray-800'
@@ -1313,23 +1314,23 @@ const SkillTreePanel = ({ npc, onClose }: SkillTreePanelProps) => {
                       skill.category === 'combat' ? 'fa-sword' :
                       skill.category === 'refining' ? 'fa-cog' :
                       'fa-star'
-                    } text-lg`}></i>
+                    } text-xl`}></i>
                     
                     {/* Level indicator */}
                     {skill.currentLevel > 0 && (
-                      <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-yellow-500 rounded-full flex items-center justify-center text-xs font-bold text-black shadow-lg">
+                      <div className="absolute -bottom-1 -right-1 w-7 h-7 bg-yellow-500 rounded-full flex items-center justify-center text-xs font-bold text-black shadow-lg">
                         {skill.currentLevel}
                       </div>
                     )}
 
                     {/* Tier indicator */}
-                    <div className="absolute -top-1 -left-1 w-5 h-5 bg-blue-600 rounded-full flex items-center justify-center text-xs font-bold text-white border border-white">
+                    <div className="absolute -top-1 -left-1 w-6 h-6 bg-blue-600 rounded-full flex items-center justify-center text-xs font-bold text-white border border-white">
                       T{skill.tier}
                     </div>
                   </div>
 
                   {/* Skill name */}
-                  <div className="absolute top-18 left-1/2 transform -translate-x-1/2 text-xs text-center text-gray-300 whitespace-nowrap max-w-24 leading-tight">
+                  <div className="absolute top-20 left-1/2 transform -translate-x-1/2 text-xs text-center text-gray-300 whitespace-nowrap max-w-28 leading-tight">
                     {skill.name}
                   </div>
                 </div>
