@@ -2,11 +2,22 @@ import { create } from "zustand";
 import { subscribeWithSelector } from "zustand/middleware";
 import { getLocalStorage, setLocalStorage } from "@/lib/utils";
 
-export type GamePhase = "login" | "ready" | "playing" | "ended";
+export type GamePhase = "login" | "character-creation" | "ready" | "playing" | "ended";
+
+interface CharacterData {
+  name: string;
+  gender: "male" | "female";
+  face: number;
+  skinColor: number;
+  hairStyle: number;
+  hairColor: number;
+  beard: number;
+}
 
 interface PlayerData {
   nickname: string;
   loginTime: string;
+  character?: CharacterData;
 }
 
 interface GameState {
@@ -15,6 +26,7 @@ interface GameState {
   
   // Actions
   login: (nickname: string) => void;
+  createCharacter: (character: CharacterData) => void;
   start: () => void;
   restart: () => void;
   end: () => void;
@@ -26,25 +38,43 @@ export const useGame = create<GameState>()(
     // Verificar se há auto-login ativo
     const autoLogin = getLocalStorage("autoLogin");
     const currentPlayer = getLocalStorage("currentPlayer");
+    const characterData = getLocalStorage("characterData");
     
-    const initialPhase: GamePhase = autoLogin && currentPlayer ? "ready" : "login";
-    const initialPlayerData = autoLogin && currentPlayer ? currentPlayer : null;
+    const initialPhase: GamePhase = autoLogin && currentPlayer && characterData ? "ready" : "login";
+    const initialPlayerData = autoLogin && currentPlayer ? {
+      ...currentPlayer,
+      character: characterData
+    } : null;
 
     return {
       phase: initialPhase,
       playerData: initialPlayerData,
       
       login: (nickname: string) => {
+        const existingCharacter = getLocalStorage("characterData");
         const playerData: PlayerData = {
           nickname,
-          loginTime: new Date().toISOString()
+          loginTime: new Date().toISOString(),
+          character: existingCharacter
         };
         
         setLocalStorage("currentPlayer", playerData);
         
         set(() => ({
-          phase: "ready",
+          phase: existingCharacter ? "ready" : "character-creation",
           playerData
+        }));
+      },
+      
+      createCharacter: (character: CharacterData) => {
+        setLocalStorage("characterData", character);
+        
+        set((state) => ({
+          phase: "ready",
+          playerData: state.playerData ? {
+            ...state.playerData,
+            character
+          } : null
         }));
       },
       
@@ -78,6 +108,7 @@ export const useGame = create<GameState>()(
       logout: () => {
         setLocalStorage("currentPlayer", null);
         setLocalStorage("autoLogin", false);
+        setLocalStorage("characterData", null);
         set(() => ({
           phase: "login",
           playerData: null
