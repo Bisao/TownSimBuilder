@@ -20,6 +20,11 @@ export interface GameState {
   placementPosition: [number, number] | null;
   placementValid: boolean;
 
+  // Camera state
+  cameraPosition: [number, number, number];
+  cameraTarget: [number, number, number];
+  cameraRotation: number;
+
   // UI state
   showBuildingPanel: boolean;
   showNpcPanel: boolean;
@@ -63,6 +68,11 @@ export interface GameState {
   setSelectedBuilding: (building: any | null) => void;
   setSelectedSilo: (silo: any | null) => void;
   onBuildingPlaced: () => void; // Nova função para ser chamada após posicionamento
+  
+  // Camera methods
+  updateCameraPosition: (position: [number, number, number]) => void;
+  updateCameraTarget: (target: [number, number, number]) => void;
+  updateCameraRotation: (rotation: number) => void;
 }
 
 export const useGameStore = create<GameState>()(
@@ -83,6 +93,11 @@ export const useGameStore = create<GameState>()(
     gameMode: "build",
     isManualControl: false,
     controlledNpcId: null,
+
+    // Camera initial state
+    cameraPosition: [0, 10, 10],
+    cameraTarget: [0, 0, 0],
+    cameraRotation: 0,
 
     // UI state
     showBuildingPanel: false,
@@ -158,5 +173,10 @@ export const useGameStore = create<GameState>()(
         placementValid: false 
       });
     },
+
+    // Camera methods
+    updateCameraPosition: (position) => set({ cameraPosition: position }),
+    updateCameraTarget: (target) => set({ cameraTarget: target }),
+    updateCameraRotation: (rotation) => set({ cameraRotation: rotation }),
   }))
 );
