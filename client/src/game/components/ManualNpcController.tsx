@@ -3,7 +3,7 @@ import React, { useEffect, useRef } from 'react';
 import { useGameStore } from '../stores/useGameStore';
 import { useNpcStore } from '../stores/useNpcStore';
 import { useBuildingStore } from '../stores/useBuildingStore';
-import { CONSTANTS } from '../constants/npcs';
+import { npcTypes, workplaceMapping } from '../constants/npcs';
 
 interface ManualNpcControllerProps {
   npcId: string;
