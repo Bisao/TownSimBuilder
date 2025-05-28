@@ -1,0 +1,503 @@
+Lista Detalhada de Habilidades da Árvore de Destinos - Albion Online
+Conforme solicitado, segue uma lista mais detalhada e específica dos nós de habilidade presentes na Árvore de Destinos (Destiny Board) do Albion Online, organizada por categorias principais conforme a estrutura da Albion Online Wiki.
+Caminho do Aventureiro
+Novice Adventurer
+Journeyman Adventurer
+Adept Adventurer
+Expert Adventurer
+Master Adventurer
+Grandmaster Adventurer
+Elder Adventurer
+Fabricação (Crafting)
+Forja do Guerreiro (Warrior's Forge)
+Trainee Craftsman
+Journeyman Warrior's Forge Crafter
+Botas de Placa (Plate Boots):
+Plate Boots Crafter
+Soldier Boots Crafting Specialist
+Knight Boots Crafting Specialist
+Guardian Boots Crafting Specialist
+Graveguard Boots Crafting Specialist
+Demon Boots Crafting Specialist
+Judicator Boots Crafting Specialist
+Duskweaver Boots Crafting Specialist
+Boots of Valor Crafting Specialist
+Armadura de Placa (Plate Armor):
+Plate Armor Crafter
+Soldier Armor Crafting Specialist
+Knight Armor Crafting Specialist
+Guardian Armor Crafting Specialist
+Graveguard Armor Crafting Specialist
+Demon Armor Crafting Specialist
+Judicator Armor Crafting Specialist
+Duskweaver Armor Crafting Specialist
+Armor of Valor Crafting Specialist
+Elmo de Placa (Plate Helmet):
+Plate Helmet Crafter
+Soldier Helmet Crafting Specialist
+Knight Helmet Crafting Specialist
+Guardian Helmet Crafting Specialist
+Graveguard Helmet Crafting Specialist
+Demon Helmet Crafting Specialist
+Judicator Helmet Crafting Specialist
+Duskweaver Helmet Crafting Specialist
+Helmet of Valor Crafting Specialist
+Espada (Sword):
+Sword Crafter
+Sword Crafting Specialist
+Claymore Crafting Specialist
+Dual Swords Crafting Specialist
+Clarent Blade Crafting Specialist
+Carving Sword Crafting Specialist
+Galatine Pair Crafting Specialist
+Kingmaker Crafting Specialist
+Infinity Blade Crafting Specialist
+Machado de Batalha (Battleaxe):
+Battleaxe Crafter
+Axe Crafting Specialist
+Greataxe Crafting Specialist
+Halberd Crafting Specialist
+Carrioncaller Crafting Specialist
+Infernal Scythe Crafting Specialist
+Bear Paws Crafting Specialist
+Realmbreaker Crafting Specialist
+Crystal Reaper Crafting Specialist
+Maça (Mace):
+Mace Crafter
+Mace Crafting Specialist
+Heavy Mace Crafting Specialist
+Morning Star Crafting Specialist
+Bedrock Mace Crafting Specialist
+Incubus Mace Crafting Specialist
+Camlann Mace Crafting Specialist
+Oathkeepers Crafting Specialist
+Martelo (Hammer):
+Hammer Crafter
+Hammer Crafting Specialist
+Polehammer Crafting Specialist
+Great Hammer Crafting Specialist
+Tombhammer Crafting Specialist
+Forge Hammers Crafting Specialist
+Grovekeeper Crafting Specialist
+Hand of Justice Crafting Specialist
+Manoplas de Guerra (War Gloves):
+War Gloves Crafter
+Brawler Gloves Crafting Specialist
+Battle Bracers Crafting Specialist
+Spiked Gauntlets Crafting Specialist
+Ursine Maulers Crafting Specialist
+Hellfire Hands Crafting Specialist
+Ravenstrike Cestus Crafting Specialist
+Fists of Avalon Crafting Specialist
+Besta (Crossbow):
+Crossbow Crafter
+Crossbow Crafting Specialist
+Heavy Crossbow Crafting Specialist
+Light Crossbow Crafting Specialist
+Weeping Repeater Crafting Specialist
+Boltcasters Crafting Specialist
+Siegebow Crafting Specialist
+Energy Shaper Crafting Specialist
+Escudo (Shield):
+Shield Crafter
+Shield Crafting Specialist
+Sarcophagus Crafting Specialist
+Caitiff Shield Crafting Specialist
+Facebreaker Crafting Specialist
+Astral Aegis Crafting Specialist
+Cabana do Caçador (Hunter's Lodge)
+Journeyman Hunter's Lodge Crafter
+Sapatos de Couro (Leather Shoes):
+Leather Shoes Crafter
+Mercenary Shoes Crafting Specialist
+Hunter Shoes Crafting Specialist
+Assassin Shoes Crafting Specialist
+Stalker Shoes Crafting Specialist
+Hellion Shoes Crafting Specialist
+Specter Shoes Crafting Specialist
+Mistwalker Shoes Crafting Specialist
+Shoes of Tenacity Crafting Specialist
+Jaqueta de Couro (Leather Jacket):
+Leather Jacket Crafter
+Mercenary Jacket Crafting Specialist
+Hunter Jacket Crafting Specialist
+Assassin Jacket Crafting Specialist
+Stalker Jacket Crafting Specialist
+Hellion Jacket Crafting Specialist
+Specter Jacket Crafting Specialist
+Mistwalker Jacket Crafting Specialist
+Jacket of Tenacity Crafting Specialist
+Capuz de Couro (Leather Hood):
+Leather Hood Crafter
+Mercenary Hood Crafting Specialist
+Hunter Hood Crafting Specialist
+Assassin Hood Crafting Specialist
+Stalker Hood Crafting Specialist
+Hellion Hood Crafting Specialist
+Specter Hood Crafting Specialist
+Mistwalker Hood Crafting Specialist
+Hood of Tenacity Crafting Specialist
+Arco (Bow):
+Bow Crafter
+Bow Crafting Specialist
+Warbow Crafting Specialist
+Longbow Crafting Specialist
+Whispering Bow Crafting Specialist
+Wailing Bow Crafting Specialist
+Bow of Badon Crafting Specialist
+Mistpiercer Crafting Specialist
+Lança (Spear):
+Spear Crafter
+Spear Crafting Specialist
+Pike Crafting Specialist
+Glaive Crafting Specialist
+Heron Spear Crafting Specialist
+Spirithunter Crafting Specialist
+Trinity Spear Crafting Specialist
+Daybreaker Crafting Specialist
+Rift Glaive Crafting Specialist
+Cajado Natural (Nature Staff):
+Nature Staff Crafter
+Nature Staff Crafting Specialist
+Great Nature Staff Crafting Specialist
+Wild Staff Crafting Specialist
+Druidic Staff Crafting Specialist
+Blight Staff Crafting Specialist
+Rampant Staff Crafting Specialist
+Ironroot Staff Crafting Specialist
+Adaga (Dagger):
+Dagger Crafter
+Dagger Crafting Specialist
+Dagger Pair Crafting Specialist
+Claws Crafting Specialist
+Bloodletter Crafting Specialist
+Demonfang Crafting Specialist
+Deathgivers Crafting Specialist
+Bridled Fury Crafting Specialist
+Bastão (Quarterstaff):
+Quarterstaff Crafter
+Quarterstaff Crafting Specialist
+Ironclad Staff Crafting Specialist
+Double Bladed Staff Crafting Specialist
+Black Monk Staves Crafting Specialist
+Soulscythe Crafting Specialist
+Staff of Balance Crafting Specialist
+Grailseeker Crafting Specialist
+Phantom Twinblade Crafting Specialist
+Cajado Metamorfo (Shapeshifter Staff):
+Shapeshifter Crafter
+Prowling Staff Crafting Specialist
+Rootbound Staff Crafting Specialist
+Primal Staff Crafting Specialist
+Bloodmoon Staff Crafting Specialist
+Hellspawn Staff Crafting Specialist
+Earthrune Staff Crafting Specialist
+Lightcaller Crafting Specialist
+Tocha (Torch):
+Torch Crafter
+Torch Crafting Specialist
+Mistcaller Crafting Specialist
+Leering Cane Crafting Specialist
+Cryptcandle Crafting Specialist
+Sacred Scepter Crafting Specialist
+Torre do Mago (Mage's Tower)
+Journeyman Mage's Tower Crafter
+Sandálias de Tecido (Cloth Sandals):
+Cloth Sandals Crafter
+Scholar Sandals Crafting Specialist
+Cleric Sandals Crafting Specialist
+Mage Sandals Crafting Specialist
+Druid Sandals Crafting Specialist
+Fiend Sandals Crafting Specialist
+Cultist Sandals Crafting Specialist
+Feyscale Sandals Crafting Specialist
+Sandals of Purity Crafting Specialist
+Robe de Tecido (Cloth Robe):
+Cloth Robe Crafter
+Scholar Robe Crafting Specialist
+Cleric Robe Crafting Specialist
+Mage Robe Crafting Specialist
+Druid Robe Crafting Specialist
+Fiend Robe Crafting Specialist
+Cultist Robe Crafting Specialist
+Feyscale Robe Crafting Specialist
+Robe of Purity Crafting Specialist
+Capelo de Tecido (Cloth Cowl):
+Cloth Cowl Crafter
+Scholar Cowl Crafting Specialist
+Cleric Cowl Crafting Specialist
+Mage Cowl Crafting Specialist
+Druid Cowl Crafting Specialist
+Fiend Cowl Crafting Specialist
+Cultist Cowl Crafting Specialist
+Feyscale Hat Crafting Specialist
+Cowl of Purity Crafting Specialist
+Cajado Ígneo (Fire Staff):
+Fire Staff Crafter
+Fire Staff Crafting Specialist
+Great Fire Staff Crafting Specialist
+Infernal Staff Crafting Specialist
+Wildfire Staff Crafting Specialist
+Brimstone Staff Crafting Specialist
+Blazing Staff Crafting Specialist
+Dawnsong Crafting Specialist
+Cajado Sagrado (Holy Staff):
+Holy Staff Crafter
+Holy Staff Crafting Specialist
+Great Holy Staff Crafting Specialist
+Divine Staff Crafting Specialist
+Lifetouch Staff Crafting Specialist
+Fallen Staff Crafting Specialist
+Redemption Staff Crafting Specialist
+Hallowfall Crafting Specialist
+Cajado Arcano (Arcane Staff):
+Arcane Staff Crafter
+Arcane Staff Crafting Specialist
+Great Arcane Staff Crafting Specialist
+Enigmatic Staff Crafting Specialist
+Witchwork Staff Crafting Specialist
+Occult Staff Crafting Specialist
+Malevolent Locus Crafting Specialist
+Evensong Crafting Specialist
+Cajado Gélido (Frost Staff):
+Frost Staff Crafter
+Frost Staff Crafting Specialist
+Great Frost Staff Crafting Specialist
+Glacial Staff Crafting Specialist
+Hoarfrost Staff Crafting Specialist
+Icicle Staff Crafting Specialist
+Permafrost Prism Crafting Specialist
+Chillhowl Crafting Specialist
+Cajado Amaldiçoado (Cursed Staff):
+Cursed Staff Crafter
+Cursed Staff Crafting Specialist
+Great Cursed Staff Crafting Specialist
+Demonic Staff Crafting Specialist
+Lifecurse Staff Crafting Specialist
+Cursed Skull Crafting Specialist
+Damnation Staff Crafting Specialist
+Shadowcaller Crafting Specialist
+Tomo (Tome):
+Tome Crafter
+Tome of Spells Crafting Specialist
+Eye of Secrets Crafting Specialist
+Muisak Crafting Specialist
+Taproot Crafting Specialist
+Celestial Censer Crafting Specialist
+Ferramentaria (Toolmaker)
+Journeyman Toolmaker
+Adept Toolmaker
+Expert Toolmaker
+Master Toolmaker
+Grandmaster Toolmaker
+Elder Toolmaker
+Ferramentas (Tools):
+Adept Gathering Tool Crafting Specialist (e equivalentes para Expert, Master, Grandmaster, Elder)
+Adept Demolition Hammer Crafting Specialist (e equivalentes)
+Acessórios (Accessories):
+Adept Cape Crafting Specialist (e equivalentes)
+Adept Bag Crafting Specialist (e equivalentes)
+Alquimista (Alchemist)
+Journeyman Alchemist
+Adept Alchemist
+Expert Alchemist
+Master Alchemist
+Grandmaster Alchemist
+Elder Alchemist
+Poções (Potions):
+Adept Potion Brewer (e equivalentes)
+Cozinheiro (Cook)
+Journeyman Cook
+Adept Cook
+Expert Cook
+Master Cook
+Grandmaster Cook
+Elder Cook
+Comida (Food):
+Adept Chef (e equivalentes)
+Refinamento (Refining)
+Journeyman Refiner
+Refinador de Madeira (Wood Refiner):
+Journeyman Lumbermill Refiner
+Adept Lumbermill Refiner (e equivalentes Expert, Master, Grandmaster, Elder)
+Planks Refining Specialist (T4 a T8)
+Refinador de Pedra (Stone Refiner):
+Journeyman Stone Refiner
+Adept Stone Refiner (e equivalentes)
+Stone Block Refining Specialist (T4 a T8)
+Refinador de Minério (Ore Refiner):
+Journeyman Smelter
+Adept Smelter (e equivalentes)
+Metal Bar Refining Specialist (T4 a T8)
+Refinador de Couro (Leather Refiner):
+Journeyman Tanner
+Adept Tanner (e equivalentes)
+Leather Refining Specialist (T4 a T8)
+Refinador de Fibra (Fiber Refiner):
+Journeyman Weaver
+Adept Weaver (e equivalentes)
+Cloth Refining Specialist (T4 a T8)
+Coleta (Gathering)
+Trainee Gatherer
+Lenhador (Lumberjack):
+Journeyman Lumberjack
+Adept Lumberjack (e equivalentes Expert, Master, Grandmaster, Elder)
+Adept Lumberjack Tool Specialist (e equivalentes)
+Adept Lumberjack Gear Specialist (e equivalentes)
+Wood Gathering Specialist (T4 a T8)
+Extrator (Quarrier):
+Journeyman Quarrier
+Adept Quarrier (e equivalentes)
+Adept Quarrier Tool Specialist (e equivalentes)
+Adept Quarrier Gear Specialist (e equivalentes)
+Stone Gathering Specialist (T4 a T8)
+Minerador (Miner):
+Journeyman Miner
+Adept Miner (e equivalentes)
+Adept Miner Tool Specialist (e equivalentes)
+Adept Miner Gear Specialist (e equivalentes)
+Ore Gathering Specialist (T4 a T8)
+Ceifador (Harvester):
+Journeyman Harvester
+Adept Harvester (e equivalentes)
+Adept Harvester Tool Specialist (e equivalentes)
+Adept Harvester Gear Specialist (e equivalentes)
+Fiber Gathering Specialist (T4 a T8)
+Esfolador (Skinner):
+Journeyman Skinner
+Adept Skinner (e equivalentes)
+Adept Skinner Tool Specialist (e equivalentes)
+Adept Skinner Gear Specialist (e equivalentes)
+Hide Gathering Specialist (T4 a T8)
+Pescador (Fisherman):
+Journeyman Fisherman
+Adept Fisherman (e equivalentes)
+Adept Fishing Gear Specialist (e equivalentes)
+Fish Catching Specialist (T4 a T8)
+Agricultura (Farming)
+Trainee Farmer
+Fazendeiro (Crop Farmer):
+Journeyman Crop Farmer
+Adept Crop Farmer (e equivalentes Expert, Master, Grandmaster, Elder)
+Crop Farming Specialist (T4 a T8)
+Herbalista (Herb Grower):
+Journeyman Herb Grower
+Adept Herb Grower (e equivalentes)
+Herb Growing Specialist (T4 a T8)
+Criador de Animais (Animal Breeder):
+Journeyman Animal Breeder
+Adept Animal Breeder (e equivalentes)
+Animal Breeding Specialist (T4 a T8)
+Combate (Combat)
+Trainee Fighter
+Reaver:
+Journeyman Reaver
+Adept Reaver
+Expert Reaver
+Master Reaver
+Grandmaster Reaver
+Elder Reaver
+Guerreiro (Warrior)
+Journeyman Warrior
+Combatente de Armadura de Placa (Plate Armor Fighter):
+Journeyman Plate Armor Fighter
+Adept Plate Armor Fighter (e equivalentes Expert, Master, Grandmaster, Elder)
+Plate Helmet Fighter (T4 a T8)
+Plate Armor Fighter (T4 a T8)
+Plate Boots Fighter (T4 a T8)
+Combatente de Espada (Sword Fighter):
+Journeyman Sword Fighter
+Adept Sword Fighter (e equivalentes)
+Sword Fighter (T4 a T8)
+Combatente de Machado de Batalha (Axe Fighter):
+Journeyman Axe Fighter
+Adept Axe Fighter (e equivalentes)
+Axe Fighter (T4 a T8)
+Combatente de Maça (Mace Fighter):
+Journeyman Mace Fighter
+Adept Mace Fighter (e equivalentes)
+Mace Fighter (T4 a T8)
+Combatente de Martelo (Hammer Fighter):
+Journeyman Hammer Fighter
+Adept Hammer Fighter (e equivalentes)
+Hammer Fighter (T4 a T8)
+Combatente de Manoplas (War Gloves Fighter):
+Journeyman War Gloves Fighter
+Adept War Gloves Fighter (e equivalentes)
+War Gloves Fighter (T4 a T8)
+Combatente de Besta (Crossbow Fighter):
+Journeyman Crossbow Fighter
+Adept Crossbow Fighter (e equivalentes)
+Crossbow Fighter (T4 a T8)
+Combatente de Escudo (Shield Fighter):
+Journeyman Shield Fighter
+Adept Shield Fighter (e equivalentes)
+Shield Fighter (T4 a T8)
+Caçador (Hunter)
+Journeyman Hunter
+Combatente de Armadura de Couro (Leather Armor Fighter):
+Journeyman Leather Armor Fighter
+Adept Leather Armor Fighter (e equivalentes)
+Leather Hood Fighter (T4 a T8)
+Leather Jacket Fighter (T4 a T8)
+Leather Shoes Fighter (T4 a T8)
+Combatente de Arco (Bow Fighter):
+Journeyman Bow Fighter
+Adept Bow Fighter (e equivalentes)
+Bow Fighter (T4 a T8)
+Combatente de Lança (Spear Fighter):
+Journeyman Spear Fighter
+Adept Spear Fighter (e equivalentes)
+Spear Fighter (T4 a T8)
+Combatente de Cajado Natural (Nature Staff Fighter):
+Journeyman Nature Staff Fighter
+Adept Nature Staff Fighter (e equivalentes)
+Nature Staff Fighter (T4 a T8)
+Combatente de Adaga (Dagger Fighter):
+Journeyman Dagger Fighter
+Adept Dagger Fighter (e equivalentes)
+Dagger Fighter (T4 a T8)
+Combatente de Bastão (Quarterstaff Fighter):
+Journeyman Quarterstaff Fighter
+Adept Quarterstaff Fighter (e equivalentes)
+Quarterstaff Fighter (T4 a T8)
+Combatente Metamorfo (Shapeshifter):
+Journeyman Shapeshifter
+Adept Shapeshifter (e equivalentes)
+Shapeshifter Staff Fighter (T4 a T8)
+Combatente de Tocha (Torch Fighter):
+Journeyman Torch Fighter
+Adept Torch Fighter (e equivalentes)
+Torch Fighter (T4 a T8)
+Mago (Mage)
+Journeyman Mage
+Combatente de Armadura de Tecido (Cloth Armor Fighter):
+Journeyman Cloth Armor Fighter
+Adept Cloth Armor Fighter (e equivalentes)
+Cloth Cowl Fighter (T4 a T8)
+Cloth Robe Fighter (T4 a T8)
+Cloth Sandals Fighter (T4 a T8)
+Piromante (Pyromancer - Fire Staff):
+Journeyman Pyromancer
+Adept Pyromancer (e equivalentes)
+Fire Staff Fighter (T4 a T8)
+Sacerdote (Priest - Holy Staff):
+Journeyman Priest
+Adept Priest (e equivalentes)
+Holy Staff Fighter (T4 a T8)
+Arcanista (Arcanist - Arcane Staff):
+Journeyman Arcanist
+Adept Arcanist (e equivalentes)
+Arcane Staff Fighter (T4 a T8)
+Mago Gélido (Frost Mage - Frost Staff):
+Journeyman Frost Mage
+Adept Frost Mage (e equivalentes)
+Frost Staff Fighter (T4 a T8)
+Bruxo (Warlock - Cursed Staff):
+Journeyman Warlock
+Adept Warlock (e equivalentes)
+Cursed Staff Fighter (T4 a T8)
+Combatente de Tomo (Tome Fighter):
+Journeyman Tome Fighter
+Adept Tome Fighter (e equivalentes)
+Tome Fighter (T4 a T8)
