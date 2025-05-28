@@ -152,13 +152,31 @@ const SkillTreePanel = ({ npc, onClose }: SkillTreePanelProps) => {
         name: 'Ramo da Criação',
         description: 'Desbloqueia as habilidades de criação',
         maxLevel: 100,
-        currentLevel: 0,
+        currentLevel: 1,
         cost: 100,
         requirements: ['adept_adventurer'],
         category: 'crafting' as const,
         position: { 
           x: centerX + Math.cos(craftingAngle) * innerRadius, 
           y: centerY + Math.sin(craftingAngle) * innerRadius 
+        },
+        connections: ['trainee_craftsman'],
+        tier: 1
+      },
+
+      // Base Crafting
+      {
+        id: 'trainee_craftsman',
+        name: 'Artesão Aprendiz',
+        description: 'Fundamentos básicos da criação',
+        maxLevel: 100,
+        currentLevel: 1,
+        cost: 125,
+        requirements: ['crafting_branch'],
+        category: 'crafting' as const,
+        position: { 
+          x: centerX + Math.cos(craftingAngle) * (innerRadius + 80), 
+          y: centerY + Math.sin(craftingAngle) * (innerRadius + 80) 
         },
         connections: ['warrior_forge', 'hunter_lodge', 'mage_tower', 'toolmaker'],
         tier: 1
@@ -170,26 +188,26 @@ const SkillTreePanel = ({ npc, onClose }: SkillTreePanelProps) => {
         name: 'Forja do Guerreiro',
         description: 'Criação de equipamentos de guerreiro',
         maxLevel: 100,
-        currentLevel: 0,
+        currentLevel: 1,
         cost: 150,
-        requirements: ['crafting_branch'],
+        requirements: ['trainee_craftsman'],
         category: 'crafting' as const,
         subcategory: 'warrior_forge',
         position: { 
           x: centerX + Math.cos(craftingAngle) * middleRadius, 
           y: centerY + Math.sin(craftingAngle) * middleRadius 
         },
-        connections: ['plate_armor_crafter', 'sword_crafter', 'axe_crafter', 'mace_crafter'],
+        connections: ['plate_armor_crafter', 'sword_crafter', 'axe_crafter', 'mace_crafter', 'hammer_crafter'],
         tier: 1
       },
 
-      // Plate Armor Specialists
+      // Plate Armor Line
       {
         id: 'plate_armor_crafter',
         name: 'Criador de Armadura de Placa',
-        description: 'Especialista em armaduras pesadas',
+        description: 'Especialista em armaduras pesadas de ferro',
         maxLevel: 100,
-        currentLevel: 0,
+        currentLevel: 1,
         cost: 200,
         requirements: ['warrior_forge'],
         category: 'crafting' as const,
@@ -198,32 +216,32 @@ const SkillTreePanel = ({ npc, onClose }: SkillTreePanelProps) => {
           x: centerX + Math.cos(craftingAngle) * outerRadius, 
           y: centerY + Math.sin(craftingAngle) * outerRadius 
         },
-        connections: ['plate_helmet_specialist', 'plate_armor_specialist', 'plate_boots_specialist'],
+        connections: ['soldier_armor_specialist', 'knight_armor_specialist', 'guardian_armor_specialist'],
         tier: 1
       },
       {
-        id: 'plate_helmet_specialist',
-        name: 'Especialista em Elmos de Placa',
-        description: 'Cria elmos de placa avançados',
+        id: 'soldier_armor_specialist',
+        name: 'Especialista em Armadura de Soldado',
+        description: 'Cria armaduras de soldado (T4)',
         maxLevel: 100,
-        currentLevel: 0,
+        currentLevel: 1,
         cost: 300,
         requirements: ['plate_armor_crafter'],
         category: 'crafting' as const,
         subcategory: 'warrior_forge',
         position: { 
-          x: centerX + Math.cos(craftingAngle - 0.4) * farRadius, 
-          y: centerY + Math.sin(craftingAngle - 0.4) * farRadius 
+          x: centerX + Math.cos(craftingAngle - 0.3) * farRadius, 
+          y: centerY + Math.sin(craftingAngle - 0.3) * farRadius 
         },
-        connections: [],
+        connections: ['graveguard_armor_specialist'],
         tier: 1
       },
       {
-        id: 'plate_armor_specialist',
-        name: 'Especialista em Armadura de Placa',
-        description: 'Cria armaduras de placa avançadas',
+        id: 'knight_armor_specialist',
+        name: 'Especialista em Armadura de Cavaleiro',
+        description: 'Cria armaduras de cavaleiro (T5)',
         maxLevel: 100,
-        currentLevel: 0,
+        currentLevel: 1,
         cost: 300,
         requirements: ['plate_armor_crafter'],
         category: 'crafting' as const,
@@ -232,34 +250,119 @@ const SkillTreePanel = ({ npc, onClose }: SkillTreePanelProps) => {
           x: centerX + Math.cos(craftingAngle) * farRadius, 
           y: centerY + Math.sin(craftingAngle) * farRadius 
         },
-        connections: [],
+        connections: ['demon_armor_specialist'],
         tier: 1
       },
       {
-        id: 'plate_boots_specialist',
-        name: 'Especialista em Botas de Placa',
-        description: 'Cria botas de placa avançadas',
+        id: 'guardian_armor_specialist',
+        name: 'Especialista em Armadura de Guardião',
+        description: 'Cria armaduras de guardião (T6)',
         maxLevel: 100,
-        currentLevel: 0,
+        currentLevel: 1,
         cost: 300,
         requirements: ['plate_armor_crafter'],
         category: 'crafting' as const,
         subcategory: 'warrior_forge',
         position: { 
-          x: centerX + Math.cos(craftingAngle + 0.4) * farRadius, 
-          y: centerY + Math.sin(craftingAngle + 0.4) * farRadius 
+          x: centerX + Math.cos(craftingAngle + 0.3) * farRadius, 
+          y: centerY + Math.sin(craftingAngle + 0.3) * farRadius 
+        },
+        connections: ['judicator_armor_specialist'],
+        tier: 1
+      },
+      {
+        id: 'graveguard_armor_specialist',
+        name: 'Especialista em Armadura de Guardião do Túmulo',
+        description: 'Cria armaduras de guardião do túmulo (T7)',
+        maxLevel: 100,
+        currentLevel: 1,
+        cost: 400,
+        requirements: ['soldier_armor_specialist'],
+        category: 'crafting' as const,
+        subcategory: 'warrior_forge',
+        position: { 
+          x: centerX + Math.cos(craftingAngle - 0.3) * extraFarRadius, 
+          y: centerY + Math.sin(craftingAngle - 0.3) * extraFarRadius 
+        },
+        connections: ['duskweaver_armor_specialist'],
+        tier: 1
+      },
+      {
+        id: 'demon_armor_specialist',
+        name: 'Especialista em Armadura Demoníaca',
+        description: 'Cria armaduras demoníacas (T8)',
+        maxLevel: 100,
+        currentLevel: 1,
+        cost: 400,
+        requirements: ['knight_armor_specialist'],
+        category: 'crafting' as const,
+        subcategory: 'warrior_forge',
+        position: { 
+          x: centerX + Math.cos(craftingAngle) * extraFarRadius, 
+          y: centerY + Math.sin(craftingAngle) * extraFarRadius 
+        },
+        connections: ['armor_of_valor_specialist'],
+        tier: 1
+      },
+      {
+        id: 'judicator_armor_specialist',
+        name: 'Especialista em Armadura de Judicador',
+        description: 'Cria armaduras de judicador',
+        maxLevel: 100,
+        currentLevel: 1,
+        cost: 400,
+        requirements: ['guardian_armor_specialist'],
+        category: 'crafting' as const,
+        subcategory: 'warrior_forge',
+        position: { 
+          x: centerX + Math.cos(craftingAngle + 0.3) * extraFarRadius, 
+          y: centerY + Math.sin(craftingAngle + 0.3) * extraFarRadius 
+        },
+        connections: [],
+        tier: 1
+      },
+      {
+        id: 'duskweaver_armor_specialist',
+        name: 'Especialista em Armadura de Tecelão do Crepúsculo',
+        description: 'Cria armaduras especiais de tecelão',
+        maxLevel: 100,
+        currentLevel: 1,
+        cost: 500,
+        requirements: ['graveguard_armor_specialist'],
+        category: 'crafting' as const,
+        subcategory: 'warrior_forge',
+        position: { 
+          x: centerX + Math.cos(craftingAngle - 0.2) * (extraFarRadius + 100), 
+          y: centerY + Math.sin(craftingAngle - 0.2) * (extraFarRadius + 100) 
+        },
+        connections: [],
+        tier: 1
+      },
+      {
+        id: 'armor_of_valor_specialist',
+        name: 'Especialista em Armadura do Valor',
+        description: 'Cria as legendárias armaduras do valor',
+        maxLevel: 100,
+        currentLevel: 1,
+        cost: 500,
+        requirements: ['demon_armor_specialist'],
+        category: 'crafting' as const,
+        subcategory: 'warrior_forge',
+        position: { 
+          x: centerX + Math.cos(craftingAngle + 0.1) * (extraFarRadius + 100), 
+          y: centerY + Math.sin(craftingAngle + 0.1) * (extraFarRadius + 100) 
         },
         connections: [],
         tier: 1
       },
 
-      // Weapon Specialists - Ramos laterais com mais espaçamento
+      // Sword Line
       {
         id: 'sword_crafter',
         name: 'Ferreiro de Espadas',
-        description: 'Especialista em espadas',
+        description: 'Especialista em espadas básicas',
         maxLevel: 100,
-        currentLevel: 0,
+        currentLevel: 1,
         cost: 200,
         requirements: ['warrior_forge'],
         category: 'crafting' as const,
@@ -268,15 +371,68 @@ const SkillTreePanel = ({ npc, onClose }: SkillTreePanelProps) => {
           x: centerX + Math.cos(craftingAngle - 0.6) * outerRadius, 
           y: centerY + Math.sin(craftingAngle - 0.6) * outerRadius 
         },
+        connections: ['sword_specialist', 'claymore_specialist', 'dual_swords_specialist'],
+        tier: 1
+      },
+      {
+        id: 'sword_specialist',
+        name: 'Especialista em Espadas',
+        description: 'Mestre em espadas de uma mão',
+        maxLevel: 100,
+        currentLevel: 1,
+        cost: 300,
+        requirements: ['sword_crafter'],
+        category: 'crafting' as const,
+        subcategory: 'warrior_forge',
+        position: { 
+          x: centerX + Math.cos(craftingAngle - 0.6) * farRadius, 
+          y: centerY + Math.sin(craftingAngle - 0.6) * farRadius 
+        },
         connections: [],
         tier: 1
       },
       {
+        id: 'claymore_specialist',
+        name: 'Especialista em Claymores',
+        description: 'Mestre em espadas de duas mãos',
+        maxLevel: 100,
+        currentLevel: 1,
+        cost: 300,
+        requirements: ['sword_crafter'],
+        category: 'crafting' as const,
+        subcategory: 'warrior_forge',
+        position: { 
+          x: centerX + Math.cos(craftingAngle - 0.7) * farRadius, 
+          y: centerY + Math.sin(craftingAngle - 0.7) * farRadius 
+        },
+        connections: [],
+        tier: 1
+      },
+      {
+        id: 'dual_swords_specialist',
+        name: 'Especialista em Espadas Duplas',
+        description: 'Mestre em espadas duplas',
+        maxLevel: 100,
+        currentLevel: 1,
+        cost: 300,
+        requirements: ['sword_crafter'],
+        category: 'crafting' as const,
+        subcategory: 'warrior_forge',
+        position: { 
+          x: centerX + Math.cos(craftingAngle - 0.8) * farRadius, 
+          y: centerY + Math.sin(craftingAngle - 0.8) * farRadius 
+        },
+        connections: [],
+        tier: 1
+      },
+
+      // Axe Line
+      {
         id: 'axe_crafter',
         name: 'Ferreiro de Machados',
-        description: 'Especialista em machados',
+        description: 'Especialista em machados básicos',
         maxLevel: 100,
-        currentLevel: 0,
+        currentLevel: 1,
         cost: 200,
         requirements: ['warrior_forge'],
         category: 'crafting' as const,
@@ -285,15 +441,68 @@ const SkillTreePanel = ({ npc, onClose }: SkillTreePanelProps) => {
           x: centerX + Math.cos(craftingAngle + 0.6) * outerRadius, 
           y: centerY + Math.sin(craftingAngle + 0.6) * outerRadius 
         },
+        connections: ['axe_specialist', 'battle_axe_specialist', 'halberd_specialist'],
+        tier: 1
+      },
+      {
+        id: 'axe_specialist',
+        name: 'Especialista em Machados',
+        description: 'Mestre em machados de uma mão',
+        maxLevel: 100,
+        currentLevel: 1,
+        cost: 300,
+        requirements: ['axe_crafter'],
+        category: 'crafting' as const,
+        subcategory: 'warrior_forge',
+        position: { 
+          x: centerX + Math.cos(craftingAngle + 0.6) * farRadius, 
+          y: centerY + Math.sin(craftingAngle + 0.6) * farRadius 
+        },
         connections: [],
         tier: 1
       },
       {
+        id: 'battle_axe_specialist',
+        name: 'Especialista em Machados de Batalha',
+        description: 'Mestre em machados de duas mãos',
+        maxLevel: 100,
+        currentLevel: 1,
+        cost: 300,
+        requirements: ['axe_crafter'],
+        category: 'crafting' as const,
+        subcategory: 'warrior_forge',
+        position: { 
+          x: centerX + Math.cos(craftingAngle + 0.7) * farRadius, 
+          y: centerY + Math.sin(craftingAngle + 0.7) * farRadius 
+        },
+        connections: [],
+        tier: 1
+      },
+      {
+        id: 'halberd_specialist',
+        name: 'Especialista em Alabardas',
+        description: 'Mestre em alabardas',
+        maxLevel: 100,
+        currentLevel: 1,
+        cost: 300,
+        requirements: ['axe_crafter'],
+        category: 'crafting' as const,
+        subcategory: 'warrior_forge',
+        position: { 
+          x: centerX + Math.cos(craftingAngle + 0.8) * farRadius, 
+          y: centerY + Math.sin(craftingAngle + 0.8) * farRadius 
+        },
+        connections: [],
+        tier: 1
+      },
+
+      // Mace & Hammer Line
+      {
         id: 'mace_crafter',
         name: 'Ferreiro de Maças',
-        description: 'Especialista em maças e martelos',
+        description: 'Especialista em maças e martelos básicos',
         maxLevel: 100,
-        currentLevel: 0,
+        currentLevel: 1,
         cost: 200,
         requirements: ['warrior_forge'],
         category: 'crafting' as const,
@@ -302,26 +511,113 @@ const SkillTreePanel = ({ npc, onClose }: SkillTreePanelProps) => {
           x: centerX + Math.cos(craftingAngle - 0.9) * (middleRadius + 40), 
           y: centerY + Math.sin(craftingAngle - 0.9) * (middleRadius + 40) 
         },
+        connections: ['mace_specialist', 'war_hammer_specialist'],
+        tier: 1
+      },
+      {
+        id: 'mace_specialist',
+        name: 'Especialista em Maças',
+        description: 'Mestre em maças de uma mão',
+        maxLevel: 100,
+        currentLevel: 1,
+        cost: 300,
+        requirements: ['mace_crafter'],
+        category: 'crafting' as const,
+        subcategory: 'warrior_forge',
+        position: { 
+          x: centerX + Math.cos(craftingAngle - 0.9) * (outerRadius + 20), 
+          y: centerY + Math.sin(craftingAngle - 0.9) * (outerRadius + 20) 
+        },
+        connections: [],
+        tier: 1
+      },
+      {
+        id: 'war_hammer_specialist',
+        name: 'Especialista em Martelos de Guerra',
+        description: 'Mestre em martelos de duas mãos',
+        maxLevel: 100,
+        currentLevel: 1,
+        cost: 300,
+        requirements: ['mace_crafter'],
+        category: 'crafting' as const,
+        subcategory: 'warrior_forge',
+        position: { 
+          x: centerX + Math.cos(craftingAngle - 1.0) * (outerRadius + 20), 
+          y: centerY + Math.sin(craftingAngle - 1.0) * (outerRadius + 20) 
+        },
         connections: [],
         tier: 1
       },
 
-      // HUNTER'S LODGE - Ramo secundário com mais espaçamento
+      // Additional Hammer Line
+      {
+        id: 'hammer_crafter',
+        name: 'Ferreiro de Martelos',
+        description: 'Especialista em martelos especiais',
+        maxLevel: 100,
+        currentLevel: 1,
+        cost: 200,
+        requirements: ['warrior_forge'],
+        category: 'crafting' as const,
+        subcategory: 'warrior_forge',
+        position: { 
+          x: centerX + Math.cos(craftingAngle + 0.9) * (middleRadius + 40), 
+          y: centerY + Math.sin(craftingAngle + 0.9) * (middleRadius + 40) 
+        },
+        connections: ['hammer_specialist', 'polehammer_specialist'],
+        tier: 1
+      },
+      {
+        id: 'hammer_specialist',
+        name: 'Especialista em Martelos',
+        description: 'Mestre em martelos especializados',
+        maxLevel: 100,
+        currentLevel: 1,
+        cost: 300,
+        requirements: ['hammer_crafter'],
+        category: 'crafting' as const,
+        subcategory: 'warrior_forge',
+        position: { 
+          x: centerX + Math.cos(craftingAngle + 0.9) * (outerRadius + 20), 
+          y: centerY + Math.sin(craftingAngle + 0.9) * (outerRadius + 20) 
+        },
+        connections: [],
+        tier: 1
+      },
+      {
+        id: 'polehammer_specialist',
+        name: 'Especialista em Martelos de Cabo',
+        description: 'Mestre em martelos de cabo longo',
+        maxLevel: 100,
+        currentLevel: 1,
+        cost: 300,
+        requirements: ['hammer_crafter'],
+        category: 'crafting' as const,
+        subcategory: 'warrior_forge',
+        position: { 
+          x: centerX + Math.cos(craftingAngle + 1.0) * (outerRadius + 20), 
+          y: centerY + Math.sin(craftingAngle + 1.0) * (outerRadius + 20) 
+        },
+        connections: [],
+        tier: 1
+      },
+
+      // HUNTER'S LODGE - Ramo secundário
       {
         id: 'hunter_lodge',
         name: 'Cabana do Caçador',
         description: 'Criação de equipamentos de caçador',
         maxLevel: 100,
-        currentLevel: 0,
+        currentLevel: 1,
         cost: 150,
-        requirements: ['crafting_branch'],
+        requirements: ['trainee_craftsman'],
         category: 'crafting' as const,
         subcategory: 'hunter_lodge',
         position: { 
           x: centerX + Math.cos(craftingAngle + 0.9) * (middleRadius + 20), 
           y: centerY + Math.sin(craftingAngle + 0.9) * (middleRadius + 20) 
         },
-        connections: ['leather_armor_crafter', 'bow_crafter', 'spear_crafter'],
+        connections: ['leather_armor_crafter', 'bow_crafter', 'spear_crafter', 'crossbow_crafter'],
         tier: 1
       },
       {
@@ -329,7 +625,7 @@ const SkillTreePanel = ({ npc, onClose }: SkillTreePanelProps) => {
         name: 'Criador de Armadura de Couro',
         description: 'Especialista em armaduras de couro',
         maxLevel: 100,
-        currentLevel: 0,
+        currentLevel: 1,
         cost: 200,
         requirements: ['hunter_lodge'],
         category: 'crafting' as const,
@@ -338,15 +634,67 @@ const SkillTreePanel = ({ npc, onClose }: SkillTreePanelProps) => {
           x: centerX + Math.cos(craftingAngle + 0.7) * (outerRadius + 30), 
           y: centerY + Math.sin(craftingAngle + 0.7) * (outerRadius + 30) 
         },
+        connections: ['mercenary_leather_specialist', 'hunter_leather_specialist', 'assassin_leather_specialist'],
+        tier: 1
+      },
+      {
+        id: 'mercenary_leather_specialist',
+        name: 'Especialista em Couro de Mercenário',
+        description: 'Cria armaduras de couro de mercenário',
+        maxLevel: 100,
+        currentLevel: 1,
+        cost: 300,
+        requirements: ['leather_armor_crafter'],
+        category: 'crafting' as const,
+        subcategory: 'hunter_lodge',
+        position: { 
+          x: centerX + Math.cos(craftingAngle + 0.6) * (farRadius + 20), 
+          y: centerY + Math.sin(craftingAngle + 0.6) * (farRadius + 20) 
+        },
         connections: [],
         tier: 1
       },
+      {
+        id: 'hunter_leather_specialist',
+        name: 'Especialista em Couro de Caçador',
+        description: 'Cria armaduras de couro de caçador',
+        maxLevel: 100,
+        currentLevel: 1,
+        cost: 300,
+        requirements: ['leather_armor_crafter'],
+        category: 'crafting' as const,
+        subcategory: 'hunter_lodge',
+        position: { 
+          x: centerX + Math.cos(craftingAngle + 0.7) * (farRadius + 20), 
+          y: centerY + Math.sin(craftingAngle + 0.7) * (farRadius + 20) 
+        },
+        connections: [],
+        tier: 1
+      },
+      {
+        id: 'assassin_leather_specialist',
+        name: 'Especialista em Couro de Assassino',
+        description: 'Cria armaduras de couro de assassino',
+        maxLevel: 100,
+        currentLevel: 1,
+        cost: 300,
+        requirements: ['leather_armor_crafter'],
+        category: 'crafting' as const,
+        subcategory: 'hunter_lodge',
+        position: { 
+          x: centerX + Math.cos(craftingAngle + 0.8) * (farRadius + 20), 
+          y: centerY + Math.sin(craftingAngle + 0.8) * (farRadius + 20) 
+        },
+        connections: [],
+        tier: 1
+      },
+
       {
         id: 'bow_crafter',
         name: 'Criador de Arcos',
         description: 'Especialista em arcos',
         maxLevel: 100,
-        currentLevel: 0,
+        currentLevel: 1,
         cost: 200,
         requirements: ['hunter_lodge'],
         category: 'crafting' as const,
@@ -355,15 +703,67 @@ const SkillTreePanel = ({ npc, onClose }: SkillTreePanelProps) => {
           x: centerX + Math.cos(craftingAngle + 0.9) * (outerRadius + 30), 
           y: centerY + Math.sin(craftingAngle + 0.9) * (outerRadius + 30) 
         },
+        connections: ['bow_specialist', 'warbow_specialist', 'longbow_specialist'],
+        tier: 1
+      },
+      {
+        id: 'bow_specialist',
+        name: 'Especialista em Arcos',
+        description: 'Mestre em arcos básicos',
+        maxLevel: 100,
+        currentLevel: 1,
+        cost: 300,
+        requirements: ['bow_crafter'],
+        category: 'crafting' as const,
+        subcategory: 'hunter_lodge',
+        position: { 
+          x: centerX + Math.cos(craftingAngle + 0.85) * (farRadius + 20), 
+          y: centerY + Math.sin(craftingAngle + 0.85) * (farRadius + 20) 
+        },
         connections: [],
         tier: 1
       },
+      {
+        id: 'warbow_specialist',
+        name: 'Especialista em Arcos de Guerra',
+        description: 'Mestre em arcos de guerra',
+        maxLevel: 100,
+        currentLevel: 1,
+        cost: 300,
+        requirements: ['bow_crafter'],
+        category: 'crafting' as const,
+        subcategory: 'hunter_lodge',
+        position: { 
+          x: centerX + Math.cos(craftingAngle + 0.9) * (farRadius + 20), 
+          y: centerY + Math.sin(craftingAngle + 0.9) * (farRadius + 20) 
+        },
+        connections: [],
+        tier: 1
+      },
+      {
+        id: 'longbow_specialist',
+        name: 'Especialista em Arcos Longos',
+        description: 'Mestre em arcos longos',
+        maxLevel: 100,
+        currentLevel: 1,
+        cost: 300,
+        requirements: ['bow_crafter'],
+        category: 'crafting' as const,
+        subcategory: 'hunter_lodge',
+        position: { 
+          x: centerX + Math.cos(craftingAngle + 0.95) * (farRadius + 20), 
+          y: centerY + Math.sin(craftingAngle + 0.95) * (farRadius + 20) 
+        },
+        connections: [],
+        tier: 1
+      },
+
       {
         id: 'spear_crafter',
         name: 'Criador de Lanças',
         description: 'Especialista em lanças',
         maxLevel: 100,
-        currentLevel: 0,
+        currentLevel: 1,
         cost: 200,
         requirements: ['hunter_lodge'],
         category: 'crafting' as const,
@@ -372,26 +772,129 @@ const SkillTreePanel = ({ npc, onClose }: SkillTreePanelProps) => {
           x: centerX + Math.cos(craftingAngle + 1.1) * (outerRadius + 30), 
           y: centerY + Math.sin(craftingAngle + 1.1) * (outerRadius + 30) 
         },
+        connections: ['spear_specialist', 'pike_specialist', 'glaive_specialist'],
+        tier: 1
+      },
+      {
+        id: 'spear_specialist',
+        name: 'Especialista em Lanças',
+        description: 'Mestre em lanças básicas',
+        maxLevel: 100,
+        currentLevel: 1,
+        cost: 300,
+        requirements: ['spear_crafter'],
+        category: 'crafting' as const,
+        subcategory: 'hunter_lodge',
+        position: { 
+          x: centerX + Math.cos(craftingAngle + 1.05) * (farRadius + 20), 
+          y: centerY + Math.sin(craftingAngle + 1.05) * (farRadius + 20) 
+        },
+        connections: [],
+        tier: 1
+      },
+      {
+        id: 'pike_specialist',
+        name: 'Especialista em Piques',
+        description: 'Mestre em piques',
+        maxLevel: 100,
+        currentLevel: 1,
+        cost: 300,
+        requirements: ['spear_crafter'],
+        category: 'crafting' as const,
+        subcategory: 'hunter_lodge',
+        position: { 
+          x: centerX + Math.cos(craftingAngle + 1.1) * (farRadius + 20), 
+          y: centerY + Math.sin(craftingAngle + 1.1) * (farRadius + 20) 
+        },
+        connections: [],
+        tier: 1
+      },
+      {
+        id: 'glaive_specialist',
+        name: 'Especialista em Glaives',
+        description: 'Mestre em glaives',
+        maxLevel: 100,
+        currentLevel: 1,
+        cost: 300,
+        requirements: ['spear_crafter'],
+        category: 'crafting' as const,
+        subcategory: 'hunter_lodge',
+        position: { 
+          x: centerX + Math.cos(craftingAngle + 1.15) * (farRadius + 20), 
+          y: centerY + Math.sin(craftingAngle + 1.15) * (farRadius + 20) 
+        },
         connections: [],
         tier: 1
       },
 
-      // MAGE'S TOWER - Outro ramo secundário
+      {
+        id: 'crossbow_crafter',
+        name: 'Criador de Bestas',
+        description: 'Especialista em bestas',
+        maxLevel: 100,
+        currentLevel: 1,
+        cost: 200,
+        requirements: ['hunter_lodge'],
+        category: 'crafting' as const,
+        subcategory: 'hunter_lodge',
+        position: { 
+          x: centerX + Math.cos(craftingAngle + 1.2) * (outerRadius + 30), 
+          y: centerY + Math.sin(craftingAngle + 1.2) * (outerRadius + 30) 
+        },
+        connections: ['crossbow_specialist', 'heavy_crossbow_specialist'],
+        tier: 1
+      },
+      {
+        id: 'crossbow_specialist',
+        name: 'Especialista em Bestas',
+        description: 'Mestre em bestas básicas',
+        maxLevel: 100,
+        currentLevel: 1,
+        cost: 300,
+        requirements: ['crossbow_crafter'],
+        category: 'crafting' as const,
+        subcategory: 'hunter_lodge',
+        position: { 
+          x: centerX + Math.cos(craftingAngle + 1.15) * (farRadius + 20), 
+          y: centerY + Math.sin(craftingAngle + 1.15) * (farRadius + 20) 
+        },
+        connections: [],
+        tier: 1
+      },
+      {
+        id: 'heavy_crossbow_specialist',
+        name: 'Especialista em Bestas Pesadas',
+        description: 'Mestre em bestas pesadas',
+        maxLevel: 100,
+        currentLevel: 1,
+        cost: 300,
+        requirements: ['crossbow_crafter'],
+        category: 'crafting' as const,
+        subcategory: 'hunter_lodge',
+        position: { 
+          x: centerX + Math.cos(craftingAngle + 1.25) * (farRadius + 20), 
+          y: centerY + Math.sin(craftingAngle + 1.25) * (farRadius + 20) 
+        },
+        connections: [],
+        tier: 1
+      },
+
+      // MAGE'S TOWER - Ramo mágico
       {
         id: 'mage_tower',
         name: 'Torre do Mago',
         description: 'Criação de equipamentos mágicos',
         maxLevel: 100,
-        currentLevel: 0,
+        currentLevel: 1,
         cost: 150,
-        requirements: ['crafting_branch'],
+        requirements: ['trainee_craftsman'],
         category: 'crafting' as const,
         subcategory: 'mage_tower',
         position: { 
           x: centerX + Math.cos(craftingAngle - 0.8) * middleRadius, 
           y: centerY + Math.sin(craftingAngle - 0.8) * middleRadius 
         },
-        connections: ['cloth_armor_crafter', 'fire_staff_crafter', 'holy_staff_crafter'],
+        connections: ['cloth_armor_crafter', 'fire_staff_crafter', 'holy_staff_crafter', 'arcane_staff_crafter', 'frost_staff_crafter', 'nature_staff_crafter'],
         tier: 1
       },
       {
@@ -399,7 +902,7 @@ const SkillTreePanel = ({ npc, onClose }: SkillTreePanelProps) => {
         name: 'Criador de Armadura de Tecido',
         description: 'Especialista em armaduras mágicas',
         maxLevel: 100,
-        currentLevel: 0,
+        currentLevel: 1,
         cost: 200,
         requirements: ['mage_tower'],
         category: 'crafting' as const,
@@ -408,15 +911,67 @@ const SkillTreePanel = ({ npc, onClose }: SkillTreePanelProps) => {
           x: centerX + Math.cos(craftingAngle - 0.8) * outerRadius, 
           y: centerY + Math.sin(craftingAngle - 0.8) * outerRadius 
         },
+        connections: ['scholar_robe_specialist', 'cleric_robe_specialist', 'mage_robe_specialist'],
+        tier: 1
+      },
+      {
+        id: 'scholar_robe_specialist',
+        name: 'Especialista em Vestes de Erudito',
+        description: 'Cria vestes de erudito',
+        maxLevel: 100,
+        currentLevel: 1,
+        cost: 300,
+        requirements: ['cloth_armor_crafter'],
+        category: 'crafting' as const,
+        subcategory: 'mage_tower',
+        position: { 
+          x: centerX + Math.cos(craftingAngle - 0.7) * farRadius, 
+          y: centerY + Math.sin(craftingAngle - 0.7) * farRadius 
+        },
         connections: [],
         tier: 1
       },
+      {
+        id: 'cleric_robe_specialist',
+        name: 'Especialista em Vestes de Clérigo',
+        description: 'Cria vestes de clérigo',
+        maxLevel: 100,
+        currentLevel: 1,
+        cost: 300,
+        requirements: ['cloth_armor_crafter'],
+        category: 'crafting' as const,
+        subcategory: 'mage_tower',
+        position: { 
+          x: centerX + Math.cos(craftingAngle - 0.8) * farRadius, 
+          y: centerY + Math.sin(craftingAngle - 0.8) * farRadius 
+        },
+        connections: [],
+        tier: 1
+      },
+      {
+        id: 'mage_robe_specialist',
+        name: 'Especialista em Vestes de Mago',
+        description: 'Cria vestes de mago',
+        maxLevel: 100,
+        currentLevel: 1,
+        cost: 300,
+        requirements: ['cloth_armor_crafter'],
+        category: 'crafting' as const,
+        subcategory: 'mage_tower',
+        position: { 
+          x: centerX + Math.cos(craftingAngle - 0.9) * farRadius, 
+          y: centerY + Math.sin(craftingAngle - 0.9) * farRadius 
+        },
+        connections: [],
+        tier: 1
+      },
+
       {
         id: 'fire_staff_crafter',
         name: 'Criador de Cajados de Fogo',
         description: 'Especialista em magia de fogo',
         maxLevel: 100,
-        currentLevel: 0,
+        currentLevel: 1,
         cost: 200,
         requirements: ['mage_tower'],
         category: 'crafting' as const,
@@ -425,15 +980,67 @@ const SkillTreePanel = ({ npc, onClose }: SkillTreePanelProps) => {
           x: centerX + Math.cos(craftingAngle - 0.6) * outerRadius, 
           y: centerY + Math.sin(craftingAngle - 0.6) * outerRadius 
         },
+        connections: ['fire_staff_specialist', 'great_fire_staff_specialist', 'infernal_staff_specialist'],
+        tier: 1
+      },
+      {
+        id: 'fire_staff_specialist',
+        name: 'Especialista em Cajados de Fogo',
+        description: 'Mestre em cajados de fogo básicos',
+        maxLevel: 100,
+        currentLevel: 1,
+        cost: 300,
+        requirements: ['fire_staff_crafter'],
+        category: 'crafting' as const,
+        subcategory: 'mage_tower',
+        position: { 
+          x: centerX + Math.cos(craftingAngle - 0.55) * farRadius, 
+          y: centerY + Math.sin(craftingAngle - 0.55) * farRadius 
+        },
         connections: [],
         tier: 1
       },
+      {
+        id: 'great_fire_staff_specialist',
+        name: 'Especialista em Grandes Cajados de Fogo',
+        description: 'Mestre em grandes cajados de fogo',
+        maxLevel: 100,
+        currentLevel: 1,
+        cost: 300,
+        requirements: ['fire_staff_crafter'],
+        category: 'crafting' as const,
+        subcategory: 'mage_tower',
+        position: { 
+          x: centerX + Math.cos(craftingAngle - 0.6) * farRadius, 
+          y: centerY + Math.sin(craftingAngle - 0.6) * farRadius 
+        },
+        connections: [],
+        tier: 1
+      },
+      {
+        id: 'infernal_staff_specialist',
+        name: 'Especialista em Cajados Infernais',
+        description: 'Mestre em cajados infernais',
+        maxLevel: 100,
+        currentLevel: 1,
+        cost: 300,
+        requirements: ['fire_staff_crafter'],
+        category: 'crafting' as const,
+        subcategory: 'mage_tower',
+        position: { 
+          x: centerX + Math.cos(craftingAngle - 0.65) * farRadius, 
+          y: centerY + Math.sin(craftingAngle - 0.65) * farRadius 
+        },
+        connections: [],
+        tier: 1
+      },
+
       {
         id: 'holy_staff_crafter',
         name: 'Criador de Cajados Sagrados',
         description: 'Especialista em magia sagrada',
         maxLevel: 100,
-        currentLevel: 0,
+        currentLevel: 1,
         cost: 200,
         requirements: ['mage_tower'],
         category: 'crafting' as const,
@@ -442,19 +1049,277 @@ const SkillTreePanel = ({ npc, onClose }: SkillTreePanelProps) => {
           x: centerX + Math.cos(craftingAngle - 1.0) * outerRadius, 
           y: centerY + Math.sin(craftingAngle - 1.0) * outerRadius 
         },
+        connections: ['holy_staff_specialist', 'great_holy_staff_specialist', 'divine_staff_specialist'],
+        tier: 1
+      },
+      {
+        id: 'holy_staff_specialist',
+        name: 'Especialista em Cajados Sagrados',
+        description: 'Mestre em cajados sagrados básicos',
+        maxLevel: 100,
+        currentLevel: 1,
+        cost: 300,
+        requirements: ['holy_staff_crafter'],
+        category: 'crafting' as const,
+        subcategory: 'mage_tower',
+        position: { 
+          x: centerX + Math.cos(craftingAngle - 0.95) * farRadius, 
+          y: centerY + Math.sin(craftingAngle - 0.95) * farRadius 
+        },
+        connections: [],
+        tier: 1
+      },
+      {
+        id: 'great_holy_staff_specialist',
+        name: 'Especialista em Grandes Cajados Sagrados',
+        description: 'Mestre em grandes cajados sagrados',
+        maxLevel: 100,
+        currentLevel: 1,
+        cost: 300,
+        requirements: ['holy_staff_crafter'],
+        category: 'crafting' as const,
+        subcategory: 'mage_tower',
+        position: { 
+          x: centerX + Math.cos(craftingAngle - 1.0) * farRadius, 
+          y: centerY + Math.sin(craftingAngle - 1.0) * farRadius 
+        },
+        connections: [],
+        tier: 1
+      },
+      {
+        id: 'divine_staff_specialist',
+        name: 'Especialista em Cajados Divinos',
+        description: 'Mestre em cajados divinos',
+        maxLevel: 100,
+        currentLevel: 1,
+        cost: 300,
+        requirements: ['holy_staff_crafter'],
+        category: 'crafting' as const,
+        subcategory: 'mage_tower',
+        position: { 
+          x: centerX + Math.cos(craftingAngle - 1.05) * farRadius, 
+          y: centerY + Math.sin(craftingAngle - 1.05) * farRadius 
+        },
         connections: [],
         tier: 1
       },
 
-      // TOOLMAKER
+      {
+        id: 'arcane_staff_crafter',
+        name: 'Criador de Cajados Arcanos',
+        description: 'Especialista em magia arcana',
+        maxLevel: 100,
+        currentLevel: 1,
+        cost: 200,
+        requirements: ['mage_tower'],
+        category: 'crafting' as const,
+        subcategory: 'mage_tower',
+        position: { 
+          x: centerX + Math.cos(craftingAngle - 0.4) * outerRadius, 
+          y: centerY + Math.sin(craftingAngle - 0.4) * outerRadius 
+        },
+        connections: ['arcane_staff_specialist', 'great_arcane_staff_specialist', 'enigmatic_staff_specialist'],
+        tier: 1
+      },
+      {
+        id: 'arcane_staff_specialist',
+        name: 'Especialista em Cajados Arcanos',
+        description: 'Mestre em cajados arcanos básicos',
+        maxLevel: 100,
+        currentLevel: 1,
+        cost: 300,
+        requirements: ['arcane_staff_crafter'],
+        category: 'crafting' as const,
+        subcategory: 'mage_tower',
+        position: { 
+          x: centerX + Math.cos(craftingAngle - 0.35) * farRadius, 
+          y: centerY + Math.sin(craftingAngle - 0.35) * farRadius 
+        },
+        connections: [],
+        tier: 1
+      },
+      {
+        id: 'great_arcane_staff_specialist',
+        name: 'Especialista em Grandes Cajados Arcanos',
+        description: 'Mestre em grandes cajados arcanos',
+        maxLevel: 100,
+        currentLevel: 1,
+        cost: 300,
+        requirements: ['arcane_staff_crafter'],
+        category: 'crafting' as const,
+        subcategory: 'mage_tower',
+        position: { 
+          x: centerX + Math.cos(craftingAngle - 0.4) * farRadius, 
+          y: centerY + Math.sin(craftingAngle - 0.4) * farRadius 
+        },
+        connections: [],
+        tier: 1
+      },
+      {
+        id: 'enigmatic_staff_specialist',
+        name: 'Especialista em Cajados Enigmáticos',
+        description: 'Mestre em cajados enigmáticos',
+        maxLevel: 100,
+        currentLevel: 1,
+        cost: 300,
+        requirements: ['arcane_staff_crafter'],
+        category: 'crafting' as const,
+        subcategory: 'mage_tower',
+        position: { 
+          x: centerX + Math.cos(craftingAngle - 0.45) * farRadius, 
+          y: centerY + Math.sin(craftingAngle - 0.45) * farRadius 
+        },
+        connections: [],
+        tier: 1
+      },
+
+      {
+        id: 'frost_staff_crafter',
+        name: 'Criador de Cajados de Gelo',
+        description: 'Especialista em magia de gelo',
+        maxLevel: 100,
+        currentLevel: 1,
+        cost: 200,
+        requirements: ['mage_tower'],
+        category: 'crafting' as const,
+        subcategory: 'mage_tower',
+        position: { 
+          x: centerX + Math.cos(craftingAngle - 0.2) * outerRadius, 
+          y: centerY + Math.sin(craftingAngle - 0.2) * outerRadius 
+        },
+        connections: ['frost_staff_specialist', 'glacial_staff_specialist', 'icicle_staff_specialist'],
+        tier: 1
+      },
+      {
+        id: 'frost_staff_specialist',
+        name: 'Especialista em Cajados de Gelo',
+        description: 'Mestre em cajados de gelo básicos',
+        maxLevel: 100,
+        currentLevel: 1,
+        cost: 300,
+        requirements: ['frost_staff_crafter'],
+        category: 'crafting' as const,
+        subcategory: 'mage_tower',
+        position: { 
+          x: centerX + Math.cos(craftingAngle - 0.15) * farRadius, 
+          y: centerY + Math.sin(craftingAngle - 0.15) * farRadius 
+        },
+        connections: [],
+        tier: 1
+      },
+      {
+        id: 'glacial_staff_specialist',
+        name: 'Especialista em Cajados Glaciais',
+        description: 'Mestre em cajados glaciais',
+        maxLevel: 100,
+        currentLevel: 1,
+        cost: 300,
+        requirements: ['frost_staff_crafter'],
+        category: 'crafting' as const,
+        subcategory: 'mage_tower',
+        position: { 
+          x: centerX + Math.cos(craftingAngle - 0.2) * farRadius, 
+          y: centerY + Math.sin(craftingAngle - 0.2) * farRadius 
+        },
+        connections: [],
+        tier: 1
+      },
+      {
+        id: 'icicle_staff_specialist',
+        name: 'Especialista em Cajados de Gelo Espinhoso',
+        description: 'Mestre em cajados de gelo espinhoso',
+        maxLevel: 100,
+        currentLevel: 1,
+        cost: 300,
+        requirements: ['frost_staff_crafter'],
+        category: 'crafting' as const,
+        subcategory: 'mage_tower',
+        position: { 
+          x: centerX + Math.cos(craftingAngle - 0.25) * farRadius, 
+          y: centerY + Math.sin(craftingAngle - 0.25) * farRadius 
+        },
+        connections: [],
+        tier: 1
+      },
+
+      {
+        id: 'nature_staff_crafter',
+        name: 'Criador de Cajados da Natureza',
+        description: 'Especialista em magia da natureza',
+        maxLevel: 100,
+        currentLevel: 1,
+        cost: 200,
+        requirements: ['mage_tower'],
+        category: 'crafting' as const,
+        subcategory: 'mage_tower',
+        position: { 
+          x: centerX + Math.cos(craftingAngle - 1.2) * outerRadius, 
+          y: centerY + Math.sin(craftingAngle - 1.2) * outerRadius 
+        },
+        connections: ['nature_staff_specialist', 'wild_staff_specialist', 'druidic_staff_specialist'],
+        tier: 1
+      },
+      {
+        id: 'nature_staff_specialist',
+        name: 'Especialista em Cajados da Natureza',
+        description: 'Mestre em cajados da natureza básicos',
+        maxLevel: 100,
+        currentLevel: 1,
+        cost: 300,
+        requirements: ['nature_staff_crafter'],
+        category: 'crafting' as const,
+        subcategory: 'mage_tower',
+        position: { 
+          x: centerX + Math.cos(craftingAngle - 1.15) * farRadius, 
+          y: centerY + Math.sin(craftingAngle - 1.15) * farRadius 
+        },
+        connections: [],
+        tier: 1
+      },
+      {
+        id: 'wild_staff_specialist',
+        name: 'Especialista em Cajados Selvagens',
+        description: 'Mestre em cajados selvagens',
+        maxLevel: 100,
+        currentLevel: 1,
+        cost: 300,
+        requirements: ['nature_staff_crafter'],
+        category: 'crafting' as const,
+        subcategory: 'mage_tower',
+        position: { 
+          x: centerX + Math.cos(craftingAngle - 1.2) * farRadius, 
+          y: centerY + Math.sin(craftingAngle - 1.2) * farRadius 
+        },
+        connections: [],
+        tier: 1
+      },
+      {
+        id: 'druidic_staff_specialist',
+        name: 'Especialista em Cajados Druídicos',
+        description: 'Mestre em cajados druídicos',
+        maxLevel: 100,
+        currentLevel: 1,
+        cost: 300,
+        requirements: ['nature_staff_crafter'],
+        category: 'crafting' as const,
+        subcategory: 'mage_tower',
+        position: { 
+          x: centerX + Math.cos(craftingAngle - 1.25) * farRadius, 
+          y: centerY + Math.sin(craftingAngle - 1.25) * farRadius 
+        },
+        connections: [],
+        tier: 1
+      },
+
+      // TOOLMAKER - Ferramentas e Acessórios
       {
         id: 'toolmaker',
         name: 'Ferramenteiro',
         description: 'Criação de ferramentas',
         maxLevel: 100,
-        currentLevel: 0,
+        currentLevel: 1,
         cost: 150,
-        requirements: ['crafting_branch'],
+        requirements: ['trainee_craftsman'],
         category: 'crafting' as const,
         subcategory: 'toolmaker',
         position: { 
@@ -469,7 +1334,7 @@ const SkillTreePanel = ({ npc, onClose }: SkillTreePanelProps) => {
         name: 'Especialista em Ferramentas de Coleta',
         description: 'Cria ferramentas para coleta',
         maxLevel: 100,
-        currentLevel: 0,
+        currentLevel: 1,
         cost: 200,
         requirements: ['toolmaker'],
         category: 'crafting' as const,
@@ -478,15 +1343,84 @@ const SkillTreePanel = ({ npc, onClose }: SkillTreePanelProps) => {
           x: centerX + Math.cos(craftingAngle + 0.2) * (middleRadius - 40), 
           y: centerY + Math.sin(craftingAngle + 0.2) * (middleRadius - 40) 
         },
+        connections: ['pickaxe_specialist', 'sickle_specialist', 'axe_tool_specialist', 'skinning_knife_specialist'],
+        tier: 1
+      },
+      {
+        id: 'pickaxe_specialist',
+        name: 'Especialista em Picaretas',
+        description: 'Mestre em picaretas de mineração',
+        maxLevel: 100,
+        currentLevel: 1,
+        cost: 250,
+        requirements: ['gathering_tools_specialist'],
+        category: 'crafting' as const,
+        subcategory: 'toolmaker',
+        position: { 
+          x: centerX + Math.cos(craftingAngle + 0.15) * (outerRadius - 60), 
+          y: centerY + Math.sin(craftingAngle + 0.15) * (outerRadius - 60) 
+        },
         connections: [],
         tier: 1
       },
+      {
+        id: 'sickle_specialist',
+        name: 'Especialista em Foices',
+        description: 'Mestre em foices de colheita',
+        maxLevel: 100,
+        currentLevel: 1,
+        cost: 250,
+        requirements: ['gathering_tools_specialist'],
+        category: 'crafting' as const,
+        subcategory: 'toolmaker',
+        position: { 
+          x: centerX + Math.cos(craftingAngle + 0.2) * (outerRadius - 60), 
+          y: centerY + Math.sin(craftingAngle + 0.2) * (outerRadius - 60) 
+        },
+        connections: [],
+        tier: 1
+      },
+      {
+        id: 'axe_tool_specialist',
+        name: 'Especialista em Machados de Corte',
+        description: 'Mestre em machados de lenhador',
+        maxLevel: 100,
+        currentLevel: 1,
+        cost: 250,
+        requirements: ['gathering_tools_specialist'],
+        category: 'crafting' as const,
+        subcategory: 'toolmaker',
+        position: { 
+          x: centerX + Math.cos(craftingAngle + 0.25) * (outerRadius - 60), 
+          y: centerY + Math.sin(craftingAngle + 0.25) * (outerRadius - 60) 
+        },
+        connections: [],
+        tier: 1
+      },
+      {
+        id: 'skinning_knife_specialist',
+        name: 'Especialista em Facas de Esfolamento',
+        description: 'Mestre em facas de esfolamento',
+        maxLevel: 100,
+        currentLevel: 1,
+        cost: 250,
+        requirements: ['gathering_tools_specialist'],
+        category: 'crafting' as const,
+        subcategory: 'toolmaker',
+        position: { 
+          x: centerX + Math.cos(craftingAngle + 0.3) * (outerRadius - 60), 
+          y: centerY + Math.sin(craftingAngle + 0.3) * (outerRadius - 60) 
+        },
+        connections: [],
+        tier: 1
+      },
+
       {
         id: 'accessories_specialist',
         name: 'Especialista em Acessórios',
         description: 'Cria anéis, amuletos e capes',
         maxLevel: 100,
-        currentLevel: 0,
+        currentLevel: 1,
         cost: 200,
         requirements: ['toolmaker'],
         category: 'crafting' as const,
@@ -494,6 +1428,57 @@ const SkillTreePanel = ({ npc, onClose }: SkillTreePanelProps) => {
         position: { 
           x: centerX + Math.cos(craftingAngle - 0.2) * (middleRadius - 40), 
           y: centerY + Math.sin(craftingAngle - 0.2) * (middleRadius - 40) 
+        },
+        connections: ['bag_specialist', 'cape_specialist', 'tome_specialist'],
+        tier: 1
+      },
+      {
+        id: 'bag_specialist',
+        name: 'Especialista em Bolsas',
+        description: 'Mestre em bolsas e mochilas',
+        maxLevel: 100,
+        currentLevel: 1,
+        cost: 250,
+        requirements: ['accessories_specialist'],
+        category: 'crafting' as const,
+        subcategory: 'toolmaker',
+        position: { 
+          x: centerX + Math.cos(craftingAngle - 0.25) * (outerRadius - 60), 
+          y: centerY + Math.sin(craftingAngle - 0.25) * (outerRadius - 60) 
+        },
+        connections: [],
+        tier: 1
+      },
+      {
+        id: 'cape_specialist',
+        name: 'Especialista em Capas',
+        description: 'Mestre em capas mágicas',
+        maxLevel: 100,
+        currentLevel: 1,
+        cost: 250,
+        requirements: ['accessories_specialist'],
+        category: 'crafting' as const,
+        subcategory: 'toolmaker',
+        position: { 
+          x: centerX + Math.cos(craftingAngle - 0.2) * (outerRadius - 60), 
+          y: centerY + Math.sin(craftingAngle - 0.2) * (outerRadius - 60) 
+        },
+        connections: [],
+        tier: 1
+      },
+      {
+        id: 'tome_specialist',
+        name: 'Especialista em Tomos',
+        description: 'Mestre em tomos e orbes mágicos',
+        maxLevel: 100,
+        currentLevel: 1,
+        cost: 250,
+        requirements: ['accessories_specialist'],
+        category: 'crafting' as const,
+        subcategory: 'toolmaker',
+        position: { 
+          x: centerX + Math.cos(craftingAngle - 0.15) * (outerRadius - 60), 
+          y: centerY + Math.sin(craftingAngle - 0.15) * (outerRadius - 60) 
         },
         connections: [],
         tier: 1
