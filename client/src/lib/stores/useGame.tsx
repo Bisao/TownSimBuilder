@@ -2,22 +2,11 @@ import { create } from "zustand";
 import { subscribeWithSelector } from "zustand/middleware";
 import { getLocalStorage, setLocalStorage } from "@/lib/utils";
 
-export type GamePhase = "login" | "character-creation" | "character-selection" | "ready" | "playing" | "ended";
-
-interface CharacterData {
-  name: string;
-  gender: "male" | "female";
-  face: number;
-  skinColor: number;
-  hairStyle: number;
-  hairColor: number;
-  beard: number;
-}
+export type GamePhase = "login" | "playing" | "ended";
 
 interface PlayerData {
   nickname: string;
   loginTime: string;
-  character?: CharacterData;
 }
 
 interface GameState {
@@ -26,8 +15,6 @@ interface GameState {
   
   // Actions
   login: (nickname: string) => void;
-  createCharacter: (character: CharacterData) => void;
-  selectCharacter: (character: CharacterData) => void;
   start: () => void;
   restart: () => void;
   end: () => void;
@@ -45,59 +32,26 @@ export const useGame = create<GameState>()(
       playerData: initialPlayerData,
       
       login: (nickname: string) => {
-        const existingCharacter = getLocalStorage("characterData");
         const playerData: PlayerData = {
           nickname,
-          loginTime: new Date().toISOString(),
-          character: existingCharacter
+          loginTime: new Date().toISOString()
         };
         
         setLocalStorage("currentPlayer", playerData);
         
-        // Se o jogador tem um personagem, vai para seleção, senão vai para criação
-        const nextPhase: GamePhase = existingCharacter ? "character-selection" : "character-creation";
-        
         set(() => ({
-          phase: nextPhase,
+          phase: "playing",
           playerData
         }));
       },
       
-      createCharacter: (character: CharacterData) => {
-        setLocalStorage("characterData", character);
-        
-        set((state) => ({
-          phase: "character-selection",
-          playerData: state.playerData ? {
-            ...state.playerData,
-            character
-          } : null
-        }));
-      },
-      
-      selectCharacter: (character: CharacterData) => {
-        set((state) => ({
-          phase: "ready",
-          playerData: state.playerData ? {
-            ...state.playerData,
-            character
-          } : null
-        }));
-      },
-      
       start: () => {
-        set((state) => {
-          // Only transition from ready to playing
-          if (state.phase === "ready") {
-            return { phase: "playing" };
-          }
-          return {};
-        });
+        set(() => ({ phase: "playing" }));
       },
       
       restart: () => {
         set((state) => ({ 
-          phase: "ready",
+          phase: "playing",
           playerData: state.playerData 
         }));
       },
@@ -115,7 +69,6 @@ export const useGame = create<GameState>()(
       logout: () => {
         setLocalStorage("currentPlayer", null);
         setLocalStorage("autoLogin", false);
-        setLocalStorage("characterData", null);
         set(() => ({
           phase: "login",
           playerData: null

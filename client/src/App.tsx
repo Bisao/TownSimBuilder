@@ -8,9 +8,6 @@ import GameUI from './ui/GameUI';
 import MarketWindow from './ui/MarketWindow';
 import { Controls } from './game/stores/useGameStore';
 import { buildingTypes, BuildingType } from './game/constants/buildings';
-import { Login } from '@/components/ui/login';
-import { CharacterCreation } from './components/ui/character-creation';
-import { CharacterSelection } from './components/ui/character-selection';
 import { Interface } from './components/ui/interface';
 import "@fontsource/inter";
 
@@ -18,7 +15,7 @@ function App() {
   const [showCanvas, setShowCanvas] = useState(false);
   const { setBackgroundMusic } = useAudio();
   const [selectedMarket, setSelectedMarket] = useState<BuildingType | null>(null);
-  const { phase, playerData, login } = useGame();
+  const { phase, playerData } = useGame();
 
   // Define keyboard controls mapping
   const keyboardMap = [
@@ -70,62 +67,38 @@ function App() {
     );
   }
 
-  // Renderizar baseado no estado do jogo
-  const renderGamePhase = () => {
-    switch (phase) {
-      case "login":
-        return <Login onLogin={login} />;
+  // Se não estiver na fase de playing, usar Interface para gerenciar login/ended
+  if (phase !== "playing") {
+    return <Interface />;
+  }
 
-      case "character-creation":
-        return <CharacterCreation />;
-
-      case "character-selection":
-        return <CharacterSelection />;
-
-      case "ready":
-        return <Interface />;
-
-      case "playing":
-        return (
-          <div className="w-full h-screen">
-            <KeyboardControls map={keyboardMap}>
-              <Canvas
-                shadows
-                camera={{
-                  position: [20, 20, 20],
-                  fov: 50,
-                  near: 0.1,
-                  far: 1000,
-                }}
-                gl={{ antialias: true }}
-              >
-                <color attach="background" args={["#87CEEB"]} />
-                <Suspense fallback={null}>
-                  <World onMarketSelect={(building) => setSelectedMarket(building)} />
-                </Suspense>
-              </Canvas>
-              <GameUI />
-              <MarketWindow
-                isOpen={selectedMarket !== null}
-                onClose={() => setSelectedMarket(null)}
-              />
-            </KeyboardControls>
-          </div>
-        );
-
-      case "ended":
-        return (
-          <div className="w-full h-screen flex items-center justify-center bg-background text-foreground">
-            <div className="text-xl">Game Ended</div>
-          </div>
-        );
-
-      default:
-        return <Login onLogin={login} />;
-    }
-  };
-
-  return renderGamePhase();
+  // Renderizar o jogo 3D
+  return (
+    <div className="w-full h-screen">
+      <KeyboardControls map={keyboardMap}>
+        <Canvas
+          shadows
+          camera={{
+            position: [20, 20, 20],
+            fov: 50,
+            near: 0.1,
+            far: 1000,
+          }}
+          gl={{ antialias: true }}
+        >
+          <color attach="background" args={["#87CEEB"]} />
+          <Suspense fallback={null}>
+            <World onMarketSelect={(building) => setSelectedMarket(building)} />
+          </Suspense>
+        </Canvas>
+        <GameUI />
+        <MarketWindow
+          isOpen={selectedMarket !== null}
+          onClose={() => setSelectedMarket(null)}
+        />
+      </KeyboardControls>
+    </div>
+  );
 }
 
 export default App;
