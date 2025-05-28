@@ -141,17 +141,6 @@ const ManualNpcController: React.FC<ManualNpcControllerProps> = ({ npcId }) => {
 
         newState = "moving";
 
-        // Ação contextual (Espaço)
-        if (keys.space) {
-          const actionResult = NPCStateHandlers.handleManualAction(npc, clampedX, clampedZ, deltaTime);
-          if (actionResult) {
-            workProgress = actionResult.workProgress !== undefined ? actionResult.workProgress : workProgress;
-            inventory = actionResult.inventory !== undefined ? actionResult.inventory : inventory;
-            newState = actionResult.state !== undefined ? actionResult.state : newState;
-            targetBuildingId = actionResult.targetBuildingId !== undefined ? actionResult.targetBuildingId : targetBuildingId;
-          }
-        }
-
         // Consumo de energia ajustado para sprint
         const energySprintMultiplier = keys.sprint ? 2.5 : 1;
         const energyConsumption = hasMovement ? CONSTANTS.ENERGY_CONSUMPTION.MOVING * 0.3 * energySprintMultiplier : 0;
@@ -169,6 +158,35 @@ const ManualNpcController: React.FC<ManualNpcControllerProps> = ({ npcId }) => {
             satisfaction: Math.max(0, npc.needs.satisfaction - deltaTime * satisfactionConsumption)
           }
         });
+
+        // Disparar evento para câmera seguir o NPC
+        window.dispatchEvent(new CustomEvent('focusOnNpc', { 
+          detail: { 
+            position: [clampedX, y, clampedZ],
+            npcId: npcId,
+            followMode: true
+          } 
+        }));
+      }
+
+      // Ação contextual (Espaço)
+      if (keys.space) {
+        const actionResult = NPCStateHandlers.handleManualAction(npc, x, z, deltaTime);
+        if (actionResult) {
+          workProgress = actionResult.workProgress !== undefined ? actionResult.workProgress : workProgress;
+          inventory = actionResult.inventory !== undefined ? actionResult.inventory : inventory;
+          newState = actionResult.state !== undefined ? actionResult.state : newState;
+          targetBuildingId = actionResult.targetBuildingId !== undefined ? actionResult.targetBuildingId : targetBuildingId;
+
+          updateNpc(npcId, {
+            position: npc.position,
+            state: newState,
+            workProgress: workProgress,
+            inventory: inventory,
+            targetBuildingId: targetBuildingId,
+            needs: npc.needs
+          });
+        }
       }
     }, 16); // ~60fps
 

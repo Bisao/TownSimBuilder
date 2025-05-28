@@ -45,15 +45,14 @@ const CameraControls = () => {
 
       if (followMode) {
         // Modo de seguir (controle manual) - posicionar atrás do NPC
-        const newTarget = new THREE.Vector3(npcX, 1, npcZ);
-        const distance = 5; // Distância da câmera ao NPC
-        const height = 3; // Altura da câmera
-        const angle = 0; // Ângulo para ficar atrás
+        const newTarget = new THREE.Vector3(npcX, 1.5, npcZ - 2);
+        const distance = 8; // Distância da câmera ao NPC
+        const height = 5; // Altura da câmera
 
         const newCameraPosition = new THREE.Vector3(
-          npcX - distance * Math.sin(angle),
+          npcX,
           height,
-          npcZ + distance * Math.cos(angle)
+          npcZ + distance
         );
 
         // Atualizar referências
@@ -229,27 +228,30 @@ const CameraControls = () => {
         const npcZ = controlledNpc.position[2];
         
         // Posicionar câmera atrás do NPC
-        const distance = 5; // Distância da câmera ao NPC
-        const height = 3; // Altura da câmera
-        const angle = 0; // Ângulo fixo para ficar atrás
+        const distance = 8; // Distância da câmera ao NPC
+        const height = 5; // Altura da câmera
         
         // Nova posição da câmera (atrás do NPC)
         const newCameraPosition = new THREE.Vector3(
-          npcX - distance * Math.sin(angle),
+          npcX,
           height,
-          npcZ + distance * Math.cos(angle)
+          npcZ + distance
         );
         
-        // Novo alvo da câmera (o NPC)
-        const newTarget = new THREE.Vector3(npcX, 1, npcZ);
+        // Novo alvo da câmera (ligeiramente à frente do NPC)
+        const newTarget = new THREE.Vector3(npcX, 1.5, npcZ - 2);
         
         // Suavizar movimento da câmera
-        currentPosition.lerp(newCameraPosition, 0.1);
-        currentTarget.lerp(newTarget, 0.1);
+        currentPosition.lerp(newCameraPosition, 0.15);
+        currentTarget.lerp(newTarget, 0.15);
         
         // Atualizar câmera
         camera.position.copy(currentPosition);
         camera.lookAt(currentTarget);
+
+        // Atualizar store
+        updateCameraPosition([currentPosition.x, currentPosition.y, currentPosition.z]);
+        updateCameraTarget([currentTarget.x, currentTarget.y, currentTarget.z]);
         
         return; // Sair cedo para não executar a lógica normal
       }
