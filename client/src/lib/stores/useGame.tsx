@@ -2,7 +2,7 @@ import { create } from "zustand";
 import { subscribeWithSelector } from "zustand/middleware";
 import { getLocalStorage, setLocalStorage } from "@/lib/utils";
 
-export type GamePhase = "login" | "character-creation" | "ready" | "playing" | "ended";
+export type GamePhase = "login" | "character-creation" | "character-selection" | "ready" | "playing" | "ended";
 
 interface CharacterData {
   name: string;
@@ -27,6 +27,7 @@ interface GameState {
   // Actions
   login: (nickname: string) => void;
   createCharacter: (character: CharacterData) => void;
+  selectCharacter: (character: CharacterData) => void;
   start: () => void;
   restart: () => void;
   end: () => void;
@@ -40,7 +41,7 @@ export const useGame = create<GameState>()(
     const currentPlayer = getLocalStorage("currentPlayer");
     const characterData = getLocalStorage("characterData");
     
-    const initialPhase: GamePhase = autoLogin && currentPlayer && characterData ? "ready" : "login";
+    const initialPhase: GamePhase = autoLogin && currentPlayer && characterData ? "character-selection" : "login";
     const initialPlayerData = autoLogin && currentPlayer ? {
       ...currentPlayer,
       character: characterData
@@ -61,7 +62,7 @@ export const useGame = create<GameState>()(
         setLocalStorage("currentPlayer", playerData);
         
         set(() => ({
-          phase: existingCharacter ? "ready" : "character-creation",
+          phase: existingCharacter ? "character-selection" : "character-creation",
           playerData
         }));
       },
@@ -69,6 +70,16 @@ export const useGame = create<GameState>()(
       createCharacter: (character: CharacterData) => {
         setLocalStorage("characterData", character);
         
+        set((state) => ({
+          phase: "character-selection",
+          playerData: state.playerData ? {
+            ...state.playerData,
+            character
+          } : null
+        }));
+      },
+      
+      selectCharacter: (character: CharacterData) => {
         set((state) => ({
           phase: "ready",
           playerData: state.playerData ? {
