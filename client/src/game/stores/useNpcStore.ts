@@ -826,8 +826,7 @@ class NPCStateHandlers {
         skills: newSkills,
         memory: {
           ...npc.memory,
-          ```tool_code
-efficiency: 1 + (newSkills.efficiency / 100),
+          efficiency: 1 + (newSkills.efficiency / 100),
           lastTaskCompletion: Date.now()
         },
         targetResource: null,
