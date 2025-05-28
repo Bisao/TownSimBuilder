@@ -28,7 +28,7 @@ export function Interface() {
   return (
     <>
       <Confetti />
-      
+
       {/* Top-right corner UI controls */}
       <div className="fixed top-4 right-4 flex gap-2 z-10">
         <Button
@@ -39,7 +39,7 @@ export function Interface() {
         >
           {isMuted ? <VolumeX size={18} /> : <Volume2 size={18} />}
         </Button>
-        
+
         <Button
           variant="outline"
           size="icon"
@@ -49,7 +49,7 @@ export function Interface() {
           <RotateCw size={18} />
         </Button>
       </div>
-      
+
       {/* Game completion overlay */}
       {phase === "ended" && (
         <div className="fixed inset-0 flex items-center justify-center z-20 bg-black/30">
@@ -60,13 +60,13 @@ export function Interface() {
                 Level Complete!
               </CardTitle>
             </CardHeader>
-            
+
             <CardContent>
               <p className="text-center text-muted-foreground">
                 Congratulations! You successfully navigated the course.
               </p>
             </CardContent>
-            
+
             <CardFooter className="flex justify-center">
               <Button onClick={restart} className="w-full">
                 Play Again
@@ -75,7 +75,7 @@ export function Interface() {
           </Card>
         </div>
       )}
-      
+
       {/* Instructions panel */}
       <div className="fixed bottom-4 left-4 z-10">
         <Card className="w-auto max-w-xs bg-background/80 backdrop-blur-sm">
