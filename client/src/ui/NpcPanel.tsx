@@ -13,7 +13,7 @@ interface NpcPanelProps {
 
 const NpcPanel = ({ npc, onClose }: NpcPanelProps) => {
   const [showSeedSelection, setShowSeedSelection] = useState(false);
-  
+
   if (!npc) return null;
 
   // Removido: auto-start de trabalho - agora só inicia manualmente via botão
@@ -40,86 +40,8 @@ const NpcPanel = ({ npc, onClose }: NpcPanelProps) => {
   });
 
   const handleWorkClick = () => {
-    console.log(`Iniciando trabalho manual para NPC ${npc.type} - Estado atual: ${npc.state}`);
-
-    const buildings = useBuildingStore.getState().buildings;
-    const home = buildings.find(b => b.id === npc.homeId);
-
-    if (!home) {
-      console.error(`Casa não encontrada para NPC ${npc.id}`);
-      return;
-    }
-
-    // Forçar início do trabalho independente do horário
-    useNpcStore.setState(state => ({
-      npcs: state.npcs.map(n => {
-        if (n.id !== npc.id) return n;
-
-        console.log(`FORÇANDO início de trabalho manual para NPC ${n.type} - mudando de ${n.state} para searching/moving`);
-
-        // Para mineiros e lenhadores: buscar recursos IMEDIATAMENTE
-        if (n.type === "miner" || n.type === "lumberjack") {
-          // Marcar como trabalhando manualmente para bypass das verificações de horário
-          return {
-            ...n,
-            state: "searching" as const,
-            workProgress: 0,
-            targetResource: null,
-            targetPosition: null,
-            targetBuildingId: null,
-            isWorkingManually: true, // Flag para indicar trabalho manual
-            needs: {
-              energy: Math.max(n.needs.energy, 70),
-              satisfaction: Math.max(n.needs.satisfaction, 70)
-            }
-          };
-        }
-
-        // Para fazendeiros: iniciar ciclo de farming
-        if (n.type === "farmer") {
-          return {
-            ...n,
-            state: "idle" as const,
-            workProgress: 0,
-            targetResource: null,
-            targetPosition: null,
-            targetBuildingId: null,
-            isWorkingManually: true,
-            farmerData: {
-              ...n.farmerData!,
-              currentTask: "waiting"
-            },
-            needs: {
-              energy: Math.max(n.needs.energy, 70),
-              satisfaction: Math.max(n.needs.satisfaction, 70)
-            }
-          };
-        }
-
-        // Para padeiros: encontrar workplace
-        if (n.type === "baker") {
-          const bakery = buildings.find(b => b.type === "bakery");
-          if (bakery) {
-            return {
-              ...n,
-              state: "moving" as const,
-              targetPosition: [bakery.position[0] + 0.5, 0, bakery.position[1] + 0.5],
-              targetBuildingId: bakery.id,
-              workProgress: 0,
-              isWorkingManually: true,
-              needs: {
-                energy: Math.max(n.needs.energy, 70),
-                satisfaction: Math.max(n.needs.satisfaction, 70)
-              }
-            };
-          }
-        }
-
-        return n;
-      })
-    }));
-    
-    console.log(`Trabalho manual FORÇADO para NPC ${npc.type}`);
+    // Ativar NPC para trabalhar manualmente
+    useNpcStore.getState().startNpcWork(npc.id);
   };
 
   return (
@@ -257,7 +179,7 @@ const NpcPanel = ({ npc, onClose }: NpcPanelProps) => {
                   e.stopPropagation();
                   useNpcStore.getState().setNpcControlMode(npc.id, "autonomous");
                   useGameStore.getState().setControlledNpc(null);
-                  
+
                   // Resetar câmera para posição padrão
                   const { updateCameraPosition, updateCameraTarget } = useGameStore.getState();
                   updateCameraPosition([20, 20, 20]);
@@ -276,7 +198,7 @@ const NpcPanel = ({ npc, onClose }: NpcPanelProps) => {
                   e.stopPropagation();
                   useNpcStore.getState().setNpcControlMode(npc.id, "manual");
                   useGameStore.getState().setControlledNpc(npc.id);
-                  
+
                   // Disparar evento para focar câmera no NPC
                   window.dispatchEvent(new CustomEvent('focusOnNpc', { 
                     detail: { 
@@ -295,7 +217,7 @@ const NpcPanel = ({ npc, onClose }: NpcPanelProps) => {
                 🎮 Manual
               </button>
             </div>
-            
+
             {npc.controlMode === "manual" && (
               <div className="mb-4 p-3 bg-green-50 rounded-lg border border-green-200">
                 <p className="text-sm text-green-700 font-medium mb-2">
@@ -360,7 +282,7 @@ const NpcPanel = ({ npc, onClose }: NpcPanelProps) => {
                     </div>
                   </div>
                 )}
-                
+
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
@@ -370,7 +292,7 @@ const NpcPanel = ({ npc, onClose }: NpcPanelProps) => {
                 >
                   🌱 Selecionar Semente
                 </button>
-                
+
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
@@ -378,7 +300,7 @@ const NpcPanel = ({ npc, onClose }: NpcPanelProps) => {
                       setShowSeedSelection(true);
                       return;
                     }
-                    
+
                     // Iniciar trabalho manual do fazendeiro
                     const updatedNpc = {
                       ...npc,
@@ -400,7 +322,7 @@ const NpcPanel = ({ npc, onClose }: NpcPanelProps) => {
                     useNpcStore.setState(state => ({
                       npcs: state.npcs.map(n => n.id === npc.id ? updatedNpc : n)
                     }));
-                    
+
                     console.log(`Fazendeiro iniciado manualmente com semente: ${npc.farmerData.selectedSeed}`);
                   }}
                   className={`w-full px-4 py-2 rounded-lg ${
@@ -434,7 +356,7 @@ const NpcPanel = ({ npc, onClose }: NpcPanelProps) => {
                 {npc.state === "working" ? "Assando..." : "Assar"}
               </button>
             )}
-            
+
             {npc.controlMode === "manual" && (
               <div className="space-y-3">
                 <div className="text-center p-4 bg-green-50 rounded-lg border border-green-200">
@@ -561,7 +483,7 @@ const NpcPanel = ({ npc, onClose }: NpcPanelProps) => {
           </div>
         </div>
       </div>
-      
+
       {showSeedSelection && (
         <SeedSelectionPanel
           onSeedSelect={(seedType) => {

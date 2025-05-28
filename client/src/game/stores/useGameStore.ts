@@ -78,6 +78,10 @@ interface GameState {
     gamepadEnabled: true;
     keyboardEnabled: true;
   };
+
+  setControlledNpc: (npcId: string | null) => void;
+  updateManualControlKeys: (keys: Partial<GameState['manualControlKeys']>) => void;
+  updateControlSettings: (settings: Partial<GameState['controlSettings']>) => void;
 }
 
 export const useGameStore = create<GameState>()(
@@ -200,11 +204,6 @@ export const useGameStore = create<GameState>()(
     setControlledNpc: (npcId) => set({ 
       controlledNpcId: npcId,
       isManualControl: npcId !== null 
-    }),
-
-    setManualControl: (enabled) => set({ 
-      isManualControl: enabled,
-      controlledNpcId: enabled ? get().controlledNpcId : null 
     }),
 
     updateManualControlKeys: (keys) => {

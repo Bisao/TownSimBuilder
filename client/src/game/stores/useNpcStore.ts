@@ -94,6 +94,9 @@ interface NPCStoreState {
   reserveResource: (npcId: string, resourceType: string, position: [number, number]) => boolean;
   releaseResource: (npcId: string) => void;
   isResourceReserved: (resourceType: string, position: [number, number]) => boolean;
+  toggleNpcControlMode: (npcId: string) => void;
+  setNpcControlMode: (npcId: string, mode: "autonomous" | "manual") => void;
+  startNpcWork: (npcId: string) => void;
 }
 
 // ===== CONSTANTES =====
@@ -169,13 +172,13 @@ class NPCUtils {
 
   static getScheduleForTime(timeCycle: number, npcId?: string): NPCSchedule {
     const hours = timeCycle * 24;
-    
+
     // Horário padrão para todos os NPCs:
     // 6h-12h: trabalho
     // 12h-13h: almoço (em casa)
     // 13h-18h: trabalho
     // 18h-6h: descanso (em casa)
-    
+
     if (hours >= 6 && hours < 12) {
       return "working"; // Manhã de trabalho
     } else if (hours >= 12 && hours < 13) {
@@ -192,12 +195,12 @@ class NPCUtils {
     if (currentSchedule === "lunch" || currentSchedule === "home") {
       return true;
     }
-    
+
     // Retornar para casa se energia ou satisfação estiverem baixas
     if (npc.needs.energy <= 30 || npc.needs.satisfaction <= 30) {
       return true;
     }
-    
+
     return false;
   }
 
@@ -299,7 +302,7 @@ class NPCUtils {
 class NPCStateHandlers {
   static handleIdleState(npc: NPC, currentSchedule: NPCSchedule, buildings: any[], npcs: NPC[], reservations: ResourceReservation[]): Partial<NPC> {
     const updates: Partial<NPC> = {};
-    
+
     const timeCycle = useGameStore.getState().timeCycle;
     const hours = timeCycle * 24;
 
@@ -330,7 +333,7 @@ class NPCStateHandlers {
     // Se NPC foi ativado manualmente, permitir trabalho independente do horário
     if (npc.isWorkingManually) {
       console.log(`NPC ${npc.type} trabalhando manualmente - ignorando horário`);
-      
+
       // Se inventário estiver cheio, ir para silo automaticamente
       if (npc.inventory.amount >= CONSTANTS.MAX_INVENTORY) {
         console.log(`NPC ${npc.type} inventário cheio (${npc.inventory.amount}/${CONSTANTS.MAX_INVENTORY}), indo para silo`);
@@ -452,10 +455,10 @@ class NPCStateHandlers {
     // Calcular fator de desaceleração baseado na distância
     const slowdownDistance = 2.0; // Começar a desacelerar quando estiver a 2 unidades do destino
     const speedMultiplier = distance > slowdownDistance ? 1.0 : Math.max(0.2, distance / slowdownDistance);
-    
+
     // Aumentar tolerância e adicionar timeout para evitar travamento
     const tolerance = Math.max(CONSTANTS.MOVEMENT_TOLERANCE, 0.3);
-    
+
     if (distance < tolerance || moveSpeed === 0) {
       console.log(`NPC ${npc.type} chegou ao destino [${targetX.toFixed(1)}, ${targetZ.toFixed(1)}]`);
       updates.position = [targetX, 0, targetZ];
@@ -488,10 +491,10 @@ class NPCStateHandlers {
       const newX = currentX + dirX * adjustedMoveSpeed;
       const newZ = currentZ + dirZ * adjustedMoveSpeed;
       const [clampedX, clampedZ] = NPCUtils.clampPosition(newX, newZ);
-      
+
       // Verificar se a posição realmente mudou
       const positionChanged = Math.abs(clampedX - currentX) > 0.001 || Math.abs(clampedZ - currentZ) > 0.001;
-      
+
       if (!positionChanged && distance > tolerance) {
         console.log(`NPC ${npc.type} não conseguiu se mover, forçando teleporte para destino`);
         updates.position = [targetX, 0, targetZ];
@@ -541,7 +544,7 @@ class NPCStateHandlers {
 
     if (npc.farmerData.currentTask === "getting_seeds") {
       const selectedSeed = npc.farmerData.selectedSeed || "seeds";
-      
+
       // Pegar sementes do silo
       import('./useResourceStore').then(({ useResourceStore }) => {
         const resourceStore = useResourceStore.getState();
@@ -586,7 +589,7 @@ class NPCStateHandlers {
 
   static handleWorkplaceArrival(npc: NPC, buildings: any[], updates: Partial<NPC>): Partial<NPC> {
     const workBuilding = buildings.find(b => b.id === npc.targetBuildingId);
-    
+
     if (workBuilding) {
       if (npc.type === "farmer" && workBuilding.type === "farm") {
         return NPCStateHandlers.handleFarmerFarmArrival(npc, workBuilding, updates);
@@ -642,7 +645,7 @@ class NPCStateHandlers {
       });
 
       console.log(`Fazendeiro concluiu plantio na fazenda ${npc.targetBuildingId}`);
-      
+
       return {
         inventory: { type: '', amount: 0 }, // Consumir semente
         workProgress: 0,
@@ -679,7 +682,7 @@ class NPCStateHandlers {
       });
 
       console.log(`Fazendeiro concluiu colheita na fazenda ${npc.targetBuildingId}`);
-      
+
       return {
         inventory: { type: 'wheat', amount: 2 }, // Colher trigo
         workProgress: 0,
@@ -823,7 +826,8 @@ class NPCStateHandlers {
         skills: newSkills,
         memory: {
           ...npc.memory,
-          efficiency: 1 + (newSkills.efficiency / 100),
+          ```tool_code
+efficiency: 1 + (newSkills.efficiency / 100),
           lastTaskCompletion: Date.now()
         },
         targetResource: null,
@@ -873,7 +877,7 @@ class NPCStateHandlers {
   static handleRestingState(npc: NPC, adjustedDeltaTime: number, currentSchedule: NPCSchedule): Partial<NPC> {
     const timeCycle = useGameStore.getState().timeCycle;
     const hours = timeCycle * 24;
-    
+
     // Regeneração mais rápida em casa
     const homeRegenerationMultiplier = 2.0;
     const newNeeds = {
@@ -938,9 +942,9 @@ class NPCStateHandlers {
         // Se não há recursos disponíveis, explorar área aleatória
         const newX = Math.floor(Math.random() * 40);
         const newZ = Math.floor(Math.random() * 40);
-        
+
         console.log(`NPC ${npc.type} no resources available, exploring [${newX}, ${newZ}]`);
-        
+
         return {
           targetPosition: [newX, 0, newZ],
           state: "moving"
@@ -1030,7 +1034,7 @@ class NPCStateHandlers {
   // Nova função para ações contextuais
   static handleManualAction(npc: NPC, x: number, z: number, deltaTime: number): any {
     const buildings = useBuildingStore.getState().buildings;
-    
+
     // Verificar proximidade com edifícios
     const nearbyBuilding = buildings.find(b => {
       const distance = Math.hypot(b.position[0] - x, b.position[1] - z);
@@ -1068,7 +1072,7 @@ class NPCStateHandlers {
       });
 
       console.log(`${npc.type} depositou ${npc.inventory.amount} ${npc.inventory.type} no silo manualmente`);
-      
+
       return {
         inventory: { type: '', amount: 0 },
         state: "idle"
@@ -1114,7 +1118,7 @@ class NPCStateHandlers {
           });
 
           console.log(`Fazendeiro plantou ${npc.inventory.type} manualmente`);
-          
+
           return {
             inventory: { type: '', amount: 0 },
             workProgress: 0,
@@ -1139,7 +1143,7 @@ class NPCStateHandlers {
         });
 
         console.log(`Fazendeiro colheu manualmente`);
-        
+
         return {
           inventory: { type: 'wheat', amount: 2 },
           workProgress: 0,
@@ -1161,12 +1165,12 @@ class NPCStateHandlers {
 
     if (newWorkProgress >= 1) {
       const resourceType = resource.type;
-      
+
       // Marcar recurso como coletado
       resource.lastCollected = Date.now();
-      
+
       console.log(`${npc.type} coletou ${resourceType} manualmente`);
-      
+
       return {
         inventory: {
           type: resourceType,
@@ -1208,7 +1212,7 @@ class NPCStateHandlers {
     // Verificar se tem sementes no inventário (da semente selecionada)
     const selectedSeed = npc.farmerData.selectedSeed || "seeds";
     const hasSeeds = npc.inventory.type === selectedSeed && npc.inventory.amount > 0;
-    
+
     // Verificar se tem trigo no inventário
     const hasWheat = npc.inventory.type === "wheat" && npc.inventory.amount > 0;
 
@@ -1405,7 +1409,7 @@ export const useNpcStore = create<NPCStoreState>()(
           // Se não se moveu nas últimas 2 segundos, incrementar stuckTimer
           const lastPosition = npc.position;
           updates.stuckTimer = npc.stuckTimer + adjustedDeltaTime;
-          
+
           // Se estiver travado há mais de 3 segundos, forçar reset
           if (updates.stuckTimer > 3) {
             console.log(`NPC ${npc.type} travado há ${updates.stuckTimer.toFixed(1)}s, forçando reset`);
@@ -1562,6 +1566,20 @@ export const useNpcStore = create<NPCStoreState>()(
                 targetResource: null,
                 targetBuildingId: null,
                 workProgress: 0,
+              }
+            : npc
+        ),
+      }));
+    },
+
+    startNpcWork: (npcId: string) => {
+      set((state) => ({
+        npcs: state.npcs.map(npc =>
+          npc.id === npcId
+            ? {
+                ...npc,
+                isWorkingManually: true,
+                state: "idle" as const,
               }
             : npc
         ),
