@@ -1,4 +1,3 @@
-
 import { useGameStore } from "../game/stores/useGameStore";
 import { buildingTypes } from "../game/constants/buildings";
 import { resourceTypes } from "../game/constants/resources";
@@ -8,164 +7,125 @@ import { useDraggable } from "../hooks/useDraggable";
 import { useState, useEffect } from "react";
 
 const BuildingPanel = ({ isVisible }: { isVisible: boolean }) => {
-  const { selectBuildingType, selectedBuildingType } = useGameStore();
+  const { selectedBuildingType, selectBuildingType, onBuildingPlaced } = useGameStore();
   const { resources } = useResourceStore();
-  const { dragRef, position, isDragging } = useDraggable({
-    initialPosition: { x: window.innerWidth / 2 - 200, y: window.innerHeight - 200 }
-  });
-  const [panelVisible, setPanelVisible] = useState(isVisible);
+  const [isDragging, dragHandlers] = useDraggable();
 
-  // Controla a visibilidade do painel
+  // Filter buildings to only show the allowed ones
+  const allowedBuildings = ['house', 'farm', 'well', 'silo'];
+  const filteredBuildings = Object.values(buildingTypes).filter(building => 
+    allowedBuildings.includes(building.id)
+  );
+
+  // Check if player can afford a building
+  const canAfford = (building: any) => {
+    return Object.entries(building.cost).every(([resourceId, cost]) => {
+      return (resources[resourceId] || 0) >= cost;
+    });
+  };
+
+  // Handle building selection
+  const handleBuildingSelect = (buildingId: string) => {
+    const building = buildingTypes[buildingId];
+    if (building && canAfford(building)) {
+      selectBuildingType(buildingId);
+    }
+  };
+
+  // Auto-hide panel when building is selected
   useEffect(() => {
     if (selectedBuildingType) {
-      setPanelVisible(false);
-    } else {
-      setPanelVisible(isVisible);
+      // Panel will be hidden when a building is selected
     }
-  }, [selectedBuildingType, isVisible]);
+  }, [selectedBuildingType]);
 
-  if (!panelVisible) return null;
-
-  const handleSelectBuilding = (type: string) => {
-    selectBuildingType(type);
-    // O painel será ocultado automaticamente pelo useEffect
-  };
-
-  // Verifica se o jogador tem recursos suficientes para um edifício
-  const canAfford = (type: string) => {
-    const buildingType = buildingTypes[type];
-    if (!buildingType) return false;
-
-    for (const [resourceType, amount] of Object.entries(buildingType.cost)) {
-      if ((resources[resourceType] || 0) < amount) {
-        return false;
-      }
-    }
-
-    return true;
-  };
-
-  // Ícones para cada tipo de estrutura
-  const getBuildingIcon = (buildingId: string) => {
-    switch (buildingId) {
-      case 'house':
-        return '🏠';
-      case 'farm':
-        return '🌾';
-      case 'waterWell':
-        return '🚰';
-      case 'silo':
-        return '🏭';
-      default:
-        return '🏗️';
-    }
-  };
+  if (!isVisible || selectedBuildingType) {
+    return null;
+  }
 
   return (
-    <div
-      ref={dragRef}
-      className="fixed bg-gradient-to-br from-slate-900/95 via-slate-800/95 to-slate-900/95 backdrop-blur-sm rounded-2xl p-6 shadow-2xl border border-slate-700/50"
-      style={{
-        left: `${position.x}px`,
-        top: `${position.y}px`,
-      }}
+    <div 
+      className={cn(
+        "absolute top-20 right-4 bg-gradient-to-br from-gray-900/95 to-black/95 rounded-xl p-4 shadow-lg border border-gray-800 w-80",
+        isDragging && "opacity-80"
+      )}
+      {...dragHandlers}
     >
-      {/* Header */}
-      <div className="flex items-center justify-between mb-6">
-        <div className="flex items-center gap-3">
-          <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
-            <span className="text-white text-lg">🏗️</span>
-          </div>
-          <h2 className="text-xl font-bold text-white">Estruturas</h2>
-        </div>
-        <button
-          onClick={() => setPanelVisible(false)}
-          className="w-6 h-6 rounded-full bg-red-500/20 hover:bg-red-500/30 transition-colors flex items-center justify-center text-red-400 hover:text-red-300"
-        >
-          ×
-        </button>
-      </div>
+      <h2 className="text-white text-center font-bold mb-4 text-lg">Estruturas</h2>
 
-      {/* Grid de estruturas */}
-      <div className="grid grid-cols-2 gap-4 w-80">
-        {Object.values(buildingTypes).map((building) => {
-          const affordable = canAfford(building.id);
-          
+      <div className="grid grid-cols-2 gap-3">
+        {filteredBuildings.map((building) => {
+          const affordable = canAfford(building);
+
           return (
-            <div
+            <button
               key={building.id}
+              onClick={() => handleBuildingSelect(building.id)}
+              disabled={!affordable}
               className={cn(
-                "group relative overflow-hidden rounded-xl border-2 cursor-pointer transition-all duration-300 transform hover:scale-105",
+                "relative p-3 rounded-lg border-2 transition-all duration-200 text-left",
                 affordable
-                  ? "border-slate-600 bg-gradient-to-br from-slate-800/50 to-slate-700/50 hover:border-blue-400 hover:shadow-lg hover:shadow-blue-400/20"
-                  : "border-red-500/50 bg-gradient-to-br from-red-900/20 to-red-800/20 opacity-60 cursor-not-allowed"
+                  ? "bg-gradient-to-br from-blue-600/20 to-blue-800/20 border-blue-500/50 hover:border-blue-400 hover:shadow-lg hover:shadow-blue-500/20 cursor-pointer"
+                  : "bg-gradient-to-br from-gray-600/20 to-gray-800/20 border-gray-600/50 cursor-not-allowed opacity-50"
               )}
-              onClick={() => affordable && handleSelectBuilding(building.id)}
+              title={affordable ? building.description : "Recursos insuficientes"}
             >
-              {/* Background pattern */}
-              <div className="absolute inset-0 bg-gradient-to-br from-transparent via-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-              
-              {/* Content */}
-              <div className="relative p-4 flex flex-col items-center text-center space-y-3">
-                {/* Ícone grande */}
-                <div className={cn(
-                  "w-12 h-12 rounded-xl flex items-center justify-center text-2xl transition-transform duration-300",
-                  affordable 
-                    ? "bg-gradient-to-br from-blue-500/20 to-purple-600/20 group-hover:scale-110" 
-                    : "bg-red-500/20"
-                )}>
-                  {getBuildingIcon(building.id)}
+              {/* Building Icon */}
+              <div className="flex items-center gap-3 mb-2">
+                <i 
+                  className={`${building.icon} text-2xl`} 
+                  style={{ color: affordable ? building.color : '#666' }}
+                />
+                <div>
+                  <h3 className="text-white font-medium text-sm">{building.name}</h3>
+                  <p className="text-gray-400 text-xs">{building.type}</p>
                 </div>
+              </div>
 
-                {/* Nome */}
-                <h3 className={cn(
-                  "font-semibold text-sm",
-                  affordable ? "text-white" : "text-red-300"
-                )}>
-                  {building.name}
-                </h3>
+              {/* Cost */}
+              <div className="space-y-1">
+                <p className="text-xs text-gray-300 font-medium">Custo:</p>
+                <div className="grid grid-cols-2 gap-1">
+                  {Object.entries(building.cost).map(([resourceId, cost]) => {
+                    const resource = resourceTypes[resourceId];
+                    const playerAmount = resources[resourceId] || 0;
+                    const hasEnough = playerAmount >= cost;
 
-                {/* Custos */}
-                <div className="flex flex-wrap gap-1 justify-center">
-                  {Object.entries(building.cost).map(([resourceType, amount]) => {
-                    const hasEnough = (resources[resourceType] || 0) >= amount;
-                    const resourceInfo = resourceTypes[resourceType];
-                    
                     return (
-                      <div
-                        key={resourceType}
-                        className={cn(
-                          "flex items-center gap-1 px-2 py-1 rounded-md text-xs font-medium",
-                          hasEnough 
-                            ? "bg-green-500/20 text-green-300" 
-                            : "bg-red-500/20 text-red-300"
-                        )}
-                      >
-                        <span>{resourceInfo?.icon || '❓'}</span>
-                        <span>{amount}</span>
+                      <div key={resourceId} className="flex items-center gap-1">
+                        <i 
+                          className={`${resource.icon} text-xs`} 
+                          style={{ color: hasEnough ? resource.color : '#666' }}
+                        />
+                        <span 
+                          className={cn(
+                            "text-xs",
+                            hasEnough ? "text-green-400" : "text-red-400"
+                          )}
+                        >
+                          {cost}
+                        </span>
                       </div>
                     );
                   })}
                 </div>
-
-                {/* Indicador de disponibilidade */}
-                <div className={cn(
-                  "absolute top-2 right-2 w-3 h-3 rounded-full",
-                  affordable ? "bg-green-500" : "bg-red-500"
-                )} />
               </div>
 
-              {/* Hover overlay */}
-              <div className="absolute inset-0 bg-gradient-to-t from-blue-600/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-            </div>
+              {/* Not affordable overlay */}
+              {!affordable && (
+                <div className="absolute inset-0 bg-red-900/20 rounded-lg flex items-center justify-center">
+                  <i className="fas fa-lock text-red-400 text-lg" />
+                </div>
+              )}
+            </button>
           );
         })}
       </div>
 
-      {/* Footer com dica */}
-      <div className="mt-4 p-3 bg-slate-800/50 rounded-lg border border-slate-700/50">
-        <p className="text-xs text-slate-300 text-center">
-          💡 Clique em uma estrutura para selecioná-la e posicioná-la no mapa
+      {/* Instructions */}
+      <div className="mt-4 p-2 bg-blue-900/30 rounded border border-blue-700/50">
+        <p className="text-blue-200 text-xs text-center">
+          Clique em uma estrutura para selecioná-la. O painel será ocultado até que a estrutura seja posicionada.
         </p>
       </div>
     </div>

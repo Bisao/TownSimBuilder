@@ -6,6 +6,16 @@ export interface GameState {
   // Game state
   phase: "login" | "character-creation" | "playing";
   selectedBuildingType: string | null;
+  
+  // Time system
+  isPaused: boolean;
+  timeSpeed: number;
+  timeCycle: number;
+  
+  // Game modes
+  gameMode: "build" | "view";
+  isManualControl: boolean;
+  controlledNpcId: string | null;
   placementPosition: [number, number] | null;
   placementValid: boolean;
 
@@ -30,6 +40,12 @@ export interface GameState {
   selectBuildingType: (type: string | null) => void;
   setPlacementPosition: (position: [number, number] | null) => void;
   setPlacementValid: (valid: boolean) => void;
+  
+  // Time control methods
+  pauseTime: () => void;
+  resumeTime: () => void;
+  increaseTimeSpeed: () => void;
+  decreaseTimeSpeed: () => void;
   toggleBuildingPanel: () => void;
   toggleNpcPanel: () => void;
   toggleResourcePanel: () => void;
@@ -54,6 +70,16 @@ export const useGameStore = create<GameState>()(
     selectedBuildingType: null,
     placementPosition: null,
     placementValid: false,
+    
+    // Time system initial state
+    isPaused: false,
+    timeSpeed: 1.0,
+    timeCycle: 0.25, // Start at 6 AM (0.25 of the day)
+    
+    // Game modes initial state
+    gameMode: "build",
+    isManualControl: false,
+    controlledNpcId: null,
 
     // UI state
     showBuildingPanel: false,
@@ -73,6 +99,16 @@ export const useGameStore = create<GameState>()(
 
     // Methods
     setPhase: (phase) => set({ phase }),
+    
+    // Time control methods
+    pauseTime: () => set({ isPaused: true }),
+    resumeTime: () => set({ isPaused: false }),
+    increaseTimeSpeed: () => set((state) => ({ 
+      timeSpeed: Math.min(state.timeSpeed * 2, 8) 
+    })),
+    decreaseTimeSpeed: () => set((state) => ({ 
+      timeSpeed: Math.max(state.timeSpeed / 2, 0.25) 
+    })),
 
     selectBuildingType: (type) => {
       set({ 
