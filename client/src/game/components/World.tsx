@@ -1,272 +1,224 @@
-import { useEffect, useRef, useState } from "react";
+import { useRef, useEffect, useState } from "react";
 import { useFrame } from "@react-three/fiber";
-import CameraControls from "./CameraControls";
+import * as THREE from "three";
+
+// Game components
+import Building from "./Building";
+import NPC from "./Npc";
+import Resource from "./Resource";
+import Terrain from "./Terrain";
 import Sky from "./Sky";
 import DayNightCycle from "./DayNightCycle";
-import Building from "./Building";
-import Resource from "./Resource";
-import Npc from "./Npc";
-import Terrain from "./Terrain";
-import TerrainEditor from "./TerrainEditor";
+import CameraControls from "./CameraControls";
 import PlacementIndicator from "./PlacementIndicator";
 import ManualNpcController from "./ManualNpcController";
+
+// Stores
 import { useGameStore } from "../stores/useGameStore";
+import { useBuildingStore } from "../stores/useBuildingStore";
 import { useNpcStore } from "../stores/useNpcStore";
 import { useResourceStore } from "../stores/useResourceStore";
-import { useBuildingStore, Building as BuildingType } from "../stores/useBuildingStore";
-import { workplaceMapping } from "../constants/npcs";
+
+// Constants
+import { buildingTypes, BuildingType } from "../constants/buildings";
 import { resourceTypes } from "../constants/resources";
-import MarketWindow from "../../ui/MarketWindow";
 
 interface WorldProps {
-  onMarketSelect?: (BuildingType) => void;
+  onMarketSelect?: (building: BuildingType) => void;
 }
 
-const World = ({ onMarketSelect }: WorldProps) => {
-  const { initResources } = useResourceStore();
-  const { buildings, updateProduction, placeBuilding } = useBuildingStore();
-  const { gameMode, advanceTime } = useGameStore();
-  const { npcs, updateNPCs, spawnNPC } = useNpcStore();
-  const lastUpdateRef = useRef(Date.now());
-  const [showMarketWindow, setShowMarketWindow] = useState(false);
-  const [selectedMarket, setSelectedMarket] = useState<BuildingType | null>(null);
-  const initializedRef = useRef(false);
-  const [naturalResources, setNaturalResources] = useState<Array<{
-    type: string;
-    position: [number, number];
-    lastCollected?: number;
-  }>>([]);
+// Natural Resources Interface
+interface NaturalResource {
+  type: string;
+  position: [number, number];
+  lastCollected?: number;
+}
 
-  // Função para respawn de recursos
+// Global natural resources (accessible by NPCs)
+declare global {
+  interface Window {
+    naturalResources?: NaturalResource[];
+  }
+}
+
+const World: React.FC<WorldProps> = ({ onMarketSelect }) => {
+  const worldRef = useRef<THREE.Group>(null);
+  const [isWorldInitialized, setIsWorldInitialized] = useState(false);
+
+  // Store states
+  const { isInitialized, initialize, gameMode } = useGameStore();
+  const { buildings, placeBuilding } = useBuildingStore();
+  const { npcs, spawnNPC } = useNpcStore();
+  const { initResources, initializeResources } = useResourceStore();
+
+  // Natural resources state
+  const [naturalResources, setNaturalResources] = useState<NaturalResource[]>([]);
+
+  // Initialize world
   useEffect(() => {
-    const respawnInterval = setInterval(() => {
-      setNaturalResources(current => {
-        return current.map(resource => {
-          if (resource.lastCollected && Date.now() - resource.lastCollected >= 300000) { // 5 minutos
-            return { ...resource, lastCollected: undefined };
-          }
-          return resource;
-        });
-      });
-    }, 10000); // Verificar a cada 10 segundos
-
-    return () => clearInterval(respawnInterval);
-  }, []);
-
-  // Função para gerar posições aleatórias para recursos naturais
-  const generateNaturalResources = () => {
-    const gridSize = 50;
-    const numTrees = 20;
-    const numStones = 15;
-    const usedPositions = new Set<string>();
-    const resources: Array<{
-      type: string;
-      position: [number, number];
-      lastCollected?: number;
-    }> = [];
-
-    // Gerar árvores
-    for (let i = 0; i < numTrees; i++) {
-      let position: [number, number];
-      let positionKey: string;
-
-      do {
-        position = [
-          Math.floor(Math.random() * gridSize),
-          Math.floor(Math.random() * gridSize)
-        ];
-        positionKey = `${position[0]},${position[1]}`;
-      } while (usedPositions.has(positionKey));
-
-      usedPositions.add(positionKey);
-      resources.push({
-        type: 'wood',
-        position
-      });
-    }
-
-    // Gerar pedras
-    for (let i = 0; i < numStones; i++) {
-      let position: [number, number];
-      let positionKey: string;
-
-      do {
-        position = [
-          Math.floor(Math.random() * gridSize),
-          Math.floor(Math.random() * gridSize)
-        ];
-        positionKey = `${position[0]},${position[1]}`;
-      } while (usedPositions.has(positionKey));
-
-      usedPositions.add(positionKey);
-      resources.push({
-        type: 'stone',
-        position
-      });
-    }
-
-    return resources;
-  };
-
-  // Função para coletar recurso natural
-  const collectNaturalResource = (position: [number, number]) => {
-    setNaturalResources(current => {
-      return current.map(resource => {
-        if (resource.position[0] === position[0] && resource.position[1] === position[1]) {
-          return { ...resource, lastCollected: Date.now() };
-        }
-        return resource;
-      });
-    });
-  };
-
-  // Expose collectNaturalResource to window for NPC access
-  useEffect(() => {
-    (window as any).collectNaturalResource = collectNaturalResource;
-    return () => {
-      delete (window as any).collectNaturalResource;
-    };
-  }, []);
-
-
-  // Initialize resources and create initial market when the game starts
-  useEffect(() => {
-    if (!initializedRef.current) {
+    if (!isInitialized) {
       console.log("Initializing game world and resources");
+
+      // Initialize game store
+      initialize();
+
+      // Initialize resources
       initResources();
+      initializeResources();
 
-      // Criar um mercado inicial em posição aleatória
-      const gridSize = 50; // Tamanho do grid
-      const marketSize = 3; // Tamanho do mercado
+      // Generate natural resources
+      generateNaturalResources();
 
-      // Garantir que o mercado esteja pelo menos a 5 unidades da borda
-      const minPos = 5;
-      const maxPos = gridSize - marketSize - minPos;
+      // Create initial market
+      createInitialMarket();
 
-      // Gerar posição aleatória para o mercado
-      const marketX = Math.floor(Math.random() * (maxPos - minPos) + minPos);
-      const marketZ = Math.floor(Math.random() * (maxPos - minPos) + minPos);
+      setIsWorldInitialized(true);
+    }
+  }, [isInitialized, initialize, initResources, initializeResources]);
 
-      // Criar o mercado inicial (sem custo)
-      const success = placeBuilding("market", [marketX, marketZ], 0, true);
+  // Generate natural resources on the map
+  const generateNaturalResources = () => {
+    const resources: NaturalResource[] = [];
+    const RESOURCE_COUNT = 40;
+    const MAP_SIZE = 40;
 
+    // Generate stone resources
+    for (let i = 0; i < RESOURCE_COUNT / 2; i++) {
+      const x = Math.floor(Math.random() * MAP_SIZE);
+      const z = Math.floor(Math.random() * MAP_SIZE);
+
+      resources.push({
+        type: "stone",
+        position: [x, z]
+      });
+    }
+
+    // Generate wood resources
+    for (let i = 0; i < RESOURCE_COUNT / 2; i++) {
+      const x = Math.floor(Math.random() * MAP_SIZE);
+      const z = Math.floor(Math.random() * MAP_SIZE);
+
+      resources.push({
+        type: "wood",
+        position: [x, z]
+      });
+    }
+
+    setNaturalResources(resources);
+
+    // Make resources available globally for NPCs
+    window.naturalResources = resources;
+
+    console.log(`Generated ${resources.length} natural resources`);
+  };
+
+  // Create initial market building
+  const createInitialMarket = async () => {
+    try {
+      // Find empty position for market
+      let marketPosition: [number, number] = [20, 20];
+      let attempts = 0;
+
+      while (attempts < 10) {
+        const x = Math.floor(Math.random() * 35) + 5;
+        const z = Math.floor(Math.random() * 35) + 5;
+
+        if (!buildings.some(b => 
+          Math.abs(b.position[0] - x) < 3 && 
+          Math.abs(b.position[1] - z) < 3
+        )) {
+          marketPosition = [x, z];
+          break;
+        }
+        attempts++;
+      }
+
+      const success = await placeBuilding("market", marketPosition, 0, true);
       if (success) {
-        console.log(`Mercado inicial criado em [${marketX}, ${marketZ}]`);
+        console.log(`Mercado inicial criado em [${marketPosition[0]}, ${marketPosition[1]}]`);
       }
-
-      // Gerar recursos naturais
-      const resources = generateNaturalResources();
-      setNaturalResources(resources);
-
-      initializedRef.current = true;
+    } catch (error) {
+      console.error("Erro ao criar mercado inicial:", error);
     }
-  }, []);
+  };
 
-   // Expose naturalResources to window for NPC access
-   useEffect(() => {
-    (window as any).naturalResources = naturalResources;
-    return () => {
-      delete (window as any).naturalResources;
-    };
-  }, [naturalResources]);
-
-  // Monitorar novos edifícios de casa de NPC para criar NPCs
-  useEffect(() => {
-    const workerHouses = buildings.filter(b => 
-      b.type === "farmerHouse" || 
-      b.type === "lumberjackHouse" || 
-      b.type === "minerHouse"
-    );
-
-    // Verificar se cada casa tem um NPC
-    for (const house of workerHouses) {
-      // Verificar se já existe um NPC associado a esta casa
-      const existingNpc = npcs.find(npc => npc.homeId === house.id);
-
-      if (!existingNpc) {
-        // Criar um novo NPC baseado no tipo da casa
-        const npcType = house.type === "farmerHouse" ? "farmer" :
-                       house.type === "lumberjackHouse" ? "lumberjack" :
-                       "miner";
-
-        const [posX, posZ] = house.position;
-        spawnNPC(npcType, house.id, [posX + 0.5, 0, posZ + 0.5]);
-      }
-    }
-  }, [buildings, npcs]);
-
-  // Game loop - update production, time cycle, and NPCs
+  // Update natural resources when NPCs collect them
   useFrame(() => {
-    const now = Date.now();
-    const deltaTime = (now - lastUpdateRef.current) / 1000; // Convert to seconds
-
-    // Update production every second
-    if (now - lastUpdateRef.current >= 1000) {
-      updateProduction(now);
-      lastUpdateRef.current = now;
+    if (window.naturalResources) {
+      // Update natural resources state if changes occurred
+      const updatedResources = window.naturalResources.filter(r => !r.lastCollected);
+      if (updatedResources.length !== naturalResources.filter(r => !r.lastCollected).length) {
+        setNaturalResources([...window.naturalResources]);
+      }
     }
-
-    // Advance time cycle
-    advanceTime(deltaTime);
-
-    // Update NPCs
-    updateNPCs(deltaTime);
   });
 
-  // Lidar com clique em edifícios
-  const handleBuildingClick = (building: BuildingType) => {
-    if (building.type === "market") {
-      onMarketSelect?.(building);
-    }
-  };
-
-  const handleTerrainClick = (e: any) => {
-    console.log("Terrain click", e);
+  if (!isWorldInitialized) {
+    return null;
   }
 
   return (
     <>
-      <CameraControls />
-
-      {/* Terrain */}
-      <Terrain />
-
-      {/* Terrain Editor */}
-      <TerrainEditor />
-
-      {/* Sky */}
+      {/* Environment */}
       <Sky />
       <DayNightCycle />
-      {/* Buildings */}
-      {buildings.map((building) => (
-        <Building 
-          key={building.id} 
-          building={building} 
-          onClick={handleBuildingClick}
-        />
-      ))}
 
-      {/* NPCs */}
-      {npcs.map((npc) => (
-        <Npc key={npc.id} npc={npc} />
-      ))}
+      {/* Camera Controls */}
+      <CameraControls />
 
-      {/* Natural Resources - renderiza apenas recursos não coletados */}
-      {naturalResources
-        .filter(resource => !resource.lastCollected)
-        .map((resource, index) => (
-          <Resource
-            key={`resource-${resource.position[0]}-${resource.position[1]}`}
-            type={resource.type}
-            position={[resource.position[0], 0, resource.position[1]]}
-            color={resourceTypes[resource.type]?.color || "#ffffff"}
-            scale={0.8}
+      {/* Lighting */}
+      <ambientLight intensity={0.4} />
+      <directionalLight
+        position={[10, 10, 5]}
+        intensity={1}
+        castShadow
+        shadow-mapSize-width={2048}
+        shadow-mapSize-height={2048}
+        shadow-camera-far={50}
+        shadow-camera-left={-20}
+        shadow-camera-right={20}
+        shadow-camera-top={20}
+        shadow-camera-bottom={-20}
+      />
+
+      {/* World container */}
+      <group ref={worldRef}>
+        {/* Terrain */}
+        <Terrain />
+
+        {/* Buildings */}
+        {buildings.map((building) => (
+          <Building
+            key={building.id}
+            building={building}
+            onMarketSelect={onMarketSelect}
           />
         ))}
 
-      {/* Building placement indicator */}
-      {gameMode === "build" && <PlacementIndicator />}
-      <ManualNpcController />
+        {/* NPCs */}
+        {npcs.map((npc) => (
+          <NPC key={npc.id} npc={npc} />
+        ))}
+
+        {/* Natural Resources - renderiza apenas recursos não coletados */}
+        {naturalResources
+          .filter(resource => !resource.lastCollected)
+          .map((resource, index) => (
+            <Resource
+              key={`resource-${resource.position[0]}-${resource.position[1]}`}
+              type={resource.type}
+              position={[resource.position[0], 0, resource.position[1]]}
+              color={resourceTypes[resource.type]?.color || "#ffffff"}
+              scale={0.8}
+            />
+          ))}
+
+        {/* Building placement indicator */}
+        {gameMode === "build" && <PlacementIndicator />}
+
+        {/* Manual NPC Controller */}
+        <ManualNpcController />
+      </group>
     </>
   );
 };

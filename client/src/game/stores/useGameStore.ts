@@ -1,7 +1,7 @@
+
 import { create } from "zustand";
 import { subscribeWithSelector } from "zustand/middleware";
 
-// Game control enum
 export enum Controls {
   forward = "forward",
   backward = "backward",
@@ -18,95 +18,87 @@ export enum Controls {
   decreaseTimeSpeed = "decreaseTimeSpeed",
 }
 
-// Game state types
-export type GameMode = "play" | "build";
-export type TimeOfDay = "dawn" | "day" | "dusk" | "night";
+export type GameMode = "view" | "build";
+
+interface ManualControlKeys {
+  forward: boolean;
+  backward: boolean;
+  left: boolean;
+  right: boolean;
+  action: boolean;
+  sprint: boolean;
+}
 
 interface GameState {
-  // Game state
+  // Game State
+  isInitialized: boolean;
   gameMode: GameMode;
-  timeOfDay: TimeOfDay;
-  dayCount: number;
-  timeCycle: number; // 0-1 represents a full day cycle
-
-  // Time control
-  timeSpeed: number; // Multiplicador de velocidade (0 = pausado, 1 = normal, 2 = 2x, etc.)
-  isPaused: boolean;
-
-  // Building placement
   selectedBuildingType: string | null;
-  placementPosition: [number, number] | null;
-  placementValid: boolean;
-
-  // Camera settings
+  buildingRotation: number;
+  
+  // Time System
+  isPaused: boolean;
+  timeSpeed: number;
+  timeCycle: number; // 0-1 representing 24 hours
+  realTimeStart: number;
+  
+  // Camera
   cameraPosition: [number, number, number];
   cameraTarget: [number, number, number];
-  cameraRotation: number;
-
+  
+  // Manual Control
+  isManualControl: boolean;
+  controlledNpcId: string | null;
+  manualControlKeys: ManualControlKeys;
+  
   // Actions
+  initialize: () => void;
   setGameMode: (mode: GameMode) => void;
-  selectBuilding: (buildingType: string | null) => void;
-  setPlacementPosition: (position: [number, number] | null) => void;
-  setPlacementValid: (valid: boolean) => void;
-  updateCameraPosition: (position: [number, number, number]) => void;
-  updateCameraTarget: (target: [number, number, number]) => void;
-  updateCameraRotation: (rotation: number) => void;
-  advanceTime: (delta: number) => void;
+  setSelectedBuildingType: (type: string | null) => void;
+  setBuildingRotation: (rotation: number) => void;
+  rotateBuildingCW: () => void;
+  rotateBuildingCCW: () => void;
+  
+  // Time Controls
   pauseTime: () => void;
   resumeTime: () => void;
-  setTimeSpeed: (speed: number) => void;
   increaseTimeSpeed: () => void;
   decreaseTimeSpeed: () => void;
-
-  // NPC Manual Control
-  controlledNpcId: string | null;
-  isManualControl: boolean;
-  manualControlKeys: {
-    forward: boolean;
-    backward: boolean;
-    left: boolean;
-    right: boolean;
-    action: boolean;
-    sprint: boolean;
-  };
-  controlSettings: {
-    sensitivity: 1.0;
-    smoothing: 0.8;
-    sprintMultiplier: 2.0;
-    actionCooldown: 300;
-    autoSwitchNpc: false;
-    gamepadEnabled: true;
-    keyboardEnabled: true;
-  };
-
-  setControlledNpc: (npcId: string | null) => void;
-  updateManualControlKeys: (keys: Partial<GameState['manualControlKeys']>) => void;
-  updateControlSettings: (settings: Partial<GameState['controlSettings']>) => void;
+  updateTime: (deltaTime: number) => void;
+  
+  // Camera Controls
+  setCameraPosition: (position: [number, number, number]) => void;
+  setCameraTarget: (target: [number, number, number]) => void;
+  
+  // Manual Control
+  startManualControl: (npcId: string) => void;
+  stopManualControl: () => void;
+  updateManualControlKeys: (keys: Partial<ManualControlKeys>) => void;
 }
+
+const TIME_SPEEDS = [0.5, 1, 2, 4, 8];
 
 export const useGameStore = create<GameState>()(
   subscribeWithSelector((set, get) => ({
-    // Initial state
-    gameMode: "play",
-    timeOfDay: "day",
-    dayCount: 1,
-    timeCycle: 0.3, // Start at morning
-
-    // Time control
-    timeSpeed: 1,
-    isPaused: false,
-
+    // Initial State
+    isInitialized: false,
+    gameMode: "view",
     selectedBuildingType: null,
-    placementPosition: null,
-    placementValid: false,
-
+    buildingRotation: 0,
+    
+    // Time System
+    isPaused: false,
+    timeSpeed: 1,
+    timeCycle: 0.25, // Start at 6 AM
+    realTimeStart: Date.now(),
+    
+    // Camera
     cameraPosition: [20, 20, 20],
     cameraTarget: [0, 0, 0],
-    cameraRotation: 0,
-
-    // NPC Manual Control
-    controlledNpcId: null,
+    
+    // Manual Control
     isManualControl: false,
+    controlledNpcId: null,
     manualControlKeys: {
       forward: false,
       backward: false,
@@ -115,107 +107,144 @@ export const useGameStore = create<GameState>()(
       action: false,
       sprint: false,
     },
-    controlSettings: {
-      sensitivity: 1.0,
-      smoothing: 0.8,
-      sprintMultiplier: 2.0,
-      actionCooldown: 300,
-      autoSwitchNpc: false,
-      gamepadEnabled: true,
-      keyboardEnabled: true,
-    },
-
+    
     // Actions
-    setGameMode: (mode) => set({ gameMode: mode }),
-
-    selectBuilding: (buildingType) => set({
-      selectedBuildingType: buildingType,
-      gameMode: buildingType ? "build" : "play",
-    }),
-
-    setPlacementPosition: (position) => set({ placementPosition: position }),
-
-    setPlacementValid: (valid) => set({ placementValid: valid }),
-
-    updateCameraPosition: (position) => set({ cameraPosition: position }),
-
-    updateCameraTarget: (target) => set({ cameraTarget: target }),
-
-    updateCameraRotation: (rotation) => set({ cameraRotation: rotation }),
-
-    advanceTime: (delta) => set((state) => {
-      // Se o jogo estiver pausado, não avançar o tempo
-      if (state.isPaused) return {};
-
-      // Aplicar multiplicador de velocidade
-      const adjustedDelta = delta * state.timeSpeed;
-
-      // Cálculo para 24 horas de jogo = 720 minutos de tempo real
-      // 24 horas = 1440 minutos de jogo
-      // 720 minutos = 43200 segundos de tempo real
-      // Proporção: 1440/43200 = 0.0333 minutos de jogo por segundo real
-
-      // Converter delta (segundos) para fração do ciclo de jogo
-      // Ciclo de 720 minutos (43200 segundos) para um dia completo
-      const cyclePerSecond = 1 / 43200; // 720 minutos por ciclo completo
-      const newTimeCycle = (state.timeCycle + adjustedDelta * cyclePerSecond) % 1;
-
-      // Determine time of day based on realistic hours
-      // 6h-8h: amanhecer, 8h-18h: dia, 18h-19h: entardecer, 19h-6h: noite
-      let timeOfDay: TimeOfDay = state.timeOfDay;
-      const hours = newTimeCycle * 24;
-
-      if (hours >= 6 && hours < 8) timeOfDay = "dawn"; // 6h-8h: amanhecer
-      else if (hours >= 8 && hours < 18) timeOfDay = "day"; // 8h-18h: dia
-      else if (hours >= 18 && hours < 19) timeOfDay = "dusk"; // 18h-19h: entardecer  
-      else timeOfDay = "night"; // 19h-6h: noite
-
-      // Increment day count when cycling from night to dawn
-      const newDayCount = 
-        state.timeOfDay === "night" && timeOfDay === "dawn"
-          ? state.dayCount + 1
-          : state.dayCount;
-
-      return { timeCycle: newTimeCycle, timeOfDay, dayCount: newDayCount };
-    }),
-
-    pauseTime: () => set({ isPaused: true }),
-
-    resumeTime: () => set({ isPaused: false }),
-
-    setTimeSpeed: (speed) => set({ timeSpeed: Math.max(0, speed) }),
-
-    increaseTimeSpeed: () => set((state) => {
-      const speeds = [0.25, 0.5, 1, 2, 4, 8, 16];
-      let currentIndex = speeds.indexOf(state.timeSpeed);
-      if (currentIndex === -1) currentIndex = 2; // Default to 1x if not found
-      const nextIndex = Math.min(currentIndex + 1, speeds.length - 1);
-      return { timeSpeed: speeds[nextIndex] };
-    }),
-
-    decreaseTimeSpeed: () => set((state) => {
-      const speeds = [0.25, 0.5, 1, 2, 4, 8, 16];
-      let currentIndex = speeds.indexOf(state.timeSpeed);
-      if (currentIndex === -1) currentIndex = 2; // Default to 1x if not found
-      const nextIndex = Math.max(currentIndex - 1, 0);
-      return { timeSpeed: speeds[nextIndex] };
-    }),
-    // Manual Control Actions
-    setControlledNpc: (npcId) => set({ 
-      controlledNpcId: npcId,
-      isManualControl: npcId !== null 
-    }),
-
+    initialize: () => {
+      console.log("Initializing game store");
+      set({ 
+        isInitialized: true,
+        realTimeStart: Date.now(),
+        timeCycle: 0.25 // 6 AM
+      });
+    },
+    
+    setGameMode: (mode) => {
+      set({ gameMode: mode });
+      if (mode !== "build") {
+        set({ selectedBuildingType: null });
+      }
+    },
+    
+    setSelectedBuildingType: (type) => {
+      set({ 
+        selectedBuildingType: type,
+        gameMode: type ? "build" : "view"
+      });
+    },
+    
+    setBuildingRotation: (rotation) => {
+      set({ buildingRotation: rotation });
+    },
+    
+    rotateBuildingCW: () => {
+      const currentRotation = get().buildingRotation;
+      set({ buildingRotation: (currentRotation + Math.PI / 2) % (Math.PI * 2) });
+    },
+    
+    rotateBuildingCCW: () => {
+      const currentRotation = get().buildingRotation;
+      set({ buildingRotation: (currentRotation - Math.PI / 2 + Math.PI * 2) % (Math.PI * 2) });
+    },
+    
+    // Time Controls
+    pauseTime: () => {
+      console.log("Time paused");
+      set({ isPaused: true });
+    },
+    
+    resumeTime: () => {
+      console.log("Time resumed");
+      set({ isPaused: false });
+    },
+    
+    increaseTimeSpeed: () => {
+      const currentSpeed = get().timeSpeed;
+      const currentIndex = TIME_SPEEDS.indexOf(currentSpeed);
+      if (currentIndex < TIME_SPEEDS.length - 1) {
+        const newSpeed = TIME_SPEEDS[currentIndex + 1];
+        console.log(`Time speed increased to ${newSpeed}x`);
+        set({ timeSpeed: newSpeed });
+      }
+    },
+    
+    decreaseTimeSpeed: () => {
+      const currentSpeed = get().timeSpeed;
+      const currentIndex = TIME_SPEEDS.indexOf(currentSpeed);
+      if (currentIndex > 0) {
+        const newSpeed = TIME_SPEEDS[currentIndex - 1];
+        console.log(`Time speed decreased to ${newSpeed}x`);
+        set({ timeSpeed: newSpeed });
+      }
+    },
+    
+    updateTime: (deltaTime) => {
+      const { isPaused, timeSpeed, timeCycle } = get();
+      if (isPaused) return;
+      
+      // Time progresses: 1 real second = 1 minute in game at 1x speed
+      // Full day cycle (24 hours) = 24 minutes at 1x speed
+      const timeIncrement = (deltaTime * timeSpeed) / (24 * 60); // Convert to cycle units
+      const newTimeCycle = (timeCycle + timeIncrement) % 1;
+      
+      set({ timeCycle: newTimeCycle });
+    },
+    
+    // Camera Controls
+    setCameraPosition: (position) => {
+      set({ cameraPosition: position });
+    },
+    
+    setCameraTarget: (target) => {
+      set({ cameraTarget: target });
+    },
+    
+    // Manual Control
+    startManualControl: (npcId) => {
+      console.log(`Starting manual control for NPC: ${npcId}`);
+      set({
+        isManualControl: true,
+        controlledNpcId: npcId,
+        manualControlKeys: {
+          forward: false,
+          backward: false,
+          left: false,
+          right: false,
+          action: false,
+          sprint: false,
+        }
+      });
+    },
+    
+    stopManualControl: () => {
+      console.log("Stopping manual control");
+      set({
+        isManualControl: false,
+        controlledNpcId: null,
+        manualControlKeys: {
+          forward: false,
+          backward: false,
+          left: false,
+          right: false,
+          action: false,
+          sprint: false,
+        }
+      });
+    },
+    
     updateManualControlKeys: (keys) => {
-    set((state) => ({
-      manualControlKeys: { ...state.manualControlKeys, ...keys },
-    }));
-  },
-
-  updateControlSettings: (settings) => {
-    set((state) => ({
-      controlSettings: { ...state.controlSettings, ...settings },
-    }));
-  },
+      set((state) => ({
+        manualControlKeys: { ...state.manualControlKeys, ...keys }
+      }));
+    },
   }))
 );
+
+// Auto-update time
+let lastTimeUpdate = Date.now();
+setInterval(() => {
+  const now = Date.now();
+  const deltaTime = (now - lastTimeUpdate) / 1000; // Convert to seconds
+  lastTimeUpdate = now;
+  
+  useGameStore.getState().updateTime(deltaTime);
+}, 16); // ~60 FPS

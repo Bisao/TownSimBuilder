@@ -1,3 +1,4 @@
+
 import { useEffect, useState, useRef } from "react";
 import { useGameStore, Controls } from "../game/stores/useGameStore";
 import { useResourceStore } from "../game/stores/useResourceStore";
@@ -22,31 +23,133 @@ import MapEditorPanel from "./MapEditorPanel";
 import ResearchPanel from "./ResearchPanel";
 import EconomyPanel from "./EconomyPanel";
 import EventPanel from "./EventPanel";
+
 const GameUI = () => {
-  const { backgroundMusic, toggleMute, isMuted } = useAudio();
-  const { timeOfDay, dayCount, isPaused, timeSpeed } = useGameStore();
-  const [showControls, setShowControls] = useState(false);
-  const [showBuildingPanel, setShowBuildingPanel] = useState(false);
-  const [showResourcePanel, setShowResourcePanel] = useState(false);
-  const [showMarket, setShowMarket] = useState(false);
-  const [selectedNpc, setSelectedNpc] = useState<any>(null);
-  const [showMetrics, setShowMetrics] = useState(false);
-  const isMobile = useIsMobile();
+  const {
+    isPaused,
+    timeSpeed,
+    timeCycle,
+    gameMode,
+    isManualControl,
+    controlledNpcId,
+    pauseTime,
+    resumeTime,
+    increaseTimeSpeed,
+    decreaseTimeSpeed,
+  } = useGameStore();
+
+  const { buildings } = useBuildingStore();
+  const { resources } = useResourceStore();
   const { npcs, updateNpc } = useNpcStore();
-  const [selectedNpcId, setSelectedNpcId] = useState<string | null>(null);
-  const [showSeedSelection, setShowSeedSelection] = useState(false);
-  const [showSiloPanel, setShowSiloPanel] = useState(false);
-  const [selectedSiloId, setSelectedSiloId] = useState<string | null>(null);
-  const [showMapEditor, setShowMapEditor] = useState(false);
-  const [showEconomyPanel, setShowEconomyPanel] = useState(false);
+  const { isBackgroundMusicPlaying, playBackgroundMusic, stopBackgroundMusic } = useAudio();
+  const isMobile = useIsMobile();
+
+  // UI State
+  const [showResourcePanel, setShowResourcePanel] = useState(true);
+  const [showBuildingPanel, setShowBuildingPanel] = useState(true);
   const [showResearchPanel, setShowResearchPanel] = useState(false);
   const [showEventPanel, setShowEventPanel] = useState(false);
+  const [showEconomyPanel, setShowEconomyPanel] = useState(false);
   const [showNpcMetrics, setShowNpcMetrics] = useState(false);
+  const [showMapEditor, setShowMapEditor] = useState(false);
+  const [showMarket, setShowMarket] = useState(false);
+  const [showSeedSelection, setShowSeedSelection] = useState(false);
+  const [showSiloPanel, setShowSiloPanel] = useState(false);
+  
+  // Selection state
+  const [selectedNpc, setSelectedNpc] = useState<NPC | null>(null);
+  const [selectedNpcId, setSelectedNpcId] = useState<string | null>(null);
+  const [selectedSiloId, setSelectedSiloId] = useState<string | null>(null);
 
+  // Game loop and initialization
+  useEffect(() => {
+    // Initialize game systems
+    const initializeSystems = () => {
+      try {
+        useResourceStore.getState().initResources();
+        useResearchStore.getState().initResearches();
+        console.log("Game systems initialized successfully");
+      } catch (error) {
+        console.error("Error initializing game systems:", error);
+      }
+    };
+
+    initializeSystems();
+  }, []);
+
+  // Update game systems
+  useEffect(() => {
+    if (!isPaused) {
+      const interval = setInterval(() => {
+        try {
+          // Update all game systems with error handling
+          const deltaTime = 0.016; // ~60 FPS
+          
+          // Update NPCs
+          useNpcStore.getState().updateNPCs(deltaTime);
+          
+          // Update building production
+          useBuildingStore.getState().updateProduction(Date.now());
+          
+          // Update economy
+          useEconomyStore.getState().calculateTaxes();
+          
+          // Update events
+          useEventStore.getState().updateEvents(deltaTime);
+          
+          // Update research
+          useResearchStore.getState().updateResearch(deltaTime);
+        } catch (error) {
+          console.error("Error in game loop:", error);
+        }
+      }, 16);
+
+      return () => clearInterval(interval);
+    }
+  }, [isPaused]);
+
+  // Keyboard shortcuts
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') {
-        setSelectedNpc(null);
+      // Prevent default browser shortcuts
+      if (event.ctrlKey || event.metaKey) return;
+
+      // UI toggles
+      if (event.key === 'r' || event.key === 'R') {
+        setShowResourcePanel(prev => !prev);
+      }
+
+      if (event.key === 'b' || event.key === 'B') {
+        setShowBuildingPanel(prev => !prev);
+      }
+
+      if (event.key === 't' || event.key === 'T') {
+        setShowResearchPanel(prev => !prev);
+      }
+
+      if (event.key === 'n' || event.key === 'N') {
+        setShowNpcMetrics(prev => !prev);
+      }
+
+      if (event.key === 'm' || event.key === 'M') {
+        setShowMapEditor(prev => !prev);
+      }
+
+      if (event.key === 'e' || event.key === 'E') {
+        setShowEconomyPanel(prev => !prev);
+      }
+
+      if (event.key === 'v' || event.key === 'V') {
+        setShowEventPanel(prev => !prev);
+      }
+
+      // Audio toggle
+      if (event.key === 'u' || event.key === 'U') {
+        if (isBackgroundMusicPlaying) {
+          stopBackgroundMusic();
+        } else {
+          playBackgroundMusic();
+        }
       }
 
       // Time control shortcuts
@@ -70,6 +173,7 @@ const GameUI = () => {
 
     window.addEventListener('keydown', handleKeyDown);
 
+    // Event listeners for game interactions
     const handleNpcClick = (event: CustomEvent) => {
       setSelectedNpc(event.detail);
     };
@@ -98,137 +202,117 @@ const GameUI = () => {
       window.removeEventListener('npcHouseClick', handleNpcHouseClick as EventListener);
       window.removeEventListener('siloClick', handleSiloClick as EventListener);
     };
-  }, []);
+  }, [isBackgroundMusicPlaying, playBackgroundMusic, stopBackgroundMusic]);
 
-  // Play background music
-  useEffect(() => {
-    if (backgroundMusic && !isMuted) {
-      backgroundMusic.play().catch((error) => {
-        console.log("Background music autoplay prevented:", error);
-      });
-    }
-
-    return () => {
-      if (backgroundMusic) {
-        backgroundMusic.pause();
-      }
-    };
-  }, [backgroundMusic, isMuted]);
-
-  // Convert time of day to formatted time
-  const getTimeString = () => {
-    const gameStore = useGameStore.getState();
-    const hours = Math.floor(gameStore.timeCycle * 24);
-    const minutes = Math.floor((gameStore.timeCycle * 24 * 60) % 60);
+  // Format time display
+  const formatTime = (cycle: number) => {
+    const hours = Math.floor(cycle * 24);
+    const minutes = Math.floor((cycle * 24 * 60) % 60);
     return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
   };
 
-  const getTimeOfDayName = () => {
-    switch (timeOfDay) {
-      case "dawn": return "amanhecer";
-      case "day": return "dia";
-      case "dusk": return "entardecer";
-      case "night": return "noite";
-      default: return "dia";
-    }
+  // Get time period
+  const getTimePeriod = (cycle: number) => {
+    const hours = cycle * 24;
+    if (hours >= 6 && hours < 12) return "Manhã";
+    if (hours >= 12 && hours < 18) return "Tarde";
+    if (hours >= 18 && hours < 24) return "Noite";
+    return "Madrugada";
   };
-
-    // Update NPCs
-  useEffect(() => {
-    if (!isPaused) {
-      const interval = setInterval(() => {
-        // Update all game systems
-        useNpcStore.getState().updateNPCs(0.016); // ~60 FPS
-        useEconomyStore.getState().calculateTaxes();
-        useEventStore.getState().updateEvents(0.016);
-        useResearchStore.getState().updateResearch(0.016);
-      }, 16);
-
-      return () => clearInterval(interval);
-    }
-  }, [isPaused]);
-
-  // Initialize systems
-  useEffect(() => {
-    useResourceStore.getState().initResources();
-    useResearchStore.getState().initResearches();
-  }, []);
 
   return (
     <>
-      {/* Time Control */}
-      <div className="absolute top-4 left-4 bg-black/50 text-white p-3 rounded-lg">
-        <div className="text-sm">
-          Dia {dayCount} - {getTimeString()} ({getTimeOfDayName()})
-        </div>
-        <div className="flex gap-2 mt-2">
-          <button
-            onClick={() => {
-              const gameStore = useGameStore.getState();
-              if (gameStore.isPaused) {
-                gameStore.resumeTime();
-              } else {
-                gameStore.pauseTime();
-              }
-            }}
-            className="px-2 py-1 bg-blue-600 hover:bg-blue-700 rounded text-xs"
-          >
-            {isPaused ? "▶️" : "⏸️"}
-          </button>
-          <button
-            onClick={() => useGameStore.getState().decreaseTimeSpeed()}
-            className="px-2 py-1 bg-gray-600 hover:bg-gray-700 rounded text-xs"
-          >
-            -
-          </button>
-          <span className="px-2 py-1 text-xs">{timeSpeed}x</span>
-          <button
-            onClick={() => useGameStore.getState().increaseTimeSpeed()}
-            className="px-2 py-1 bg-gray-600 hover:bg-gray-700 rounded text-xs"
-          >
-            +
-          </button>
+      {/* Top HUD */}
+      <div className="absolute top-4 left-4 right-4 z-10 pointer-events-none">
+        <div className="flex justify-between items-start">
+          {/* Left side - Game info */}
+          <div className="bg-black/50 text-white p-3 rounded-lg backdrop-blur-sm pointer-events-auto">
+            <div className="flex items-center gap-4">
+              <div className="text-sm">
+                <div className="font-semibold">{formatTime(timeCycle)}</div>
+                <div className="text-xs opacity-80">{getTimePeriod(timeCycle)}</div>
+              </div>
+              <div className="text-sm">
+                <div className="font-semibold">Velocidade: {timeSpeed.toFixed(1)}x</div>
+                <div className="text-xs opacity-80">{isPaused ? "PAUSADO" : "RODANDO"}</div>
+              </div>
+            </div>
+          </div>
+
+          {/* Right side - Mode info */}
+          <div className="bg-black/50 text-white p-3 rounded-lg backdrop-blur-sm pointer-events-auto">
+            <div className="text-sm">
+              <div className="font-semibold">Modo: {gameMode === "build" ? "Construção" : "Visualização"}</div>
+              {isManualControl && controlledNpcId && (
+                <div className="text-xs opacity-80">Controlando NPC: {controlledNpcId}</div>
+              )}
+            </div>
+          </div>
         </div>
       </div>
 
-      {/* UI Panels */}
-      <div className="absolute top-4 right-4 flex flex-col gap-2">
-        <button
-          onClick={() => setShowBuildingPanel(!showBuildingPanel)}
-          className="px-3 py-2 bg-orange-600 hover:bg-orange-700 text-white rounded text-sm"
-        >
-          Estruturas
-        </button>
-        <button
-          onClick={() => setShowResearchPanel(!showResearchPanel)}
-          className="px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded text-sm"
-        >
-          Pesquisa
-        </button>
-        <button
-          onClick={() => setShowEventPanel(!showEventPanel)}
-          className="px-3 py-2 bg-green-600 hover:bg-green-700 text-white rounded text-sm"
-        >
-          Eventos
-        </button>
-        <button
-          onClick={() => setShowEconomyPanel(!showEconomyPanel)}
-          className="px-3 py-2 bg-yellow-600 hover:bg-yellow-700 text-white rounded text-sm"
-        >
-          Economia
-        </button>
-        <button
-          onClick={() => setShowNpcMetrics(!showNpcMetrics)}
-          className="px-3 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded text-sm"
-        >
-          Métricas NPCs
-        </button>
-        <button
-          onClick={() => setShowMapEditor(!showMapEditor)}
-          className="px-3 py-2 bg-red-600 hover:bg-red-700 text-white rounded text-sm"
-        >
-          Editor Mapa
-        </button>
+      {/* Bottom HUD */}
+      <div className="absolute bottom-4 left-4 right-4 z-10 pointer-events-none">
+        <div className="flex justify-center">
+          <div className="bg-black/50 text-white p-3 rounded-lg backdrop-blur-sm pointer-events-auto">
+            <div className="grid grid-cols-8 gap-2 text-xs">
+              <button
+                onClick={() => setShowResourcePanel(!showResourcePanel)}
+                className={`px-3 py-1 rounded ${showResourcePanel ? 'bg-blue-600' : 'bg-gray-600'} hover:bg-blue-700 transition-colors`}
+              >
+                Recursos (R)
+              </button>
+              <button
+                onClick={() => setShowBuildingPanel(!showBuildingPanel)}
+                className={`px-3 py-1 rounded ${showBuildingPanel ? 'bg-blue-600' : 'bg-gray-600'} hover:bg-blue-700 transition-colors`}
+              >
+                Construções (B)
+              </button>
+              <button
+                onClick={() => setShowResearchPanel(!showResearchPanel)}
+                className={`px-3 py-1 rounded ${showResearchPanel ? 'bg-blue-600' : 'bg-gray-600'} hover:bg-blue-700 transition-colors`}
+              >
+                Pesquisa (T)
+              </button>
+              <button
+                onClick={() => setShowEconomyPanel(!showEconomyPanel)}
+                className={`px-3 py-1 rounded ${showEconomyPanel ? 'bg-blue-600' : 'bg-gray-600'} hover:bg-blue-700 transition-colors`}
+              >
+                Economia (E)
+              </button>
+              <button
+                onClick={() => setShowEventPanel(!showEventPanel)}
+                className={`px-3 py-1 rounded ${showEventPanel ? 'bg-blue-600' : 'bg-gray-600'} hover:bg-blue-700 transition-colors`}
+              >
+                Eventos (V)
+              </button>
+              <button
+                onClick={() => setShowNpcMetrics(!showNpcMetrics)}
+                className={`px-3 py-1 rounded ${showNpcMetrics ? 'bg-blue-600' : 'bg-gray-600'} hover:bg-blue-700 transition-colors`}
+              >
+                Métricas (N)
+              </button>
+              <button
+                onClick={() => setShowMapEditor(!showMapEditor)}
+                className={`px-3 py-1 rounded ${showMapEditor ? 'bg-blue-600' : 'bg-gray-600'} hover:bg-blue-700 transition-colors`}
+              >
+                Editor (M)
+              </button>
+              <button
+                onClick={() => {
+                  if (isBackgroundMusicPlaying) {
+                    stopBackgroundMusic();
+                  } else {
+                    playBackgroundMusic();
+                  }
+                }}
+                className={`px-3 py-1 rounded ${isBackgroundMusicPlaying ? 'bg-green-600' : 'bg-gray-600'} hover:bg-green-700 transition-colors`}
+              >
+                Áudio (U)
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* Panels */}

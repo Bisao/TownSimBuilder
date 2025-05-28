@@ -1,3 +1,4 @@
+
 import { create } from "zustand";
 import { subscribeWithSelector } from "zustand/middleware";
 import { resourceTypes } from "../constants/resources";
@@ -10,23 +11,22 @@ interface Resource {
 
 interface ResourceState {
   resources: Record<string, number>;
-  mapResources: Resource[]; // Added to store resources placed on the map
+  mapResources: Resource[];
 
   // Methods
   initResources: () => void;
   updateResource: (type: string, amount: number) => boolean;
   hasEnoughResources: (requirements: Record<string, number>) => boolean;
-  getStorageCapacity: () => Promise<number>;
-  initializeResources: () => void; // Added initializeResources
+  getStorageCapacity: () => number;
+  initializeResources: () => void;
 }
 
-const BASE_STORAGE_CAPACITY = 100;
-const SILO_STORAGE_BONUS = 200; // Capacidade extra por silo
+const BASE_STORAGE_CAPACITY = 1000;
 
 export const useResourceStore = create<ResourceState>()(
   subscribeWithSelector((set, get) => ({
     resources: {},
-    mapResources: [], // Initialize the mapResources array
+    mapResources: [],
 
     initResources: () => {
       const initialResources: Record<string, number> = {};
@@ -36,21 +36,34 @@ export const useResourceStore = create<ResourceState>()(
         initialResources[resource.id] = resource.initialAmount;
       });
 
+      console.log("Resources initialized:", initialResources);
       set({ resources: initialResources });
     },
 
     updateResource: (type, amount) => {
-      if (!resourceTypes[type]) return false;
+      if (!resourceTypes[type]) {
+        console.warn(`Unknown resource type: ${type}`);
+        return false;
+      }
 
-      const currentAmount = get().resources[type] || 0;
+      const state = get();
+      const currentAmount = state.resources[type] || 0;
       const newAmount = currentAmount + amount;
 
       // Don't allow negative resources
-      if (newAmount < 0) return false;
+      if (newAmount < 0) {
+        console.warn(`Cannot have negative ${type}: ${newAmount}`);
+        return false;
+      }
 
-      // Don't exceed max amount
+      // Check storage capacity
       const maxAmount = resourceTypes[type].maxAmount;
-      const clampedAmount = Math.min(newAmount, maxAmount);
+      const storageCapacity = state.getStorageCapacity();
+      const clampedAmount = Math.min(newAmount, Math.min(maxAmount, storageCapacity));
+
+      if (clampedAmount !== newAmount) {
+        console.warn(`Resource ${type} clamped from ${newAmount} to ${clampedAmount} (storage limit)`);
+      }
 
       set((state) => ({
         resources: {
@@ -63,8 +76,9 @@ export const useResourceStore = create<ResourceState>()(
     },
 
     hasEnoughResources: (requirements) => {
+      const state = get();
       for (const [resourceType, amount] of Object.entries(requirements)) {
-        const currentAmount = get().resources[resourceType] || 0;
+        const currentAmount = state.resources[resourceType] || 0;
         if (currentAmount < amount) {
           return false;
         }
@@ -72,13 +86,11 @@ export const useResourceStore = create<ResourceState>()(
       return true;
     },
 
-    getStorageCapacity: async () => {
-      // Importação dinâmica para evitar dependência circular
-      const { useBuildingStore } = await import('./useBuildingStore');
-      const buildings = useBuildingStore.getState().buildings;
-      const siloCount = buildings.filter(b => b.type === 'silo').length;
-      return BASE_STORAGE_CAPACITY + (siloCount * SILO_STORAGE_BONUS);
+    getStorageCapacity: () => {
+      // Base capacity - will be enhanced when buildings are available
+      return BASE_STORAGE_CAPACITY;
     },
+
     initializeResources: () => {
       const resources: Resource[] = [];
       const MAP_SIZE = 50;
@@ -95,7 +107,9 @@ export const useResourceStore = create<ResourceState>()(
 
         resources.push({ id, x, z });
       }
-      set({ mapResources: resources }); // Store generated map resources in state
+      
+      console.log(`Generated ${resources.length} map resources`);
+      set({ mapResources: resources });
     },
   }))
 );

@@ -1,3 +1,4 @@
+
 import { create } from "zustand";
 import { subscribeWithSelector } from "zustand/middleware";
 import { BuildingType, buildingTypes } from "../constants/buildings";
@@ -40,27 +41,36 @@ export const useBuildingStore = create<BuildingState>()(
     buildingIdCounter: 0,
     
     placeBuilding: async (type, position, rotation, freeOfCharge = false) => {
-      // Importação dinâmica para evitar dependência circular
-      const { useResourceStore } = await import('./useResourceStore');
-      const resourceStore = useResourceStore.getState();
       const buildingType = buildingTypes[type];
       
-      // Check if we can place the building and have resources
+      // Check if we can place the building
       if (!buildingType || !get().canPlaceBuilding(type, position)) {
+        console.warn(`Cannot place building ${type} at position [${position[0]}, ${position[1]}]`);
         return false;
       }
       
-      // Check if player has enough resources (skip if freeOfCharge is true)
+      // Check resources only if not free of charge
       if (!freeOfCharge) {
-        for (const [resourceType, amount] of Object.entries(buildingType.cost)) {
-          if (resourceStore.resources[resourceType] < amount) {
-            return false;
+        try {
+          // Dynamic import to avoid circular dependency
+          const { useResourceStore } = await import('./useResourceStore');
+          const resourceStore = useResourceStore.getState();
+          
+          // Check if player has enough resources
+          for (const [resourceType, amount] of Object.entries(buildingType.cost)) {
+            if (resourceStore.resources[resourceType] < amount) {
+              console.warn(`Not enough ${resourceType}: need ${amount}, have ${resourceStore.resources[resourceType]}`);
+              return false;
+            }
           }
-        }
-        
-        // Deduct resources
-        for (const [resourceType, amount] of Object.entries(buildingType.cost)) {
-          resourceStore.updateResource(resourceType, -amount);
+          
+          // Deduct resources
+          for (const [resourceType, amount] of Object.entries(buildingType.cost)) {
+            resourceStore.updateResource(resourceType, -amount);
+          }
+        } catch (error) {
+          console.error("Error checking/deducting resources:", error);
+          return false;
         }
       }
       
@@ -78,6 +88,7 @@ export const useBuildingStore = create<BuildingState>()(
         buildingIdCounter: state.buildingIdCounter + 1,
       }));
       
+      console.log(`Building ${type} placed at [${position[0]}, ${position[1]}]`);
       return true;
     },
     
@@ -85,19 +96,20 @@ export const useBuildingStore = create<BuildingState>()(
       set((state) => ({
         buildings: state.buildings.filter((b) => b.id !== id),
       }));
+      console.log(`Building ${id} removed`);
     },
     
     canPlaceBuilding: (type, position) => {
       const buildingType = buildingTypes[type];
       if (!buildingType) return false;
       
-      // Check if the building fits within the grid bounds (50x50)
+      // Check if the building fits within the grid bounds (40x40)
       const [posX, posZ] = position;
       const [sizeX, sizeZ] = buildingType.size;
       
       if (
-        posX < 0 || posX + sizeX > 50 ||
-        posZ < 0 || posZ + sizeZ > 50
+        posX < 0 || posX + sizeX > 40 ||
+        posZ < 0 || posZ + sizeZ > 40
       ) {
         return false;
       }
@@ -155,15 +167,8 @@ export const useBuildingStore = create<BuildingState>()(
     },
     
     updateProduction: async (currentTime) => {
-      // Importação dinâmica para evitar dependência circular
-      const { useResourceStore } = await import('./useResourceStore');
-      const resourceStore = useResourceStore.getState();
       const updatedBuildings: Building[] = [];
-      let resourcesUpdated = false;
-      
-      // Não podemos importar useNpcStore diretamente para evitar dependência circular
-      // Vamos simplificar e remover a funcionalidade de NPC por enquanto
-      const npcs: any[] = [];
+      let hasUpdates = false;
       
       for (const building of get().buildings) {
         const buildingType = buildingTypes[building.type];
@@ -178,52 +183,45 @@ export const useBuildingStore = create<BuildingState>()(
         
         // Check if it's time to produce
         if (timeSinceLastProduction >= intervalMs) {
-          // Check if required resources are available
           let canProduce = true;
           
-          if (buildingType.requires) {
-            for (const [reqResource, reqAmount] of Object.entries(buildingType.requires)) {
-              if (resourceStore.resources[reqResource] < reqAmount) {
-                canProduce = false;
-                break;
-              }
-            }
-          }
-          
-          if (canProduce) {
-            // Verificar se há NPCs trabalhando neste edifício
-            const workingNpcs = npcs.filter(
-              (npc: any) => npc.targetBuildingId === building.id && npc.state === "working"
-            );
+          try {
+            // Dynamic import to avoid circular dependency
+            const { useResourceStore } = await import('./useResourceStore');
+            const resourceStore = useResourceStore.getState();
             
-            // Calcular bônus de produção baseado no número de NPCs
-            // Cada NPC adiciona 50% à produção
-            const productionMultiplier = 1 + workingNpcs.length * 0.5;
-            
-            // Consume required resources
+            // Check if required resources are available
             if (buildingType.requires) {
               for (const [reqResource, reqAmount] of Object.entries(buildingType.requires)) {
-                resourceStore.updateResource(reqResource, -reqAmount);
-                resourcesUpdated = true;
+                if (resourceStore.resources[reqResource] < reqAmount) {
+                  canProduce = false;
+                  break;
+                }
               }
             }
             
-            // Add produced resource com bônus de NPCs
-            const adjustedAmount = Math.floor(amount * productionMultiplier);
-            resourceStore.updateResource(resourceType, adjustedAmount);
-            resourcesUpdated = true;
-            
-            // Log para mostrar o bônus de produção
-            if (workingNpcs.length > 0) {
-              console.log(`${building.type} produziu ${adjustedAmount} de ${resourceType} com bônus de ${workingNpcs.length} NPCs`);
+            if (canProduce) {
+              // Consume required resources
+              if (buildingType.requires) {
+                for (const [reqResource, reqAmount] of Object.entries(buildingType.requires)) {
+                  resourceStore.updateResource(reqResource, -reqAmount);
+                }
+              }
+              
+              // Add produced resource
+              resourceStore.updateResource(resourceType, amount);
+              
+              // Update last produced time
+              updatedBuildings.push({
+                ...building,
+                lastProduced: currentTime,
+              });
+              hasUpdates = true;
+            } else {
+              updatedBuildings.push(building);
             }
-            
-            // Update last produced time
-            updatedBuildings.push({
-              ...building,
-              lastProduced: currentTime,
-            });
-          } else {
+          } catch (error) {
+            console.error("Error in production update:", error);
             updatedBuildings.push(building);
           }
         } else {
@@ -231,17 +229,23 @@ export const useBuildingStore = create<BuildingState>()(
         }
       }
       
-      if (resourcesUpdated || updatedBuildings.length !== get().buildings.length) {
+      if (hasUpdates) {
         set({ buildings: updatedBuildings });
       }
     },
 
     plantSeeds: (buildingId) => {
       const building = get().buildings.find(b => b.id === buildingId);
-      if (!building || building.type !== 'farm') return false;
+      if (!building || building.type !== 'farm') {
+        console.warn(`Cannot plant seeds: building ${buildingId} not found or not a farm`);
+        return false;
+      }
       
       // Verificar se já tem plantação
-      if (building.plantation?.planted) return false;
+      if (building.plantation?.planted) {
+        console.warn(`Farm ${buildingId} already has crops planted`);
+        return false;
+      }
       
       const currentTime = Date.now();
       const updatedBuildings = get().buildings.map(b => {
@@ -261,12 +265,16 @@ export const useBuildingStore = create<BuildingState>()(
       });
       
       set({ buildings: updatedBuildings });
+      console.log(`Seeds planted in farm ${buildingId}`);
       return true;
     },
 
     harvestCrop: (buildingId) => {
       const building = get().buildings.find(b => b.id === buildingId);
-      if (!building || building.type !== 'farm' || !building.plantation?.ready) return false;
+      if (!building || building.type !== 'farm' || !building.plantation?.ready) {
+        console.warn(`Cannot harvest: farm ${buildingId} not ready or not found`);
+        return false;
+      }
       
       const updatedBuildings = get().buildings.map(b => {
         if (b.id === buildingId) {
@@ -283,6 +291,7 @@ export const useBuildingStore = create<BuildingState>()(
       });
       
       set({ buildings: updatedBuildings });
+      console.log(`Crops harvested from farm ${buildingId}`);
       return true;
     },
 
