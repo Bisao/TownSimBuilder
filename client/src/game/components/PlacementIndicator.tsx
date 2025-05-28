@@ -5,7 +5,7 @@ import { buildingTypes } from "../constants/buildings";
 import { useBuildingStore } from "../stores/useBuildingStore";
 import { useGameStore } from "../stores/useGameStore";
 import { useKeyboardControls } from "@react-three/drei";
-import { Controls } from "../stores/useGameStore";
+import { Controls } from "../types/controls";
 
 const PlacementIndicator = () => {
   const { camera, raycaster, scene, gl } = useThree();

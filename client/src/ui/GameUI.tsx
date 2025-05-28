@@ -1,6 +1,7 @@
 
 import { useEffect, useState, useRef } from "react";
-import { useGameStore, Controls } from "../game/stores/useGameStore";
+import { useGameStore } from "../game/stores/useGameStore";
+import { Controls } from "../game/types/controls";
 import { useResourceStore } from "../game/stores/useResourceStore";
 import { useBuildingStore } from "../game/stores/useBuildingStore";
 import { useNpcStore } from "../game/stores/useNpcStore";

@@ -2,8 +2,9 @@ import { useThree, useFrame } from "@react-three/fiber";
 import { useEffect, useRef } from "react";
 import { useKeyboardControls } from "@react-three/drei";
 import * as THREE from "three";
-import { Controls, useGameStore } from "../stores/useGameStore";
+import { useGameStore } from "../stores/useGameStore";
 import { useNpcStore } from "../stores/useNpcStore";
+import { Controls } from "../types/controls";
 
 const CameraControls = () => {
   const { camera, gl } = useThree();

@@ -6,7 +6,7 @@ import { useGame } from "./lib/stores/useGame";
 import World from './game/components/World';
 import GameUI from './ui/GameUI';
 import MarketWindow from './ui/MarketWindow';
-import { Controls } from './game/stores/useGameStore';
+import { ControlsEnum } from './game/types/controls';
 import { buildingTypes, BuildingType } from './game/constants/buildings';
 import { Interface } from './components/ui/interface';
 import "@fontsource/inter";
@@ -19,19 +19,19 @@ function App() {
 
   // Define keyboard controls mapping
   const keyboardMap = [
-    { name: Controls.forward, keys: ["ArrowUp", "KeyW"] },
-    { name: Controls.backward, keys: ["ArrowDown", "KeyS"] },
-    { name: Controls.leftward, keys: ["ArrowLeft", "KeyA"] },
-    { name: Controls.rightward, keys: ["ArrowRight", "KeyD"] },
-    { name: Controls.zoomIn, keys: ["Equal", "NumpadAdd"] },
-    { name: Controls.zoomOut, keys: ["Minus", "NumpadSubtract"] },
-    { name: Controls.rotateCW, keys: ["KeyE"] },
-    { name: Controls.rotateCCW, keys: ["KeyQ"] },
-    { name: Controls.place, keys: ["Space"] },
-    { name: Controls.cancel, keys: ["Escape"] },
-    { name: Controls.pauseTime, keys: ["KeyP"] },
-    { name: Controls.increaseTimeSpeed, keys: ["BracketRight"] },
-    { name: Controls.decreaseTimeSpeed, keys: ["BracketLeft"] },
+    { name: ControlsEnum.forward, keys: ["ArrowUp", "KeyW"] },
+    { name: ControlsEnum.backward, keys: ["ArrowDown", "KeyS"] },
+    { name: ControlsEnum.leftward, keys: ["ArrowLeft", "KeyA"] },
+    { name: ControlsEnum.rightward, keys: ["ArrowRight", "KeyD"] },
+    { name: ControlsEnum.zoomIn, keys: ["Equal", "NumpadAdd"] },
+    { name: ControlsEnum.zoomOut, keys: ["Minus", "NumpadSubtract"] },
+    { name: ControlsEnum.rotateCW, keys: ["KeyE"] },
+    { name: ControlsEnum.rotateCCW, keys: ["KeyQ"] },
+    { name: ControlsEnum.place, keys: ["Space"] },
+    { name: ControlsEnum.cancel, keys: ["Escape"] },
+    { name: ControlsEnum.pauseTime, keys: ["KeyP"] },
+    { name: ControlsEnum.increaseTimeSpeed, keys: ["BracketRight"] },
+    { name: ControlsEnum.decreaseTimeSpeed, keys: ["BracketLeft"] },
   ];
 
   // Load audio assets

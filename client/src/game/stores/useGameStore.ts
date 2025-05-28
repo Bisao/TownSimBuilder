@@ -1,19 +1,8 @@
 import { create } from "zustand";
 import { subscribeWithSelector } from "zustand/middleware";
+import { Controls } from "../types/controls";
 
-export interface Controls {
-  forward: boolean;
-  backward: boolean;
-  left: boolean;
-  right: boolean;
-  jump: boolean;
-  place: boolean;
-  cancel: boolean;
-  up: boolean;
-  down: boolean;
-}
-
-interface GameState {
+export interface GameState {
   // Game state
   phase: "login" | "character-creation" | "playing";
   selectedBuildingType: string | null;
