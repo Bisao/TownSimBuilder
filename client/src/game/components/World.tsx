@@ -79,13 +79,16 @@ const World: React.FC<WorldProps> = ({ onMarketSelect }) => {
   // Generate natural resources on the map
   const generateNaturalResources = () => {
     const resources: NaturalResource[] = [];
-    const RESOURCE_COUNT = 40;
-    const MAP_SIZE = 40;
+    const MAP_SIZE = 50;
+    const RESOURCE_COUNT = 30;
+    const MARGIN = 5; // Margem das bordas para evitar extremidades
+    const USABLE_SIZE = MAP_SIZE - (MARGIN * 2); // Área utilizável
 
     // Generate stone resources
     for (let i = 0; i < RESOURCE_COUNT / 2; i++) {
-      const x = Math.floor(Math.random() * MAP_SIZE);
-      const z = Math.floor(Math.random() * MAP_SIZE);
+      // Gera posições centralizadas, evitando extremidades
+      const x = Math.floor((Math.random() * USABLE_SIZE) - (USABLE_SIZE / 2));
+      const z = Math.floor((Math.random() * USABLE_SIZE) - (USABLE_SIZE / 2));
 
       resources.push({
         type: "stone",
@@ -95,8 +98,9 @@ const World: React.FC<WorldProps> = ({ onMarketSelect }) => {
 
     // Generate wood resources
     for (let i = 0; i < RESOURCE_COUNT / 2; i++) {
-      const x = Math.floor(Math.random() * MAP_SIZE);
-      const z = Math.floor(Math.random() * MAP_SIZE);
+      // Gera posições centralizadas, evitando extremidades
+      const x = Math.floor((Math.random() * USABLE_SIZE) - (USABLE_SIZE / 2));
+      const z = Math.floor((Math.random() * USABLE_SIZE) - (USABLE_SIZE / 2));
 
       resources.push({
         type: "wood",

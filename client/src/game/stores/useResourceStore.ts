@@ -95,12 +95,13 @@ export const useResourceStore = create<ResourceState>()(
       const resources: Resource[] = [];
       const MAP_SIZE = 50;
       const RESOURCE_COUNT = 30;
+      const MARGIN = 8; // Margem das bordas para evitar extremidades
+      const USABLE_SIZE = MAP_SIZE - (MARGIN * 2); // Área utilizável
 
       for (let i = 0; i < RESOURCE_COUNT; i++) {
-        // Distribuir recursos mais uniformemente, evitando as extremidades
-        const margin = 10; // margem das bordas
-        const x = (Math.random() * (MAP_SIZE - margin * 2) - (MAP_SIZE - margin * 2) / 2);
-        const z = (Math.random() * (MAP_SIZE - margin * 2) - (MAP_SIZE - margin * 2) / 2);
+        // Gera posições mais distribuídas pelo grid, evitando extremidades
+        const x = (Math.random() * USABLE_SIZE) - (USABLE_SIZE / 2);
+        const z = (Math.random() * USABLE_SIZE) - (USABLE_SIZE / 2);
 
         // Generate a unique ID for each resource
         const id = `resource-${i}`;
@@ -108,7 +109,7 @@ export const useResourceStore = create<ResourceState>()(
         resources.push({ id, x, z });
       }
       
-      console.log(`Generated ${resources.length} map resources`);
+      console.log(`Generated ${resources.length} map resources with improved distribution`);
       set({ mapResources: resources });
     },
   }))
