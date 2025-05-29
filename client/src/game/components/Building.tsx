@@ -32,7 +32,8 @@ const Building = ({ building, onClick }: BuildingProps) => {
 
   // Memoize house NPCs to prevent unnecessary recalculations
   const houseNpcs = useMemo(() => {
-    if (!building.type.includes("House")) return [];
+    const isHouse = building.type === "house" || building.type === "farmerHouse" || building.type === "minerHouse" || building.type === "lumberjackHouse" || building.type.includes("House");
+    if (!isHouse) return [];
     return npcs.filter(npc => npc.homeId === building.id);
   }, [npcs, building.id, building.type]);
 
@@ -100,7 +101,7 @@ const Building = ({ building, onClick }: BuildingProps) => {
     e.stopPropagation();
     if (building.type === "market" && onClick) {
       onClick(building);
-    } else if (building.type.includes("House")) {
+    } else if (building.type === "house" || building.type === "farmerHouse" || building.type === "minerHouse" || building.type === "lumberjackHouse" || building.type.includes("House")) {
       // Disparar evento para abrir painel da casa (com ou sem NPC)
       const houseNpc = houseNpcs[0]; // Pegar o primeiro NPC da casa se existir
       window.dispatchEvent(new CustomEvent('houseClick', { 
@@ -1031,7 +1032,7 @@ const Building = ({ building, onClick }: BuildingProps) => {
     >
       {renderBuilding()}
       {/* Ícones de status dos NPCs para casas */}
-      {building.type.includes("House") && (
+      {(building.type === "house" || building.type === "farmerHouse" || building.type === "minerHouse" || building.type === "lumberjackHouse" || building.type.includes("House")) && (
         <group position={[0, buildingType.height + 0.3, 0]}>
           {houseNpcs.map((npc, index) => {
               return (
@@ -1049,10 +1050,10 @@ const Building = ({ building, onClick }: BuildingProps) => {
                       width: '1rem',
                       height: '1rem',
                       borderRadius: '50%',
-                      backgroundColor: npc.isSleeping ? 'lightblue' : 'lightgreen',
+                      backgroundColor: npc.state === 'resting' ? 'lightblue' : 'lightgreen',
                       border: '1px solid black'
                     }}
-                    title={npc.name + (npc.isSleeping ? ' (Dormindo)' : ' (Ativo)')}
+                    title={npc.name || npc.type + (npc.state === 'resting' ? ' (Descansando)' : ' (Ativo)')}
                   />
                 </Html>
               );

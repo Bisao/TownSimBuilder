@@ -188,22 +188,41 @@ const GameUI = () => {
         // Se não há NPC, criar um NPC temporário para mostrar a casa
         const tempNpc: NPC = {
           id: `temp_${building.id}`,
-          name: `Casa ${building.type}`,
           type: 'villager',
-          position: [building.position[0], building.position[1]],
           homeId: building.id,
-          isWorking: false,
-          isSleeping: false,
-          currentTask: null,
-          energy: 100,
-          happiness: 50,
-          health: 100,
-          experience: 0,
-          level: 1,
-          skills: {},
-          inventory: {},
-          workBuilding: null,
-          lastWorked: 0
+          position: [building.position[0] + 0.5, 0, building.position[1] + 0.5],
+          targetPosition: null,
+          targetBuildingId: null,
+          targetResource: null,
+          state: "idle",
+          workProgress: 0,
+          lastResourceTime: 0,
+          lastMoveTime: Date.now(),
+          stuckTimer: 0,
+          isPlayerControlled: false,
+          controlMode: "autonomous",
+          inventory: { type: '', amount: 0 },
+          needs: {
+            energy: 100,
+            satisfaction: 100,
+            health: 100,
+            hunger: 100
+          },
+          memory: {
+            lastVisitedPositions: [],
+            knownResources: [],
+            failedAttempts: 0,
+            lastTaskCompletion: Date.now(),
+            efficiency: 1.0
+          },
+          currentSchedule: "home",
+          name: `Casa ${building.type}`,
+          skills: {
+            gathering: 0,
+            working: 0,
+            efficiency: 0,
+            experience: 0
+          }
         };
         setSelectedNpc(tempNpc);
       }
