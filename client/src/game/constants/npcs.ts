@@ -10,6 +10,15 @@ export interface NPCType {
 }
 
 export const npcTypes: Record<string, NPCType> = {
+  villager: {
+    id: "villager",
+    name: "Aldeão",
+    profession: "Geral",
+    description: "Um habitante comum da vila, versátil em tarefas básicas",
+    speed: 0.12,
+    workRadius: 8,
+    color: "#808080", // Cinza
+  },
   farmer: {
     id: "farmer",
     name: "Fazendeiro",

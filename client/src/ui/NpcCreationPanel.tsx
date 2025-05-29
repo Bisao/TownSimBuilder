@@ -93,11 +93,19 @@ const NpcCreationPanel: React.FC<NpcCreationPanelProps> = ({
     setIsCreating(true);
 
     try {
+      console.log("Tentando criar NPC:", {
+        type: selectedClass,
+        houseId,
+        position: [housePosition[0], 0, housePosition[1]]
+      });
+
       const newNpcId = spawnNPC(
         selectedClass as any,
         houseId,
         [housePosition[0], 0, housePosition[1]]
       );
+
+      console.log("NPC criado com ID:", newNpcId);
 
       if (newNpcId) {
         // Customizar nome e habilidades baseadas na classe
