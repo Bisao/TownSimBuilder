@@ -3,7 +3,7 @@ import { useTexture } from "@react-three/drei";
 import { useThree, useFrame } from "@react-three/fiber";
 import * as THREE from "three";
 import { useRef, useState, useEffect, useMemo } from "react";
-import { useMapEditorStore } from "../stores/useMapEditorStore";
+
 
 const GRID_SIZE = 50;
 
@@ -13,26 +13,19 @@ const Terrain = () => {
   const { camera } = useThree();
   const [isGridVisible, setIsGridVisible] = useState(true);
   
-  const { 
-    isEditorMode, 
-    gridSize: editorGridSize, 
-    showGrid: editorShowGrid,
-    terrain: terrainTiles 
-  } = useMapEditorStore();
-  
-  const currentGridSize = isEditorMode ? editorGridSize : GRID_SIZE;
-  const shouldShowGrid = isEditorMode ? editorShowGrid : isGridVisible;
+  const currentGridSize = GRID_SIZE;
+  const shouldShowGrid = isGridVisible;
 
   useEffect(() => {
     const handleKeyPress = (event: KeyboardEvent) => {
-      if (event.code === 'KeyG' && !isEditorMode) {
+      if (event.code === 'KeyG') {
         setIsGridVisible(prev => !prev);
       }
     };
 
     window.addEventListener('keydown', handleKeyPress);
     return () => window.removeEventListener('keydown', handleKeyPress);
-  }, [isEditorMode]);
+  }, []);
 
   // Generate terrain geometry based on editor data
   const terrainGeometry = useMemo(() => {
