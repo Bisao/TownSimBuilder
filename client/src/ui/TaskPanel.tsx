@@ -28,53 +28,94 @@ const TaskPanel: React.FC<TaskPanelProps> = ({ npc, onClose }) => {
   const getTasks = (): Task[] => {
     const baseTasks: Task[] = [];
 
-    // Tarefas baseadas no tipo do NPC
-    switch (npc.type) {
-      case "miner":
-        baseTasks.push({
-          id: "mining",
-          name: "Mineração",
-          description: "Extrair pedras dos recursos naturais disponíveis no mapa",
-          icon: "fa-hammer",
-          color: "text-orange-600",
-          available: true
-        });
-        break;
+    // Se for aldeão, pode fazer qualquer trabalho
+    if (npc.type === "villager") {
+      baseTasks.push({
+        id: "mining",
+        name: "Mineração",
+        description: "Extrair pedras dos recursos naturais disponíveis no mapa",
+        icon: "fa-hammer",
+        color: "text-orange-600",
+        available: true
+      });
 
-      case "lumberjack":
-        baseTasks.push({
-          id: "lumbering",
-          name: "Cortar Madeira",
-          description: "Cortar árvores dos recursos naturais disponíveis no mapa",
-          icon: "fa-tree",
-          color: "text-green-600",
-          available: true
-        });
-        break;
+      baseTasks.push({
+        id: "lumbering",
+        name: "Cortar Madeira",
+        description: "Cortar árvores dos recursos naturais disponíveis no mapa",
+        icon: "fa-tree",
+        color: "text-green-600",
+        available: true
+      });
 
-      case "farmer":
-        baseTasks.push({
-          id: "farming",
-          name: "Cultivar",
-          description: "Plantar e colher cultivos nas fazendas disponíveis",
-          icon: "fa-wheat-awn",
-          color: "text-yellow-600",
-          requirements: ["Fazenda construída", "Sementes disponíveis"],
-          available: true
-        });
-        break;
+      baseTasks.push({
+        id: "farming",
+        name: "Cultivar",
+        description: "Plantar e colher cultivos nas fazendas disponíveis",
+        icon: "fa-wheat-awn",
+        color: "text-yellow-600",
+        requirements: ["Fazenda construída", "Sementes disponíveis"],
+        available: true
+      });
 
-      case "baker":
-        baseTasks.push({
-          id: "baking",
-          name: "Assar",
-          description: "Transformar trigo em pão na padaria",
-          icon: "fa-bread-slice",
-          color: "text-amber-600",
-          requirements: ["Padaria construída", "Trigo disponível"],
-          available: true
-        });
-        break;
+      baseTasks.push({
+        id: "baking",
+        name: "Assar",
+        description: "Transformar trigo em pão na padaria",
+        icon: "fa-bread-slice",
+        color: "text-amber-600",
+        requirements: ["Padaria construída", "Trigo disponível"],
+        available: true
+      });
+    } else {
+      // Tarefas específicas para cada tipo de NPC
+      switch (npc.type) {
+        case "miner":
+          baseTasks.push({
+            id: "mining",
+            name: "Mineração",
+            description: "Extrair pedras dos recursos naturais disponíveis no mapa",
+            icon: "fa-hammer",
+            color: "text-orange-600",
+            available: true
+          });
+          break;
+
+        case "lumberjack":
+          baseTasks.push({
+            id: "lumbering",
+            name: "Cortar Madeira",
+            description: "Cortar árvores dos recursos naturais disponíveis no mapa",
+            icon: "fa-tree",
+            color: "text-green-600",
+            available: true
+          });
+          break;
+
+        case "farmer":
+          baseTasks.push({
+            id: "farming",
+            name: "Cultivar",
+            description: "Plantar e colher cultivos nas fazendas disponíveis",
+            icon: "fa-wheat-awn",
+            color: "text-yellow-600",
+            requirements: ["Fazenda construída", "Sementes disponíveis"],
+            available: true
+          });
+          break;
+
+        case "baker":
+          baseTasks.push({
+            id: "baking",
+            name: "Assar",
+            description: "Transformar trigo em pão na padaria",
+            icon: "fa-bread-slice",
+            color: "text-amber-600",
+            requirements: ["Padaria construída", "Trigo disponível"],
+            available: true
+          });
+          break;
+      }
     }
 
     // Tarefas universais
@@ -102,6 +143,46 @@ const TaskPanel: React.FC<TaskPanelProps> = ({ npc, onClose }) => {
   const handleTaskStart = (taskId: string) => {
     // Colocar NPC em modo autônomo para executar a tarefa
     setNpcControlMode(npc.id, "autonomous");
+
+    // Se for aldeão, mudar temporariamente o tipo para executar o trabalho
+    if (npc.type === "villager") {
+      let newType = npc.type;
+      switch (taskId) {
+        case "mining":
+          newType = "miner";
+          break;
+        case "lumbering":
+          newType = "lumberjack";
+          break;
+        case "farming":
+          newType = "farmer";
+          break;
+        case "baking":
+          newType = "baker";
+          break;
+      }
+
+      // Atualizar o tipo do NPC temporariamente
+      useNpcStore.setState(state => ({
+        npcs: state.npcs.map(n => 
+          n.id === npc.id 
+            ? { 
+                ...n, 
+                type: newType,
+                // Se for fazendeiro, adicionar dados necessários
+                ...(newType === "farmer" && !n.farmerData && {
+                  farmerData: {
+                    currentTask: "waiting",
+                    targetFarmId: null,
+                    targetSiloId: null,
+                    selectedSeed: null
+                  }
+                })
+              }
+            : n
+        )
+      }));
+    }
 
     switch (taskId) {
       case "mining":
@@ -272,6 +353,16 @@ const TaskPanel: React.FC<TaskPanelProps> = ({ npc, onClose }) => {
             <i className="fa-solid fa-info-circle text-blue-500"></i>
             <span>Clique em uma tarefa para iniciar automaticamente</span>
           </div>
+          
+          {npc.type === "villager" && (
+            <div className="mt-2 p-2 bg-green-100 rounded-lg border border-green-200">
+              <p className="text-xs text-green-700">
+                <i className="fa-solid fa-star"></i>
+                {" "}Aldeões são versáteis e podem realizar qualquer trabalho disponível.
+              </p>
+            </div>
+          )}
+          
           {npc.controlMode === "manual" && (
             <div className="mt-2 p-2 bg-yellow-100 rounded-lg border border-yellow-200">
               <p className="text-xs text-yellow-700">

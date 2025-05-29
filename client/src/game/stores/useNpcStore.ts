@@ -44,6 +44,7 @@ export type NPCState = "idle" | "moving" | "working" | "gathering" | "resting" |
 export interface NPC {
   id: string;
   type: string;
+  originalType?: string; // Para rastrear o tipo original dos aldeões
   homeId: string;
   position: [number, number, number];
   targetPosition: [number, number, number] | null;
@@ -98,6 +99,7 @@ interface NPCStoreState {
   setNpcControlMode: (npcId: string, mode: "autonomous" | "manual") => void;
   startNpcWork: (npcId: string) => void;
   updateNpc: (npcId: string, updates: Partial<NPC>) => void;
+  restoreVillagerType: (npcId: string) => void;
 }
 
 // ===== CONSTANTES =====
@@ -308,6 +310,15 @@ class NPCStateHandlers {
     const hours = timeCycle * 24;
 
     console.log(`NPC ${npc.type} em estado idle - horário: ${currentSchedule} (${hours.toFixed(1)}h) - energia: ${npc.needs.energy.toFixed(1)} - satisfação: ${npc.needs.satisfaction.toFixed(1)}`);
+
+    // Se é um aldeão que completou uma tarefa, restaurar tipo original
+    if (npc.originalType === "villager" && npc.type !== "villager" && !npc.isWorkingManually) {
+      console.log(`Restaurando aldeão ${npc.id} para tipo original`);
+      // Usar setTimeout para evitar problemas de sincronização
+      setTimeout(() => {
+        useNpcStore.getState().restoreVillagerType(npc.id);
+      }, 100);
+    }
 
     // Verificar se deve ir para casa por horário ou necessidades
     if (NPCUtils.shouldReturnHome(npc, currentSchedule)) {
@@ -1320,6 +1331,7 @@ export const useNpcStore = create<NPCStoreState>()(
       const newNPC: NPC = {
         id,
         type,
+        originalType: type === "villager" ? "villager" : undefined,
         homeId,
         position,
         targetPosition: null,
@@ -1591,6 +1603,22 @@ export const useNpcStore = create<NPCStoreState>()(
         npcs: state.npcs.map(npc =>
           npc.id === npcId ? { ...npc, ...updates } : npc
         ),
+      }));
+    },
+
+    restoreVillagerType: (npcId: string) => {
+      set((state) => ({
+        npcs: state.npcs.map(npc => {
+          if (npc.id === npcId && npc.originalType === "villager") {
+            return {
+              ...npc,
+              type: "villager",
+              farmerData: undefined, // Limpar dados específicos
+              isWorkingManually: false
+            };
+          }
+          return npc;
+        }),
       }));
     },
   }))
