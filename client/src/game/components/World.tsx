@@ -4,7 +4,7 @@ import { Canvas } from "@react-three/fiber";
 import { KeyboardControls, Stats, Environment } from "@react-three/drei";
 import { Physics } from "@react-three/rapier";
 import { useGameStore } from "../stores/useGameStore";
-import { Controls } from "../types/controls";
+// Controls interface is for state management, not key mapping
 
 // Components
 import Terrain from "./Terrain";
@@ -23,12 +23,13 @@ import { useNpcStore } from "../stores/useNpcStore";
 import { useResourceStore } from "../stores/useResourceStore";
 
 const keyboardMap = [
-  { name: Controls.forward, keys: ["ArrowUp", "KeyW"] },
-  { name: Controls.back, keys: ["ArrowDown", "KeyS"] },
-  { name: Controls.left, keys: ["ArrowLeft", "KeyA"] },
-  { name: Controls.right, keys: ["ArrowRight", "KeyD"] },
-  { name: Controls.jump, keys: ["Space"] },
-  { name: Controls.run, keys: ["Shift"] },
+  { name: "forward", keys: ["ArrowUp", "KeyW"] },
+  { name: "backward", keys: ["ArrowDown", "KeyS"] },
+  { name: "left", keys: ["ArrowLeft", "KeyA"] },
+  { name: "right", keys: ["ArrowRight", "KeyD"] },
+  { name: "jump", keys: ["Space"] },
+  { name: "place", keys: ["Space"] },
+  { name: "cancel", keys: ["Escape"] },
 ];
 
 const World: React.FC = () => {
