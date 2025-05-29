@@ -79,11 +79,6 @@ const GameUI: React.FC = () => {
 };
 
 export default GameUI;
-      </div>
-
-      {/* Panels */}
-      {showResourcePanel && <ResourcePanel />}
-      {showBuildingPanel && <BuildingPanel />}
       {showNpcPanel && <NpcPanel />}
       {showMarketWindow && <MarketWindow />}
       {showNpcMetrics && <NpcMetricsPanel />}
