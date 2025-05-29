@@ -94,18 +94,18 @@ const NpcCreationPanel: React.FC<NpcCreationPanelProps> = ({
 
     try {
       const newNpcId = spawnNPC(
-        housePosition,
         selectedClass as any,
-        npcName.trim(),
-        houseId
+        houseId,
+        [housePosition[0], 0, housePosition[1]]
       );
 
       if (newNpcId) {
-        // Customizar habilidades baseadas na classe
+        // Customizar nome e habilidades baseadas na classe
         const npcClass = npcClasses.find(c => c.id === selectedClass);
         if (npcClass) {
           const { updateNpc } = useNpcStore.getState();
           updateNpc(newNpcId, {
+            name: npcName.trim(),
             skills: {
               gathering: npcClass.baseStats.gathering + Math.random() * 10,
               working: npcClass.baseStats.working + Math.random() * 10,
