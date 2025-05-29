@@ -34,8 +34,8 @@ export type NPCState = "idle" | "moving" | "working" | "gathering" | "resting" |
 
 export interface NPC {
   id: string;
-  type: string;
-  originalType?: string;
+  type: string; // Sempre "villager"
+  assignedWork: string | null; // Tipo de trabalho atribuído (farmer, miner, etc)
   homeId: string;
   position: [number, number, number];
   targetPosition: [number, number, number] | null;
@@ -58,6 +58,8 @@ export interface NPC {
   currentSchedule: NPCSchedule;
   name: string;
   skills: NPCSkills;
+  workExperience: Record<string, number>; // XP por tipo de trabalho
+  currentLevel: number;
   farmerData?: {
     currentTask: "waiting" | "getting_seeds" | "planting" | "harvesting" | "delivering";
     targetFarmId: string | null;
@@ -79,7 +81,7 @@ interface NPCStoreState {
   resourceReservations: ResourceReservation[];
 
   // Actions
-  spawnNPC: (type: string, homeId: string, position: [number, number, number]) => string;
+  spawnNPC: (homeId: string, position: [number, number, number], name?: string) => string;
   removeNPC: (id: string) => void;
   updateNPCs: (deltaTime: number) => void;
   findWorkplace: (npcId: string) => string | null;
@@ -90,7 +92,9 @@ interface NPCStoreState {
   setNpcControlMode: (npcId: string, mode: "autonomous" | "manual") => void;
   startNpcWork: (npcId: string) => void;
   updateNpc: (npcId: string, updates: Partial<NPC>) => void;
-  restoreVillagerType: (npcId: string) => void;
+  assignWork: (npcId: string, workType: string) => void;
+  removeWork: (npcId: string) => void;
+  addWorkExperience: (npcId: string, workType: string, amount: number) => void;
 }
 
 // ===== CONSTANTES =====
@@ -496,8 +500,12 @@ class NPCStateManager {
   static startWork(npc: NPC, context: StateContext): Partial<NPC> {
     const { buildings, reservations } = context;
 
-    if (npc.type === "miner" || npc.type === "lumberjack") {
-      const resourceType = npc.type === "miner" ? "stone" : "wood";
+    if (!npc.assignedWork) {
+      return { state: "idle" }; // Sem trabalho atribuído
+    }
+
+    if (npc.assignedWork === "miner" || npc.assignedWork === "lumberjack") {
+      const resourceType = npc.assignedWork === "miner" ? "stone" : "wood";
       const resource = NPCUtils.findNearestResource(npc, resourceType, reservations);
 
       if (resource) {
@@ -511,12 +519,12 @@ class NPCStateManager {
       }
     }
 
-    if (npc.type === "farmer") {
+    if (npc.assignedWork === "farmer") {
       return this.handleFarmerCycle(npc, buildings);
     }
 
-    // Para outros tipos, ir para workplace
-    const workplaceType = Object.entries(WORKPLACE_MAPPING).find(([_, npcTypeId]) => npcTypeId === npc.type)?.[0];
+    // Para outros trabalhos, ir para workplace
+    const workplaceType = Object.entries(WORKPLACE_MAPPING).find(([_, workId]) => workId === npc.assignedWork)?.[0];
     if (workplaceType) {
       const workplace = buildings.find(b => b.type === workplaceType);
       if (workplace) {
@@ -590,7 +598,7 @@ class NPCStateManager {
   }
 
   static completeResourceGathering(npc: NPC): Partial<NPC> {
-    const resourceType = npc.type === "lumberjack" ? "wood" : "stone";
+    const resourceType = npc.assignedWork === "lumberjack" ? "wood" : "stone";
 
     if (npc.inventory.type === '' || npc.inventory.type === resourceType) {
       // Marcar recurso como coletado
@@ -604,6 +612,13 @@ class NPCStateManager {
         if (resourceIndex !== -1) {
           window.naturalResources[resourceIndex].lastCollected = Date.now();
         }
+      }
+
+      // Dar XP para o trabalho atual
+      if (npc.assignedWork) {
+        import('./useNpcStore').then(({ useNpcStore }) => {
+          useNpcStore.getState().addWorkExperience(npc.id, npc.assignedWork!, 5);
+        }).catch(console.error);
       }
 
       // Atualizar métricas
@@ -727,18 +742,14 @@ export const useNpcStore = create<NPCStoreState>()(
     npcIdCounter: 0,
     resourceReservations: [],
 
-    spawnNPC: (type, homeId, position) => {
-      if (!npcTypes[type]) {
-        console.error(`Tipo de NPC inválido: ${type}`);
-        return "";
-      }
-
+    spawnNPC: (homeId, position, name) => {
       const id = `npc_${get().npcIdCounter}`;
+      const npcName = name || `Aldeão ${get().npcIdCounter}`;
 
       const newNPC: NPC = {
         id,
-        type,
-        originalType: type === "villager" ? "villager" : undefined,
+        type: "villager",
+        assignedWork: null,
         homeId,
         position,
         targetPosition: null,
@@ -766,21 +777,15 @@ export const useNpcStore = create<NPCStoreState>()(
           efficiency: 1.0
         },
         currentSchedule: "home",
-        name: `${type} ${get().npcIdCounter}`,
+        name: npcName,
         skills: {
           gathering: 10 + Math.random() * 20,
           working: 10 + Math.random() * 20,
           efficiency: 10 + Math.random() * 20,
           experience: 0
         },
-        ...(type === "farmer" && {
-          farmerData: {
-            currentTask: "waiting",
-            targetFarmId: null,
-            targetSiloId: null,
-            selectedSeed: null
-          }
-        })
+        workExperience: {},
+        currentLevel: 1
       };
 
       set((state) => ({
@@ -793,7 +798,7 @@ export const useNpcStore = create<NPCStoreState>()(
         useNpcMetrics.getState().initializeNPC(id);
       }).catch(console.error);
 
-      console.log(`NPC ${type} criado com ID ${id} em ${position}`);
+      console.log(`NPC aldeão criado com ID ${id} em ${position}`);
       return id;
     },
 
@@ -996,16 +1001,93 @@ return workplace ? workplace.id : null;
       }));
     },
 
-    restoreVillagerType: (npcId: string) => {
+    assignWork: (npcId: string, workType: string) => {
       set((state) => ({
         npcs: state.npcs.map(npc => {
-          if (npc.id === npcId && npc.originalType === "villager") {
+          if (npc.id === npcId) {
+            const updatedNpc = {
+              ...npc,
+              assignedWork: workType,
+              state: "idle" as const,
+              targetPosition: null,
+              targetResource: null,
+              targetBuildingId: null,
+              workProgress: 0
+            };
+
+            // Adicionar dados específicos do trabalho se necessário
+            if (workType === "farmer") {
+              updatedNpc.farmerData = {
+                currentTask: "waiting",
+                targetFarmId: null,
+                targetSiloId: null,
+                selectedSeed: null
+              };
+            }
+
+            return updatedNpc;
+          }
+          return npc;
+        }),
+      }));
+      console.log(`NPC ${npcId} agora trabalha como ${workType}`);
+    },
+
+    removeWork: (npcId: string) => {
+      set((state) => ({
+        npcs: state.npcs.map(npc => {
+          if (npc.id === npcId) {
             return {
               ...npc,
-              type: "villager",
+              assignedWork: null,
               farmerData: undefined,
-              isWorkingManually: false
+              state: "idle" as const,
+              targetPosition: null,
+              targetResource: null,
+              targetBuildingId: null,
+              workProgress: 0
             };
+          }
+          return npc;
+        }),
+      }));
+      console.log(`NPC ${npcId} não tem mais trabalho atribuído`);
+    },
+
+    addWorkExperience: (npcId: string, workType: string, amount: number) => {
+      set((state) => ({
+        npcs: state.npcs.map(npc => {
+          if (npc.id === npcId) {
+            const currentXP = npc.workExperience[workType] || 0;
+            const newXP = currentXP + amount;
+            const newLevel = Math.floor(newXP / 100) + 1; // 100 XP por nível
+
+            const updatedNpc = {
+              ...npc,
+              workExperience: {
+                ...npc.workExperience,
+                [workType]: newXP
+              },
+              currentLevel: Math.max(npc.currentLevel, newLevel),
+              skills: {
+                ...npc.skills,
+                experience: npc.skills.experience + amount,
+                [workType === "farmer" ? "working" : 
+                  workType === "miner" || workType === "lumberjack" ? "gathering" : 
+                  "efficiency"]: Math.min(100, 
+                    npc.skills[workType === "farmer" ? "working" : 
+                      workType === "miner" || workType === "lumberjack" ? "gathering" : 
+                      "efficiency"] + amount * 0.1
+                  )
+              }
+            };
+
+            // Log de level up
+            if (newLevel > npc.currentLevel) {
+              console.log(`${npc.name} subiu para o nível ${newLevel} em ${workType}!`);
+            }
+
+            return updatedNpc;
           }
           return npc;
         }),

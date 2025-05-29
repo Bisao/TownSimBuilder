@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { NPC, useNpcStore } from "../game/stores/useNpcStore";
-import { npcTypes } from "../game/constants/npcs";
+import { npcTypes, workTypes } from "../game/constants/npcs";
 import { useBuildingStore } from "../game/stores/useBuildingStore";
 import { useGameStore } from "../game/stores/useGameStore";
 import { useDraggable } from "../hooks/useDraggable";
@@ -16,7 +16,7 @@ interface NpcPanelProps {
 }
 
 const NpcPanel: React.FC<NpcPanelProps> = ({ npc, onClose }) => {
-  const { updateNpc, assignNpcToBuilding, spawnNPC } = useNpcStore();
+  const { updateNpc, assignWork, removeWork, spawnNPC } = useNpcStore();
   const { buildings } = useBuildingStore();
 
   // Verificar se é um NPC temporário (casa vazia)
@@ -28,12 +28,14 @@ const NpcPanel: React.FC<NpcPanelProps> = ({ npc, onClose }) => {
   const [showInventory, setShowInventory] = useState(false);
   const [showNpcCreation, setShowNpcCreation] = useState(false);
   const [showTasks, setShowTasks] = useState(false);
+  const [showWorkSelection, setShowWorkSelection] = useState(false);
 
   if (!npc) return null;
 
   // Removido: auto-start de trabalho - agora só inicia manualmente via botão
 
   const npcType = npcTypes[npc.type];
+  const currentWork = npc.assignedWork ? workTypes[npc.assignedWork] : null;
   const stateTranslations = {
     idle: "Parado",
     moving: "Movendo",
@@ -104,21 +106,26 @@ const NpcPanel: React.FC<NpcPanelProps> = ({ npc, onClose }) => {
         <div className="flex justify-between items-center mb-6">
             <div className="flex items-center gap-3">
               <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
-                npc.type === "miner" ? "bg-blue-100" :
-                npc.type === "lumberjack" ? "bg-green-100" :
-                npc.type === "farmer" ? "bg-yellow-100" : "bg-orange-100"
+                currentWork?.id === "miner" ? "bg-blue-100" :
+                currentWork?.id === "lumberjack" ? "bg-green-100" :
+                currentWork?.id === "farmer" ? "bg-yellow-100" :
+                currentWork?.id === "baker" ? "bg-orange-100" : "bg-gray-100"
               }`}>
                 <i className={`fa-solid ${
-                  npc.type === "miner" ? "fa-helmet-safety" :
-                  npc.type === "lumberjack" ? "fa-tree" :
-                  npc.type === "farmer" ? "fa-wheat-awn" : "fa-bread-slice"
+                  currentWork?.icon || "fa-user"
                 } text-xl ${
-                  npc.type === "miner" ? "text-blue-600" :
-                  npc.type === "lumberjack" ? "text-green-600" :
-                  npc.type === "farmer" ? "text-yellow-600" : "text-orange-600"
+                  currentWork?.id === "miner" ? "text-blue-600" :
+                  currentWork?.id === "lumberjack" ? "text-green-600" :
+                  currentWork?.id === "farmer" ? "text-yellow-600" :
+                  currentWork?.id === "baker" ? "text-orange-600" : "text-gray-600"
                 }`}></i>
               </div>
-              <h2 className="text-xl font-bold">{npcType?.name || npc.type}</h2>
+              <div>
+                <h2 className="text-xl font-bold">{npc.name}</h2>
+                <p className="text-sm text-gray-600">
+                  {currentWork ? currentWork.name : "Sem trabalho"}
+                </p>
+              </div>
             </div>
             <div className="flex gap-2">
               <button 
@@ -194,6 +201,61 @@ const NpcPanel: React.FC<NpcPanelProps> = ({ npc, onClose }) => {
                   ></div>
                 </div>
               </div>
+            </div>
+          </div>
+
+          <div className="bg-gray-50 p-4 rounded-lg">
+            <h3 className="font-semibold mb-2 text-gray-700">Trabalho</h3>
+            <div className="space-y-2">
+              {currentWork ? (
+                <div>
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="flex items-center gap-2">
+                      <i className={`fa-solid ${currentWork.icon} text-sm`}></i>
+                      <span className="font-medium">{currentWork.name}</span>
+                    </div>
+                    <span className="text-sm text-gray-500">Nível {npc.currentLevel}</span>
+                  </div>
+                  
+                  {npc.assignedWork && npc.workExperience[npc.assignedWork] && (
+                    <div>
+                      <div className="flex justify-between text-sm mb-1">
+                        <span>Experiência</span>
+                        <span>{npc.workExperience[npc.assignedWork]} XP</span>
+                      </div>
+                      <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
+                        <div 
+                          className="h-full bg-blue-500" 
+                          style={{width: `${(npc.workExperience[npc.assignedWork] % 100)}%`}}
+                        ></div>
+                      </div>
+                    </div>
+                  )}
+                  
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      removeWork(npc.id);
+                    }}
+                    className="w-full mt-2 px-3 py-1 bg-red-500 hover:bg-red-600 text-white rounded text-sm transition-colors"
+                  >
+                    Remover Trabalho
+                  </button>
+                </div>
+              ) : (
+                <div className="text-center">
+                  <p className="text-gray-500 mb-2">Nenhum trabalho atribuído</p>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setShowWorkSelection(true);
+                    }}
+                    className="w-full px-3 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded transition-colors"
+                  >
+                    Atribuir Trabalho
+                  </button>
+                </div>
+              )}
             </div>
           </div>
 
@@ -364,7 +426,7 @@ const NpcPanel: React.FC<NpcPanelProps> = ({ npc, onClose }) => {
 
           <div className="bg-gray-50 p-4 rounded-lg">
             <h3 className="font-semibold mb-2 text-gray-700">Trabalho Autônomo</h3>
-            {npc.type === "miner" && npc.controlMode === "autonomous" && (
+            {npc.assignedWork === "miner" && npc.controlMode === "autonomous" && (
               <button
                 onClick={(e) => {
                   e.stopPropagation();
@@ -382,7 +444,7 @@ const NpcPanel: React.FC<NpcPanelProps> = ({ npc, onClose }) => {
                  npc.state === "moving" ? "Movendo..." : "Iniciar Mineração"}
               </button>
             )}
-             {npc.type === "lumberjack" && npc.controlMode === "autonomous" && (
+             {npc.assignedWork === "lumberjack" && npc.controlMode === "autonomous" && (
               <button
                 onClick={(e) => {
                   e.stopPropagation();
@@ -400,7 +462,7 @@ const NpcPanel: React.FC<NpcPanelProps> = ({ npc, onClose }) => {
                  npc.state === "moving" ? "Movendo..." : "Iniciar Corte"}
               </button>
             )}
-            {npc.type === "farmer" && npc.controlMode === "autonomous" && (
+            {npc.assignedWork === "farmer" && npc.controlMode === "autonomous" && (
               <div className="space-y-3">
                 {npc.farmerData?.selectedSeed && (
                   <div className="p-3 bg-yellow-50 rounded-lg border border-yellow-200">
@@ -468,13 +530,11 @@ const NpcPanel: React.FC<NpcPanelProps> = ({ npc, onClose }) => {
                 </button>
               </div>
             )}
-            {npc.type === "baker" && npc.controlMode === "autonomous" && (
+            {npc.assignedWork === "baker" && npc.controlMode === "autonomous" && (
               <button
-                onClick={() => {
-                  if (npc.state === "idle") {
-                    npc.state = "working";
-                    npc.workProgress = 0;
-                  }
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleWorkClick();
                 }}
                 className={`w-full px-4 py-2 rounded-lg ${
                   npc.state === "working" 
@@ -485,6 +545,23 @@ const NpcPanel: React.FC<NpcPanelProps> = ({ npc, onClose }) => {
               >
                 {npc.state === "working" ? "Assando..." : "Assar"}
               </button>
+            )}
+
+            {!npc.assignedWork && npc.controlMode === "autonomous" && (
+              <div className="text-center p-4 bg-yellow-50 rounded-lg border border-yellow-200">
+                <p className="text-yellow-700 mb-2">
+                  Este NPC não tem trabalho atribuído
+                </p>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setShowWorkSelection(true);
+                  }}
+                  className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded font-medium transition-colors"
+                >
+                  Atribuir Trabalho
+                </button>
+              </div>
             )}
 
             {npc.controlMode === "manual" && (
@@ -674,6 +751,67 @@ const NpcPanel: React.FC<NpcPanelProps> = ({ npc, onClose }) => {
           npc={npc}
           onClose={() => setShowTasks(false)}
         />
+      )}
+
+      {showWorkSelection && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[10000]"
+             onClick={(e) => {
+               if (e.target === e.currentTarget) setShowWorkSelection(false);
+               e.stopPropagation();
+             }}>
+          <div className="bg-white rounded-xl p-6 w-96 max-h-[90vh] overflow-y-auto">
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-lg font-bold">Escolher Trabalho</h3>
+              <button 
+                onClick={() => setShowWorkSelection(false)}
+                className="text-gray-500 hover:text-gray-700"
+              >
+                <i className="fa-solid fa-times"></i>
+              </button>
+            </div>
+
+            <p className="text-gray-600 mb-4">
+              Escolha um trabalho para {npc.name}. Eles ganharão experiência realizando esse trabalho.
+            </p>
+
+            <div className="space-y-2">
+              {Object.values(workTypes).map(work => (
+                <button
+                  key={work.id}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    assignWork(npc.id, work.id);
+                    setShowWorkSelection(false);
+                  }}
+                  className="w-full p-3 text-left rounded-lg border hover:bg-gray-50 transition-colors"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
+                      work.id === "miner" ? "bg-blue-100" :
+                      work.id === "lumberjack" ? "bg-green-100" :
+                      work.id === "farmer" ? "bg-yellow-100" :
+                      work.id === "baker" ? "bg-orange-100" : "bg-purple-100"
+                    }`}>
+                      <i className={`fa-solid ${work.icon} ${
+                        work.id === "miner" ? "text-blue-600" :
+                        work.id === "lumberjack" ? "text-green-600" :
+                        work.id === "farmer" ? "text-yellow-600" :
+                        work.id === "baker" ? "text-orange-600" : "text-purple-600"
+                      }`}></i>
+                    </div>
+                    <div className="flex-1">
+                      <div className="font-medium">{work.name}</div>
+                      <div className="text-sm text-gray-500">{work.description}</div>
+                      <div className="text-xs text-gray-400 capitalize">
+                        Categoria: {work.category}
+                      </div>
+                    </div>
+                  </div>
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

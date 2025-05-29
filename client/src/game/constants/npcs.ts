@@ -9,6 +9,18 @@ export interface NPCType {
   color: string; // Cor para renderização
 }
 
+// Tipos de trabalho disponíveis para os NPCs
+export interface WorkType {
+  id: string;
+  name: string;
+  description: string;
+  icon: string;
+  category: 'gathering' | 'crafting' | 'farming' | 'refining';
+  resourceType?: string;
+  buildingType?: string;
+  experienceMultiplier: number;
+}
+
 export const npcTypes: Record<string, NPCType> = {
   villager: {
     id: "villager",
@@ -18,49 +30,62 @@ export const npcTypes: Record<string, NPCType> = {
     speed: 0.12,
     workRadius: 8,
     color: "#808080", // Cinza
-  },
+  }
+};
+
+// Tipos de trabalho disponíveis
+export const workTypes: Record<string, WorkType> = {
   farmer: {
     id: "farmer",
     name: "Fazendeiro",
-    profession: "Agricultura",
-    description: "Trabalha em fazendas para aumentar a produção de trigo",
-    speed: 0.15,
-    workRadius: 10,
-    color: "#006400", // Verde escuro
+    description: "Cultiva plantas e colhe recursos agrícolas",
+    icon: "fa-wheat-awn",
+    category: "farming",
+    buildingType: "farm",
+    experienceMultiplier: 1.0
   },
   lumberjack: {
-    id: "lumberjack",
+    id: "lumberjack", 
     name: "Lenhador",
-    profession: "Extração",
-    description: "Trabalha em serrarias para aumentar a produção de madeira",
-    speed: 0.12,
-    workRadius: 8,
-    color: "#8B4513", // Marrom
+    description: "Coleta madeira das árvores",
+    icon: "fa-tree",
+    category: "gathering",
+    resourceType: "wood",
+    experienceMultiplier: 1.0
+  },
+  miner: {
+    id: "miner",
+    name: "Minerador", 
+    description: "Extrai pedra e minérios",
+    icon: "fa-helmet-safety",
+    category: "gathering",
+    resourceType: "stone",
+    experienceMultiplier: 1.0
   },
   baker: {
     id: "baker",
     name: "Padeiro",
-    profession: "Produção",
-    description: "Trabalha em padarias para aumentar a produção de pão",
-    speed: 0.10,
-    workRadius: 5,
-    color: "#D2691E", // Marrom claro
+    description: "Produz pães e outros alimentos",
+    icon: "fa-bread-slice",
+    category: "crafting",
+    buildingType: "bakery",
+    experienceMultiplier: 1.2
   },
-  miner: {
-    id: "miner",
-    name: "Minerador",
-    profession: "Extração",
-    description: "Trabalha em minas para aumentar a produção de pedra",
-    speed: 0.11,
-    workRadius: 7,
-    color: "#708090", // Cinza
-  },
+  refiner: {
+    id: "refiner",
+    name: "Refinador",
+    description: "Refina recursos brutos em materiais processados",
+    icon: "fa-cog",
+    category: "refining",
+    experienceMultiplier: 1.5
+  }
 };
 
-// Mapeamento de que tipo de NPC trabalha em cada tipo de edifício
+// Mapeamento de que tipo de trabalho funciona em cada tipo de edifício
 export const workplaceMapping: Record<string, string> = {
   farm: "farmer",
   lumberMill: "lumberjack",
   bakery: "baker",
   stoneMine: "miner",
+  silo: "refiner"
 };

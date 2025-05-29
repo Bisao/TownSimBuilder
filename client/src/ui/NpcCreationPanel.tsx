@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { useDraggable } from "../hooks/useDraggable";
 import { useNpcStore } from "../game/stores/useNpcStore";
@@ -84,55 +83,17 @@ const NpcCreationPanel: React.FC<NpcCreationPanelProps> = ({
 
   const selectedNpcClass = npcClasses.find(c => c.id === selectedClass);
 
-  const handleCreateNpc = async () => {
-    if (!npcName.trim()) {
-      alert("Por favor, digite um nome para o NPC");
-      return;
-    }
+  const handleCreateNpc = () => {
+    if (!npcName.trim()) return;
 
-    setIsCreating(true);
+    const newNpcId = spawnNPC(
+      houseId,
+      [housePosition[0] + 0.5, 0, housePosition[1] + 0.5],
+      npcName.trim()
+    );
 
-    try {
-      console.log("Tentando criar NPC:", {
-        type: selectedClass,
-        houseId,
-        position: [housePosition[0], 0, housePosition[1]]
-      });
-
-      const newNpcId = spawnNPC(
-        selectedClass as any,
-        houseId,
-        [housePosition[0], 0, housePosition[1]]
-      );
-
-      console.log("NPC criado com ID:", newNpcId);
-
-      if (newNpcId) {
-        // Customizar nome e habilidades baseadas na classe
-        const npcClass = npcClasses.find(c => c.id === selectedClass);
-        if (npcClass) {
-          const { updateNpc } = useNpcStore.getState();
-          updateNpc(newNpcId, {
-            name: npcName.trim(),
-            skills: {
-              gathering: npcClass.baseStats.gathering + Math.random() * 10,
-              working: npcClass.baseStats.working + Math.random() * 10,
-              efficiency: npcClass.baseStats.efficiency + Math.random() * 10,
-              experience: 0
-            }
-          });
-        }
-
-        onNpcCreated(newNpcId);
-        onClose();
-      } else {
-        alert("Erro ao criar NPC. Tente novamente.");
-      }
-    } catch (error) {
-      console.error("Erro ao criar NPC:", error);
-      alert("Erro ao criar NPC. Tente novamente.");
-    } finally {
-      setIsCreating(false);
+    if (newNpcId) {
+      onNpcCreated(newNpcId);
     }
   };
 
@@ -203,7 +164,7 @@ const NpcCreationPanel: React.FC<NpcCreationPanelProps> = ({
                   </div>
                 </div>
                 <p className="text-sm text-slate-400 mb-3">{npcClass.description}</p>
-                
+
                 {/* Stats Preview */}
                 <div className="space-y-1">
                   <div className="flex justify-between text-xs">
@@ -227,7 +188,7 @@ const NpcCreationPanel: React.FC<NpcCreationPanelProps> = ({
         {/* Character Customization */}
         <div className="mb-6">
           <h3 className="text-lg font-semibold text-white mb-4">Personalização</h3>
-          
+
           <div className="bg-slate-800/50 rounded-lg p-4 border border-slate-600">
             <div className="mb-4">
               <label className="block text-sm font-medium text-white mb-2">
@@ -258,7 +219,7 @@ const NpcCreationPanel: React.FC<NpcCreationPanelProps> = ({
                   <div className="flex-1">
                     <h5 className="font-semibold text-white">{selectedNpcClass.name}</h5>
                     <p className="text-sm text-slate-400 mb-2">{selectedNpcClass.description}</p>
-                    
+
                     {/* Stats Bars */}
                     <div className="space-y-2">
                       <div className="flex items-center gap-2">
