@@ -8,6 +8,7 @@ import SeedSelectionPanel from "./SeedSelectionPanel";
 import SkillTreePanel from "./SkillTreePanel";
 import InventoryPanel from "./InventoryPanel";
 import NpcCreationPanel from "./NpcCreationPanel";
+import TaskPanel from "./TaskPanel";
 
 interface NpcPanelProps {
   npc: NPC | null;
@@ -26,6 +27,7 @@ const NpcPanel: React.FC<NpcPanelProps> = ({ npc, onClose }) => {
   const [showSkillTree, setShowSkillTree] = useState(false);
   const [showInventory, setShowInventory] = useState(false);
   const [showNpcCreation, setShowNpcCreation] = useState(false);
+  const [showTasks, setShowTasks] = useState(false);
 
   if (!npc) return null;
 
@@ -239,8 +241,22 @@ const NpcPanel: React.FC<NpcPanelProps> = ({ npc, onClose }) => {
           <div className="bg-gray-50 p-4 rounded-lg">
             <h3 className="font-semibold mb-2 text-gray-700">Modo de Controle</h3>
 
-            {/* Skill Tree Button */}
+            {/* Tasks Button */}
             <div className="mb-4">
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setShowTasks(true);
+                }}
+                className="w-full px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg font-medium transition-colors flex items-center justify-center gap-2"
+              >
+                <i className="fa-solid fa-tasks"></i>
+                📋 Tarefas
+              </button>
+            </div>
+
+            {/* Skill Tree Button */}
+            <div className="mb-4"></div>
               <button
                 onClick={(e) => {
                   e.stopPropagation();
@@ -630,6 +646,13 @@ const NpcPanel: React.FC<NpcPanelProps> = ({ npc, onClose }) => {
               }
             }, 100);
           }}
+        />
+      )}
+
+      {showTasks && (
+        <TaskPanel
+          npc={npc}
+          onClose={() => setShowTasks(false)}
         />
       )}
     </div>
