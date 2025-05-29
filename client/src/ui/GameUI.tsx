@@ -62,6 +62,25 @@ const GameUI: React.FC = () => {
         </div>
       </div>
 
+      {/* Game Panels */}
+      {showBuildingPanel && <BuildingPanel />}
+      {showNpcPanel && <NpcPanel />}
+      {showResourcePanel && <ResourcePanel />}
+      {showMarketWindow && <MarketWindow />}
+      {showNpcMetrics && <NpcMetricsPanel />}
+      {showSeedSelection && <SeedSelectionPanel />}
+      {showSiloPanel && <SiloPanel />}
+      {showResearchPanel && <ResearchPanel />}
+      {showEconomyPanel && <EconomyPanel />}
+      {showEventPanel && <EventPanel />}
+      <TaskPanel />
+    </div>
+  );
+};
+
+export default GameUI;
+      </div>
+
       {/* Panels */}
       {showResourcePanel && <ResourcePanel />}
       {showBuildingPanel && <BuildingPanel />}
