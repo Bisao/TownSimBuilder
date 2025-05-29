@@ -178,9 +178,8 @@ const GameUI = () => {
       setSelectedNpc(event.detail);
     };
 
-    const handleNpcHouseClick = (e: CustomEvent<Building>) => {
-      const house = e.detail;
-      const npc = useNpcStore.getState().npcs.find(n => n.homeId === house.id);
+    const handleNpcHouseClick = (e: CustomEvent<{npc: NPC, building: Building}>) => {
+      const { npc } = e.detail;
       if (npc) {
         setSelectedNpc(npc);
         setShowNpcPanel(true); // Open NPC panel when house is clicked

@@ -101,18 +101,13 @@ const Building = ({ building, onClick }: BuildingProps) => {
     if (building.type === "market" && onClick) {
       onClick(building);
     } else if (building.type.includes("House")) {
-      // Encontrar o NPC associado a esta casa e abrir seu painel
+      // Encontrar o NPC associado a esta casa e disparar evento
       const houseNpc = houseNpcs[0]; // Pegar o primeiro NPC da casa
       if (houseNpc) {
-        // Usar o GameStore para definir o NPC selecionado e abrir o painel
-        const { setSelectedNpc, toggleNpcPanel } = useGameStore.getState();
-        setSelectedNpc(houseNpc.id);
-        
-        // Se o painel não estiver aberto, abri-lo
-        const { showNpcPanel } = useGameStore.getState();
-        if (!showNpcPanel) {
-          toggleNpcPanel();
-        }
+        // Disparar evento customizado para abrir o painel do NPC
+        window.dispatchEvent(new CustomEvent('npcHouseClick', { 
+          detail: { npc: houseNpc, building: building }
+        }));
       }
     } else if (building.type === 'silo') {
       window.dispatchEvent(new CustomEvent('siloClick', { detail: building }));
