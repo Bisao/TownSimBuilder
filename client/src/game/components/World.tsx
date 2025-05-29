@@ -192,7 +192,7 @@ const World: React.FC<WorldProps> = ({ onMarketSelect }) => {
           .filter(resource => !resource.lastCollected)
           .map((resource, index) => (
             <Resource
-              key={`resource-${resource.position[0]}-${resource.position[1]}`}
+              key={`resource-${resource.type}-${resource.position[0]}-${resource.position[1]}-${index}`}
               type={resource.type}
               position={[resource.position[0], 0, resource.position[1]]}
               color={resourceTypes[resource.type]?.color || "#ffffff"}
