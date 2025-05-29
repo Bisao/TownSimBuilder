@@ -79,15 +79,15 @@ const World: React.FC<WorldProps> = ({ onMarketSelect }) => {
   // Generate natural resources on the map
   const generateNaturalResources = () => {
     const resources: NaturalResource[] = [];
-    const MAP_SIZE = 50;
-    const STONE_COUNT = 15;
-    const WOOD_COUNT = 15;
-    const MIN_DISTANCE = 3; // Distância mínima entre recursos
-    const MARGIN = 8; // Margem das bordas
+    const MAP_SIZE = 40; // Reduced map size to match terrain
+    const STONE_COUNT = 20;
+    const WOOD_COUNT = 25;
+    const MIN_DISTANCE = 2.5; // Minimum distance between resources
+    const MARGIN = 5; // Margin from edges
 
-    // Helper function to check if position is valid (not too close to existing resources)
+    // Helper function to check if position is valid
     const isValidPosition = (x: number, z: number, existingResources: NaturalResource[]): boolean => {
-      // Check boundaries
+      // Check boundaries - keep resources within the map
       if (x < -MAP_SIZE/2 + MARGIN || x > MAP_SIZE/2 - MARGIN || 
           z < -MAP_SIZE/2 + MARGIN || z > MAP_SIZE/2 - MARGIN) {
         return false;
@@ -105,105 +105,43 @@ const World: React.FC<WorldProps> = ({ onMarketSelect }) => {
       return true;
     };
 
-    // Helper function to generate cluster around a center point
-    const generateCluster = (centerX: number, centerZ: number, type: string, count: number): NaturalResource[] => {
-      const cluster: NaturalResource[] = [];
-      const CLUSTER_RADIUS = 4;
-      
-      for (let i = 0; i < count; i++) {
-        let attempts = 0;
-        const maxAttempts = 50;
+    // Generate resources with natural distribution
+    const generateResourcesOfType = (type: string, count: number) => {
+      const typeResources: NaturalResource[] = [];
+      let attempts = 0;
+      const maxTotalAttempts = count * 50;
+
+      while (typeResources.length < count && attempts < maxTotalAttempts) {
+        // Generate random position within valid area
+        const x = Math.round((Math.random() - 0.5) * (MAP_SIZE - MARGIN * 2));
+        const z = Math.round((Math.random() - 0.5) * (MAP_SIZE - MARGIN * 2));
         
-        while (attempts < maxAttempts) {
-          // Generate position within cluster radius
-          const angle = Math.random() * Math.PI * 2;
-          const radius = Math.random() * CLUSTER_RADIUS;
-          const x = Math.round(centerX + Math.cos(angle) * radius);
-          const z = Math.round(centerZ + Math.sin(angle) * radius);
-          
-          if (isValidPosition(x, z, [...resources, ...cluster])) {
-            cluster.push({
-              type,
-              position: [x, z]
-            });
-            break;
-          }
-          attempts++;
+        if (isValidPosition(x, z, [...resources, ...typeResources])) {
+          typeResources.push({
+            type,
+            position: [x, z]
+          });
         }
+        attempts++;
       }
-      return cluster;
+
+      return typeResources;
     };
 
-    // Generate stone clusters
-    const stoneClusterCenters = [
-      [-15, -10], [10, -15], [-8, 12], [18, 8]
-    ];
-    
-    stoneClusterCenters.forEach(([centerX, centerZ]) => {
-      const clusterResources = generateCluster(centerX, centerZ, "stone", Math.floor(STONE_COUNT / stoneClusterCenters.length));
-      resources.push(...clusterResources);
-    });
+    // Generate stone resources
+    const stoneResources = generateResourcesOfType("stone", STONE_COUNT);
+    resources.push(...stoneResources);
 
-    // Generate wood clusters
-    const woodClusterCenters = [
-      [-12, 15], [15, -8], [5, 18], [-18, -5]
-    ];
-    
-    woodClusterCenters.forEach(([centerX, centerZ]) => {
-      const clusterResources = generateCluster(centerX, centerZ, "wood", Math.floor(WOOD_COUNT / woodClusterCenters.length));
-      resources.push(...clusterResources);
-    });
-
-    // Fill remaining resources randomly if needed
-    const remainingStone = STONE_COUNT - resources.filter(r => r.type === "stone").length;
-    const remainingWood = WOOD_COUNT - resources.filter(r => r.type === "wood").length;
-    
-    // Add remaining stone resources
-    for (let i = 0; i < remainingStone; i++) {
-      let attempts = 0;
-      const maxAttempts = 100;
-      
-      while (attempts < maxAttempts) {
-        const x = Math.round((Math.random() - 0.5) * (MAP_SIZE - MARGIN * 2));
-        const z = Math.round((Math.random() - 0.5) * (MAP_SIZE - MARGIN * 2));
-        
-        if (isValidPosition(x, z, resources)) {
-          resources.push({
-            type: "stone",
-            position: [x, z]
-          });
-          break;
-        }
-        attempts++;
-      }
-    }
-
-    // Add remaining wood resources
-    for (let i = 0; i < remainingWood; i++) {
-      let attempts = 0;
-      const maxAttempts = 100;
-      
-      while (attempts < maxAttempts) {
-        const x = Math.round((Math.random() - 0.5) * (MAP_SIZE - MARGIN * 2));
-        const z = Math.round((Math.random() - 0.5) * (MAP_SIZE - MARGIN * 2));
-        
-        if (isValidPosition(x, z, resources)) {
-          resources.push({
-            type: "wood",
-            position: [x, z]
-          });
-          break;
-        }
-        attempts++;
-      }
-    }
+    // Generate wood resources
+    const woodResources = generateResourcesOfType("wood", WOOD_COUNT);
+    resources.push(...woodResources);
 
     setNaturalResources(resources);
 
     // Make resources available globally for NPCs
     window.naturalResources = resources;
 
-    console.log(`Generated ${resources.length} natural resources`);
+    console.log(`Generated ${resources.length} natural resources (${stoneResources.length} stone, ${woodResources.length} wood)`);
   };
 
   // Create initial market building

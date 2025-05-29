@@ -93,14 +93,14 @@ export const useResourceStore = create<ResourceState>()(
 
     initializeResources: () => {
       const resources: Resource[] = [];
-      const MAP_SIZE = 50;
-      const RESOURCE_COUNT = 30;
-      const MARGIN = 8;
-      const MIN_DISTANCE = 3;
+      const MAP_SIZE = 40; // Match terrain size
+      const RESOURCE_COUNT = 45;
+      const MARGIN = 5;
+      const MIN_DISTANCE = 2;
 
       // Helper function to check if position is valid
       const isValidPosition = (x: number, z: number, existingResources: Resource[]): boolean => {
-        // Check boundaries
+        // Check boundaries - ensure resources stay within map
         if (x < -MAP_SIZE/2 + MARGIN || x > MAP_SIZE/2 - MARGIN || 
             z < -MAP_SIZE/2 + MARGIN || z > MAP_SIZE/2 - MARGIN) {
           return false;
@@ -118,26 +118,23 @@ export const useResourceStore = create<ResourceState>()(
         return true;
       };
 
-      // Generate resources with proper spacing
-      for (let i = 0; i < RESOURCE_COUNT; i++) {
-        let attempts = 0;
-        const maxAttempts = 100;
+      // Generate resources naturally distributed
+      let attempts = 0;
+      const maxTotalAttempts = RESOURCE_COUNT * 100;
+
+      while (resources.length < RESOURCE_COUNT && attempts < maxTotalAttempts) {
+        // Generate position within the entire valid area
+        const x = Math.round((Math.random() - 0.5) * (MAP_SIZE - MARGIN * 2));
+        const z = Math.round((Math.random() - 0.5) * (MAP_SIZE - MARGIN * 2));
         
-        while (attempts < maxAttempts) {
-          // Generate position within valid area
-          const x = Math.round((Math.random() - 0.5) * (MAP_SIZE - MARGIN * 2));
-          const z = Math.round((Math.random() - 0.5) * (MAP_SIZE - MARGIN * 2));
-          
-          if (isValidPosition(x, z, resources)) {
-            const id = `resource-${i}`;
-            resources.push({ id, x, z });
-            break;
-          }
-          attempts++;
+        if (isValidPosition(x, z, resources)) {
+          const id = `resource-${resources.length}`;
+          resources.push({ id, x, z });
         }
+        attempts++;
       }
       
-      console.log(`Generated ${resources.length} map resources with cluster distribution`);
+      console.log(`Generated ${resources.length} map resources naturally distributed`);
       set({ mapResources: resources });
     },
   }))
