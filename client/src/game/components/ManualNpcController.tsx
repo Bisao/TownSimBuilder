@@ -66,12 +66,18 @@ const ManualNpcController: React.FC<ManualNpcControllerProps> = ({ npcId }) => {
         case 'Escape':
           // Sair do controle manual
           useNpcStore.getState().setNpcControlMode(npcId, 'autonomous');
-          useGameStore.getState().setControlledNpc(null);
+          const gameStore = useGameStore.getState();
+          gameStore.setControlledNpc(null);
+          
+          // Desativar modo manual
+          useGameStore.setState({ isManualControl: false });
           
           // Resetar câmera
-          const { updateCameraPosition, updateCameraTarget } = useGameStore.getState();
+          const { updateCameraPosition, updateCameraTarget } = gameStore;
           updateCameraPosition([20, 20, 20]);
           updateCameraTarget([0, 0, 0]);
+          
+          console.log(`Saindo do modo manual para NPC ${npcId}`);
           break;
       }
     };

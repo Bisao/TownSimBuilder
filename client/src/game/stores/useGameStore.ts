@@ -166,7 +166,13 @@ export const useGameStore = create<GameState>()(
     setSelectedNpc: (npcId) => set({ selectedNpc: npcId }),
     setSelectedBuilding: (building) => set({ selectedBuilding: building }),
     setSelectedSilo: (silo) => set({ selectedSilo: silo }),
-    setControlledNpc: (npcId) => set({ controlledNpcId: npcId, isManualControl: npcId !== null }),
+    setControlledNpc: (npcId) => {
+      console.log(`setControlledNpc called with: ${npcId}`);
+      set({ 
+        controlledNpcId: npcId, 
+        isManualControl: npcId !== null 
+      });
+    },
 
     // Nova função para ser chamada após o posicionamento bem-sucedido
     onBuildingPlaced: () => {

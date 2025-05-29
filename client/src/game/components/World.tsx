@@ -298,7 +298,9 @@ const World: React.FC<WorldProps> = ({ onMarketSelect }) => {
         {gameMode === "build" && <PlacementIndicator />}
 
         {/* Manual NPC Controller */}
-        <ManualNpcController />
+        {isManualControl && controlledNpcId && (
+          <ManualNpcController npcId={controlledNpcId} />
+        )}
       </group>
     </>
   );

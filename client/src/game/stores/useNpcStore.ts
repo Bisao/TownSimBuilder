@@ -955,6 +955,7 @@ return workplace ? workplace.id : null;
     },
 
     setNpcControlMode: (npcId: string, mode: "autonomous" | "manual") => {
+      console.log(`setNpcControlMode: NPC ${npcId} -> ${mode}`);
       set((state) => ({
         npcs: state.npcs.map(npc =>
           npc.id === npcId

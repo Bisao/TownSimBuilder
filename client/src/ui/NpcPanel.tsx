@@ -287,13 +287,23 @@ const NpcPanel: React.FC<NpcPanelProps> = ({ npc, onClose }) => {
               <button
                 onClick={(e) => {
                   e.stopPropagation();
+                  
+                  // Definir modo autônomo no NPC
                   useNpcStore.getState().setNpcControlMode(npc.id, "autonomous");
-                  useGameStore.getState().setControlledNpc(null);
+                  
+                  // Remover controle do GameStore
+                  const gameStore = useGameStore.getState();
+                  gameStore.setControlledNpc(null);
+                  
+                  // Desativar modo manual
+                  useGameStore.setState({ isManualControl: false });
 
                   // Resetar câmera para posição padrão
                   const { updateCameraPosition, updateCameraTarget } = useGameStore.getState();
                   updateCameraPosition([20, 20, 20]);
                   updateCameraTarget([0, 0, 0]);
+                  
+                  console.log(`Modo autônomo ativado para NPC ${npc.id}`);
                 }}
                 className={`flex-1 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
                   npc.controlMode === "autonomous" 
@@ -306,8 +316,16 @@ const NpcPanel: React.FC<NpcPanelProps> = ({ npc, onClose }) => {
               <button
                 onClick={(e) => {
                   e.stopPropagation();
+                  
+                  // Primeiro definir o modo manual no NPC
                   useNpcStore.getState().setNpcControlMode(npc.id, "manual");
-                  useGameStore.getState().setControlledNpc(npc.id);
+                  
+                  // Depois definir como controlado no GameStore
+                  const gameStore = useGameStore.getState();
+                  gameStore.setControlledNpc(npc.id);
+                  
+                  // Ativar modo manual
+                  useGameStore.setState({ isManualControl: true });
 
                   // Disparar evento para focar câmera no NPC
                   window.dispatchEvent(new CustomEvent('focusOnNpc', { 
@@ -317,6 +335,8 @@ const NpcPanel: React.FC<NpcPanelProps> = ({ npc, onClose }) => {
                       followMode: true
                     } 
                   }));
+                  
+                  console.log(`Modo manual ativado para NPC ${npc.id}`);
                 }}
                 className={`flex-1 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
                   npc.controlMode === "manual" 
