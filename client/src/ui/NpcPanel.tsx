@@ -256,7 +256,7 @@ const NpcPanel: React.FC<NpcPanelProps> = ({ npc, onClose }) => {
             </div>
 
             {/* Skill Tree Button */}
-            <div className="mb-4"></div>
+            <div className="mb-4">
               <button
                 onClick={(e) => {
                   e.stopPropagation();
