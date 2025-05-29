@@ -1,0 +1,49 @@
+useBuildingStore.ts:48 Cannot place building market at position [32, 9]
+placeBuilding @ useBuildingStore.ts:48
+createInitialMarket @ World.tsx:123
+(anonymous) @ World.tsx:73
+commitHookEffectListMount @ chunk-A3GN3WMN.js?v=a24d7128:10911
+commitPassiveMountOnFiber @ chunk-A3GN3WMN.js?v=a24d7128:12219
+commitPassiveMountEffects_complete @ chunk-A3GN3WMN.js?v=a24d7128:12191
+commitPassiveMountEffects_begin @ chunk-A3GN3WMN.js?v=a24d7128:12181
+commitPassiveMountEffects @ chunk-A3GN3WMN.js?v=a24d7128:12171
+flushPassiveEffectsImpl @ chunk-A3GN3WMN.js?v=a24d7128:13939
+flushPassiveEffects @ chunk-A3GN3WMN.js?v=a24d7128:13902
+(anonymous) @ chunk-A3GN3WMN.js?v=a24d7128:13793
+workLoop @ chunk-A3GN3WMN.js?v=a24d7128:274
+flushWork @ chunk-A3GN3WMN.js?v=a24d7128:253
+performWorkUntilDeadline @ chunk-A3GN3WMN.js?v=a24d7128:461
+chunk-A3GN3WMN.js?v=a24d7128:18167 Warning: Encountered two children with the same key, `resource-37-25`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+    at group
+    at World (https://29e9757e-ed02-450f-8db6-ef720aa3cb0f-00-1euuewvc2zjps.riker.replit.dev/src/game/components/World.tsx:34:18)
+    at Suspense
+    at Suspense
+    at ErrorBoundary (https://29e9757e-ed02-450f-8db6-ef720aa3cb0f-00-1euuewvc2zjps.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-A3GN3WMN.js?v=a24d7128:16490:5)
+    at FiberProvider (https://29e9757e-ed02-450f-8db6-ef720aa3cb0f-00-1euuewvc2zjps.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-A3GN3WMN.js?v=a24d7128:18170:21)
+    at Provider (https://29e9757e-ed02-450f-8db6-ef720aa3cb0f-00-1euuewvc2zjps.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-A3GN3WMN.js?v=a24d7128:17779:3)
+console.error @ chunk-A3GN3WMN.js?v=a24d7128:18167
+printWarning @ chunk-A3GN3WMN.js?v=a24d7128:596
+error2 @ chunk-A3GN3WMN.js?v=a24d7128:580
+warnOnInvalidKey @ chunk-A3GN3WMN.js?v=a24d7128:5224
+reconcileChildrenArray @ chunk-A3GN3WMN.js?v=a24d7128:5241
+reconcileChildFibers2 @ chunk-A3GN3WMN.js?v=a24d7128:5566
+reconcileChildren @ chunk-A3GN3WMN.js?v=a24d7128:8733
+updateFragment @ chunk-A3GN3WMN.js?v=a24d7128:8956
+beginWork @ chunk-A3GN3WMN.js?v=a24d7128:10393
+beginWork$1 @ chunk-A3GN3WMN.js?v=a24d7128:14188
+performUnitOfWork @ chunk-A3GN3WMN.js?v=a24d7128:13664
+workLoopSync @ chunk-A3GN3WMN.js?v=a24d7128:13604
+renderRootSync @ chunk-A3GN3WMN.js?v=a24d7128:13583
+performConcurrentWorkOnRoot @ chunk-A3GN3WMN.js?v=a24d7128:13115
+workLoop @ chunk-A3GN3WMN.js?v=a24d7128:274
+flushWork @ chunk-A3GN3WMN.js?v=a24d7128:253
+performWorkUntilDeadline @ chunk-A3GN3WMN.js?v=a24d7128:461
+CameraControls.tsx:35 Camera initialized: {position: Array(3), target: Array(3)}
+703chunk-A3GN3WMN.js?v=a24d7128:18167 Warning: Encountered two children with the same key, `resource-37-25`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+    at group
+    at World (https://29e9757e-ed02-450f-8db6-ef720aa3cb0f-00-1euuewvc2zjps.riker.replit.dev/src/game/components/World.tsx:34:18)
+    at Suspense
+    at Suspense
+    at ErrorBoundary (https://29e9757e-ed02-450f-8db6-ef720aa3cb0f-00-1euuewvc2zjps.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-A3GN3WMN.js?v=a24d7128:16490:5)
+    at FiberProvider (https://29e9757e-ed02-450f-8db6-ef720aa3cb0f-00-1euuewvc2zjps.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-A3GN3WMN.js?v=a24d7128:18170:21)
+    at Provider (https://29e9757e-ed02-450f-8db6-ef720aa3cb0f-00-1euuewvc2zjps.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-A3GN3WMN.js?v=a24d7128:17779:3)
