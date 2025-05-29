@@ -7,6 +7,7 @@ import { useDraggable } from "../hooks/useDraggable";
 import SeedSelectionPanel from "./SeedSelectionPanel";
 import SkillTreePanel from "./SkillTreePanel";
 import InventoryPanel from "./InventoryPanel";
+import NpcCreationPanel from "./NpcCreationPanel";
 
 interface NpcPanelProps {
   npc: NPC | null;
@@ -24,6 +25,7 @@ const NpcPanel: React.FC<NpcPanelProps> = ({ npc, onClose }) => {
   const [showSeedSelection, setShowSeedSelection] = useState(false);
   const [showSkillTree, setShowSkillTree] = useState(false);
   const [showInventory, setShowInventory] = useState(false);
+  const [showNpcCreation, setShowNpcCreation] = useState(false);
 
   if (!npc) return null;
 
@@ -204,6 +206,35 @@ const NpcPanel: React.FC<NpcPanelProps> = ({ npc, onClose }) => {
               )}
             </p>
           </div>
+
+          {/* Create NPC Section for Empty Houses */}
+          {isTemporaryNpc && (
+            <div className="bg-gradient-to-br from-blue-50 to-purple-50 p-6 rounded-lg border-2 border-blue-200 mb-4">
+              <div className="text-center">
+                <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <i className="fa-solid fa-home text-white text-2xl"></i>
+                </div>
+                <h3 className="font-bold text-lg text-gray-800 mb-2">Casa Vazia</h3>
+                <p className="text-gray-600 mb-4">
+                  Esta casa não possui um morador. Você pode criar um novo NPC para habitar este local.
+                </p>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setShowNpcCreation(true);
+                  }}
+                  className="w-full px-6 py-3 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white rounded-lg font-medium transition-all flex items-center justify-center gap-2 shadow-lg hover:shadow-xl"
+                >
+                  <i className="fa-solid fa-user-plus text-lg"></i>
+                  Criar Novo NPC
+                </button>
+                <div className="mt-3 text-xs text-gray-500 flex items-center justify-center gap-1">
+                  <i className="fa-solid fa-info-circle"></i>
+                  <span>Inspire-se no sistema de criação do Albion Online</span>
+                </div>
+              </div>
+            </div>
+          )}
 
           <div className="bg-gray-50 p-4 rounded-lg">
             <h3 className="font-semibold mb-2 text-gray-700">Modo de Controle</h3>
@@ -581,6 +612,24 @@ const NpcPanel: React.FC<NpcPanelProps> = ({ npc, onClose }) => {
         <InventoryPanel
           npc={npc}
           onClose={() => setShowInventory(false)}
+        />
+      )}
+
+      {showNpcCreation && isTemporaryNpc && building && (
+        <NpcCreationPanel
+          houseId={building.id}
+          housePosition={building.position}
+          onClose={() => setShowNpcCreation(false)}
+          onNpcCreated={(npcId) => {
+            // Fechar o painel atual e reabrir com o novo NPC
+            onClose();
+            setTimeout(() => {
+              const newNpc = useNpcStore.getState().npcs.find(n => n.id === npcId);
+              if (newNpc) {
+                window.dispatchEvent(new CustomEvent('npcClick', { detail: newNpc }));
+              }
+            }, 100);
+          }}
         />
       )}
     </div>
