@@ -101,14 +101,15 @@ const Building = ({ building, onClick }: BuildingProps) => {
     if (building.type === "market" && onClick) {
       onClick(building);
     } else if (building.type.includes("House")) {
-      // Encontrar o NPC associado a esta casa e disparar evento
-      const houseNpc = houseNpcs[0]; // Pegar o primeiro NPC da casa
-      if (houseNpc) {
-        // Disparar evento customizado para abrir o painel do NPC
-        window.dispatchEvent(new CustomEvent('npcHouseClick', { 
-          detail: { npc: houseNpc, building: building }
-        }));
-      }
+      // Disparar evento para abrir painel da casa (com ou sem NPC)
+      const houseNpc = houseNpcs[0]; // Pegar o primeiro NPC da casa se existir
+      window.dispatchEvent(new CustomEvent('houseClick', { 
+        detail: { 
+          building: building,
+          npc: houseNpc || null, // null se não houver NPC
+          hasNpc: !!houseNpc
+        }
+      }));
     } else if (building.type === 'silo') {
       window.dispatchEvent(new CustomEvent('siloClick', { detail: building }));
     }

@@ -74,9 +74,10 @@ export const useBuildingStore = create<BuildingState>()(
         }
       }
       
-      // Add the building
+      // Add the building with unique ID
+      const uniqueId = `${type}_${get().buildingIdCounter}_${Date.now()}`;
       const newBuilding: Building = {
-        id: `building_${get().buildingIdCounter}`,
+        id: uniqueId,
         type,
         position,
         rotation,

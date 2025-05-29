@@ -13,7 +13,14 @@ interface NpcPanelProps {
   onClose: () => void;
 }
 
-const NpcPanel = ({ npc, onClose }: NpcPanelProps) => {
+const NpcPanel: React.FC<NpcPanelProps> = ({ npc, onClose }) => {
+  const { updateNpc, assignNpcToBuilding, spawnNPC } = useNpcStore();
+  const { buildings } = useBuildingStore();
+
+  // Verificar se é um NPC temporário (casa vazia)
+  const isTemporaryNpc = npc.id.startsWith('temp_');
+  const building = buildings.find(b => b.id === npc.homeId);
+
   const [showSeedSelection, setShowSeedSelection] = useState(false);
   const [showSkillTree, setShowSkillTree] = useState(false);
   const [showInventory, setShowInventory] = useState(false);
@@ -46,6 +53,29 @@ const NpcPanel = ({ npc, onClose }: NpcPanelProps) => {
   const handleWorkClick = () => {
     // Ativar NPC para trabalhar manualmente
     useNpcStore.getState().startNpcWork(npc.id);
+  };
+
+  const handleCreateNpc = () => {
+    if (isTemporaryNpc && building) {
+      // Criar um novo NPC real para esta casa
+      const newNpcId = spawnNPC(
+        building.position,
+        'villager',
+        `Morador da ${building.type}`,
+        building.id
+      );
+
+      if (newNpcId) {
+        const newNpc = useNpcStore.getState().npcs.find(n => n.id === newNpcId);
+        if (newNpc) {
+          // Fechar o painel temporário e reabrir com o NPC real
+          onClose();
+          setTimeout(() => {
+            window.dispatchEvent(new CustomEvent('npcClick', { detail: newNpc }));
+          }, 100);
+        }
+      }
+    }
   };
 
   return (
@@ -177,7 +207,7 @@ const NpcPanel = ({ npc, onClose }: NpcPanelProps) => {
 
           <div className="bg-gray-50 p-4 rounded-lg">
             <h3 className="font-semibold mb-2 text-gray-700">Modo de Controle</h3>
-            
+
             {/* Skill Tree Button */}
             <div className="mb-4">
               <button

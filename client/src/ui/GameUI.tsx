@@ -178,12 +178,37 @@ const GameUI = () => {
       setSelectedNpc(event.detail);
     };
 
-    const handleNpcHouseClick = (e: CustomEvent<{npc: NPC, building: Building}>) => {
-      const { npc } = e.detail;
-      if (npc) {
+    const handleHouseClick = (e: CustomEvent<{building: Building, npc: NPC | null, hasNpc: boolean}>) => {
+      const { building, npc, hasNpc } = e.detail;
+      
+      if (hasNpc && npc) {
+        // Se há NPC na casa, mostrar dados do NPC
         setSelectedNpc(npc);
-        setShowNpcPanel(true); // Open NPC panel when house is clicked
+      } else {
+        // Se não há NPC, criar um NPC temporário para mostrar a casa
+        const tempNpc: NPC = {
+          id: `temp_${building.id}`,
+          name: `Casa ${building.type}`,
+          type: 'villager',
+          position: [building.position[0], building.position[1]],
+          homeId: building.id,
+          isWorking: false,
+          isSleeping: false,
+          currentTask: null,
+          energy: 100,
+          happiness: 50,
+          health: 100,
+          experience: 0,
+          level: 1,
+          skills: {},
+          inventory: {},
+          workBuilding: null,
+          lastWorked: 0
+        };
+        setSelectedNpc(tempNpc);
       }
+      
+      setShowNpcPanel(true); // Sempre abrir o painel
     };
 
     const handleSiloClick = (event: CustomEvent<Building>) => {
@@ -193,13 +218,13 @@ const GameUI = () => {
     };
 
     window.addEventListener('npcClick', handleNpcClick as EventListener);
-    window.addEventListener('npcHouseClick', handleNpcHouseClick as EventListener);
+    window.addEventListener('houseClick', handleHouseClick as EventListener);
     window.addEventListener('siloClick', handleSiloClick as EventListener);
 
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
       window.removeEventListener('npcClick', handleNpcClick as EventListener);
-      window.removeEventListener('npcHouseClick', handleNpcHouseClick as EventListener);
+      window.removeEventListener('houseClick', handleHouseClick as EventListener);
       window.removeEventListener('siloClick', handleSiloClick as EventListener);
     };
   }, [isBackgroundMusicPlaying, playBackgroundMusic, stopBackgroundMusic]);
