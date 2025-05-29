@@ -145,7 +145,13 @@ const NpcCreationPanel: React.FC<NpcCreationPanelProps> = ({
           cursor: isDragging ? 'grabbing' : 'grab',
         }}
         ref={dragRef}
-        onMouseDown={handleMouseDown}
+        onMouseDown={(e) => {
+          // Não iniciar drag se o clique for no input
+          if ((e.target as HTMLElement).tagName === 'INPUT') {
+            return;
+          }
+          handleMouseDown(e);
+        }}
       >
         {/* Header */}
         <div className="flex justify-between items-center mb-6 text-white">
@@ -223,9 +229,13 @@ const NpcCreationPanel: React.FC<NpcCreationPanelProps> = ({
                 type="text"
                 value={npcName}
                 onChange={(e) => setNpcName(e.target.value)}
+                onClick={(e) => e.stopPropagation()}
+                onMouseDown={(e) => e.stopPropagation()}
+                onKeyDown={(e) => e.stopPropagation()}
                 placeholder="Digite um nome único"
                 className="w-full px-4 py-2 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:border-blue-500 focus:outline-none"
                 maxLength={30}
+                autoFocus
               />
             </div>
 
