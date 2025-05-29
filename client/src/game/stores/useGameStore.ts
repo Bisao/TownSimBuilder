@@ -95,6 +95,7 @@ export const useGameStore = create<GameState>()(
     gameMode: "build",
     isManualControl: false,
     controlledNpcId: null,
+    controlledNpcId: null,
 
     // Camera initial state
     cameraPosition: [0, 10, 10],
