@@ -95,21 +95,49 @@ export const useResourceStore = create<ResourceState>()(
       const resources: Resource[] = [];
       const MAP_SIZE = 50;
       const RESOURCE_COUNT = 30;
-      const MARGIN = 8; // Margem das bordas para evitar extremidades
-      const USABLE_SIZE = MAP_SIZE - (MARGIN * 2); // Área utilizável
+      const MARGIN = 8;
+      const MIN_DISTANCE = 3;
 
+      // Helper function to check if position is valid
+      const isValidPosition = (x: number, z: number, existingResources: Resource[]): boolean => {
+        // Check boundaries
+        if (x < -MAP_SIZE/2 + MARGIN || x > MAP_SIZE/2 - MARGIN || 
+            z < -MAP_SIZE/2 + MARGIN || z > MAP_SIZE/2 - MARGIN) {
+          return false;
+        }
+
+        // Check distance from existing resources
+        for (const resource of existingResources) {
+          const dx = x - resource.x;
+          const dz = z - resource.z;
+          const distance = Math.sqrt(dx * dx + dz * dz);
+          if (distance < MIN_DISTANCE) {
+            return false;
+          }
+        }
+        return true;
+      };
+
+      // Generate resources with proper spacing
       for (let i = 0; i < RESOURCE_COUNT; i++) {
-        // Gera posições mais distribuídas pelo grid, evitando extremidades
-        const x = (Math.random() * USABLE_SIZE) - (USABLE_SIZE / 2);
-        const z = (Math.random() * USABLE_SIZE) - (USABLE_SIZE / 2);
-
-        // Generate a unique ID for each resource
-        const id = `resource-${i}`;
-
-        resources.push({ id, x, z });
+        let attempts = 0;
+        const maxAttempts = 100;
+        
+        while (attempts < maxAttempts) {
+          // Generate position within valid area
+          const x = Math.round((Math.random() - 0.5) * (MAP_SIZE - MARGIN * 2));
+          const z = Math.round((Math.random() - 0.5) * (MAP_SIZE - MARGIN * 2));
+          
+          if (isValidPosition(x, z, resources)) {
+            const id = `resource-${i}`;
+            resources.push({ id, x, z });
+            break;
+          }
+          attempts++;
+        }
       }
       
-      console.log(`Generated ${resources.length} map resources with improved distribution`);
+      console.log(`Generated ${resources.length} map resources with cluster distribution`);
       set({ mapResources: resources });
     },
   }))
