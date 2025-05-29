@@ -1,7 +1,9 @@
+
 import { useTexture } from "@react-three/drei";
 import { useThree, useFrame } from "@react-three/fiber";
 import * as THREE from "three";
 import { useRef, useState, useEffect, useMemo } from "react";
+import { useMapEditorStore } from "../stores/useMapEditorStore";
 
 const GRID_SIZE = 50;
 
@@ -10,27 +12,96 @@ const Terrain = () => {
   const gridRef = useRef<THREE.GridHelper>(null);
   const { camera } = useThree();
   const [isGridVisible, setIsGridVisible] = useState(true);
-
-  const currentGridSize = GRID_SIZE;
-  const shouldShowGrid = isGridVisible;
+  
+  const { 
+    isEditorMode, 
+    gridSize: editorGridSize, 
+    showGrid: editorShowGrid,
+    terrain: terrainTiles 
+  } = useMapEditorStore();
+  
+  const currentGridSize = isEditorMode ? editorGridSize : GRID_SIZE;
+  const shouldShowGrid = isEditorMode ? editorShowGrid : isGridVisible;
 
   useEffect(() => {
     const handleKeyPress = (event: KeyboardEvent) => {
-      if (event.code === 'KeyG') {
+      if (event.code === 'KeyG' && !isEditorMode) {
         setIsGridVisible(prev => !prev);
       }
     };
 
     window.addEventListener('keydown', handleKeyPress);
     return () => window.removeEventListener('keydown', handleKeyPress);
-  }, []);
+  }, [isEditorMode]);
 
-  // Generate basic terrain geometry
+  // Generate terrain geometry based on editor data
   const terrainGeometry = useMemo(() => {
     const geometry = new THREE.PlaneGeometry(currentGridSize, currentGridSize, currentGridSize - 1, currentGridSize - 1);
+    const positions = geometry.attributes.position.array as Float32Array;
+    
+    if (isEditorMode && Object.keys(terrainTiles).length > 0) {
+      // Apply editor modifications
+      for (let i = 0; i < currentGridSize; i++) {
+        for (let j = 0; j < currentGridSize; j++) {
+          const tile = terrainTiles[`${i},${j}`];
+          if (tile) {
+            const index = (i * currentGridSize + j) * 3 + 2; // Z component
+            if (index < positions.length) {
+              positions[index] = tile.height;
+            }
+          }
+        }
+      }
+      geometry.attributes.position.needsUpdate = true;
+    }
+    
     geometry.computeVertexNormals();
     return geometry;
-  }, [currentGridSize]);
+  }, [currentGridSize, terrainTiles, isEditorMode]);
+
+  // Generate terrain colors based on terrain types
+  const terrainColors = useMemo(() => {
+    if (!isEditorMode || Object.keys(terrainTiles).length === 0) {
+      return null;
+    }
+
+    const colors = new Float32Array(currentGridSize * currentGridSize * 3);
+    
+    for (let i = 0; i < currentGridSize; i++) {
+      for (let j = 0; j < currentGridSize; j++) {
+        const tile = terrainTiles[`${i},${j}`];
+        const index = (i * currentGridSize + j) * 3;
+        
+        let color = new THREE.Color("#4CAF50"); // Default grass color
+        
+        if (tile) {
+          switch (tile.type) {
+            case "grass":
+              color = new THREE.Color("#4CAF50");
+              break;
+            case "dirt":
+              color = new THREE.Color("#8B4513");
+              break;
+            case "sand":
+              color = new THREE.Color("#F4A460");
+              break;
+            case "stone":
+              color = new THREE.Color("#708090");
+              break;
+            case "water":
+              color = new THREE.Color("#4FC3F7");
+              break;
+          }
+        }
+        
+        colors[index] = color.r;
+        colors[index + 1] = color.g;
+        colors[index + 2] = color.b;
+      }
+    }
+    
+    return colors;
+  }, [currentGridSize, terrainTiles, isEditorMode]);
 
   return (
     <group>
@@ -43,8 +114,15 @@ const Terrain = () => {
       >
         <primitive object={terrainGeometry} />
         <meshLambertMaterial 
-          color="#4CAF50"
+          color={isEditorMode ? "#ffffff" : "#4CAF50"}
+          vertexColors={isEditorMode && terrainColors ? true : false}
         />
+        {terrainColors && isEditorMode && (
+          <bufferAttribute
+            attach="attributes-color"
+            args={[terrainColors, 3]}
+          />
+        )}
       </mesh>
 
       {/* Grid Helper */}
