@@ -7,12 +7,12 @@ export interface GameState {
   phase: "login" | "character-creation" | "playing";
   selectedBuildingType: string | null;
   isInitialized: boolean;
-  
+
   // Time system
   isPaused: boolean;
   timeSpeed: number;
   timeCycle: number;
-  
+
   // Game modes
   gameMode: "build" | "view";
   isManualControl: boolean;
@@ -47,7 +47,7 @@ export interface GameState {
   selectBuildingType: (type: string | null) => void;
   setPlacementPosition: (position: [number, number] | null) => void;
   setPlacementValid: (valid: boolean) => void;
-  
+
   // Time control methods
   pauseTime: () => void;
   resumeTime: () => void;
@@ -68,11 +68,13 @@ export interface GameState {
   setSelectedBuilding: (building: any | null) => void;
   setSelectedSilo: (silo: any | null) => void;
   onBuildingPlaced: () => void; // Nova função para ser chamada após posicionamento
-  
+
   // Camera methods
   updateCameraPosition: (position: [number, number, number]) => void;
   updateCameraTarget: (target: [number, number, number]) => void;
   updateCameraRotation: (rotation: number) => void;
+
+  setControlledNpc: (npcId: string | null) => void;
 }
 
 export const useGameStore = create<GameState>()(
@@ -83,12 +85,12 @@ export const useGameStore = create<GameState>()(
     isInitialized: false,
     placementPosition: null,
     placementValid: false,
-    
+
     // Time system initial state
     isPaused: false,
     timeSpeed: 1.0,
     timeCycle: 0.25, // Start at 6 AM (0.25 of the day)
-    
+
     // Game modes initial state
     gameMode: "build",
     isManualControl: false,
@@ -120,9 +122,9 @@ export const useGameStore = create<GameState>()(
       console.log("Initializing game store");
       set({ isInitialized: true });
     },
-    
+
     setPhase: (phase) => set({ phase }),
-    
+
     // Time control methods
     pauseTime: () => set({ isPaused: true }),
     resumeTime: () => set({ isPaused: false }),
@@ -164,6 +166,7 @@ export const useGameStore = create<GameState>()(
     setSelectedNpc: (npcId) => set({ selectedNpc: npcId }),
     setSelectedBuilding: (building) => set({ selectedBuilding: building }),
     setSelectedSilo: (silo) => set({ selectedSilo: silo }),
+    setControlledNpc: (npcId) => set({ controlledNpcId: npcId, isManualControl: npcId !== null }),
 
     // Nova função para ser chamada após o posicionamento bem-sucedido
     onBuildingPlaced: () => {
