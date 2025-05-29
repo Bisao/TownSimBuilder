@@ -85,22 +85,39 @@ const GameUI = () => {
           // Update all game systems with error handling
           const deltaTime = 0.016; // ~60 FPS
 
-          // Update NPCs
-          useNpcStore.getState().updateNPCs(deltaTime);
+          // Update NPCs with additional safety checks
+          const npcStore = useNpcStore.getState();
+          if (npcStore && typeof npcStore.updateNPCs === 'function') {
+            npcStore.updateNPCs(deltaTime);
+          }
 
           // Update building production
-          useBuildingStore.getState().updateProduction(Date.now());
+          const buildingStore = useBuildingStore.getState();
+          if (buildingStore && typeof buildingStore.updateProduction === 'function') {
+            buildingStore.updateProduction(Date.now());
+          }
 
           // Update economy
-          useEconomyStore.getState().calculateTaxes();
+          const economyStore = useEconomyStore.getState();
+          if (economyStore && typeof economyStore.calculateTaxes === 'function') {
+            economyStore.calculateTaxes();
+          }
 
           // Update events
-          useEventStore.getState().updateEvents(deltaTime);
+          const eventStore = useEventStore.getState();
+          if (eventStore && typeof eventStore.updateEvents === 'function') {
+            eventStore.updateEvents(deltaTime);
+          }
 
           // Update research
-          useResearchStore.getState().updateResearch(deltaTime);
+          const researchStore = useResearchStore.getState();
+          if (researchStore && typeof researchStore.updateResearch === 'function') {
+            researchStore.updateResearch(deltaTime);
+          }
         } catch (error) {
           console.error("Error in game loop:", error);
+          // Optionally pause the game on critical errors
+          // setPaused(true);
         }
       }, 16);
 

@@ -152,14 +152,20 @@ export const useResearchStore = create<ResearchState>()(
     },
 
     canResearch: (researchId) => {
-      const state = get();
-      const research = state.researches[researchId];
-      
-      if (!research || research.completed) return false;
+      try {
+        const state = get();
+        const research = state.researches[researchId];
+        
+        if (!research || research.completed) return false;
+        if (!research.requirements || !Array.isArray(research.requirements)) return true;
 
-      return research.requirements.every(req => 
-        state.researches[req]?.completed
-      );
+        return research.requirements.every(req => 
+          state.researches[req]?.completed === true
+        );
+      } catch (error) {
+        console.error("Error in canResearch:", error);
+        return false;
+      }
     }
   }))
 );
