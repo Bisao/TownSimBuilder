@@ -113,34 +113,21 @@ const World: React.FC<WorldProps> = ({ onMarketSelect }) => {
   };
 
   // Create initial market building
-  const createInitialMarket = async () => {
-    try {
-      // Find empty position for market
-      let marketPosition: [number, number] = [20, 20];
-      let attempts = 0;
-
-      while (attempts < 10) {
-        const x = Math.floor(Math.random() * 35) + 5;
-        const z = Math.floor(Math.random() * 35) + 5;
-
-        if (!buildings.some(b => 
-          Math.abs(b.position[0] - x) < 3 && 
-          Math.abs(b.position[1] - z) < 3
-        )) {
-          marketPosition = [x, z];
-          break;
+  const createInitialMarket = () => {
+      const marketExists = buildings.some(b => b.type === 'market');
+      if (!marketExists) {
+        // Try different positions until we find a valid one
+        const positions = [[32, 9], [30, 9], [34, 9], [32, 7], [32, 11]];
+        for (const pos of positions) {
+          try {
+            useBuildingStore.getState().placeBuilding('market', pos as [number, number], 0);
+            break;
+          } catch (error) {
+            console.log(`Cannot place market at ${pos}, trying next position`);
+          }
         }
-        attempts++;
       }
-
-      const success = await placeBuilding("market", marketPosition, 0, true);
-      if (success) {
-        console.log(`Mercado inicial criado em [${marketPosition[0]}, ${marketPosition[1]}]`);
-      }
-    } catch (error) {
-      console.error("Erro ao criar mercado inicial:", error);
-    }
-  };
+    };
 
   // Update natural resources when NPCs collect them
   useFrame(() => {

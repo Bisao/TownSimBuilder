@@ -1,4 +1,3 @@
-
 import { useEffect, useState, useRef } from "react";
 import { useGameStore } from "../game/stores/useGameStore";
 import { Controls } from "../game/types/controls";
@@ -23,7 +22,6 @@ import SiloPanel from "./SiloPanel";
 import MapEditorPanel from "./MapEditorPanel";
 import ResearchPanel from "./ResearchPanel";
 import EconomyPanel from "./EconomyPanel";
-import EventPanel from "./EventPanel";
 
 const GameUI = () => {
   const {
@@ -56,7 +54,8 @@ const GameUI = () => {
   const [showMarket, setShowMarket] = useState(false);
   const [showSeedSelection, setShowSeedSelection] = useState(false);
   const [showSiloPanel, setShowSiloPanel] = useState(false);
-  
+  const [showNpcPanel, setShowNpcPanel] = useState(false);
+
   // Selection state
   const [selectedNpc, setSelectedNpc] = useState<NPC | null>(null);
   const [selectedNpcId, setSelectedNpcId] = useState<string | null>(null);
@@ -85,19 +84,19 @@ const GameUI = () => {
         try {
           // Update all game systems with error handling
           const deltaTime = 0.016; // ~60 FPS
-          
+
           // Update NPCs
           useNpcStore.getState().updateNPCs(deltaTime);
-          
+
           // Update building production
           useBuildingStore.getState().updateProduction(Date.now());
-          
+
           // Update economy
           useEconomyStore.getState().calculateTaxes();
-          
+
           // Update events
           useEventStore.getState().updateEvents(deltaTime);
-          
+
           // Update research
           useResearchStore.getState().updateResearch(deltaTime);
         } catch (error) {
@@ -184,6 +183,7 @@ const GameUI = () => {
       const npc = useNpcStore.getState().npcs.find(n => n.homeId === house.id);
       if (npc) {
         setSelectedNpc(npc);
+        setShowNpcPanel(true); // Open NPC panel when house is clicked
       }
     };
 
@@ -319,7 +319,7 @@ const GameUI = () => {
       {/* Panels */}
       <ResourcePanel isVisible={showResourcePanel} />
       <BuildingPanel isVisible={showBuildingPanel} />
-      
+
       {showResearchPanel && <ResearchPanel />}
       {showEventPanel && <EventPanel />}
       {showEconomyPanel && <EconomyPanel />}

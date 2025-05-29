@@ -1,4 +1,3 @@
-
 import React from "react";
 import { useResourceStore } from "../game/stores/useResourceStore";
 import { resourceTypes } from "../game/constants/resources";
@@ -62,11 +61,11 @@ const SiloPanel = ({ isOpen, onClose, siloId }: SiloPanelProps) => {
 
         <div className="space-y-4">
           <h3 className="font-semibold text-gray-700 border-b pb-2">Recursos Armazenados</h3>
-          
+
           {storableResources.map(resourceId => {
             const resource = resourceTypes[resourceId];
             const amount = resources[resourceId] || 0;
-            
+
             return (
               <div key={resourceId} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
                 <div className="flex items-center gap-3">
@@ -83,7 +82,7 @@ const SiloPanel = ({ isOpen, onClose, siloId }: SiloPanelProps) => {
               </div>
             );
           })}
-          
+
           {storableResources.every(id => (resources[id] || 0) === 0) && (
             <div className="text-center py-8 text-gray-500">
               <i className="fa-solid fa-box-open text-3xl mb-2"></i>
@@ -91,6 +90,20 @@ const SiloPanel = ({ isOpen, onClose, siloId }: SiloPanelProps) => {
               <p className="text-sm">Nenhum recurso armazenado</p>
             </div>
           )}
+
+          {Object.entries(resources).map(([type, amount]) => {
+            const resourceConfig = resourceTypes[type];
+            if (!resourceConfig) return null;
+            return (
+              <div key={type} className="flex items-center justify-between py-2 px-3 bg-gray-50 rounded">
+                <div className="flex items-center gap-2">
+                  <span className="text-lg">{resourceConfig.icon}</span>
+                  <span className="font-medium">{resourceConfig.name}</span>
+                </div>
+                <span className="font-bold text-blue-600">{amount}</span>
+              </div>
+            );
+          })}
         </div>
       </div>
     </div>
