@@ -40,53 +40,51 @@ const GameUI: React.FC = () => {
         <div className="bg-black/80 text-white p-3 rounded-lg flex items-center gap-3">
           <button
             onClick={isPaused ? resumeTime : pauseTime}
-            className="px-3 py-1 bg-blue-500 hover:bg-blue-600 rounded text-sm font-medium"
+            className="px-3 py-1 bg-blue-500 hover:bg-blue-600 rounded text-sm font-medium transition-colors"
+            title={isPaused ? "Resume Time" : "Pause Time"}
           >
             {isPaused ? "▶️" : "⏸️"}
           </button>
+          
           <button
             onClick={decreaseTimeSpeed}
-            className="px-2 py-1 bg-gray-600 hover:bg-gray-700 rounded text-sm"
+            className="px-2 py-1 bg-gray-600 hover:bg-gray-700 rounded text-sm transition-colors"
+            title="Decrease Speed"
           >
             -
           </button>
+          
           <span className="text-sm font-medium min-w-[60px] text-center">
             {timeSpeed}x
           </span>
+          
           <button
             onClick={increaseTimeSpeed}
-            className="px-2 py-1 bg-gray-600 hover:bg-gray-700 rounded text-sm"
+            className="px-2 py-1 bg-gray-600 hover:bg-gray-700 rounded text-sm transition-colors"
+            title="Increase Speed"
           >
             +
           </button>
         </div>
       </div>
 
-      {/* Game Panels */}
+      {/* Core Game Panels */}
+      {showResourcePanel && <ResourcePanel />}
       {showBuildingPanel && <BuildingPanel />}
       {showNpcPanel && <NpcPanel />}
-      {showResourcePanel && <ResourcePanel />}
+      
+      {/* Specialized Panels */}
       {showMarketWindow && <MarketWindow />}
       {showNpcMetrics && <NpcMetricsPanel />}
       {showSeedSelection && <SeedSelectionPanel />}
       {showSiloPanel && <SiloPanel />}
+      
+      {/* Advanced Features */}
       {showResearchPanel && <ResearchPanel />}
       {showEconomyPanel && <EconomyPanel />}
       {showEventPanel && <EventPanel />}
-      <TaskPanel />
-    </div>
-  );
-};
-
-export default GameUI;
-      {showNpcPanel && <NpcPanel />}
-      {showMarketWindow && <MarketWindow />}
-      {showNpcMetrics && <NpcMetricsPanel />}
-      {showSeedSelection && <SeedSelectionPanel />}
-      {showSiloPanel && <SiloPanel />}
-      {showResearchPanel && <ResearchPanel />}
-      {showEconomyPanel && <EconomyPanel />}
-      {showEventPanel && <EventPanel />}
+      
+      {/* Always Available */}
       <TaskPanel />
     </div>
   );
