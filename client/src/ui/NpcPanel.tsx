@@ -312,8 +312,54 @@ const NpcPanel: React.FC<NpcPanelProps> = ({ npc, onClose }) => {
                     <i className="fa-solid fa-home text-xs"></i>
                     <span className="text-sm">{npcType?.name || 'Aldeão'}</span>
                   </div>
+                  <div className="flex items-center gap-2 mt-1">
+                    <div className={`w-2 h-2 rounded-full ${
+                      npc.state === "working" ? "bg-green-400" :
+                      npc.state === "moving" ? "bg-yellow-400" :
+                      npc.state === "gathering" ? "bg-blue-400" :
+                      npc.state === "resting" ? "bg-purple-400" :
+                      npc.state === "attacking" ? "bg-red-400" : "bg-gray-400"
+                    }`}></div>
+                    <span className="text-xs text-gray-600">{stateTranslations[npc.state]}</span>
+                  </div>
                 </div>
               </div>
+              {/* Control Mode Section */}
+              <div className="p-4 border-b border-gray-100">
+                <h3 className="text-sm font-semibold text-gray-700 mb-3">Modo de Controle</h3>
+                <div className="grid grid-cols-2 gap-2">
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      useNpcStore.getState().setNpcControlMode(npc.id, "autonomous");
+                    }}
+                    className={`px-3 py-2 rounded-lg font-medium text-sm transition-all flex items-center justify-center gap-2 ${
+                      npc.controlMode === "autonomous" 
+                        ? "bg-blue-500 text-white shadow-md" 
+                        : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                    }`}
+                  >
+                    <i className="fa-solid fa-robot"></i>
+                    Autônomo
+                  </button>
+
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      useNpcStore.getState().setNpcControlMode(npc.id, "manual");
+                    }}
+                    className={`px-3 py-2 rounded-lg font-medium text-sm transition-all flex items-center justify-center gap-2 ${
+                      npc.controlMode === "manual" 
+                        ? "bg-green-500 text-white shadow-md" 
+                        : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                    }`}
+                  >
+                    <i className="fa-solid fa-gamepad"></i>
+                    Controlar
+                  </button>
+                </div>
+              </div>
+
               {/* Action Buttons Grid */}
               <div className="p-4 space-y-3">
                 {/* Top Row - 3 buttons */}
