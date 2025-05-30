@@ -1,16 +1,17 @@
-
 import React from 'react';
 import { useResourceStore } from '../game/stores/useResourceStore';
-import { useDraggable } from '../hooks/useDraggable';
-import { useIsMobile } from '../hooks/useIsMobile';
+import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
+import { Progress } from '../components/ui/progress';
+import { X, Coins, TreePine, Hammer, Wheat } from 'lucide-react';
 
 interface ResourcePanelProps {
   isVisible: boolean;
-  onClose?: () => void;
+  onClose: () => void;
 }
 
 const ResourcePanel: React.FC<ResourcePanelProps> = ({ isVisible, onClose }) => {
-  const { resources } = useResourceStore();
+  const resourceStore = useResourceStore();
+  const { resources = {} } = resourceStore || {};
   const isMobile = useIsMobile();
 
   const { dragRef, position, isDragging, handleMouseDown } = useDraggable({
@@ -97,7 +98,7 @@ const ResourcePanel: React.FC<ResourcePanelProps> = ({ isVisible, onClose }) => 
               </div>
               <h2 className="text-lg font-bold text-white">Recursos</h2>
             </div>
-            
+
             {onClose && (
               <button
                 onClick={onClose}
@@ -133,7 +134,7 @@ const ResourcePanel: React.FC<ResourcePanelProps> = ({ isVisible, onClose }) => 
                         ${resourceColors[resourceId] || 'text-gray-600'} text-lg
                       `}></i>
                     </div>
-                    
+
                     <div>
                       <h3 className="font-semibold text-gray-800 text-sm">
                         {getResourceName(resourceId)}
@@ -188,7 +189,7 @@ const ResourcePanel: React.FC<ResourcePanelProps> = ({ isVisible, onClose }) => 
                   {Object.keys(resources).length}
                 </span>
               </div>
-              
+
               <div className="flex items-center justify-between mt-1">
                 <span className="text-xs text-gray-600">
                   Valor total estimado:

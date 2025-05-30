@@ -1,4 +1,3 @@
-
 import { create } from 'zustand';
 import { subscribeWithSelector } from 'zustand/middleware';
 import { resourceTypes } from '../constants/resources';
@@ -21,25 +20,25 @@ interface ResourceActions {
   addResource: (resourceId: string, amount: number) => boolean;
   spendResource: (resourceId: string, amount: number) => boolean;
   setResource: (resourceId: string, amount: number) => void;
-  
+
   // Storage Management
   upgradeStorage: (resourceId: string) => boolean;
   getStorageCapacity: (resourceId: string) => number;
   getStorageUsage: (resourceId: string) => number;
-  
+
   // Auto Collection
   toggleAutoCollect: (resourceId: string) => void;
   processAutoCollection: () => void;
-  
+
   // Utilities
   hasResources: (requirements: Record<string, number>) => boolean;
   canAfford: (cost: Record<string, number>) => boolean;
   spendResources: (cost: Record<string, number>) => boolean;
-  
+
   // History & Statistics
   updateHistory: (resourceId: string, amount: number) => void;
   getResourceRate: (resourceId: string, timeWindow?: number) => number;
-  
+
   // State Management
   reset: () => void;
   initResources: () => void;
@@ -90,7 +89,7 @@ export const useResourceStore = create<ResourceStore>()(
       const currentAmount = resources[resourceId] || 0;
       const maxCapacity = getStorageCapacity(resourceId);
       const availableSpace = maxCapacity - currentAmount;
-      
+
       if (availableSpace <= 0) {
         useNotificationStore.getState().addNotification({
           type: 'warning',
@@ -101,7 +100,7 @@ export const useResourceStore = create<ResourceStore>()(
       }
 
       const actualAmount = Math.min(amount, availableSpace);
-      
+
       set((state) => ({
         resources: {
           ...state.resources,
@@ -133,7 +132,7 @@ export const useResourceStore = create<ResourceStore>()(
 
       const { resources, updateHistory } = get();
       const currentAmount = resources[resourceId] || 0;
-      
+
       if (currentAmount < amount) {
         const resourceInfo = resourceTypes[resourceId];
         useNotificationStore.getState().addNotification({
@@ -159,7 +158,7 @@ export const useResourceStore = create<ResourceStore>()(
       const { getStorageCapacity } = get();
       const maxCapacity = getStorageCapacity(resourceId);
       const clampedAmount = Math.max(0, Math.min(amount, maxCapacity));
-      
+
       set((state) => ({
         resources: {
           ...state.resources,
@@ -173,7 +172,7 @@ export const useResourceStore = create<ResourceStore>()(
       const { storageUpgrades, maxStorage } = get();
       const currentUpgrade = storageUpgrades[resourceId] || 0;
       const maxUpgrades = 10;
-      
+
       if (currentUpgrade >= maxUpgrades) return false;
 
       const upgradeCost = {
@@ -227,7 +226,7 @@ export const useResourceStore = create<ResourceStore>()(
 
     processAutoCollection: () => {
       const { autoCollect, addResource } = get();
-      
+
       Object.entries(autoCollect).forEach(([resourceId, enabled]) => {
         if (enabled) {
           const resourceInfo = resourceTypes[resourceId];
@@ -252,7 +251,7 @@ export const useResourceStore = create<ResourceStore>()(
 
     spendResources: (cost: Record<string, number>) => {
       const { hasResources, spendResource } = get();
-      
+
       if (!hasResources(cost)) return false;
 
       // Spend all resources atomically
@@ -288,7 +287,7 @@ export const useResourceStore = create<ResourceStore>()(
       const { resourceHistory } = get();
       const history = resourceHistory[resourceId] || [];
       const currentTime = Date.now();
-      
+
       const recentHistory = history.filter(
         entry => currentTime - entry.time <= timeWindow
       );
@@ -311,11 +310,11 @@ export const useResourceStore = create<ResourceStore>()(
 
     tick: (deltaTime: number) => {
       const { processAutoCollection } = get();
-      
+
       // Process auto collection every second
       const now = Date.now();
       const { lastUpdate } = get();
-      
+
       if (now - lastUpdate >= 1000) {
         processAutoCollection();
         set({ lastUpdate: now });
