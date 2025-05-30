@@ -1306,12 +1306,12 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
                     <div className="absolute bottom-0 left-0 w-full h-2 bg-gray-800/50 rounded-b-xl">
                       <div 
                         className={`h-2 rounded-full transition-all duration-300 ${
-                          (selectedItem.durability.current / selectedItem.durability.max) > 0.75 ? 'bg-green-500' :
-                          (selectedItem.durability.current / selectedItem.durability.max) > 0.5 ? 'bg-yellow-500' :
-                          (selectedItem.durability.current / selectedItem.durability.max) > 0.25 ? 'bg-orange-500' : 'bg-red-500'
-                        }`}
-                        style={{ width: `${(selectedItem.durability.current / selectedItem.durability.max) * 100}%` }}
-                      />
+                            (selectedItem.durability.current / selectedItem.durability.max) > 0.75 ? 'bg-green-500' :
+                            (selectedItem.durability.current / selectedItem.durability.max) > 0.5 ? 'bg-yellow-500' :
+                            (selectedItem.durability.current / selectedItem.durability.max) > 0.25 ? 'bg-orange-500' : 'bg-red-500'
+                          }`}
+                          style={{ width: `${(selectedItem.durability.current / selectedItem.durability.max) * 100}%` }}
+                        />
                     </div>
                   )}
                 </div>
@@ -1321,10 +1321,10 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
                   <div className="flex items-center gap-4 text-sm mb-3">
                     <span className="px-2 py-1 bg-gray-200 rounded-lg font-medium">Tier {selectedItem.tier}</span>
                     <span className={`px-2 py-1 rounded-lg font-medium ${
-                      selectedItem.rarity === "legendary" ? "bg-yellow-200 text-yellow-800" :
-                      selectedItem.rarity === "epic" ? "bg-purple-200 text-purple-800" :
-                      selectedItem.rarity === "rare" ? "bg-blue-200 text-blue-800" : "bg-gray-200 text-gray-800"
-                    }`}>
+                        selectedItem.rarity === "legendary" ? "bg-yellow-200 text-yellow-800" :
+                        selectedItem.rarity === "epic" ? "bg-purple-200 text-purple-800" :
+                        selectedItem.rarity === "rare" ? "bg-blue-200 text-blue-800" : "bg-gray-200 text-gray-800"
+                      }`}>
                       {selectedItem.rarity?.toUpperCase() || "COMUM"}
                     </span>
                     {selectedItem.slot && (
@@ -1376,11 +1376,11 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
                       <div className="w-full bg-gray-200 rounded-full h-2">
                         <div 
                           className={`h-2 rounded-full transition-all duration-300 ${
-                            (selectedItem.durability.current / selectedItem.durability.max) > 0.75 ? 'bg-green-500' :
-                            (selectedItem.durability.current / selectedItem.durability.max) > 0.5 ? 'bg-yellow-500' :
-                            (selectedItem.durability.current / selectedItem.durability.max) > 0.25 ? 'bg-orange-500' : 'bg-red-500'
-                          }`}
-                          style={{ width: `${(selectedItem.durability.current / selectedItem.durability.max) * 100}%` }}
+                              (selectedItem.durability.current / selectedItem.durability.max) > 0.75 ? 'bg-green-500' :
+                              (selectedItem.durability.current / selectedItem.durability.max) > 0.5 ? 'bg-yellow-500' :
+                              (selectedItem.durability.current / selectedItem.durability.max) > 0.25 ? 'bg-orange-500' : 'bg-red-500'
+                            }`}
+                            style={{ width: `${(selectedItem.durability.current / selectedItem.durability.max) * 100}%` }}
                         />
                       </div>
                     </div>

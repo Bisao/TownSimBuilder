@@ -22,18 +22,20 @@ const BuildingPanel = ({ isVisible }: { isVisible: boolean }) => {
   return (
     <div
       className={cn(
-        "absolute bg-gray-800 text-white p-3 lg:p-4 rounded-lg shadow-lg responsive-panel ui-panel",
+        "absolute bg-gray-800 text-white p-2 lg:p-3 rounded-lg shadow-lg ui-panel",
         isDragging ? "z-50" : "z-10"
       )}
       style={{
         left: position.x,
         top: position.y,
         pointerEvents: "auto",
+        width: "280px",
+        maxHeight: "400px"
       }}
     >
-      <h2 className="text-white text-center font-bold mb-4 text-lg">Estruturas</h2>
+      <h2 className="text-white text-center font-bold mb-3 text-base">Estruturas</h2>
 
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-2 gap-2">
         {allowedBuildings.map((buildingType) => {
           const building = buildingTypes[buildingType];
           if (!building) return null;
@@ -49,7 +51,7 @@ const BuildingPanel = ({ isVisible }: { isVisible: boolean }) => {
               key={buildingType}
               onClick={() => handleSelectBuilding(buildingType)}
               className={cn(
-                "p-3 rounded-lg border transition-all duration-200 text-left",
+                "p-2 rounded-lg border transition-all duration-200 text-left",
                 isSelected
                   ? "bg-blue-600 border-blue-500 shadow-lg transform scale-105"
                   : canAfford

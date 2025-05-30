@@ -15,13 +15,15 @@ const ResourcePanel: React.FC<ResourcePanelProps> = ({ isVisible }) => {
 
   return (
     <div
-      className={`absolute bg-gray-800 text-white p-3 lg:p-4 rounded-lg shadow-lg responsive-panel ui-panel ${
+      className={`absolute bg-gray-800 text-white p-3 rounded-lg shadow-lg ui-panel ${
         isDragging ? "z-50" : "z-10"
       }`}
       style={{
         left: position.x,
         top: position.y,
         pointerEvents: "auto",
+        width: "240px",
+        maxHeight: "350px"
       }}
     >
       <h2 className="text-lg font-bold mb-2">Recursos</h2>

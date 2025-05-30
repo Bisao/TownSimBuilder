@@ -116,13 +116,13 @@
 
 /* Responsive panel sizes */
 .responsive-panel {
-  width: clamp(300px, 25vw, 400px);
-  max-height: clamp(300px, 70vh, 800px);
+  width: clamp(280px, 20vw, 350px);
+  max-height: clamp(250px, 60vh, 600px);
 }
 
 .responsive-panel-large {
-  width: clamp(400px, 35vw, 600px);
-  max-height: clamp(400px, 80vh, 900px);
+  width: clamp(320px, 25vw, 450px);
+  max-height: clamp(300px, 65vh, 650px);
 }
 
 /* Improved kbd styling */
