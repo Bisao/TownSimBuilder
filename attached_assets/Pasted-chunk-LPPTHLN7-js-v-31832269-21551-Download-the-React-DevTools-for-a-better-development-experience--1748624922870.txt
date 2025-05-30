@@ -1,0 +1,75 @@
+chunk-LPPTHLN7.js?v=31832269:21551 Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools
+App.tsx:58 Sistema de áudio inicializado
+interface.tsx:19 Current game phase: login
+GameUI.tsx:73 Initializing game systems...
+useResourceStore.ts:39 Resources initialized: Object
+GameUI.tsx:84 Game systems initialized successfully
+World.tsx:64 Initializing game world and resources
+useGameStore.ts:113 Initializing game store
+useResourceStore.ts:39 Resources initialized: Object
+useResourceStore.ts:140 Generated 30 map resources with cluster distribution
+World.tsx:210 Generated 30 natural resources
+useBuildingStore.ts:49 Cannot place building market at position [25, 25]
+placeBuilding @ useBuildingStore.ts:49
+World.tsx:226 Market placed successfully at [25, 25]
+useDummyStore.ts:46 Dummy de treinamento criado: dummy_1748624895810_wgykfdbru na posição [10, 0, 10]
+2Terrain.tsx:18 Uncaught ReferenceError: useMapEditorStore is not defined
+    at Terrain (Terrain.tsx:18:7)
+    at renderWithHooks (chunk-6CHFNV4N.js?v=31832269:5892:26)
+    at mountIndeterminateComponent (chunk-6CHFNV4N.js?v=31832269:9375:21)
+    at beginWork (chunk-6CHFNV4N.js?v=31832269:10358:22)
+    at HTMLUnknownElement.callCallback2 (chunk-6CHFNV4N.js?v=31832269:10589:22)
+    at Object.invokeGuardedCallbackDev (chunk-6CHFNV4N.js?v=31832269:10614:24)
+    at invokeGuardedCallback (chunk-6CHFNV4N.js?v=31832269:10646:39)
+    at beginWork$1 (chunk-6CHFNV4N.js?v=31832269:14200:15)
+    at performUnitOfWork (chunk-6CHFNV4N.js?v=31832269:13664:20)
+    at workLoopSync (chunk-6CHFNV4N.js?v=31832269:13604:13)
+chunk-6CHFNV4N.js?v=31832269:17705 The above error occurred in the <Terrain> component:
+
+    at Terrain (https://a54fc98d-0eb6-4ef0-b632-b68b537c60ae-00-175lok1gdly5y.worf.replit.dev/src/game/components/Terrain.tsx:24:19)
+    at group
+    at World (https://a54fc98d-0eb6-4ef0-b632-b68b537c60ae-00-175lok1gdly5y.worf.replit.dev/src/game/components/World.tsx:37:18)
+    at Suspense
+    at Suspense
+    at ErrorBoundary (https://a54fc98d-0eb6-4ef0-b632-b68b537c60ae-00-175lok1gdly5y.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-6CHFNV4N.js?v=31832269:16028:5)
+    at FiberProvider (https://a54fc98d-0eb6-4ef0-b632-b68b537c60ae-00-175lok1gdly5y.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-6CHFNV4N.js?v=31832269:17708:21)
+    at Provider (https://a54fc98d-0eb6-4ef0-b632-b68b537c60ae-00-175lok1gdly5y.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-6CHFNV4N.js?v=31832269:17317:3)
+
+React will try to recreate this component tree from scratch using the error boundary you provided, ErrorBoundary.
+console.error @ chunk-6CHFNV4N.js?v=31832269:17705
+2chunk-6CHFNV4N.js?v=31832269:17814 Uncaught ReferenceError: useMapEditorStore is not defined
+    at Terrain (Terrain.tsx:18:7)
+    at renderWithHooks (chunk-6CHFNV4N.js?v=31832269:5892:26)
+    at mountIndeterminateComponent (chunk-6CHFNV4N.js?v=31832269:9375:21)
+    at beginWork (chunk-6CHFNV4N.js?v=31832269:10358:22)
+    at beginWork$1 (chunk-6CHFNV4N.js?v=31832269:14188:22)
+    at performUnitOfWork (chunk-6CHFNV4N.js?v=31832269:13664:20)
+    at workLoopSync (chunk-6CHFNV4N.js?v=31832269:13604:13)
+    at renderRootSync (chunk-6CHFNV4N.js?v=31832269:13583:15)
+    at recoverFromConcurrentError (chunk-6CHFNV4N.js?v=31832269:13173:28)
+    at performConcurrentWorkOnRoot (chunk-6CHFNV4N.js?v=31832269:13121:30)
+chunk-6CHFNV4N.js?v=31832269:17705 The above error occurred in the <ForwardRef(Canvas)> component:
+
+    at Canvas (https://a54fc98d-0eb6-4ef0-b632-b68b537c60ae-00-175lok1gdly5y.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-6CHFNV4N.js?v=31832269:17774:3)
+    at FiberProvider (https://a54fc98d-0eb6-4ef0-b632-b68b537c60ae-00-175lok1gdly5y.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-6CHFNV4N.js?v=31832269:17708:21)
+    at CanvasWrapper
+    at KeyboardControls (https://a54fc98d-0eb6-4ef0-b632-b68b537c60ae-00-175lok1gdly5y.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@react-three_drei.js?v=31832269:9069:8)
+    at div
+    at App (https://a54fc98d-0eb6-4ef0-b632-b68b537c60ae-00-175lok1gdly5y.worf.replit.dev/src/App.tsx?v=2azROICy5ZQd25ODvaM1b:31:39)
+    at QueryClientProvider (https://a54fc98d-0eb6-4ef0-b632-b68b537c60ae-00-175lok1gdly5y.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=31832269:2909:3)
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+console.error @ chunk-6CHFNV4N.js?v=31832269:17705
+chunk-LPPTHLN7.js?v=31832269:19413 Uncaught ReferenceError: useMapEditorStore is not defined
+    at Terrain (Terrain.tsx:18:7)
+    at renderWithHooks (chunk-6CHFNV4N.js?v=31832269:5892:26)
+    at mountIndeterminateComponent (chunk-6CHFNV4N.js?v=31832269:9375:21)
+    at beginWork (chunk-6CHFNV4N.js?v=31832269:10358:22)
+    at beginWork$1 (chunk-6CHFNV4N.js?v=31832269:14188:22)
+    at performUnitOfWork (chunk-6CHFNV4N.js?v=31832269:13664:20)
+    at workLoopSync (chunk-6CHFNV4N.js?v=31832269:13604:13)
+    at renderRootSync (chunk-6CHFNV4N.js?v=31832269:13583:15)
+    at recoverFromConcurrentError (chunk-6CHFNV4N.js?v=31832269:13173:28)
+    at performConcurrentWorkOnRoot (chunk-6CHFNV4N.js?v=31832269:13121:30)
+chunk-664ZIH6C.js?v=31832269:17835 THREE.WebGLRenderer: Context Lost.
