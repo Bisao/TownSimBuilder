@@ -75,9 +75,19 @@ const GameUI: React.FC<GameUIProps> = ({ className = "", onBuildingSelect }) => 
     combatEntityId: null as string | null,
   });
 
-  // Keyboard controls
-  const keyboardControls = useKeyboardControls<Controls>();
-  const [, get] = Array.isArray(keyboardControls) ? keyboardControls : [null, () => ({})];
+  // Keyboard controls - with proper error handling
+  let keyboardControls;
+  let get = () => ({} as Controls);
+  
+  try {
+    keyboardControls = useKeyboardControls<Controls>();
+    if (Array.isArray(keyboardControls) && keyboardControls.length >= 2) {
+      [, get] = keyboardControls;
+    }
+  } catch (error) {
+    // KeyboardControls context not available, use fallback
+    console.warn('KeyboardControls context not available, using fallback');
+  }
 
   // Refs
   const gameLoopRef = useRef<NodeJS.Timeout | null>(null);
@@ -152,18 +162,24 @@ const GameUI: React.FC<GameUIProps> = ({ className = "", onBuildingSelect }) => 
   }, [selectedEntities.npc, updateNpc, closePanel]);
 
   const handleKeyboardControls = useCallback(() => {
-    const controls = get();
+    try {
+      const controls = get();
+      if (!controls) return;
 
-    // Time controls
-    if (controls.pause) pauseTime();
-    if (controls.resume) resumeTime();
-    if (controls.increaseSpeed) increaseTimeSpeed();
-    if (controls.decreaseSpeed) decreaseTimeSpeed();
+      // Time controls
+      if (controls.pause) pauseTime();
+      if (controls.resume) resumeTime();
+      if (controls.increaseSpeed) increaseTimeSpeed();
+      if (controls.decreaseSpeed) decreaseTimeSpeed();
 
-    // Panel toggles
-    if (controls.toggleResources) togglePanel('resources');
-    if (controls.toggleBuildings) togglePanel('buildings');
-    if (controls.toggleNpcMetrics) togglePanel('npcMetrics');
+      // Panel toggles
+      if (controls.toggleResources) togglePanel('resources');
+      if (controls.toggleBuildings) togglePanel('buildings');
+      if (controls.toggleNpcMetrics) togglePanel('npcMetrics');
+    } catch (error) {
+      // Silently handle keyboard control errors
+      console.warn('Error handling keyboard controls:', error);
+    }
   }, [get, pauseTime, resumeTime, increaseTimeSpeed, decreaseTimeSpeed, togglePanel]);
 
   // Initialize audio and setup event listeners
