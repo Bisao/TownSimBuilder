@@ -2,7 +2,6 @@
 import React, { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { QueryClientProvider } from '@tanstack/react-query';
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { ErrorBoundary } from '@/components/ui/error-boundary';
 import { queryClient } from '@/lib/queryClient';
 import App from './App';
@@ -122,14 +121,6 @@ const AppWrapper = () => (
     >
       <QueryClientProvider client={queryClient}>
         <App />
-        
-        {/* Development tools */}
-        {isDevelopment && (
-          <ReactQueryDevtools
-            initialIsOpen={false}
-            position="bottom-right"
-          />
-        )}
       </QueryClientProvider>
     </ErrorBoundary>
   </StrictMode>
@@ -152,7 +143,7 @@ const initializeApp = async () => {
     console.log(`🚀 Starting application in ${isDevelopment ? 'development' : 'production'} mode`);
     
     if (isDevelopment) {
-      console.log('📊 React DevTools and Query DevTools are available');
+      console.log('📊 React DevTools available');
     }
 
     // Render application
