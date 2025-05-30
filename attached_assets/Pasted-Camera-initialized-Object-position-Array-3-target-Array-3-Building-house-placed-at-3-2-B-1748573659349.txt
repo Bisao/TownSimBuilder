@@ -1,0 +1,49 @@
+Camera initialized: 
+Object {position: Array(3), target: Array(3)}
+Building house placed at 3,2
+Building house placed at [3, 2]
+Could not load /textures/wood.jpg: undefined
+Could not load /textures/wood.jpg: undefined
+The above error occurred in the <Building> component:
+
+    at Building (https://c7f2ca93-8e07-456b-8d56-b1836bfa5d98-00-38dey0i21xng0.picard.replit.dev/src/game/components/Building.tsx:26:21)
+    at group
+    at World (https://c7f2ca93-8e07-456b-8d56-b1836bfa5d98-00-38dey0i21xng0.picard.replit.dev/src/game/components/World.tsx:34:18)
+    at Suspense
+    at Suspense
+    at ErrorBoundary (https://c7f2ca93-8e07-456b-8d56-b1836bfa5d98-00-38dey0i21xng0.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-6CHFNV4N.js?v=31832269:16028:5)
+    at FiberProvider (https://c7f2ca93-8e07-456b-8d56-b1836bfa5d98-00-38dey0i21xng0.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-6CHFNV4N.js?v=31832269:17708:21)
+    at Provider (https://c7f2ca93-8e07-456b-8d56-b1836bfa5d98-00-38dey0i21xng0.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-6CHFNV4N.js?v=31832269:17317:3)
+
+React will try to recreate this component tree from scratch using the error boundary you provided, ErrorBoundary.
+Could not load /textures/wood.jpg: undefined
+Could not load /textures/wood.jpg: undefined
+The above error occurred in the <ForwardRef(Canvas)> component:
+
+    at Canvas (https://c7f2ca93-8e07-456b-8d56-b1836bfa5d98-00-38dey0i21xng0.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-6CHFNV4N.js?v=31832269:17774:3)
+    at FiberProvider (https://c7f2ca93-8e07-456b-8d56-b1836bfa5d98-00-38dey0i21xng0.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-6CHFNV4N.js?v=31832269:17708:21)
+    at CanvasWrapper
+    at KeyboardControls (https://c7f2ca93-8e07-456b-8d56-b1836bfa5d98-00-38dey0i21xng0.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@react-three_drei.js?v=31832269:9069:8)
+    at div
+    at App (https://c7f2ca93-8e07-456b-8d56-b1836bfa5d98-00-38dey0i21xng0.picard.replit.dev/src/App.tsx?v=8AjzPd1limi-_cw596Ted:31:39)
+    at QueryClientProvider (https://c7f2ca93-8e07-456b-8d56-b1836bfa5d98-00-38dey0i21xng0.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=31832269:2909:3)
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+
+at Canvas (https://c7f2ca93-8e07-456b-8d56-b1836bfa5d98-00-38dey0i21xng0.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-6CHFNV4N.js?v=31832269:17774:3)
+at FiberProvider (https://c7f2ca93-8e07-456b-8d56-b1836bfa5d98-00-38dey0i21xng0.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-6CHFNV4N.js?v=31832269:17708:21)
+at CanvasWrapper
+at KeyboardControls (https://c7f2ca93-8e07-456b-8d56-b1836bfa5d98-00-38dey0i21xng0.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@react-three_drei.js?v=31832269:9069:8)
+at div
+at App (https://c7f2ca93-8e07-456b-8d56-b1836bfa5d98-00-38dey0i21xng0.picard.replit.dev/src/App.tsx?v=8AjzPd1limi-_cw596Ted:31:39)
+at QueryClientProvider (https://c7f2ca93-8e07-456b-8d56-b1836bfa5d98-00-38dey0i21xng0.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=31832269:2909:3)
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+at t.value (https://c7f2ca93-8e07-456b-8d56-b1836bfa5d98-00-38dey0i21xng0.picard.replit.dev/__replco/static/devtools/eruda/3.2.3/eruda.js:2:17465)
+at new t (https://c7f2ca93-8e07-456b-8d56-b1836bfa5d98-00-38dey0i21xng0.picard.replit.dev/__replco/static/devtools/eruda/3.2.3/eruda.js:2:12630)
+at t.value (https://c7f2ca93-8e07-456b-8d56-b1836bfa5d98-00-38dey0i21xng0.picard.replit.dev/__replco/static/devtools/eruda/3.2.3/eruda.js:2:32766)
+at https://c7f2ca93-8e07-456b-8d56-b1836bfa5d98-00-38dey0i21xng0.picard.replit.dev/__replco/static/devtools/eruda/3.2.3/eruda.js:2:34400
+Could not load /textures/wood.jpg: undefined
+THREE.WebGLRenderer: Context Lost.
