@@ -162,21 +162,33 @@ const World: React.FC<WorldProps> = ({ selectedBuildingType, onMarketSelect }) =
 
   // Create initial market building
   const createInitialMarket = () => {
-    const marketExists = Array.isArray(buildings) && buildings.some(b => b.type === 'market');
-    if (!marketExists) {
-      // Try different positions within the valid grid
-      const positions = [
-        [25, 25], [20, 20], [30, 30], [15, 25], [35, 25],
-        [25, 15], [25, 35], [20, 30], [30, 20], [10, 10]
-      ];
+    try {
+      const buildingStore = useBuildingStore.getState();
+      if (!buildingStore || !buildingStore.buildings) {
+        console.warn('Building store not initialized yet');
+        return;
+      }
 
-      for (const pos of positions) {
-        const success = useBuildingStore.getState().placeBuilding('market', pos as [number, number], 0, true);
-        if (success) {
-          console.log(`Market placed successfully at [${pos[0]}, ${pos[1]}]`);
-          break;
+      const buildingsArray = Object.values(buildingStore.buildings);
+      const marketExists = buildingsArray.some(b => b && b.type === 'market');
+      
+      if (!marketExists) {
+        // Try different positions within the valid grid
+        const positions = [
+          [25, 25], [20, 20], [30, 30], [15, 25], [35, 25],
+          [25, 15], [25, 35], [20, 30], [30, 20], [10, 10]
+        ];
+
+        for (const pos of positions) {
+          const success = buildingStore.placeBuilding('market', pos as [number, number], 0, true);
+          if (success) {
+            console.log(`Market placed successfully at [${pos[0]}, ${pos[1]}]`);
+            break;
+          }
         }
       }
+    } catch (error) {
+      console.error('Error creating initial market:', error);
     }
   };
 

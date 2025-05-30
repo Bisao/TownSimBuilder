@@ -97,85 +97,106 @@ export const useBuildingStore = create<BuildingStore>()(
     ...initialState,
 
     // Building Management
-    placeBuilding: (type: BuildingType, position: [number, number]) => {
-      const { canPlaceBuilding, buildings } = get();
-      
-      if (!canPlaceBuilding(type, position)) {
-        console.warn(`Cannot place building ${type} at position ${position}`);
-        return false;
-      }
+    placeBuilding: (type: BuildingType, position: [number, number], rotation: number = 0, bypassResourceCheck: boolean = false) => {
+      try {
+        const { canPlaceBuilding, buildings } = get();
+        
+        if (!canPlaceBuilding(type, position)) {
+          console.warn(`Cannot place building ${type} at position ${position}`);
+          return false;
+        }
 
-      const buildingDef = buildingTypes[type];
-      if (!buildingDef) {
-        console.error(`Building type ${type} not found`);
-        return false;
-      }
+        const buildingDef = buildingTypes[type];
+        if (!buildingDef) {
+          console.error(`Building type ${type} not found`);
+          return false;
+        }
 
-      // Check resources
-      const resourceStore = useResourceStore.getState();
-      const hasResources = Object.entries(buildingDef.cost).every(([resource, amount]) => {
-        return (resourceStore.resources[resource] || 0) >= amount;
-      });
+        // Check resources (skip for initial buildings)
+        if (!bypassResourceCheck) {
+          const resourceStore = useResourceStore.getState();
+          if (!resourceStore || !resourceStore.resources) {
+            console.error('Resource store not initialized');
+            return false;
+          }
+          
+          const hasResources = Object.entries(buildingDef.cost || {}).every(([resource, amount]) => {
+            const availableAmount = resourceStore.resources[resource] || 0;
+            return availableAmount >= amount;
+          });
 
       if (!hasResources) {
-        useNotificationStore.getState().addNotification({
-          type: 'error',
-          title: 'Recursos insuficientes',
-          message: 'Você não tem recursos suficientes para construir este edifício',
-        });
-        return false;
-      }
+            const notificationStore = useNotificationStore.getState();
+            if (notificationStore && notificationStore.addNotification) {
+              notificationStore.addNotification({
+                type: 'error',
+                title: 'Recursos insuficientes',
+                message: 'Você não tem recursos suficientes para construir este edifício',
+              });
+            }
+            return false;
+          }
 
-      // Consume resources
-      Object.entries(buildingDef.cost).forEach(([resource, amount]) => {
-        resourceStore.spendResource(resource, amount);
-      });
+          // Consume resources
+          Object.entries(buildingDef.cost || {}).forEach(([resource, amount]) => {
+            if (resourceStore && resourceStore.spendResource) {
+              resourceStore.spendResource(resource, amount);
+            }
+          });
+        }
 
       // Create building
-      const buildingId = `building_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-      const newBuilding: Building = {
-        id: buildingId,
-        type,
-        position,
-        health: buildingDef.health,
-        maxHealth: buildingDef.health,
-        level: 1,
-        isWorking: false,
-        lastProductionTime: Date.now(),
-        workers: [],
-        maxWorkers: buildingDef.maxWorkers || 0,
-        upgrades: [],
-        isConstructed: buildingDef.constructionTime ? false : true,
-        constructionTime: buildingDef.constructionTime,
-      };
-
-      // Add production if building produces resources
-      if (buildingDef.production) {
-        newBuilding.production = {
-          input: buildingDef.production.input || {},
-          output: buildingDef.production.output || {},
-          rate: buildingDef.production.rate || 1,
-          efficiency: 1.0,
+        const buildingId = `building_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+        const newBuilding: Building = {
+          id: buildingId,
+          type,
+          position,
+          health: buildingDef.health || 100,
+          maxHealth: buildingDef.health || 100,
+          level: 1,
+          isWorking: false,
+          lastProductionTime: Date.now(),
+          workers: [],
+          maxWorkers: buildingDef.maxWorkers || 0,
+          upgrades: [],
+          isConstructed: buildingDef.constructionTime ? false : true,
+          constructionTime: buildingDef.constructionTime,
         };
+
+        // Add production if building produces resources
+        if (buildingDef.production) {
+          newBuilding.production = {
+            input: buildingDef.production.input || {},
+            output: buildingDef.production.output || {},
+            rate: buildingDef.production.rate || 1,
+            efficiency: 1.0,
+          };
+        }
+
+        set((state) => ({
+          buildings: { ...state.buildings, [buildingId]: newBuilding },
+          totalBuildings: state.totalBuildings + 1,
+          buildingStats: {
+            ...state.buildingStats,
+            [type]: state.buildingStats[type] + 1,
+          },
+        }));
+
+        const notificationStore = useNotificationStore.getState();
+        if (notificationStore && notificationStore.addNotification) {
+          notificationStore.addNotification({
+            type: 'success',
+            title: 'Edifício construído',
+            message: `${buildingDef.name} foi construído com sucesso`,
+          });
+        }
+
+        console.log(`Building ${type} placed at ${position}`);
+        return true;
+      } catch (error) {
+        console.error('Error placing building:', error);
+        return false;
       }
-
-      set((state) => ({
-        buildings: { ...state.buildings, [buildingId]: newBuilding },
-        totalBuildings: state.totalBuildings + 1,
-        buildingStats: {
-          ...state.buildingStats,
-          [type]: state.buildingStats[type] + 1,
-        },
-      }));
-
-      useNotificationStore.getState().addNotification({
-        type: 'success',
-        title: 'Edifício construído',
-        message: `${buildingDef.name} foi construído com sucesso`,
-      });
-
-      console.log(`Building ${type} placed at ${position}`);
-      return true;
     },
 
     removeBuilding: (buildingId: string) => {
