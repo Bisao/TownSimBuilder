@@ -37,7 +37,7 @@ const GameUI = () => {
   const { buildings } = useBuildingStore();
   const { resources } = useResourceStore();
   const { npcs, updateNpc } = useNpcStore();
-  const { isBackgroundMusicPlaying, playBackgroundMusic, stopBackgroundMusic } = useAudio();
+  const { isMuted, toggleMute, initAudio } = useAudio();
   const isMobile = useIsMobile();
 
   // UI State
@@ -81,6 +81,9 @@ const GameUI = () => {
 
         isInitializedRef.current = true;
         console.log("Game systems initialized successfully");
+        
+        // Initialize audio system
+        initAudio();
       } catch (error) {
         console.error("Error initializing game systems:", error);
         setErrors(prev => [...prev, "Failed to initialize game systems"]);
@@ -152,11 +155,7 @@ const GameUI = () => {
           setShowNpcMetrics(prev => !prev);
           break;
         case 'u':
-          if (isBackgroundMusicPlaying) {
-            stopBackgroundMusic();
-          } else {
-            playBackgroundMusic();
-          }
+          toggleMute();
           break;
         case 'p':
           const gameStore = useGameStore.getState();
@@ -188,7 +187,7 @@ const GameUI = () => {
       console.error("Error handling keyboard shortcut:", error);
       setErrors(prev => [...prev.slice(-4), `Keyboard error: ${error instanceof Error ? error.message : 'Unknown error'}`]);
     }
-  }, [isBackgroundMusicPlaying, playBackgroundMusic, stopBackgroundMusic]);
+  }, [toggleMute]);
 
   // Game event handlers
   const handleNpcClick = useCallback((event: CustomEvent) => {
@@ -417,14 +416,8 @@ const GameUI = () => {
                 Métricas (N)
               </button>
               <button
-                onClick={() => {
-                  if (isBackgroundMusicPlaying) {
-                    stopBackgroundMusic();
-                  } else {
-                    playBackgroundMusic();
-                  }
-                }}
-                className={`px-2 lg:px-3 py-1 rounded whitespace-nowrap responsive-text ${isBackgroundMusicPlaying ? 'bg-green-600' : 'bg-gray-600'} hover:bg-green-700 transition-colors`}
+                onClick={toggleMute}
+                className={`px-2 lg:px-3 py-1 rounded whitespace-nowrap responsive-text ${!isMuted ? 'bg-green-600' : 'bg-gray-600'} hover:bg-green-700 transition-colors`}
                 title="Toggle Audio (U)"
               >
                 Áudio (U)
