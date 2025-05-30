@@ -121,7 +121,7 @@ interface GameStore extends GameState {
   resetGame: () => void;
 }
 
-import { useNotificationStore } from './notificationStore'; // Certifique-se de que o caminho está correto
+import { useNotificationStore } from '../../lib/stores/useNotificationStore';
 import { GAME_CONFIG } from '../config/gameConfig';
 
 export const useGameStore = create<GameStore>()(
