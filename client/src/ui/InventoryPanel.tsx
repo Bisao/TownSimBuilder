@@ -23,9 +23,8 @@ const InventoryPanel: React.FC<InventoryPanelProps> = ({ npc, onClose }) => {
   const inventorySlotsGenerated = Array.from({ length: 40 }, (_, index) => (
     <div
       key={`inventory-${index}`}
-      className="responsive-slot bg-amber-100 border-2 border-amber-300 rounded-lg hover:bg-amber-200 transition-colors flex items-center justify-center cursor-pointer"
+      className="w-8 h-8 sm:w-10 sm:h-10 bg-amber-100 border-2 border-amber-300 rounded-lg hover:bg-amber-200 transition-colors flex items-center justify-center cursor-pointer"
     >
-      <span className="text-xs text-amber-600">{index + 1}</span>
     </div>
   ));
 
@@ -38,11 +37,11 @@ const InventoryPanel: React.FC<InventoryPanelProps> = ({ npc, onClose }) => {
       }}
     >
       <div 
-        className="bg-gradient-to-br from-amber-50 to-yellow-50 shadow-2xl border-l-2 border-amber-200 overflow-hidden fixed right-0 top-0 h-full w-80 sm:w-96 transform transition-transform duration-300 ease-in-out"
+        className="bg-gradient-to-br from-amber-50 to-yellow-50 shadow-2xl border-l-2 border-amber-200 overflow-hidden fixed right-0 top-0 h-full w-72 sm:w-80 transform transition-transform duration-300 ease-in-out"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="bg-gradient-to-r from-amber-600 to-yellow-600 p-3 sm:p-4 text-white relative overflow-hidden flex-shrink-0">
+        <div className="bg-gradient-to-r from-amber-600 to-yellow-600 p-2 sm:p-3 text-white relative overflow-hidden flex-shrink-0">
           <div className="absolute inset-0 bg-black/10"></div>
           <div className="relative z-10 flex justify-between items-center">
             <div className="flex items-center gap-2 sm:gap-3">
@@ -79,23 +78,23 @@ const InventoryPanel: React.FC<InventoryPanelProps> = ({ npc, onClose }) => {
         {/* Container principal com flex para ocupar toda altura restante */}
         <div className="flex flex-col flex-1 overflow-hidden">
           {/* Equipment Section - Fixed */}
-          <div className="p-2 sm:p-4 pb-0 flex-shrink-0">
+          <div className="p-2 sm:p-3 pb-0 flex-shrink-0">
             {/* Equipment Grid */}
             <div className="mb-2 sm:mb-4">
               <div className="flex justify-between items-start">
                 {/* Left Side - Resources */}
                 <div className="flex flex-col gap-1 sm:gap-2 w-12 sm:w-16">
-                  <div className="responsive-equipment-slot bg-yellow-100 border-2 border-yellow-300 rounded-lg flex items-center justify-center">
-                    <i className="fa-solid fa-coins text-yellow-600 text-xs sm:text-sm"></i>
+                  <div className="w-6 h-6 sm:w-8 sm:h-8 bg-yellow-100 border-2 border-yellow-300 rounded-lg flex items-center justify-center">
+                    <i className="fa-solid fa-coins text-yellow-600 text-xs"></i>
                   </div>
-                  <div className="responsive-equipment-slot bg-purple-100 border-2 border-purple-300 rounded-lg flex items-center justify-center">
-                    <i className="fa-solid fa-gem text-purple-600 text-xs sm:text-sm"></i>
+                  <div className="w-6 h-6 sm:w-8 sm:h-8 bg-purple-100 border-2 border-purple-300 rounded-lg flex items-center justify-center">
+                    <i className="fa-solid fa-gem text-purple-600 text-xs"></i>
                   </div>
                 </div>
 
                 {/* Center - Equipment Grid */}
                 <div className="flex-1 mx-2 sm:mx-4">
-                  <div className="grid grid-cols-3 gap-1 sm:gap-2 max-w-[180px] sm:max-w-[240px] mx-auto">
+                  <div className="grid grid-cols-3 gap-1 max-w-[120px] sm:max-w-[150px] mx-auto">
                     {Array.from({ length: 12 }, (_, index) => {
                       const row = Math.floor(index / 3);
                       const col = index % 3;
@@ -104,7 +103,7 @@ const InventoryPanel: React.FC<InventoryPanelProps> = ({ npc, onClose }) => {
                       return (
                         <div
                           key={`equipment-${index}`}
-                          className={`responsive-equipment-slot rounded-lg border-2 flex items-center justify-center transition-colors ${
+                          className={`w-8 h-8 sm:w-10 sm:h-10 rounded-lg border-2 flex items-center justify-center transition-colors ${
                             slot 
                               ? 'bg-blue-100 border-blue-300 hover:bg-blue-200 cursor-pointer' 
                               : 'bg-transparent border-transparent'
@@ -112,7 +111,7 @@ const InventoryPanel: React.FC<InventoryPanelProps> = ({ npc, onClose }) => {
                           title={slot?.name}
                         >
                           {slot && (
-                            <i className={`fa-solid ${slot.icon} text-blue-600 text-xs sm:text-sm`}></i>
+                            <i className={`fa-solid ${slot.icon} text-blue-600 text-xs`}></i>
                           )}
                         </div>
                       );
@@ -122,11 +121,11 @@ const InventoryPanel: React.FC<InventoryPanelProps> = ({ npc, onClose }) => {
 
                 {/* Right Side - Actions */}
                 <div className="flex flex-col gap-1 sm:gap-2 w-12 sm:w-16">
-                  <button className="responsive-equipment-slot bg-green-100 border-2 border-green-300 rounded-lg hover:bg-green-200 transition-colors flex items-center justify-center">
-                    <i className="fa-solid fa-tshirt text-green-600 text-xs sm:text-sm"></i>
+                  <button className="w-6 h-6 sm:w-8 sm:h-8 bg-green-100 border-2 border-green-300 rounded-lg hover:bg-green-200 transition-colors flex items-center justify-center">
+                    <i className="fa-solid fa-tshirt text-green-600 text-xs"></i>
                   </button>
-                  <button className="responsive-equipment-slot bg-purple-100 border-2 border-purple-300 rounded-lg hover:bg-purple-200 transition-colors flex items-center justify-center">
-                    <i className="fa-solid fa-star text-purple-600 text-xs sm:text-sm"></i>
+                  <button className="w-6 h-6 sm:w-8 sm:h-8 bg-purple-100 border-2 border-purple-300 rounded-lg hover:bg-purple-200 transition-colors flex items-center justify-center">
+                    <i className="fa-solid fa-star text-purple-600 text-xs"></i>
                   </button>
                 </div>
               </div>
@@ -145,26 +144,19 @@ const InventoryPanel: React.FC<InventoryPanelProps> = ({ npc, onClose }) => {
           </div>
 
           {/* Scrollable Inventory Section - flex-1 para ocupar espaço restante */}
-          <div className="flex-1 px-2 sm:px-4 pb-2 sm:pb-4 overflow-hidden min-h-0">
-            <div className="h-full flex">
+          <div className="flex-1 px-2 sm:px-3 pb-2 sm:pb-3 overflow-hidden min-h-0">
+            <div className="h-full">
               {/* Inventory Grid - Scrollable */}
-              <div className="flex-1 overflow-y-auto pr-1 sm:pr-2">
-                <div className="responsive-grid-inventory p-1 sm:p-2 bg-amber-50/50 rounded-lg border border-amber-200">
+              <div className="h-full overflow-y-auto custom-scrollbar">
+                <div className="grid grid-cols-5 gap-1 sm:gap-2 p-2 bg-amber-50/50 rounded-lg border border-amber-200">
                   {inventorySlotsGenerated}
-                </div>
-              </div>
-
-              {/* Scroll Indicator */}
-              <div className="flex flex-col justify-center ml-1 sm:ml-2">
-                <div className="w-1 sm:w-2 h-16 sm:h-20 bg-gray-300 rounded-full relative">
-                  <div className="w-1 sm:w-2 h-6 sm:h-8 bg-gray-600 rounded-full absolute top-0"></div>
                 </div>
               </div>
             </div>
           </div>
 
           {/* Bottom Bar - Fixed */}
-          <div className="flex items-center justify-between responsive-text text-gray-600 p-2 sm:p-4 border-t border-amber-200 flex-shrink-0">
+          <div className="flex items-center justify-between text-xs sm:text-sm text-gray-600 p-2 sm:p-3 border-t border-amber-200 flex-shrink-0">
             <div className="flex items-center gap-2 sm:gap-4">
               <div className="w-4 h-4 sm:w-6 sm:h-6 bg-gray-400 rounded-full flex items-center justify-center">
                 <i className="fa-solid fa-cog text-white text-xs"></i>
