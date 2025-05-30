@@ -100,6 +100,15 @@ const Terrain = () => {
     return colors;
   }, [currentGridSize, terrainTiles, isEditorMode]);
 
+  // Dispose geometry when component unmounts or changes
+  useEffect(() => {
+    return () => {
+      if (terrainGeometry) {
+        terrainGeometry.dispose();
+      }
+    };
+  }, [terrainGeometry]);
+
   return (
     <group>
       {/* Terrain Mesh */}
@@ -113,6 +122,8 @@ const Terrain = () => {
         <meshLambertMaterial 
           color={isEditorMode ? "#ffffff" : "#4CAF50"}
           vertexColors={isEditorMode && terrainColors ? true : false}
+          transparent={false}
+          opacity={1.0}
         />
         {terrainColors && isEditorMode && (
           <bufferAttribute
@@ -128,6 +139,8 @@ const Terrain = () => {
           ref={gridRef}
           args={[currentGridSize, currentGridSize, "#888888", "#888888"]} 
           position={[currentGridSize / 2 - 0.5, 0.01, currentGridSize / 2 - 0.5]}
+          material-transparent={false}
+          material-opacity={1.0}
         />
       )}
     </group>

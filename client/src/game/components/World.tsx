@@ -81,115 +81,16 @@ const World: React.FC<WorldProps> = ({ selectedBuildingType, onMarketSelect }) =
     }
   }, [isInitialized, initialize, initResources]);
 
-  // Generate natural resources on the map
+  // Natural resources generation disabled
   const generateNaturalResources = () => {
-    const resources: NaturalResource[] = [];
-    const MAP_SIZE = GRID_CONFIG.DEFAULT_SIZE;
-    const STONE_COUNT = 20;
-    const WOOD_COUNT = 20;
-    const MIN_DISTANCE = GRID_CONFIG.MIN_RESOURCE_DISTANCE;
-    const MARGIN = GRID_CONFIG.RESOURCE_MARGIN;
-
-    // Helper function to check if position is valid (not too close to existing resources)
-    const isValidPosition = (x: number, z: number, existingResources: NaturalResource[]): boolean => {
-      // Check boundaries - use grid coordinates
-      if (x < MARGIN || x > MAP_SIZE - MARGIN || 
-          z < MARGIN || z > MAP_SIZE - MARGIN) {
-        return false;
-      }
-
-      // Check distance from existing resources
-      for (const resource of existingResources) {
-        const dx = x - resource.position[0];
-        const dz = z - resource.position[1];
-        const distance = Math.sqrt(dx * dx + dz * dz);
-        if (distance < MIN_DISTANCE) {
-          return false;
-        }
-      }
-      return true;
-    };
-
-    // Generate stone resources randomly across the map
-    for (let i = 0; i < STONE_COUNT; i++) {
-      let attempts = 0;
-      const maxAttempts = 100;
-
-      while (attempts < maxAttempts) {
-        // Generate random position in grid coordinates (0 to MAP_SIZE)
-        const x = Math.floor(Math.random() * (MAP_SIZE - MARGIN * 2)) + MARGIN;
-        const z = Math.floor(Math.random() * (MAP_SIZE - MARGIN * 2)) + MARGIN;
-
-        if (isValidPosition(x, z, resources)) {
-          resources.push({
-            type: "stone",
-            position: [x, z]
-          });
-          break;
-        }
-        attempts++;
-      }
-    }
-
-    // Generate wood resources randomly across the map
-    for (let i = 0; i < WOOD_COUNT; i++) {
-      let attempts = 0;
-      const maxAttempts = 100;
-
-      while (attempts < maxAttempts) {
-        // Generate random position in grid coordinates (0 to MAP_SIZE)
-        const x = Math.floor(Math.random() * (MAP_SIZE - MARGIN * 2)) + MARGIN;
-        const z = Math.floor(Math.random() * (MAP_SIZE - MARGIN * 2)) + MARGIN;
-
-        if (isValidPosition(x, z, resources)) {
-          resources.push({
-            type: "wood",
-            position: [x, z]
-          });
-          break;
-        }
-        attempts++;
-      }
-    }
-
-    setNaturalResources(resources);
-
-    // Make resources available globally for NPCs
-    window.naturalResources = resources;
-
-    console.log(`Generated ${resources.length} natural resources distributed across the map`);
+    // Disabled to keep grid clean
+    setNaturalResources([]);
+    window.naturalResources = [];
   };
 
-  // Create initial market building
+  // Initial market creation disabled
   const createInitialMarket = () => {
-    try {
-      const buildingStore = useBuildingStore.getState();
-      if (!buildingStore || !buildingStore.buildings) {
-        console.warn('Building store not initialized yet');
-        return;
-      }
-
-      const buildingsArray = Object.values(buildingStore.buildings);
-      const marketExists = buildingsArray.some(b => b && b.type === 'market');
-      
-      if (!marketExists) {
-        // Try different positions within the valid grid
-        const positions = [
-          [25, 25], [20, 20], [30, 30], [15, 25], [35, 25],
-          [25, 15], [25, 35], [20, 30], [30, 20], [10, 10]
-        ];
-
-        for (const pos of positions) {
-          const success = buildingStore.placeBuilding('market', pos as [number, number], 0, true);
-          if (success) {
-            console.log(`Market placed successfully at [${pos[0]}, ${pos[1]}]`);
-            break;
-          }
-        }
-      }
-    } catch (error) {
-      console.error('Error creating initial market:', error);
-    }
+    // Disabled to keep grid clean
   };
 
   // Update natural resources when NPCs collect them
@@ -209,10 +110,7 @@ const World: React.FC<WorldProps> = ({ selectedBuildingType, onMarketSelect }) =
     }
   };
 
-  useEffect(() => {
-    // Adicionar dummy de treinamento ao store
-    addDummy([10, 0, 10]);
-  }, [addDummy]);
+  // Training dummy addition disabled to keep grid clean
 
   if (!isWorldInitialized) {
     return null;
@@ -247,50 +145,7 @@ const World: React.FC<WorldProps> = ({ selectedBuildingType, onMarketSelect }) =
         {/* Terrain */}
         <Terrain />
 
-        {/* Buildings */}
-        {Array.isArray(buildings) && buildings.map((building) => {
-          if (!building || !building.id) return null;
-          try {
-            return (
-              <Building
-                key={building.id}
-                building={building}
-                onMarketSelect={onMarketSelect}
-              />
-            );
-          } catch (error) {
-            console.error(`Error rendering building ${building.id}:`, error);
-            return null;
-          }
-        })}
-
-        {/* NPCs */}
-        {Array.isArray(npcs) && npcs.map((npc) => {
-          if (!npc || !npc.id) return null;
-          return <NPC key={npc.id} npc={npc} />;
-        })}
-
-        {/* Training Dummy para teste de combate */}
-        <TrainingDummy 
-          id="training_dummy_1"
-          position={[10, 0, 10]} 
-        />
-
-        {/* Natural Resources - renderiza apenas recursos não coletados */}
-        {Array.isArray(naturalResources) && naturalResources
-          .filter(resource => resource && !resource.lastCollected)
-          .map((resource, index) => {
-            if (!resource || !resource.type || !resource.position) return null;
-            return (
-              <Resource
-                key={`resource-${resource.type}-${resource.position[0]}-${resource.position[1]}-${index}`}
-                type={resource.type}
-                position={[resource.position[0] - MAP_SIZE/2, 0, resource.position[1] - MAP_SIZE/2]}
-                color={resourceTypes[resource.type]?.color || "#ffffff"}
-                scale={0.8}
-              />
-            );
-          })}
+        {/* All grid items removed as requested */}
 
         {/* Building placement indicator */}
         {gameMode === "build" && <PlacementIndicator />}
