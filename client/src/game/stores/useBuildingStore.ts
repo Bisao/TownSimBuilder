@@ -439,6 +439,13 @@ export const useBuildingStore = create<BuildingStore>()(
       const { getBuildingAt } = get();
       const [x, z] = position;
 
+      // Check if building type exists
+      const buildingDef = buildingTypes[type];
+      if (!buildingDef) {
+        console.warn(`Building type ${type} not found in buildingTypes`);
+        return false;
+      }
+
       // Check if position is within bounds
       if (x < 0 || x >= GAME_CONFIG.GRID_SIZE || z < 0 || z >= GAME_CONFIG.GRID_SIZE) {
         return false;
@@ -450,7 +457,6 @@ export const useBuildingStore = create<BuildingStore>()(
       }
 
       // Check building-specific restrictions
-      const buildingDef = buildingTypes[type];
       if (buildingDef.restrictions) {
         // Add custom restriction logic here
       }
