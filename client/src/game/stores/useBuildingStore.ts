@@ -229,6 +229,28 @@ export const useBuildingStore = create<BuildingStore>()(
       set({ selectedBuilding: buildingId });
     },
 
+    clearAllBuildings: () => {
+      set((state) => ({
+        buildings: {},
+        selectedBuilding: null,
+        totalBuildings: 0,
+        buildingStats: {
+          house: 0,
+          farm: 0,
+          warehouse: 0,
+          mine: 0,
+          lumbermill: 0,
+          smithy: 0,
+          market: 0,
+          well: 0,
+          silo: 0,
+          workshop: 0,
+        },
+      }));
+      console.log('All buildings cleared from grid');
+    },
+    },
+
     // Production
     updateProduction: (currentTime: number) => {
       const { buildings } = get();

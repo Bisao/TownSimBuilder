@@ -52,9 +52,8 @@ const World: React.FC<WorldProps> = ({ selectedBuildingType, onMarketSelect }) =
 
   // Store states
   const { isInitialized, initialize, gameMode, isManualControl, controlledNpcId } = useGameStore();
-  const { buildings, placeBuilding } = useBuildingStore();
-  const { npcs, spawnNPC } = useNpcStore();
-  const { initResources } = useResourceStore();
+  const { buildings, placeBuilding, selectedBuildingType, setSelectedBuildingType, clearAllBuildings } = useBuildingStore();
+  const { naturalResources, generateNaturalResources, clearAllNaturalResources } = useResourceStore();
   const { addDummy } = useDummyStore();
 
   // Natural resources state
@@ -109,6 +108,39 @@ const World: React.FC<WorldProps> = ({ selectedBuildingType, onMarketSelect }) =
       onMarketSelect(building);
     }
   };
+
+  const handleTerrainClick = (event: any) => {
+    if (!selectedBuildingType) return;
+
+    const point = event.point;
+    const gridX = Math.floor(point.x + 0.5);
+    const gridZ = Math.floor(point.z + 0.5);
+
+    const success = placeBuilding(selectedBuildingType, [gridX, gridZ]);
+    if (success) {
+      setSelectedBuildingType(null);
+    }
+  };
+
+  const handleClearAll = () => {
+    clearAllBuildings();
+    clearAllNaturalResources();
+  };
+
+  useEffect(() => {
+    generateNaturalResources(30);
+
+    // Add global event listener for clearing grid
+    const handleClearGrid = () => {
+      handleClearAll();
+    };
+
+    window.addEventListener('clearGrid', handleClearGrid);
+
+    return () => {
+      window.removeEventListener('clearGrid', handleClearGrid);
+    };
+  }, [generateNaturalResources]);
 
   // Training dummy addition disabled to keep grid clean
 

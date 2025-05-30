@@ -1,7 +1,7 @@
 import React, { useRef, useMemo, useState, useCallback } from 'react';
 import { useFrame, useThree } from '@react-three/fiber';
 import * as THREE from 'three';
-import { Html } from '@react-three/drei';
+import { Html, useGLTF } from '@react-three/drei';
 import { Building as BuildingType } from '../stores/useBuildingStore';
 import { buildingTypes } from '../constants/buildings';
 import { useNpcStore } from "../stores/useNpcStore";
@@ -197,22 +197,22 @@ const Building: React.FC<BuildingProps> = ({ building, onMarketSelect }) => {
 };
 
 // Sub-components for different building types
-const HouseModel: React.FC<{ width: number; length: number; height: number }> = ({ width, length, height }) => (
-  <group>
-    <mesh position={[0, height / 2, 0]}>
-      <boxGeometry args={[width, height, length]} />
-      <meshStandardMaterial color="#E6D3B7" flatShading />
-    </mesh>
-    <mesh position={[0, height + 0.3, 0]} rotation={[0, Math.PI / 4, 0]}>
-      <coneGeometry args={[0.8, 0.6, 4]} />
-      <meshStandardMaterial color="#8B0000" flatShading />
-    </mesh>
-    <mesh position={[0, 0.4, 0.52]}>
-      <boxGeometry args={[0.3, 0.8, 0.03]} />
-      <meshStandardMaterial color="#654321" flatShading />
-    </mesh>
-  </group>
-);
+const HouseModel: React.FC<{ width: number; length: number; height: number }> = ({ width, length, height }) => {
+  const { scene } = useGLTF('/models/low_poly_house.glb');
+  
+  // Clone the scene to avoid issues with multiple instances
+  const clonedScene = useMemo(() => scene.clone(), [scene]);
+  
+  return (
+    <group>
+      <primitive 
+        object={clonedScene} 
+        scale={[0.5, 0.5, 0.5]} 
+        position={[0, 0, 0]}
+      />
+    </group>
+  );
+};
 
 const FarmerHouseModel: React.FC<{ width: number; length: number; height: number }> = ({ width, length, height }) => (
   <group>
@@ -396,5 +396,8 @@ const PlantationModel: React.FC<{ plantation: any }> = ({ plantation }) => {
     </group>
   );
 };
+
+// Preload the house model
+useGLTF.preload('/models/low_poly_house.glb');
 
 export default Building;
