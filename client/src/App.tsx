@@ -11,21 +11,7 @@ import { buildingTypes, BuildingType } from './game/constants/buildings';
 import { Interface } from './components/ui/interface';
 import "@fontsource/inter";
 
-// Texture verification utility
-const verifyTextures = async () => {
-  const textureUrls = ['/textures/wood.jpg', '/textures/grass.png'];
 
-  for (const url of textureUrls) {
-    try {
-      const response = await fetch(url);
-      if (!response.ok) {
-        console.warn(`Texture not found: ${url}`);
-      }
-    } catch (error) {
-      console.warn(`Failed to verify texture: ${url}`, error);
-    }
-  }
-};
 
 function App() {
   const [showCanvas, setShowCanvas] = useState(false);

@@ -1,25 +1,17 @@
 import React, { useRef, useMemo, useState, useEffect } from 'react';
-import { useFrame } from '@react-three/fiber';
+import { useFrame, useThree } from '@react-three/fiber';
 import * as THREE from 'three';
-import { useTexture } from '@react-three/drei';
+import { useTexture, Html } from '@react-three/drei';
 import { Building as BuildingType } from '../stores/useBuildingStore';
 import { buildingTypes } from '../constants/buildings';
-import { useRef, useState } from "react";
-import { useFrame } from "@react-three/fiber";
-import { buildingTypes } from "../constants/buildings";
-import { Building as BuildingType } from "../stores/useBuildingStore";
-import * as THREE from "three";
-import { useThree } from "@react-three/fiber";
-import { useTexture } from "@react-three/drei";
-import { Html } from "@react-three/drei";
 import { useNpcStore } from "../stores/useNpcStore";
 
 interface BuildingProps {
   building: BuildingType;
-  onClick?: (building: BuildingType) => void;
+  onMarketSelect?: (building: BuildingType) => void;
 }
 
-const Building = ({ building, onClick }: BuildingProps) => {
+const Building = ({ building, onMarketSelect }: BuildingProps) => {
   const ref = useRef<THREE.Mesh>(null);
   const lastProducedRef = useRef<number>(building.lastProduced);
   const [hovered, setHovered] = useState(false);
@@ -41,8 +33,14 @@ const Building = ({ building, onClick }: BuildingProps) => {
     return npcs.filter(npc => npc.homeId === building.id);
   }, [npcs, building.id, building.type]);
 
-  // Load texture
-  const woodTexture = useTexture("/textures/wood.jpg");
+  // Load texture with fallback
+  let woodTexture;
+  try {
+    woodTexture = useTexture("/textures/wood.jpg");
+  } catch (error) {
+    console.warn("Failed to load wood texture, using fallback");
+    woodTexture = useTexture("/textures/wood_fallback.jpg");
+  }
 
   // Calculate position (centered on grid cell)
   const [posX, posZ] = building.position;
@@ -103,8 +101,8 @@ const Building = ({ building, onClick }: BuildingProps) => {
 
   const handlePointerDown = (e: any) => {
     e.stopPropagation();
-    if (building.type === "market" && onClick) {
-      onClick(building);
+    if (building.type === "market" && onMarketSelect) {
+      onMarketSelect(building);
     } else if (building.type === "house" || building.type === "farmerHouse" || building.type === "minerHouse" || building.type === "lumberjackHouse" || building.type.includes("House")) {
       // Disparar evento para abrir painel da casa (com ou sem NPC)
       const houseNpc = houseNpcs[0]; // Pegar o primeiro NPC da casa se existir
