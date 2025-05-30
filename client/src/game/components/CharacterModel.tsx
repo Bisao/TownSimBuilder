@@ -42,8 +42,8 @@ const CharacterModel: React.FC<CharacterModelProps> = ({
 
   useFrame(() => {
     if (groupRef.current) {
-      // Ajustar a posição Y para que o modelo fique no chão
-      groupRef.current.position.set(position[0], position[1] - 0.5, position[2]);
+      // Ajustar a posição Y para que o modelo fique no nível do chão
+      groupRef.current.position.set(position[0], position[1] + 1, position[2]);
       groupRef.current.rotation.set(rotation[0], rotation[1], rotation[2]);
     }
   });
