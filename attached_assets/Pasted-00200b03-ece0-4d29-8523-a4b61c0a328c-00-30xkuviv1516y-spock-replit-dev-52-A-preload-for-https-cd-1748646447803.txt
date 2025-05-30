@@ -1,0 +1,459 @@
+00200b03-ece0-4d29-8523-a4b61c0a328c-00-30xkuviv1516y.spock.replit.dev/:52 A preload for 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css' is found, but is not used because the request credentials mode does not match. Consider taking a look at crossorigin attribute.
+chunk-LPPTHLN7.js?v=31832269:21551 Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools
+main.tsx:143 🚀 Starting application in development mode
+main.tsx:146 📊 React DevTools available
+main.tsx:152 ✅ Application initialized successfully
+interface.tsx:19 Current game phase: login
+App.tsx:132 🚀 Starting application in development mode
+App.tsx:135 📊 React DevTools available
+App.tsx:138 ✅ Application initialized successfully
+App.tsx:181 Aplicação inicializada com sucesso
+interface.tsx:19 Current game phase: login
+App.tsx:132 🚀 Starting application in development mode
+App.tsx:135 📊 React DevTools available
+App.tsx:138 ✅ Application initialized successfully
+App.tsx:181 Aplicação inicializada com sucesso
+00200b03-ece0-4d29-8523-a4b61c0a328c-00-30xkuviv1516y.spock.replit.dev/:1 The resource https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.
+useAudio.tsx:34 Inicializando sistema de áudio
+useAudio.tsx:55 Sistema de áudio inicializado
+App.tsx:145 Sistema de áudio inicializado com sucesso
+00200b03-ece0-4d29-8523-a4b61c0a328c-00-30xkuviv1516y.spock.replit.dev/:1 The resource https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.
+GameUI.tsx:89 KeyboardControls context not available, using fallback
+GameUI @ GameUI.tsx:89
+renderWithHooks @ chunk-LPPTHLN7.js?v=31832269:11548
+mountIndeterminateComponent @ chunk-LPPTHLN7.js?v=31832269:14926
+beginWork @ chunk-LPPTHLN7.js?v=31832269:15914
+beginWork$1 @ chunk-LPPTHLN7.js?v=31832269:19753
+performUnitOfWork @ chunk-LPPTHLN7.js?v=31832269:19198
+workLoopSync @ chunk-LPPTHLN7.js?v=31832269:19137
+renderRootSync @ chunk-LPPTHLN7.js?v=31832269:19116
+performSyncWorkOnRoot @ chunk-LPPTHLN7.js?v=31832269:18874
+flushSyncCallbacks @ chunk-LPPTHLN7.js?v=31832269:9119
+(anonymous) @ chunk-LPPTHLN7.js?v=31832269:18627
+GameUI.tsx:89 KeyboardControls context not available, using fallback
+GameUI @ GameUI.tsx:89
+renderWithHooks @ chunk-LPPTHLN7.js?v=31832269:11548
+mountIndeterminateComponent @ chunk-LPPTHLN7.js?v=31832269:14976
+beginWork @ chunk-LPPTHLN7.js?v=31832269:15914
+beginWork$1 @ chunk-LPPTHLN7.js?v=31832269:19753
+performUnitOfWork @ chunk-LPPTHLN7.js?v=31832269:19198
+workLoopSync @ chunk-LPPTHLN7.js?v=31832269:19137
+renderRootSync @ chunk-LPPTHLN7.js?v=31832269:19116
+performSyncWorkOnRoot @ chunk-LPPTHLN7.js?v=31832269:18874
+flushSyncCallbacks @ chunk-LPPTHLN7.js?v=31832269:9119
+(anonymous) @ chunk-LPPTHLN7.js?v=31832269:18627
+GameUI.tsx:89 KeyboardControls context not available, using fallback
+GameUI @ GameUI.tsx:89
+renderWithHooks @ chunk-LPPTHLN7.js?v=31832269:11548
+updateFunctionComponent @ chunk-LPPTHLN7.js?v=31832269:14582
+beginWork @ chunk-LPPTHLN7.js?v=31832269:15924
+beginWork$1 @ chunk-LPPTHLN7.js?v=31832269:19753
+performUnitOfWork @ chunk-LPPTHLN7.js?v=31832269:19198
+workLoopSync @ chunk-LPPTHLN7.js?v=31832269:19137
+renderRootSync @ chunk-LPPTHLN7.js?v=31832269:19116
+performConcurrentWorkOnRoot @ chunk-LPPTHLN7.js?v=31832269:18678
+workLoop @ chunk-LPPTHLN7.js?v=31832269:197
+flushWork @ chunk-LPPTHLN7.js?v=31832269:176
+performWorkUntilDeadline @ chunk-LPPTHLN7.js?v=31832269:384
+GameUI.tsx:89 KeyboardControls context not available, using fallback
+GameUI @ GameUI.tsx:89
+renderWithHooks @ chunk-LPPTHLN7.js?v=31832269:11548
+updateFunctionComponent @ chunk-LPPTHLN7.js?v=31832269:14587
+beginWork @ chunk-LPPTHLN7.js?v=31832269:15924
+beginWork$1 @ chunk-LPPTHLN7.js?v=31832269:19753
+performUnitOfWork @ chunk-LPPTHLN7.js?v=31832269:19198
+workLoopSync @ chunk-LPPTHLN7.js?v=31832269:19137
+renderRootSync @ chunk-LPPTHLN7.js?v=31832269:19116
+performConcurrentWorkOnRoot @ chunk-LPPTHLN7.js?v=31832269:18678
+workLoop @ chunk-LPPTHLN7.js?v=31832269:197
+flushWork @ chunk-LPPTHLN7.js?v=31832269:176
+performWorkUntilDeadline @ chunk-LPPTHLN7.js?v=31832269:384
+World.tsx:66 Initializing game world and resources
+useGameStore.ts:193 Initializing game store
+useResourceStore.ts:309 Resource store initialized
+World.tsx:160 Generated 40 natural resources distributed across the map
+main.tsx:23 Global error: TypeError: buildings.some is not a function
+    at createInitialMarket (World.tsx:165:36)
+    at World.tsx:78:7
+    at commitHookEffectListMount (chunk-6CHFNV4N.js?v=31832269:10911:34)
+    at commitPassiveMountOnFiber (chunk-6CHFNV4N.js?v=31832269:12219:19)
+    at commitPassiveMountEffects_complete (chunk-6CHFNV4N.js?v=31832269:12191:17)
+    at commitPassiveMountEffects_begin (chunk-6CHFNV4N.js?v=31832269:12181:15)
+    at commitPassiveMountEffects (chunk-6CHFNV4N.js?v=31832269:12171:11)
+    at flushPassiveEffectsImpl (chunk-6CHFNV4N.js?v=31832269:13939:11)
+    at flushPassiveEffects (chunk-6CHFNV4N.js?v=31832269:13902:22)
+    at chunk-6CHFNV4N.js?v=31832269:13793:17
+console.error @ chunk-6CHFNV4N.js?v=31832269:17705
+handleGlobalError @ main.tsx:23
+invokeGuardedCallbackDev @ chunk-6CHFNV4N.js?v=31832269:10614
+invokeGuardedCallback @ chunk-6CHFNV4N.js?v=31832269:10646
+reportUncaughtErrorInDEV @ chunk-6CHFNV4N.js?v=31832269:10673
+commitPassiveMountEffects_complete @ chunk-6CHFNV4N.js?v=31832269:12193
+commitPassiveMountEffects_begin @ chunk-6CHFNV4N.js?v=31832269:12181
+commitPassiveMountEffects @ chunk-6CHFNV4N.js?v=31832269:12171
+flushPassiveEffectsImpl @ chunk-6CHFNV4N.js?v=31832269:13939
+flushPassiveEffects @ chunk-6CHFNV4N.js?v=31832269:13902
+(anonymous) @ chunk-6CHFNV4N.js?v=31832269:13793
+workLoop @ chunk-6CHFNV4N.js?v=31832269:274
+flushWork @ chunk-6CHFNV4N.js?v=31832269:253
+performWorkUntilDeadline @ chunk-6CHFNV4N.js?v=31832269:461
+App.tsx:168 Global error: TypeError: buildings.some is not a function
+    at createInitialMarket (World.tsx:165:36)
+    at World.tsx:78:7
+    at commitHookEffectListMount (chunk-6CHFNV4N.js?v=31832269:10911:34)
+    at commitPassiveMountOnFiber (chunk-6CHFNV4N.js?v=31832269:12219:19)
+    at commitPassiveMountEffects_complete (chunk-6CHFNV4N.js?v=31832269:12191:17)
+    at commitPassiveMountEffects_begin (chunk-6CHFNV4N.js?v=31832269:12181:15)
+    at commitPassiveMountEffects (chunk-6CHFNV4N.js?v=31832269:12171:11)
+    at flushPassiveEffectsImpl (chunk-6CHFNV4N.js?v=31832269:13939:11)
+    at flushPassiveEffects (chunk-6CHFNV4N.js?v=31832269:13902:22)
+    at chunk-6CHFNV4N.js?v=31832269:13793:17
+chunk-6CHFNV4N.js?v=31832269:10674 Uncaught TypeError: buildings.some is not a function
+    at createInitialMarket (World.tsx:165:36)
+    at World.tsx:78:7
+    at commitHookEffectListMount (chunk-6CHFNV4N.js?v=31832269:10911:34)
+    at commitPassiveMountOnFiber (chunk-6CHFNV4N.js?v=31832269:12219:19)
+    at commitPassiveMountEffects_complete (chunk-6CHFNV4N.js?v=31832269:12191:17)
+    at commitPassiveMountEffects_begin (chunk-6CHFNV4N.js?v=31832269:12181:15)
+    at commitPassiveMountEffects (chunk-6CHFNV4N.js?v=31832269:12171:11)
+    at flushPassiveEffectsImpl (chunk-6CHFNV4N.js?v=31832269:13939:11)
+    at flushPassiveEffects (chunk-6CHFNV4N.js?v=31832269:13902:22)
+    at chunk-6CHFNV4N.js?v=31832269:13793:17
+createInitialMarket @ World.tsx:165
+(anonymous) @ World.tsx:78
+commitHookEffectListMount @ chunk-6CHFNV4N.js?v=31832269:10911
+commitPassiveMountOnFiber @ chunk-6CHFNV4N.js?v=31832269:12219
+commitPassiveMountEffects_complete @ chunk-6CHFNV4N.js?v=31832269:12191
+commitPassiveMountEffects_begin @ chunk-6CHFNV4N.js?v=31832269:12181
+commitPassiveMountEffects @ chunk-6CHFNV4N.js?v=31832269:12171
+flushPassiveEffectsImpl @ chunk-6CHFNV4N.js?v=31832269:13939
+flushPassiveEffects @ chunk-6CHFNV4N.js?v=31832269:13902
+(anonymous) @ chunk-6CHFNV4N.js?v=31832269:13793
+workLoop @ chunk-6CHFNV4N.js?v=31832269:274
+flushWork @ chunk-6CHFNV4N.js?v=31832269:253
+performWorkUntilDeadline @ chunk-6CHFNV4N.js?v=31832269:461
+chunk-6CHFNV4N.js?v=31832269:17705 The above error occurred in the <World> component:
+
+    at World (https://00200b03-ece0-4d29-8523-a4b61c0a328c-00-30xkuviv1516y.spock.replit.dev/src/game/components/World.tsx:37:18)
+    at Suspense
+    at Suspense
+    at ErrorBoundary (https://00200b03-ece0-4d29-8523-a4b61c0a328c-00-30xkuviv1516y.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-6CHFNV4N.js?v=31832269:16028:5)
+    at FiberProvider (https://00200b03-ece0-4d29-8523-a4b61c0a328c-00-30xkuviv1516y.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-6CHFNV4N.js?v=31832269:17708:21)
+    at Provider (https://00200b03-ece0-4d29-8523-a4b61c0a328c-00-30xkuviv1516y.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-6CHFNV4N.js?v=31832269:17317:3)
+
+React will try to recreate this component tree from scratch using the error boundary you provided, ErrorBoundary.
+console.error @ chunk-6CHFNV4N.js?v=31832269:17705
+logCapturedError @ chunk-6CHFNV4N.js?v=31832269:7765
+callback @ chunk-6CHFNV4N.js?v=31832269:7811
+callCallback @ chunk-6CHFNV4N.js?v=31832269:3716
+commitUpdateQueue @ chunk-6CHFNV4N.js?v=31832269:3733
+commitLayoutEffectOnFiber @ chunk-6CHFNV4N.js?v=31832269:11066
+commitLayoutMountEffects_complete @ chunk-6CHFNV4N.js?v=31832269:12040
+commitLayoutEffects_begin @ chunk-6CHFNV4N.js?v=31832269:12029
+commitLayoutEffects @ chunk-6CHFNV4N.js?v=31832269:11980
+commitRootImpl @ chunk-6CHFNV4N.js?v=31832269:13818
+commitRoot @ chunk-6CHFNV4N.js?v=31832269:13743
+performSyncWorkOnRoot @ chunk-6CHFNV4N.js?v=31832269:13332
+flushSyncCallbacks @ chunk-6CHFNV4N.js?v=31832269:2766
+flushPassiveEffectsImpl @ chunk-6CHFNV4N.js?v=31832269:13955
+flushPassiveEffects @ chunk-6CHFNV4N.js?v=31832269:13902
+(anonymous) @ chunk-6CHFNV4N.js?v=31832269:13793
+workLoop @ chunk-6CHFNV4N.js?v=31832269:274
+flushWork @ chunk-6CHFNV4N.js?v=31832269:253
+performWorkUntilDeadline @ chunk-6CHFNV4N.js?v=31832269:461
+GameUI.tsx:89 KeyboardControls context not available, using fallback
+GameUI @ GameUI.tsx:89
+renderWithHooks @ chunk-LPPTHLN7.js?v=31832269:11548
+updateFunctionComponent @ chunk-LPPTHLN7.js?v=31832269:14582
+beginWork @ chunk-LPPTHLN7.js?v=31832269:15924
+beginWork$1 @ chunk-LPPTHLN7.js?v=31832269:19753
+performUnitOfWork @ chunk-LPPTHLN7.js?v=31832269:19198
+workLoopSync @ chunk-LPPTHLN7.js?v=31832269:19137
+renderRootSync @ chunk-LPPTHLN7.js?v=31832269:19116
+performSyncWorkOnRoot @ chunk-LPPTHLN7.js?v=31832269:18874
+flushSyncCallbacks @ chunk-LPPTHLN7.js?v=31832269:9119
+(anonymous) @ chunk-LPPTHLN7.js?v=31832269:18627
+GameUI.tsx:89 KeyboardControls context not available, using fallback
+GameUI @ GameUI.tsx:89
+renderWithHooks @ chunk-LPPTHLN7.js?v=31832269:11548
+updateFunctionComponent @ chunk-LPPTHLN7.js?v=31832269:14587
+beginWork @ chunk-LPPTHLN7.js?v=31832269:15924
+beginWork$1 @ chunk-LPPTHLN7.js?v=31832269:19753
+performUnitOfWork @ chunk-LPPTHLN7.js?v=31832269:19198
+workLoopSync @ chunk-LPPTHLN7.js?v=31832269:19137
+renderRootSync @ chunk-LPPTHLN7.js?v=31832269:19116
+performSyncWorkOnRoot @ chunk-LPPTHLN7.js?v=31832269:18874
+flushSyncCallbacks @ chunk-LPPTHLN7.js?v=31832269:9119
+(anonymous) @ chunk-LPPTHLN7.js?v=31832269:18627
+main.tsx:23 Global error: TypeError: buildings.some is not a function
+    at createInitialMarket (World.tsx:165:36)
+    at World.tsx:78:7
+    at commitHookEffectListMount (chunk-6CHFNV4N.js?v=31832269:10911:34)
+    at commitPassiveMountOnFiber (chunk-6CHFNV4N.js?v=31832269:12219:19)
+    at commitPassiveMountEffects_complete (chunk-6CHFNV4N.js?v=31832269:12191:17)
+    at commitPassiveMountEffects_begin (chunk-6CHFNV4N.js?v=31832269:12181:15)
+    at commitPassiveMountEffects (chunk-6CHFNV4N.js?v=31832269:12171:11)
+    at flushPassiveEffectsImpl (chunk-6CHFNV4N.js?v=31832269:13939:11)
+    at flushPassiveEffects (chunk-6CHFNV4N.js?v=31832269:13902:22)
+    at chunk-6CHFNV4N.js?v=31832269:13793:17
+console.error @ chunk-6CHFNV4N.js?v=31832269:17705
+handleGlobalError @ main.tsx:23
+invokeGuardedCallbackDev @ chunk-LPPTHLN7.js?v=31832269:3699
+invokeGuardedCallback @ chunk-LPPTHLN7.js?v=31832269:3733
+beginWork$1 @ chunk-LPPTHLN7.js?v=31832269:19765
+performUnitOfWork @ chunk-LPPTHLN7.js?v=31832269:19198
+workLoopSync @ chunk-LPPTHLN7.js?v=31832269:19137
+renderRootSync @ chunk-LPPTHLN7.js?v=31832269:19116
+performConcurrentWorkOnRoot @ chunk-LPPTHLN7.js?v=31832269:18678
+workLoop @ chunk-LPPTHLN7.js?v=31832269:197
+flushWork @ chunk-LPPTHLN7.js?v=31832269:176
+performWorkUntilDeadline @ chunk-LPPTHLN7.js?v=31832269:384
+App.tsx:168 Global error: TypeError: buildings.some is not a function
+    at createInitialMarket (World.tsx:165:36)
+    at World.tsx:78:7
+    at commitHookEffectListMount (chunk-6CHFNV4N.js?v=31832269:10911:34)
+    at commitPassiveMountOnFiber (chunk-6CHFNV4N.js?v=31832269:12219:19)
+    at commitPassiveMountEffects_complete (chunk-6CHFNV4N.js?v=31832269:12191:17)
+    at commitPassiveMountEffects_begin (chunk-6CHFNV4N.js?v=31832269:12181:15)
+    at commitPassiveMountEffects (chunk-6CHFNV4N.js?v=31832269:12171:11)
+    at flushPassiveEffectsImpl (chunk-6CHFNV4N.js?v=31832269:13939:11)
+    at flushPassiveEffects (chunk-6CHFNV4N.js?v=31832269:13902:22)
+    at chunk-6CHFNV4N.js?v=31832269:13793:17
+useNotificationStore.ts:89 Warning: Cannot update a component (`NotificationContainer`) while rendering a different component (`ForwardRef(Canvas)`). To locate the bad setState() call inside `ForwardRef(Canvas)`, follow the stack trace as described in https://reactjs.org/link/setstate-in-render
+    at Canvas (https://00200b03-ece0-4d29-8523-a4b61c0a328c-00-30xkuviv1516y.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-6CHFNV4N.js?v=31832269:17774:3)
+    at FiberProvider (https://00200b03-ece0-4d29-8523-a4b61c0a328c-00-30xkuviv1516y.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-6CHFNV4N.js?v=31832269:17708:21)
+    at CanvasWrapper
+    at KeyboardControls (https://00200b03-ece0-4d29-8523-a4b61c0a328c-00-30xkuviv1516y.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@react-three_drei.js?v=31832269:9069:8)
+    at div
+    at https://00200b03-ece0-4d29-8523-a4b61c0a328c-00-30xkuviv1516y.spock.replit.dev/src/App.tsx?v=oMXXkkjBSmbSmbjsqP1Gq:68:59
+    at div
+    at HooksErrorBoundary (https://00200b03-ece0-4d29-8523-a4b61c0a328c-00-30xkuviv1516y.spock.replit.dev/src/components/ui/hooks-error-boundary.tsx:7:5)
+    at ErrorBoundary (https://00200b03-ece0-4d29-8523-a4b61c0a328c-00-30xkuviv1516y.spock.replit.dev/src/components/ui/error-boundary.tsx:10:5)
+    at App (https://00200b03-ece0-4d29-8523-a4b61c0a328c-00-30xkuviv1516y.spock.replit.dev/src/App.tsx?v=oMXXkkjBSmbSmbjsqP1Gq:209:21)
+    at ErrorBoundary (https://00200b03-ece0-4d29-8523-a4b61c0a328c-00-30xkuviv1516y.spock.replit.dev/src/components/ui/error-boundary.tsx:10:5)
+    at AppWrapper
+    at QueryClientProvider (https://00200b03-ece0-4d29-8523-a4b61c0a328c-00-30xkuviv1516y.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=31832269:2909:3)
+    at ErrorBoundary (https://00200b03-ece0-4d29-8523-a4b61c0a328c-00-30xkuviv1516y.spock.replit.dev/src/components/ui/error-boundary.tsx:10:5)
+    at AppWrapper
+console.error @ chunk-6CHFNV4N.js?v=31832269:17705
+printWarning @ chunk-LPPTHLN7.js?v=31832269:521
+error @ chunk-LPPTHLN7.js?v=31832269:505
+warnAboutRenderPhaseUpdatesInDEV @ chunk-LPPTHLN7.js?v=31832269:19793
+scheduleUpdateOnFiber @ chunk-LPPTHLN7.js?v=31832269:18546
+forceStoreRerender @ chunk-LPPTHLN7.js?v=31832269:11999
+handleStoreChange @ chunk-LPPTHLN7.js?v=31832269:11981
+(anonymous) @ chunk-CEYHGE2S.js?v=31832269:17
+setState @ chunk-CEYHGE2S.js?v=31832269:17
+addNotification @ useNotificationStore.ts:89
+handleGlobalError @ App.tsx:169
+invokeGuardedCallbackDev @ chunk-LPPTHLN7.js?v=31832269:3699
+invokeGuardedCallback @ chunk-LPPTHLN7.js?v=31832269:3733
+beginWork$1 @ chunk-LPPTHLN7.js?v=31832269:19765
+performUnitOfWork @ chunk-LPPTHLN7.js?v=31832269:19198
+workLoopSync @ chunk-LPPTHLN7.js?v=31832269:19137
+renderRootSync @ chunk-LPPTHLN7.js?v=31832269:19116
+performConcurrentWorkOnRoot @ chunk-LPPTHLN7.js?v=31832269:18678
+workLoop @ chunk-LPPTHLN7.js?v=31832269:197
+flushWork @ chunk-LPPTHLN7.js?v=31832269:176
+performWorkUntilDeadline @ chunk-LPPTHLN7.js?v=31832269:384
+chunk-6CHFNV4N.js?v=31832269:17814 Uncaught TypeError: buildings.some is not a function
+    at createInitialMarket (World.tsx:165:36)
+    at World.tsx:78:7
+    at commitHookEffectListMount (chunk-6CHFNV4N.js?v=31832269:10911:34)
+    at commitPassiveMountOnFiber (chunk-6CHFNV4N.js?v=31832269:12219:19)
+    at commitPassiveMountEffects_complete (chunk-6CHFNV4N.js?v=31832269:12191:17)
+    at commitPassiveMountEffects_begin (chunk-6CHFNV4N.js?v=31832269:12181:15)
+    at commitPassiveMountEffects (chunk-6CHFNV4N.js?v=31832269:12171:11)
+    at flushPassiveEffectsImpl (chunk-6CHFNV4N.js?v=31832269:13939:11)
+    at flushPassiveEffects (chunk-6CHFNV4N.js?v=31832269:13902:22)
+    at chunk-6CHFNV4N.js?v=31832269:13793:17
+createInitialMarket @ World.tsx:165
+(anonymous) @ World.tsx:78
+commitHookEffectListMount @ chunk-6CHFNV4N.js?v=31832269:10911
+commitPassiveMountOnFiber @ chunk-6CHFNV4N.js?v=31832269:12219
+commitPassiveMountEffects_complete @ chunk-6CHFNV4N.js?v=31832269:12191
+commitPassiveMountEffects_begin @ chunk-6CHFNV4N.js?v=31832269:12181
+commitPassiveMountEffects @ chunk-6CHFNV4N.js?v=31832269:12171
+flushPassiveEffectsImpl @ chunk-6CHFNV4N.js?v=31832269:13939
+flushPassiveEffects @ chunk-6CHFNV4N.js?v=31832269:13902
+(anonymous) @ chunk-6CHFNV4N.js?v=31832269:13793
+workLoop @ chunk-6CHFNV4N.js?v=31832269:274
+flushWork @ chunk-6CHFNV4N.js?v=31832269:253
+performWorkUntilDeadline @ chunk-6CHFNV4N.js?v=31832269:461
+GameUI.tsx:89 KeyboardControls context not available, using fallback
+GameUI @ GameUI.tsx:89
+renderWithHooks @ chunk-LPPTHLN7.js?v=31832269:11548
+mountIndeterminateComponent @ chunk-LPPTHLN7.js?v=31832269:14926
+beginWork @ chunk-LPPTHLN7.js?v=31832269:15914
+beginWork$1 @ chunk-LPPTHLN7.js?v=31832269:19753
+performUnitOfWork @ chunk-LPPTHLN7.js?v=31832269:19198
+workLoopSync @ chunk-LPPTHLN7.js?v=31832269:19137
+renderRootSync @ chunk-LPPTHLN7.js?v=31832269:19116
+performConcurrentWorkOnRoot @ chunk-LPPTHLN7.js?v=31832269:18678
+workLoop @ chunk-LPPTHLN7.js?v=31832269:197
+flushWork @ chunk-LPPTHLN7.js?v=31832269:176
+performWorkUntilDeadline @ chunk-LPPTHLN7.js?v=31832269:384
+GameUI.tsx:89 KeyboardControls context not available, using fallback
+GameUI @ GameUI.tsx:89
+renderWithHooks @ chunk-LPPTHLN7.js?v=31832269:11548
+mountIndeterminateComponent @ chunk-LPPTHLN7.js?v=31832269:14976
+beginWork @ chunk-LPPTHLN7.js?v=31832269:15914
+beginWork$1 @ chunk-LPPTHLN7.js?v=31832269:19753
+performUnitOfWork @ chunk-LPPTHLN7.js?v=31832269:19198
+workLoopSync @ chunk-LPPTHLN7.js?v=31832269:19137
+renderRootSync @ chunk-LPPTHLN7.js?v=31832269:19116
+performConcurrentWorkOnRoot @ chunk-LPPTHLN7.js?v=31832269:18678
+workLoop @ chunk-LPPTHLN7.js?v=31832269:197
+flushWork @ chunk-LPPTHLN7.js?v=31832269:176
+performWorkUntilDeadline @ chunk-LPPTHLN7.js?v=31832269:384
+main.tsx:23 Global error: TypeError: buildings.some is not a function
+    at createInitialMarket (World.tsx:165:36)
+    at World.tsx:78:7
+    at commitHookEffectListMount (chunk-6CHFNV4N.js?v=31832269:10911:34)
+    at commitPassiveMountOnFiber (chunk-6CHFNV4N.js?v=31832269:12219:19)
+    at commitPassiveMountEffects_complete (chunk-6CHFNV4N.js?v=31832269:12191:17)
+    at commitPassiveMountEffects_begin (chunk-6CHFNV4N.js?v=31832269:12181:15)
+    at commitPassiveMountEffects (chunk-6CHFNV4N.js?v=31832269:12171:11)
+    at flushPassiveEffectsImpl (chunk-6CHFNV4N.js?v=31832269:13939:11)
+    at flushPassiveEffects (chunk-6CHFNV4N.js?v=31832269:13902:22)
+    at chunk-6CHFNV4N.js?v=31832269:13793:17
+console.error @ chunk-6CHFNV4N.js?v=31832269:17705
+handleGlobalError @ main.tsx:23
+invokeGuardedCallbackDev @ chunk-LPPTHLN7.js?v=31832269:3699
+invokeGuardedCallback @ chunk-LPPTHLN7.js?v=31832269:3733
+beginWork$1 @ chunk-LPPTHLN7.js?v=31832269:19765
+performUnitOfWork @ chunk-LPPTHLN7.js?v=31832269:19198
+workLoopSync @ chunk-LPPTHLN7.js?v=31832269:19137
+renderRootSync @ chunk-LPPTHLN7.js?v=31832269:19116
+recoverFromConcurrentError @ chunk-LPPTHLN7.js?v=31832269:18736
+performConcurrentWorkOnRoot @ chunk-LPPTHLN7.js?v=31832269:18684
+workLoop @ chunk-LPPTHLN7.js?v=31832269:197
+flushWork @ chunk-LPPTHLN7.js?v=31832269:176
+performWorkUntilDeadline @ chunk-LPPTHLN7.js?v=31832269:384
+App.tsx:168 Global error: TypeError: buildings.some is not a function
+    at createInitialMarket (World.tsx:165:36)
+    at World.tsx:78:7
+    at commitHookEffectListMount (chunk-6CHFNV4N.js?v=31832269:10911:34)
+    at commitPassiveMountOnFiber (chunk-6CHFNV4N.js?v=31832269:12219:19)
+    at commitPassiveMountEffects_complete (chunk-6CHFNV4N.js?v=31832269:12191:17)
+    at commitPassiveMountEffects_begin (chunk-6CHFNV4N.js?v=31832269:12181:15)
+    at commitPassiveMountEffects (chunk-6CHFNV4N.js?v=31832269:12171:11)
+    at flushPassiveEffectsImpl (chunk-6CHFNV4N.js?v=31832269:13939:11)
+    at flushPassiveEffects (chunk-6CHFNV4N.js?v=31832269:13902:22)
+    at chunk-6CHFNV4N.js?v=31832269:13793:17
+chunk-6CHFNV4N.js?v=31832269:17814 Uncaught TypeError: buildings.some is not a function
+    at createInitialMarket (World.tsx:165:36)
+    at World.tsx:78:7
+    at commitHookEffectListMount (chunk-6CHFNV4N.js?v=31832269:10911:34)
+    at commitPassiveMountOnFiber (chunk-6CHFNV4N.js?v=31832269:12219:19)
+    at commitPassiveMountEffects_complete (chunk-6CHFNV4N.js?v=31832269:12191:17)
+    at commitPassiveMountEffects_begin (chunk-6CHFNV4N.js?v=31832269:12181:15)
+    at commitPassiveMountEffects (chunk-6CHFNV4N.js?v=31832269:12171:11)
+    at flushPassiveEffectsImpl (chunk-6CHFNV4N.js?v=31832269:13939:11)
+    at flushPassiveEffects (chunk-6CHFNV4N.js?v=31832269:13902:22)
+    at chunk-6CHFNV4N.js?v=31832269:13793:17
+createInitialMarket @ World.tsx:165
+(anonymous) @ World.tsx:78
+commitHookEffectListMount @ chunk-6CHFNV4N.js?v=31832269:10911
+commitPassiveMountOnFiber @ chunk-6CHFNV4N.js?v=31832269:12219
+commitPassiveMountEffects_complete @ chunk-6CHFNV4N.js?v=31832269:12191
+commitPassiveMountEffects_begin @ chunk-6CHFNV4N.js?v=31832269:12181
+commitPassiveMountEffects @ chunk-6CHFNV4N.js?v=31832269:12171
+flushPassiveEffectsImpl @ chunk-6CHFNV4N.js?v=31832269:13939
+flushPassiveEffects @ chunk-6CHFNV4N.js?v=31832269:13902
+(anonymous) @ chunk-6CHFNV4N.js?v=31832269:13793
+workLoop @ chunk-6CHFNV4N.js?v=31832269:274
+flushWork @ chunk-6CHFNV4N.js?v=31832269:253
+performWorkUntilDeadline @ chunk-6CHFNV4N.js?v=31832269:461
+GameUI.tsx:89 KeyboardControls context not available, using fallback
+GameUI @ GameUI.tsx:89
+renderWithHooks @ chunk-LPPTHLN7.js?v=31832269:11548
+mountIndeterminateComponent @ chunk-LPPTHLN7.js?v=31832269:14926
+beginWork @ chunk-LPPTHLN7.js?v=31832269:15914
+beginWork$1 @ chunk-LPPTHLN7.js?v=31832269:19753
+performUnitOfWork @ chunk-LPPTHLN7.js?v=31832269:19198
+workLoopSync @ chunk-LPPTHLN7.js?v=31832269:19137
+renderRootSync @ chunk-LPPTHLN7.js?v=31832269:19116
+recoverFromConcurrentError @ chunk-LPPTHLN7.js?v=31832269:18736
+performConcurrentWorkOnRoot @ chunk-LPPTHLN7.js?v=31832269:18684
+workLoop @ chunk-LPPTHLN7.js?v=31832269:197
+flushWork @ chunk-LPPTHLN7.js?v=31832269:176
+performWorkUntilDeadline @ chunk-LPPTHLN7.js?v=31832269:384
+GameUI.tsx:89 KeyboardControls context not available, using fallback
+GameUI @ GameUI.tsx:89
+renderWithHooks @ chunk-LPPTHLN7.js?v=31832269:11548
+mountIndeterminateComponent @ chunk-LPPTHLN7.js?v=31832269:14976
+beginWork @ chunk-LPPTHLN7.js?v=31832269:15914
+beginWork$1 @ chunk-LPPTHLN7.js?v=31832269:19753
+performUnitOfWork @ chunk-LPPTHLN7.js?v=31832269:19198
+workLoopSync @ chunk-LPPTHLN7.js?v=31832269:19137
+renderRootSync @ chunk-LPPTHLN7.js?v=31832269:19116
+recoverFromConcurrentError @ chunk-LPPTHLN7.js?v=31832269:18736
+performConcurrentWorkOnRoot @ chunk-LPPTHLN7.js?v=31832269:18684
+workLoop @ chunk-LPPTHLN7.js?v=31832269:197
+flushWork @ chunk-LPPTHLN7.js?v=31832269:176
+performWorkUntilDeadline @ chunk-LPPTHLN7.js?v=31832269:384
+chunk-6CHFNV4N.js?v=31832269:17705 The above error occurred in the <ForwardRef(Canvas)> component:
+
+    at Canvas (https://00200b03-ece0-4d29-8523-a4b61c0a328c-00-30xkuviv1516y.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-6CHFNV4N.js?v=31832269:17774:3)
+    at FiberProvider (https://00200b03-ece0-4d29-8523-a4b61c0a328c-00-30xkuviv1516y.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-6CHFNV4N.js?v=31832269:17708:21)
+    at CanvasWrapper
+    at KeyboardControls (https://00200b03-ece0-4d29-8523-a4b61c0a328c-00-30xkuviv1516y.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@react-three_drei.js?v=31832269:9069:8)
+    at div
+    at https://00200b03-ece0-4d29-8523-a4b61c0a328c-00-30xkuviv1516y.spock.replit.dev/src/App.tsx?v=oMXXkkjBSmbSmbjsqP1Gq:68:59
+    at div
+    at HooksErrorBoundary (https://00200b03-ece0-4d29-8523-a4b61c0a328c-00-30xkuviv1516y.spock.replit.dev/src/components/ui/hooks-error-boundary.tsx:7:5)
+    at ErrorBoundary (https://00200b03-ece0-4d29-8523-a4b61c0a328c-00-30xkuviv1516y.spock.replit.dev/src/components/ui/error-boundary.tsx:10:5)
+    at App (https://00200b03-ece0-4d29-8523-a4b61c0a328c-00-30xkuviv1516y.spock.replit.dev/src/App.tsx?v=oMXXkkjBSmbSmbjsqP1Gq:209:21)
+    at ErrorBoundary (https://00200b03-ece0-4d29-8523-a4b61c0a328c-00-30xkuviv1516y.spock.replit.dev/src/components/ui/error-boundary.tsx:10:5)
+    at AppWrapper
+    at QueryClientProvider (https://00200b03-ece0-4d29-8523-a4b61c0a328c-00-30xkuviv1516y.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=31832269:2909:3)
+    at ErrorBoundary (https://00200b03-ece0-4d29-8523-a4b61c0a328c-00-30xkuviv1516y.spock.replit.dev/src/components/ui/error-boundary.tsx:10:5)
+    at AppWrapper
+
+React will try to recreate this component tree from scratch using the error boundary you provided, HooksErrorBoundary.
+console.error @ chunk-6CHFNV4N.js?v=31832269:17705
+logCapturedError @ chunk-LPPTHLN7.js?v=31832269:14032
+callback @ chunk-LPPTHLN7.js?v=31832269:14078
+callCallback @ chunk-LPPTHLN7.js?v=31832269:11248
+commitUpdateQueue @ chunk-LPPTHLN7.js?v=31832269:11265
+commitLayoutEffectOnFiber @ chunk-LPPTHLN7.js?v=31832269:17075
+commitLayoutMountEffects_complete @ chunk-LPPTHLN7.js?v=31832269:17980
+commitLayoutEffects_begin @ chunk-LPPTHLN7.js?v=31832269:17969
+commitLayoutEffects @ chunk-LPPTHLN7.js?v=31832269:17920
+commitRootImpl @ chunk-LPPTHLN7.js?v=31832269:19353
+commitRoot @ chunk-LPPTHLN7.js?v=31832269:19277
+finishConcurrentRender @ chunk-LPPTHLN7.js?v=31832269:18760
+performConcurrentWorkOnRoot @ chunk-LPPTHLN7.js?v=31832269:18718
+workLoop @ chunk-LPPTHLN7.js?v=31832269:197
+flushWork @ chunk-LPPTHLN7.js?v=31832269:176
+performWorkUntilDeadline @ chunk-LPPTHLN7.js?v=31832269:384
+GameUI.tsx:89 KeyboardControls context not available, using fallback
+GameUI @ GameUI.tsx:89
+renderWithHooks @ chunk-LPPTHLN7.js?v=31832269:11548
+updateFunctionComponent @ chunk-LPPTHLN7.js?v=31832269:14582
+beginWork @ chunk-LPPTHLN7.js?v=31832269:15924
+beginWork$1 @ chunk-LPPTHLN7.js?v=31832269:19753
+performUnitOfWork @ chunk-LPPTHLN7.js?v=31832269:19198
+workLoopSync @ chunk-LPPTHLN7.js?v=31832269:19137
+renderRootSync @ chunk-LPPTHLN7.js?v=31832269:19116
+performConcurrentWorkOnRoot @ chunk-LPPTHLN7.js?v=31832269:18678
+workLoop @ chunk-LPPTHLN7.js?v=31832269:197
+flushWork @ chunk-LPPTHLN7.js?v=31832269:176
+performWorkUntilDeadline @ chunk-LPPTHLN7.js?v=31832269:384
+GameUI.tsx:89 KeyboardControls context not available, using fallback
+GameUI @ GameUI.tsx:89
+renderWithHooks @ chunk-LPPTHLN7.js?v=31832269:11548
+updateFunctionComponent @ chunk-LPPTHLN7.js?v=31832269:14587
+beginWork @ chunk-LPPTHLN7.js?v=31832269:15924
+beginWork$1 @ chunk-LPPTHLN7.js?v=31832269:19753
+performUnitOfWork @ chunk-LPPTHLN7.js?v=31832269:19198
+workLoopSync @ chunk-LPPTHLN7.js?v=31832269:19137
+renderRootSync @ chunk-LPPTHLN7.js?v=31832269:19116
+performConcurrentWorkOnRoot @ chunk-LPPTHLN7.js?v=31832269:18678
+workLoop @ chunk-LPPTHLN7.js?v=31832269:197
+flushWork @ chunk-LPPTHLN7.js?v=31832269:176
+performWorkUntilDeadline @ chunk-LPPTHLN7.js?v=31832269:384
+useDummyStore.ts:45 Dummy de treinamento criado: dummy_1748646430202_fqdfdwzoi na posição [10, 0, 10]
+chunk-664ZIH6C.js?v=31832269:17835 THREE.WebGLRenderer: Context Lost.
+00200b03-ece0-4d29-8523-a4b61c0a328c-00-30xkuviv1516y.spock.replit.dev/:1 The resource https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.
