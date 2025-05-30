@@ -1,106 +1,149 @@
 
-import { useRef } from "react";
+import { useRef, useMemo } from "react";
 import { useFrame } from "@react-three/fiber";
 import { useGameStore } from "../stores/useGameStore";
 import * as THREE from "three";
 
-const DayNightCycle = () => {
+// Lighting configuration
+const LIGHTING_CONFIG = {
+  SUN_DISTANCE: 200,
+  SHADOW_MAP_SIZE: 2048,
+  SHADOW_CAMERA_SIZE: 150,
+  SHADOW_NEAR: 10,
+  SHADOW_FAR: 500,
+  SHADOW_BIAS: -0.0001,
+  SHADOW_RADIUS: 4,
+} as const;
+
+const DayNightCycle: React.FC = () => {
   const { timeCycle, timeOfDay } = useGameStore();
   const lightRef = useRef<THREE.DirectionalLight>(null);
   const ambientRef = useRef<THREE.AmbientLight>(null);
   
-  useFrame(() => {
-    if (!lightRef.current || !ambientRef.current) return;
-    
-    // Calcular posição do sol baseado nos horários realistas
-    const hours = timeCycle * 24;
-    
-    // Mapear horário para ângulo do sol (6h = nascente, 12h = pino, 18h = poente)
+  // Memoize light colors to avoid recreating objects
+  const lightColors = useMemo(() => ({
+    dawn: {
+      directional: new THREE.Color(1, 0.8, 0.6),
+      ambient: new THREE.Color(0.5, 0.4, 0.6)
+    },
+    day: {
+      directional: new THREE.Color(1, 0.98, 0.95),
+      ambient: new THREE.Color(0.6, 0.7, 0.9)
+    },
+    dusk: {
+      directional: new THREE.Color(1, 0.7, 0.4),
+      ambient: new THREE.Color(0.6, 0.4, 0.5)
+    },
+    night: {
+      directional: new THREE.Color(0.7, 0.8, 1),
+      ambient: new THREE.Color(0.2, 0.2, 0.4)
+    }
+  }), []);
+
+  const calculateSunPosition = (hours: number) => {
     let sunAngle = 0;
     let sunElevation = 0;
     
     if (hours >= 6 && hours <= 18) {
-      // Durante o dia (6h-18h): sol visível
-      const dayProgress = (hours - 6) / 12; // 0 a 1 durante o dia (12 horas de sol)
-      sunAngle = dayProgress * Math.PI; // 0 a π (leste para oeste)
-      sunElevation = Math.sin(dayProgress * Math.PI) * 0.9; // Parábola do sol
+      // Daytime (6h-18h): visible sun
+      const dayProgress = (hours - 6) / 12; // 0 to 1 during day
+      sunAngle = dayProgress * Math.PI; // 0 to π (east to west)
+      sunElevation = Math.sin(dayProgress * Math.PI) * 0.9; // Sun parabola
     } else {
-      // Durante a noite: sol abaixo do horizonte
+      // Nighttime: sun below horizon
       sunElevation = -0.3;
       if (hours < 6) {
-        sunAngle = ((hours + 18) / 12) * Math.PI; // Continua movimento noturno
+        sunAngle = ((hours + 18) / 12) * Math.PI;
       } else {
-        sunAngle = ((hours - 18) / 12) * Math.PI; // Movimento após pôr do sol
+        sunAngle = ((hours - 18) / 12) * Math.PI;
       }
     }
     
-    // Posição do sol no céu
-    const sunDistance = 200;
-    const sunX = Math.cos(sunAngle) * sunDistance;
-    const sunY = Math.max(sunElevation * sunDistance, -20); // Não deixar muito baixo
-    const sunZ = Math.sin(sunAngle) * sunDistance;
+    // Calculate 3D position
+    const sunX = Math.cos(sunAngle) * LIGHTING_CONFIG.SUN_DISTANCE;
+    const sunY = Math.max(sunElevation * LIGHTING_CONFIG.SUN_DISTANCE, -20);
+    const sunZ = Math.sin(sunAngle) * LIGHTING_CONFIG.SUN_DISTANCE;
     
-    // Atualizar posição do sol
-    lightRef.current.position.set(sunX, sunY, sunZ);
-    lightRef.current.lookAt(0, 0, 0);
-    
-    // Calcular intensidades baseado na altura do sol
+    return { x: sunX, y: sunY, z: sunZ, elevation: sunElevation };
+  };
+
+  const calculateLightingValues = (timeOfDay: string, hours: number, sunElevation: number) => {
     const sunHeight = Math.max(0, sunElevation);
     const sunIntensity = Math.max(0, sunHeight * 2);
     
-    // Intensidades mais realistas
     let directionalIntensity = 0;
     let ambientIntensity = 0;
-    let lightColor = new THREE.Color(1, 1, 1);
-    let ambientColor = new THREE.Color(0.4, 0.4, 0.6);
+    let lightColor = lightColors.day.directional;
+    let ambientColor = lightColors.day.ambient;
     
-    if (timeOfDay === "dawn") {
-      // Amanhecer (6h-8h) - luz dourada crescente
-      const dawnProgress = (hours - 6) / 2; // 0 a 1 durante amanhecer (2 horas)
-      directionalIntensity = dawnProgress * sunIntensity * 5.0;
-      ambientIntensity = 0.5 + dawnProgress * 0.8;
-      lightColor = new THREE.Color(1, 0.8 + dawnProgress * 0.15, 0.6 + dawnProgress * 0.3);
-      ambientColor = new THREE.Color(0.5 + dawnProgress * 0.1, 0.4 + dawnProgress * 0.2, 0.6 + dawnProgress * 0.2);
-    } else if (timeOfDay === "day") {
-      // Dia (8h-18h) - luz intensa e branca
-      directionalIntensity = sunIntensity * 6.0;
-      ambientIntensity = 1.2;
-      lightColor = new THREE.Color(1, 0.98, 0.95); // Branco solar
-      ambientColor = new THREE.Color(0.6, 0.7, 0.9); // Azul céu
-    } else if (timeOfDay === "dusk") {
-      // Entardecer (18h-19h) - luz alaranjada decrescente  
-      const duskProgress = (hours - 18) / 1; // 0 a 1 durante entardecer (1 hora)
-      directionalIntensity = (1 - duskProgress) * sunIntensity * 4.0;
-      ambientIntensity = 0.8 - duskProgress * 0.4;
-      lightColor = new THREE.Color(1, 0.7 - duskProgress * 0.2, 0.4 - duskProgress * 0.2);
-      ambientColor = new THREE.Color(0.6 - duskProgress * 0.4, 0.4 - duskProgress * 0.2, 0.5 + duskProgress * 0.1);
-    } else {
-      // Noite (19h-6h) - luz lunar mais intensa
-      directionalIntensity = 0.3;
-      ambientIntensity = 0.4;
-      lightColor = new THREE.Color(0.7, 0.8, 1); // Azul lunar
-      ambientColor = new THREE.Color(0.2, 0.2, 0.4); // Azul noturno mais claro
+    switch (timeOfDay) {
+      case "dawn":
+        const dawnProgress = (hours - 6) / 2; // 0 to 1 during dawn (2 hours)
+        directionalIntensity = dawnProgress * sunIntensity * 5.0;
+        ambientIntensity = 0.5 + dawnProgress * 0.8;
+        lightColor = lightColors.dawn.directional.clone().lerp(lightColors.day.directional, dawnProgress);
+        ambientColor = lightColors.dawn.ambient.clone().lerp(lightColors.day.ambient, dawnProgress);
+        break;
+        
+      case "day":
+        directionalIntensity = sunIntensity * 6.0;
+        ambientIntensity = 1.2;
+        lightColor = lightColors.day.directional;
+        ambientColor = lightColors.day.ambient;
+        break;
+        
+      case "dusk":
+        const duskProgress = (hours - 18) / 1; // 0 to 1 during dusk (1 hour)
+        directionalIntensity = (1 - duskProgress) * sunIntensity * 4.0;
+        ambientIntensity = 0.8 - duskProgress * 0.4;
+        lightColor = lightColors.day.directional.clone().lerp(lightColors.dusk.directional, duskProgress);
+        ambientColor = lightColors.day.ambient.clone().lerp(lightColors.dusk.ambient, duskProgress);
+        break;
+        
+      case "night":
+      default:
+        directionalIntensity = 0.3;
+        ambientIntensity = 0.4;
+        lightColor = lightColors.night.directional;
+        ambientColor = lightColors.night.ambient;
+        break;
     }
     
-    // Aplicar intensidades e cores
-    lightRef.current.intensity = directionalIntensity;
-    lightRef.current.color = lightColor;
-    ambientRef.current.intensity = ambientIntensity;
-    ambientRef.current.color = ambientColor;
+    return { directionalIntensity, ambientIntensity, lightColor, ambientColor };
+  };
+
+  const configureShadows = (light: THREE.DirectionalLight) => {
+    light.shadow.camera.near = LIGHTING_CONFIG.SHADOW_NEAR;
+    light.shadow.camera.far = LIGHTING_CONFIG.SHADOW_FAR;
+    light.shadow.camera.left = -LIGHTING_CONFIG.SHADOW_CAMERA_SIZE;
+    light.shadow.camera.right = LIGHTING_CONFIG.SHADOW_CAMERA_SIZE;
+    light.shadow.camera.top = LIGHTING_CONFIG.SHADOW_CAMERA_SIZE;
+    light.shadow.camera.bottom = -LIGHTING_CONFIG.SHADOW_CAMERA_SIZE;
+    light.shadow.mapSize.width = LIGHTING_CONFIG.SHADOW_MAP_SIZE;
+    light.shadow.mapSize.height = LIGHTING_CONFIG.SHADOW_MAP_SIZE;
+    light.shadow.bias = LIGHTING_CONFIG.SHADOW_BIAS;
+    light.shadow.radius = LIGHTING_CONFIG.SHADOW_RADIUS;
+  };
+  
+  useFrame(() => {
+    if (!lightRef.current || !ambientRef.current) return;
     
-    // Configurar sombras mais realistas
-    lightRef.current.shadow.camera.near = 10;
-    lightRef.current.shadow.camera.far = 500;
-    lightRef.current.shadow.camera.left = -150;
-    lightRef.current.shadow.camera.right = 150;
-    lightRef.current.shadow.camera.top = 150;
-    lightRef.current.shadow.camera.bottom = -150;
-    lightRef.current.shadow.mapSize.width = 2048;
-    lightRef.current.shadow.mapSize.height = 2048;
-    lightRef.current.shadow.bias = -0.0001;
+    const hours = timeCycle * 24;
+    const sunPosition = calculateSunPosition(hours);
+    const lightingValues = calculateLightingValues(timeOfDay, hours, sunPosition.elevation);
     
-    // Suavizar bordas das sombras
-    lightRef.current.shadow.radius = 4;
+    // Update sun position
+    lightRef.current.position.set(sunPosition.x, sunPosition.y, sunPosition.z);
+    lightRef.current.lookAt(0, 0, 0);
+    
+    // Update lighting
+    lightRef.current.intensity = lightingValues.directionalIntensity;
+    lightRef.current.color = lightingValues.lightColor;
+    ambientRef.current.intensity = lightingValues.ambientIntensity;
+    ambientRef.current.color = lightingValues.ambientColor;
+    
+    // Configure shadows
+    configureShadows(lightRef.current);
   });
   
   return (

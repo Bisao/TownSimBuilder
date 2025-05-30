@@ -1,5 +1,5 @@
 
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useCallback } from 'react';
 import { useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
 import { Text } from '@react-three/drei';
@@ -8,13 +8,38 @@ interface DamageTextProps {
   damage: number;
   position: THREE.Vector3;
   critical?: boolean;
+  type?: 'damage' | 'heal' | 'experience';
   onComplete: () => void;
 }
 
-const DamageText: React.FC<DamageTextProps> = ({ damage, position, critical = false, onComplete }) => {
+const DamageText: React.FC<DamageTextProps> = ({ 
+  damage, 
+  position, 
+  critical = false, 
+  type = 'damage',
+  onComplete 
+}) => {
   const groupRef = useRef<THREE.Group>(null);
   const startTime = useRef(Date.now());
-  const duration = 2000; // 2 segundos
+  const duration = 2000; // 2 seconds
+
+  const getTextColor = useCallback(() => {
+    switch (type) {
+      case 'heal':
+        return critical ? "#00FF44" : "#44FF44";
+      case 'experience':
+        return critical ? "#FFD700" : "#FFA500";
+      case 'damage':
+      default:
+        return critical ? "#FF4444" : "#FFFF44";
+    }
+  }, [type, critical]);
+
+  const getText = useCallback(() => {
+    const prefix = critical ? "CRÍTICO! " : "";
+    const suffix = type === 'experience' ? " XP" : "";
+    return `${prefix}${damage}${suffix}`;
+  }, [damage, critical, type]);
 
   useFrame(() => {
     if (!groupRef.current) return;
@@ -27,22 +52,30 @@ const DamageText: React.FC<DamageTextProps> = ({ damage, position, critical = fa
       return;
     }
 
-    // Animação de movimento para cima
-    groupRef.current.position.y = position.y + progress * 2;
+    // Animation curves
+    const easeOut = 1 - Math.pow(1 - progress, 3);
+    const fadeOut = 1 - Math.pow(progress, 2);
+
+    // Movement animation
+    groupRef.current.position.y = position.y + easeOut * 2;
     
-    // Fade out
-    const opacity = 1 - progress;
+    // Scale animation for critical hits
+    if (critical) {
+      const pulseIntensity = Math.sin(elapsed * 0.01) * 0.2;
+      const baseScale = 1 + pulseIntensity * (1 - progress);
+      groupRef.current.scale.setScalar(baseScale);
+    } else {
+      groupRef.current.scale.setScalar(1 - progress * 0.2);
+    }
+
+    // Fade out effect
     groupRef.current.children.forEach(child => {
-      if (child instanceof THREE.Mesh && child.material instanceof THREE.MeshBasicMaterial) {
-        child.material.opacity = opacity;
+      if (child instanceof THREE.Mesh && child.material instanceof THREE.Material) {
+        if ('opacity' in child.material) {
+          child.material.opacity = fadeOut;
+        }
       }
     });
-
-    // Escala para críticos
-    if (critical) {
-      const scale = 1 + Math.sin(elapsed * 0.01) * 0.2;
-      groupRef.current.scale.setScalar(scale);
-    }
   });
 
   return (
@@ -50,14 +83,15 @@ const DamageText: React.FC<DamageTextProps> = ({ damage, position, critical = fa
       <Text
         position={[0, 0, 0]}
         fontSize={critical ? 0.4 : 0.3}
-        color={critical ? "#FF4444" : "#FFFF44"}
+        color={getTextColor()}
         anchorX="center"
         anchorY="middle"
         outlineWidth={0.02}
         outlineColor="#000000"
         font="/fonts/inter.json"
+        transparent
       >
-        {critical ? `CRÍTICO! ${damage}` : damage.toString()}
+        {getText()}
       </Text>
     </group>
   );
