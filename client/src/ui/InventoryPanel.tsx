@@ -385,6 +385,7 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
       <div className="flex flex-col items-center space-y-2">
         <span className="text-xs text-gray-600 font-medium">{label}</span>
         <div
+          data-slot={slotId}
           className={`w-14 h-14 rounded-xl border-2 border-dashed transition-all duration-200 flex items-center justify-center relative overflow-hidden ${
             draggedItem 
               ? canAccept 
@@ -405,7 +406,10 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
             e.currentTarget.classList.remove('animate-pulse');
             handleDropOnSlot(e, slotId);
           }}
-          onClick={() => slot?.equipped && handleUnequip(slotId)}
+          onClick={(e) => {
+            e.stopPropagation();
+            if (slot?.equipped) handleUnequip(slotId);
+          }}
         >
           {slot?.equipped ? (
             <div className="relative group">
@@ -454,10 +458,25 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
           cursor: isDragging ? 'grabbing' : 'grab',
         }}
         ref={dragRef}
-        onMouseDown={handleMouseDown}
+        onMouseDown={(e) => {
+          // Não arrastar o painel se estamos clicando em itens ou slots
+          const target = e.target as HTMLElement;
+          const isInteractiveElement = target.closest('[draggable="true"]') || 
+                                     target.closest('[data-slot]') || 
+                                     target.closest('button') || 
+                                     target.closest('input') || 
+                                     target.closest('select');
+          
+          if (!isInteractiveElement) {
+            handleMouseDown(e);
+          }
+        }}
       >
         {/* Header Aprimorado */}
-        <div className="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 p-6 text-white relative overflow-hidden">
+        <div 
+          className="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 p-6 text-white relative overflow-hidden cursor-grab active:cursor-grabbing"
+          onMouseDown={handleMouseDown}
+        >
           <div className="absolute inset-0 bg-black/20 backdrop-blur-sm"></div>
           <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent animate-pulse"></div>
           <div className="relative z-10">
@@ -472,7 +491,10 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
                 </div>
               </div>
               <button 
-                onClick={onClose}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onClose();
+                }}
                 className="w-12 h-12 bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-2xl flex items-center justify-center transition-all duration-200 border border-white/30 hover:scale-105"
               >
                 <i className="fa-solid fa-times text-white text-xl"></i>
