@@ -1,6 +1,6 @@
 
-import React, { useState, useCallback, useMemo } from "react";
-import { NPC } from "../game/stores/useNpcStore";
+import React, { useState, useCallback, useMemo, useEffect } from "react";
+import { NPC, useNpcStore } from "../game/stores/useNpcStore";
 import { useDraggable } from "../hooks/useDraggable";
 
 interface InventoryPanelProps {
@@ -34,6 +34,7 @@ interface EquipmentSlot {
 }
 
 const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
+  const { updateNpc } = useNpcStore();
   const { dragRef, position, isDragging, handleMouseDown } = useDraggable({
     initialPosition: { x: window.innerWidth / 2 - 350, y: window.innerHeight / 2 - 350 }
   });
@@ -168,67 +169,92 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
     }] : [])
   ]);
 
-  const [equipmentSlots, setEquipmentSlots] = useState<EquipmentSlot[]>([
-    { 
-      id: "head", 
-      name: "Capacete", 
-      type: "head",
-      acceptedTypes: ["armor"]
-    },
-    { 
-      id: "cape", 
-      name: "Capa", 
-      type: "cape",
-      acceptedTypes: ["armor"]
-    },
-    { 
-      id: "bag", 
-      name: "Bolsa", 
-      type: "bag",
-      acceptedTypes: ["consumable"]
-    },
-    { 
-      id: "mainhand", 
-      name: "Mão Principal", 
-      type: "weapon",
-      acceptedTypes: ["weapon", "tool"]
-    },
-    { 
-      id: "chest", 
-      name: "Peitoral", 
-      type: "chest",
-      acceptedTypes: ["armor"]
-    },
-    { 
-      id: "offhand", 
-      name: "Mão Secundária", 
-      type: "offhand",
-      acceptedTypes: ["weapon", "armor", "tool"]
-    },
-    { 
-      id: "potion", 
-      name: "Poção", 
-      type: "potion",
-      acceptedTypes: ["consumable"]
-    },
-    { 
-      id: "boots", 
-      name: "Botas", 
-      type: "boots",
-      acceptedTypes: ["armor"]
-    },
-    { 
-      id: "food", 
-      name: "Comida", 
-      type: "food",
-      acceptedTypes: ["consumable"]
+  // Inicializar equipamentos a partir do NPC ou valores padrão
+  const [equipmentSlots, setEquipmentSlots] = useState<EquipmentSlot[]>(() => {
+    const defaultSlots = [
+      { 
+        id: "head", 
+        name: "Capacete", 
+        type: "head" as const,
+        acceptedTypes: ["armor"]
+      },
+      { 
+        id: "cape", 
+        name: "Capa", 
+        type: "cape" as const,
+        acceptedTypes: ["armor"]
+      },
+      { 
+        id: "bag", 
+        name: "Bolsa", 
+        type: "bag" as const,
+        acceptedTypes: ["consumable"]
+      },
+      { 
+        id: "mainhand", 
+        name: "Mão Principal", 
+        type: "weapon" as const,
+        acceptedTypes: ["weapon", "tool"]
+      },
+      { 
+        id: "chest", 
+        name: "Peitoral", 
+        type: "chest" as const,
+        acceptedTypes: ["armor"]
+      },
+      { 
+        id: "offhand", 
+        name: "Mão Secundária", 
+        type: "offhand" as const,
+        acceptedTypes: ["weapon", "armor", "tool"]
+      },
+      { 
+        id: "potion", 
+        name: "Poção", 
+        type: "potion" as const,
+        acceptedTypes: ["consumable"]
+      },
+      { 
+        id: "boots", 
+        name: "Botas", 
+        type: "boots" as const,
+        acceptedTypes: ["armor"]
+      },
+      { 
+        id: "food", 
+        name: "Comida", 
+        type: "food" as const,
+        acceptedTypes: ["consumable"]
+      }
+    ];
+
+    // Carregar equipamentos do NPC se existirem
+    if (npc.equipment) {
+      return defaultSlots.map(slot => ({
+        ...slot,
+        equipped: npc.equipment[slot.id] || undefined
+      }));
     }
-  ]);
+
+    return defaultSlots;
+  });
 
   const [draggedItem, setDraggedItem] = useState<InventoryItem | null>(null);
   const [selectedItem, setSelectedItem] = useState<InventoryItem | null>(null);
   const [filter, setFilter] = useState<string>("all");
   const [sortBy, setSortBy] = useState<string>("tier");
+
+  // Sincronizar equipamentos quando o NPC muda
+  useEffect(() => {
+    if (npc.equipment) {
+      setEquipmentSlots(prev => 
+        prev.map(slot => ({
+          ...slot,
+          equipped: npc.equipment?.[slot.id] || undefined
+        }))
+      );
+    }
+  }, [npc.equipment]);
 
   const getRarityColor = (rarity?: string) => {
     switch (rarity) {
@@ -349,6 +375,17 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
       );
       
       console.log("Slot equipado:", { slotId, item: itemData.name });
+      
+      // Salvar equipamentos no NPC
+      const equipment = newSlots.reduce((acc, slot) => {
+        if (slot.equipped) {
+          acc[slot.id] = slot.equipped;
+        }
+        return acc;
+      }, {} as Record<string, InventoryItem>);
+      
+      updateNpc(npc.id, { equipment });
+      
       return newSlots;
     });
 
@@ -390,9 +427,23 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
     setInventoryItems(prev => [...prev, { ...equippedItem, equipped: false }]);
     
     // Remover item do slot de equipamento
-    setEquipmentSlots(prev => prev.map(s => 
-      s.id === slotId ? { ...s, equipped: undefined } : s
-    ));
+    setEquipmentSlots(prev => {
+      const newSlots = prev.map(s => 
+        s.id === slotId ? { ...s, equipped: undefined } : s
+      );
+      
+      // Salvar equipamentos no NPC
+      const equipment = newSlots.reduce((acc, slot) => {
+        if (slot.equipped) {
+          acc[slot.id] = slot.equipped;
+        }
+        return acc;
+      }, {} as Record<string, InventoryItem>);
+      
+      updateNpc(npc.id, { equipment });
+      
+      return newSlots;
+    });
 
     // Feedback de sucesso
     const notification = document.createElement('div');
@@ -508,11 +559,25 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
                 });
                 
                 // Equipar novo item
-                setEquipmentSlots(prev => prev.map(s => 
-                  s.id === slotId 
-                    ? { ...s, equipped: { ...draggedItem, equipped: true } }
-                    : s
-                ));
+                setEquipmentSlots(prev => {
+                  const newSlots = prev.map(s => 
+                    s.id === slotId 
+                      ? { ...s, equipped: { ...draggedItem, equipped: true } }
+                      : s
+                  );
+                  
+                  // Salvar equipamentos no NPC
+                  const equipment = newSlots.reduce((acc, slot) => {
+                    if (slot.equipped) {
+                      acc[slot.id] = slot.equipped;
+                    }
+                    return acc;
+                  }, {} as Record<string, InventoryItem>);
+                  
+                  updateNpc(npc.id, { equipment });
+                  
+                  return newSlots;
+                });
                 
                 setDraggedItem(null);
                 

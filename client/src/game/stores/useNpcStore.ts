@@ -53,6 +53,7 @@ export interface NPC {
     type: string;
     amount: number;
   };
+  equipment?: Record<string, any>; // Equipamentos do NPC
   needs: NPCNeeds;
   memory: NPCMemory;
   currentSchedule: NPCSchedule;
@@ -763,6 +764,7 @@ export const useNpcStore = create<NPCStoreState>()(
         isPlayerControlled: false,
         controlMode: "autonomous",
         inventory: { type: '', amount: 0 },
+        equipment: {}, // Inicializar equipamentos vazios
         needs: {
           energy: 100,
           satisfaction: 100,
