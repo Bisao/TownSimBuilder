@@ -29,16 +29,48 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
     initialPosition: { x: window.innerWidth / 2 - 220, y: window.innerHeight / 2 - 300 }
   });
 
-  // Itens iniciais baseados no NPC
+  // Itens iniciais baseados no NPC - Incluindo equipamentos de combate
   const [inventoryItems, setInventoryItems] = useState<InventoryItem[]>([
-    // Ferramentas T1
+    // === COMBATE CORPO A CORPO (Warrior/Plate Fighter) ===
+    { id: "iron_sword", name: "Espada de Ferro", type: "weapon", tier: 4, icon: "⚔️", skill: "sword" },
+    { id: "iron_axe", name: "Machado de Ferro", type: "weapon", tier: 4, icon: "🪓", skill: "axe" },
+    { id: "iron_mace", name: "Maça de Ferro", type: "weapon", tier: 4, icon: "🔨", skill: "mace" },
+    { id: "iron_plate", name: "Armadura de Placas", type: "armor", tier: 4, icon: "🛡️", skill: "defense" },
+    { id: "iron_helmet", name: "Capacete de Ferro", type: "armor", tier: 4, icon: "⛑️", skill: "defense" },
+
+    // === COMBATE À DISTÂNCIA (Hunter/Archer) ===
+    { id: "hunting_bow", name: "Arco de Caça", type: "weapon", tier: 3, icon: "🏹", skill: "bow" },
+    { id: "crossbow", name: "Besta", type: "weapon", tier: 4, icon: "🎯", skill: "crossbow" },
+    { id: "hunter_leather", name: "Couro de Caçador", type: "armor", tier: 4, icon: "🧥", skill: "defense" },
+    { id: "leather_boots", name: "Botas de Couro", type: "armor", tier: 3, icon: "👢", skill: "defense" },
+
+    // === COMBATE MÁGICO (Mage Tower) ===
+    { id: "fire_staff", name: "Cajado de Fogo", type: "weapon", tier: 4, icon: "🔥", skill: "fire_magic" },
+    { id: "ice_staff", name: "Cajado de Gelo", type: "weapon", tier: 4, icon: "🧊", skill: "ice_magic" },
+    { id: "lightning_staff", name: "Cajado de Raio", type: "weapon", tier: 4, icon: "⚡", skill: "lightning_magic" },
+    { id: "holy_staff", name: "Cajado Sagrado", type: "weapon", tier: 4, icon: "✨", skill: "holy_magic" },
+    { id: "mage_robe", name: "Túnica de Mago", type: "armor", tier: 4, icon: "👘", skill: "defense" },
+    { id: "mage_hood", name: "Capuz de Mago", type: "armor", tier: 4, icon: "🎩", skill: "defense" },
+
+    // === COMBATE HÍBRIDO ===
+    { id: "enchanted_sword", name: "Espada Encantada", type: "weapon", tier: 5, icon: "🗡️", skill: "hybrid_combat" },
+    { id: "battle_mage_staff", name: "Cajado de Batalha", type: "weapon", tier: 5, icon: "🪄", skill: "battle_magic" },
+
+    // === CONSUMÍVEIS ===
+    { id: "health_potion", name: "Poção de Vida", type: "consumable", tier: 1, icon: "🧪", skill: "alchemy" },
+    { id: "mana_potion", name: "Poção de Mana", type: "consumable", tier: 1, icon: "💙", skill: "alchemy" },
+    { id: "bread", name: "Pão", type: "consumable", tier: 1, icon: "🍞", skill: "cooking" },
+    { id: "travel_bag", name: "Bolsa de Viagem", type: "consumable", tier: 2, icon: "🎒", skill: "utility" },
+
+    // === FERRAMENTAS BÁSICAS ===
     { id: "pickaxe_t1", name: "Picareta T1", type: "tool", tier: 1, icon: "⛏️", skill: "mining" },
     { id: "axe_t1", name: "Machado T1", type: "tool", tier: 1, icon: "🪓", skill: "lumberjack" },
     { id: "sickle_t1", name: "Foice T1", type: "tool", tier: 1, icon: "🗡️", skill: "farming" },
 
-    // Armas T1
-    { id: "sword_t1", name: "Espada T1", type: "weapon", tier: 1, icon: "⚔️", skill: "sword" },
-    { id: "bow_t1", name: "Arco T1", type: "weapon", tier: 1, icon: "🏹", skill: "bow" },
+    // === FLECHAS ESPECIAIS ===
+    { id: "fire_arrows", name: "Flechas de Fogo", type: "consumable", tier: 3, icon: "🔥", skill: "archery" },
+    { id: "ice_arrows", name: "Flechas de Gelo", type: "consumable", tier: 3, icon: "🧊", skill: "archery" },
+    { id: "explosive_bolts", name: "Virotes Explosivos", type: "consumable", tier: 4, icon: "💥", skill: "crossbow" },
 
     // Recursos se o NPC tiver algum
     ...(npc.inventory.amount > 0 ? [{
@@ -72,8 +104,9 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
     e.dataTransfer.setData("text/plain", item.id);
   }, []);
 
-  const handleDragEnd = useCallback(() => {
-    setDraggedItem(null);
+  const handleDragEnd = useCallback((e: React.DragEvent) => {
+    // Só limpar se não foi um drop bem-sucedido
+    setTimeout(() => setDraggedItem(null), 100);
   }, []);
 
   const handleDropOnSlot = useCallback((e: React.DragEvent, slotId: string) => {
@@ -87,8 +120,16 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
     // Verificar se o tipo do item é compatível com o slot
     const isCompatible = (
       (slot.type === "weapon" && (draggedItem.type === "weapon" || draggedItem.type === "tool")) ||
-      (slot.type === draggedItem.type) ||
-      (slot.type === "offhand" && draggedItem.type === "weapon")
+      (slot.type === "armor" && draggedItem.type === "armor") ||
+      (slot.type === "head" && draggedItem.type === "armor") ||
+      (slot.type === "chest" && draggedItem.type === "armor") ||
+      (slot.type === "boots" && draggedItem.type === "armor") ||
+      (slot.type === "cape" && draggedItem.type === "armor") ||
+      (slot.type === "bag" && draggedItem.type === "consumable") ||
+      (slot.type === "food" && draggedItem.type === "consumable") ||
+      (slot.type === "potion" && draggedItem.type === "consumable") ||
+      (slot.type === "mount" && draggedItem.type === "consumable") ||
+      (slot.type === "offhand" && (draggedItem.type === "weapon" || draggedItem.type === "armor"))
     );
 
     if (!isCompatible) {
@@ -98,7 +139,17 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
 
     // Se já há um item equipado, retorná-lo ao inventário
     if (slot.equipped) {
-      setInventoryItems(prev => [...prev, slot.equipped!]);
+      setInventoryItems(prev => {
+        const newItems = [...prev];
+        // Encontrar o primeiro slot vazio
+        const emptyIndex = newItems.findIndex((item, index) => !item);
+        if (emptyIndex !== -1) {
+          newItems[emptyIndex] = { ...slot.equipped!, equipped: false };
+        } else {
+          newItems.push({ ...slot.equipped!, equipped: false });
+        }
+        return newItems;
+      });
     }
 
     // Remover item do inventário
@@ -108,12 +159,20 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
     setEquipmentSlots(prev => 
       prev.map(s => 
         s.id === slotId 
-          ? { ...s, equipped: draggedItem }
+          ? { ...s, equipped: { ...draggedItem, equipped: true } }
           : s
       )
     );
 
-    console.log(`${draggedItem.name} equipado em ${slot.name}`);
+    setDraggedItem(null);
+    console.log(`✅ ${draggedItem.name} equipado em ${slot.name}`);
+    
+    // Feedback visual opcional
+    const notification = document.createElement('div');
+    notification.className = 'fixed top-4 right-4 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg z-[10000]';
+    notification.textContent = `${draggedItem.name} equipado!`;
+    document.body.appendChild(notification);
+    setTimeout(() => document.body.removeChild(notification), 2000);
   }, [draggedItem, equipmentSlots]);
 
   const handleDropOnInventory = useCallback((e: React.DragEvent, slotIndex: number) => {
@@ -137,10 +196,23 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
     if (!inventoryItems.find(item => item.id === draggedItem.id)) {
       setInventoryItems(prev => {
         const newItems = [...prev];
-        newItems[slotIndex] = draggedItem;
+        // Se o slot está vazio, colocar o item lá
+        if (!newItems[slotIndex]) {
+          newItems[slotIndex] = { ...draggedItem, equipped: false };
+        } else {
+          // Encontrar primeiro slot vazio
+          const emptyIndex = newItems.findIndex((item, index) => !item);
+          if (emptyIndex !== -1) {
+            newItems[emptyIndex] = { ...draggedItem, equipped: false };
+          } else {
+            newItems.push({ ...draggedItem, equipped: false });
+          }
+        }
         return newItems;
       });
     }
+
+    setDraggedItem(null);
   }, [draggedItem, equipmentSlots, inventoryItems]);
 
   const handleUnequip = useCallback((slotId: string) => {
@@ -200,12 +272,21 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
       <div className="flex flex-col items-center">
         <span className="text-xs text-gray-600 mb-1 font-medium">{label}</span>
         <div
-          className="w-12 h-12 bg-white/30 border-2 border-gray-300/60 rounded-lg flex items-center justify-center cursor-pointer hover:bg-white/40 transition-colors backdrop-blur-sm shadow-sm"
+          className={`w-12 h-12 bg-white/30 border-2 ${
+            draggedItem ? 'border-blue-400 bg-blue-50/50' : 'border-gray-300/60'
+          } rounded-lg flex items-center justify-center cursor-pointer hover:bg-white/40 transition-colors backdrop-blur-sm shadow-sm`}
           onDragOver={(e) => {
             e.preventDefault();
             e.stopPropagation();
+            e.currentTarget.classList.add('border-green-400', 'bg-green-50/50');
           }}
-          onDrop={(e) => handleDropOnSlot(e, slotId)}
+          onDragLeave={(e) => {
+            e.currentTarget.classList.remove('border-green-400', 'bg-green-50/50');
+          }}
+          onDrop={(e) => {
+            e.currentTarget.classList.remove('border-green-400', 'bg-green-50/50');
+            handleDropOnSlot(e, slotId);
+          }}
           onClick={(e) => {
             e.stopPropagation();
             if (slot?.equipped) handleUnequip(slotId);
