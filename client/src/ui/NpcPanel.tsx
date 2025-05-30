@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import { NPC, useNpcStore } from "../game/stores/useNpcStore";
+import { useBuildingStore } from "../game/stores/useBuildingStore";
+import { useCombatStore } from "../game/stores/useCombatStore";
 import { npcTypes, workTypes } from "../game/constants/npcs";
 import { useBuildingStore } from "../game/stores/useBuildingStore";
 import { useGameStore } from "../game/stores/useGameStore";
