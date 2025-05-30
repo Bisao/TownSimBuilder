@@ -53,6 +53,242 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
   
 
   const [inventoryItems, setInventoryItems] = useState<InventoryItem[]>([
+    // === ITEMS NÍVEL 1 ===
+    // Armas Básicas
+    { 
+      id: "wooden_sword", 
+      name: "Espada de Madeira", 
+      type: "weapon", 
+      tier: 1, 
+      icon: "🗡️", 
+      skill: "sword",
+      rarity: "common",
+      description: "Espada básica de madeira para treino",
+      stats: { damage: 8, speed: 45 },
+      slot: "mainhand",
+      durability: { current: 100, max: 100 },
+      requirements: { level: 1, skills: { sword: 1 } }
+    },
+    { 
+      id: "wooden_club", 
+      name: "Porrete de Madeira", 
+      type: "weapon", 
+      tier: 1, 
+      icon: "🏏", 
+      skill: "club",
+      rarity: "common",
+      description: "Porrete simples de madeira",
+      stats: { damage: 10, speed: 35 },
+      slot: "mainhand",
+      durability: { current: 100, max: 100 },
+      requirements: { level: 1, skills: { club: 1 } }
+    },
+    { 
+      id: "wooden_dagger", 
+      name: "Adaga de Madeira", 
+      type: "weapon", 
+      tier: 1, 
+      icon: "🗡️", 
+      skill: "dagger",
+      rarity: "common",
+      description: "Adaga leve para ataques rápidos",
+      stats: { damage: 6, speed: 65 },
+      slot: "mainhand",
+      durability: { current: 100, max: 100 },
+      requirements: { level: 1, skills: { dagger: 1 } }
+    },
+    
+    // Armaduras Básicas
+    { 
+      id: "cloth_cap", 
+      name: "Capuz de Pano", 
+      type: "armor", 
+      tier: 1, 
+      icon: "🧢", 
+      skill: "defense",
+      rarity: "common",
+      description: "Proteção básica para a cabeça",
+      stats: { defense: 5, health: 5 },
+      slot: "head",
+      durability: { current: 100, max: 100 },
+      requirements: { level: 1, skills: { defense: 1 } }
+    },
+    { 
+      id: "cloth_tunic", 
+      name: "Túnica de Pano", 
+      type: "armor", 
+      tier: 1, 
+      icon: "👔", 
+      skill: "defense",
+      rarity: "common",
+      description: "Roupa básica para proteção",
+      stats: { defense: 8, health: 10 },
+      slot: "chest",
+      durability: { current: 100, max: 100 },
+      requirements: { level: 1, skills: { defense: 1 } }
+    },
+    {
+      id: "cloth_shoes",
+      name: "Sapatos de Pano",
+      type: "armor",
+      tier: 1,
+      icon: "👟",
+      skill: "defense",
+      rarity: "common",
+      description: "Calçado básico e confortável",
+      stats: { defense: 3, speed: 5 },
+      slot: "boots",
+      durability: { current: 100, max: 100 },
+      requirements: { level: 1, skills: { defense: 1 } }
+    },
+    { 
+      id: "cloth_gloves", 
+      name: "Luvas de Pano", 
+      type: "armor", 
+      tier: 1, 
+      icon: "🧤", 
+      skill: "defense",
+      rarity: "common",
+      description: "Proteção básica para as mãos",
+      stats: { defense: 2, speed: 3 },
+      slot: "offhand",
+      durability: { current: 100, max: 100 },
+      requirements: { level: 1, skills: { defense: 1 } }
+    },
+
+    // Ferramentas Básicas
+    { 
+      id: "wooden_pickaxe", 
+      name: "Picareta de Madeira", 
+      type: "tool", 
+      tier: 1, 
+      icon: "⛏️", 
+      skill: "mining",
+      rarity: "common",
+      description: "Ferramenta básica para mineração",
+      stats: { speed: 5 },
+      slot: "tool",
+      durability: { current: 100, max: 100 },
+      requirements: { level: 1, skills: { mining: 1 } }
+    },
+    { 
+      id: "wooden_axe", 
+      name: "Machado de Madeira", 
+      type: "tool", 
+      tier: 1, 
+      icon: "🪓", 
+      skill: "lumberjack",
+      rarity: "common",
+      description: "Ferramenta básica para cortar madeira",
+      stats: { speed: 5 },
+      slot: "tool",
+      durability: { current: 100, max: 100 },
+      requirements: { level: 1, skills: { lumberjack: 1 } }
+    },
+    { 
+      id: "wooden_hoe", 
+      name: "Enxada de Madeira", 
+      type: "tool", 
+      tier: 1, 
+      icon: "🌾", 
+      skill: "farming",
+      rarity: "common",
+      description: "Ferramenta básica para agricultura",
+      stats: { speed: 5 },
+      slot: "tool",
+      durability: { current: 100, max: 100 },
+      requirements: { level: 1, skills: { farming: 1 } }
+    },
+
+    // Consumíveis Básicos
+    {
+      id: "small_health_potion",
+      name: "Poção Pequena de Vida",
+      type: "consumable",
+      tier: 1,
+      icon: "🧪",
+      skill: "alchemy",
+      rarity: "common",
+      description: "Restaura pouca vida",
+      stats: { health: 15 },
+      slot: "potion"
+    },
+    {
+      id: "bread",
+      name: "Pão",
+      type: "consumable",
+      tier: 1,
+      icon: "🍞",
+      skill: "cooking",
+      rarity: "common",
+      description: "Comida nutritiva",
+      stats: { health: 25 },
+      slot: "food"
+    },
+    {
+      id: "apple",
+      name: "Maçã",
+      type: "consumable",
+      tier: 1,
+      icon: "🍎",
+      skill: "gathering",
+      rarity: "common",
+      description: "Fruta fresca e saudável",
+      stats: { health: 10 },
+      slot: "food"
+    },
+    {
+      id: "water_bottle",
+      name: "Garrafa de Água",
+      type: "consumable",
+      tier: 1,
+      icon: "💧",
+      skill: "survival",
+      rarity: "common",
+      description: "Hidratação essencial",
+      stats: { health: 5 },
+      slot: "potion"
+    },
+
+    // Recursos Básicos
+    {
+      id: "basic_wood",
+      name: "Madeira Básica",
+      type: "resource",
+      tier: 1,
+      icon: "🪵",
+      rarity: "common",
+      description: "Material básico para construção"
+    },
+    {
+      id: "basic_stone",
+      name: "Pedra Básica",
+      type: "resource",
+      tier: 1,
+      icon: "🪨",
+      rarity: "common",
+      description: "Material básico para construção"
+    },
+    {
+      id: "basic_fiber",
+      name: "Fibra Básica",
+      type: "resource",
+      tier: 1,
+      icon: "🌱",
+      rarity: "common",
+      description: "Material básico para tecidos"
+    },
+    {
+      id: "basic_ore",
+      name: "Minério Básico",
+      type: "resource",
+      tier: 1,
+      icon: "⛰️",
+      rarity: "common",
+      description: "Minério básico para fundição"
+    },
+
+    // === ITEMS DE NÍVEL SUPERIOR ===
     // === ARMAS LENDÁRIAS ===
     { 
       id: "excalibur", 
@@ -194,18 +430,6 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
       rarity: "epic",
       description: "Energia mágica pura",
       slot: "potion"
-    },
-    {
-      id: "bread",
-      name: "Pão",
-      type: "consumable",
-      tier: 1,
-      icon: "🍞",
-      skill: "cooking",
-      rarity: "common",
-      description: "Comida nutritiva",
-      stats: { health: 25 },
-      slot: "food"
     },
 
     // === FERRAMENTAS ===
