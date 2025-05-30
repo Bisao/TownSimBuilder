@@ -3,6 +3,7 @@ import { create } from 'zustand';
 import { subscribeWithSelector } from 'zustand/middleware';
 import { useNotificationStore } from '../../lib/stores/useNotificationStore';
 import { usePlayerStore } from './usePlayerStore';
+import { GAME_CONFIG } from '../../../../shared/constants/game';
 
 // Types
 export interface Skill {

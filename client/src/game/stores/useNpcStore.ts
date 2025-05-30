@@ -4,7 +4,7 @@ import { npcTypes, NpcType } from '../constants/npcs';
 import { useResourceStore } from './useResourceStore';
 import { useBuildingStore } from './useBuildingStore';
 import { useNotificationStore } from '../../lib/stores/useNotificationStore';
-import { GAME_CONFIG } from '../../../shared/constants/game';
+import { GAME_CONFIG } from '../../../../shared/constants/game';
 
 // Types
 export interface Npc {

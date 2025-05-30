@@ -1,4 +1,3 @@
-
 import { create } from "zustand";
 import { subscribeWithSelector } from "zustand/middleware";
 
@@ -14,7 +13,7 @@ export interface TrainingDummy {
 
 interface DummyState {
   dummies: TrainingDummy[];
-  
+
   // Ações
   addDummy: (position: [number, number, number]) => string;
   removeDummy: (id: string) => void;
@@ -69,7 +68,7 @@ export const useDummyStore = create<DummyState>()(
       }));
 
       console.log(`Dummy ${id} recebeu ${damage} de dano${critical ? ' (CRÍTICO)' : ''}`);
-      
+
       // Disparar evento para animações
       window.dispatchEvent(new CustomEvent('dummyHit', { 
         detail: { id, damage, critical } 

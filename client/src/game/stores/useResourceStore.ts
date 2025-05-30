@@ -3,7 +3,7 @@ import { create } from 'zustand';
 import { subscribeWithSelector } from 'zustand/middleware';
 import { resourceTypes } from '../constants/resources';
 import { useNotificationStore } from '../../lib/stores/useNotificationStore';
-import { GAME_CONFIG } from '../../../shared/constants/game';
+import { GAME_CONFIG } from '../../../../shared/constants/game';
 
 // Types
 export interface ResourceState {

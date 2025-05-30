@@ -1,4 +1,3 @@
-
 import { create } from "zustand";
 import { subscribeWithSelector } from "zustand/middleware";
 import { 
@@ -18,29 +17,29 @@ interface CombatState {
   isInCombat: boolean;
   activeCombats: Map<string, CombatInstance>;
   combatEntities: Map<string, CombatEntity>;
-  
+
   // Ações
   initializeCombat: (attacker: string, defender: string) => string;
   endCombat: (combatId: string, result: CombatResult) => void;
   executeCombatAction: (combatId: string, entityId: string, action: CombatAction) => void;
-  
+
   // Gerenciamento de entidades
   addCombatEntity: (entity: CombatEntity) => void;
   updateEntityStats: (entityId: string, stats: Partial<CombatStats>) => void;
   applyDamage: (entityId: string, damage: DamageResult) => void;
   applyStatusEffect: (entityId: string, effect: StatusEffect) => void;
-  
+
   // Sistema de equipamentos
   equipWeapon: (entityId: string, weapon: Weapon) => void;
   equipArmor: (entityId: string, armor: Armor) => void;
-  
+
   // Sistema de magias
   castSpell: (casterId: string, spellId: string, targetId?: string, targetPosition?: {x: number, y: number, z: number}) => void;
-  
+
   // Cálculos de combate
   calculateDamage: (attacker: CombatEntity, defender: CombatEntity, action: CombatAction) => DamageResult;
   calculateDefense: (entity: CombatEntity) => { physical: number; magical: number };
-  
+
   // Utilitários
   getEntityById: (entityId: string) => CombatEntity | undefined;
   isEntityInCombat: (entityId: string) => boolean;
@@ -74,7 +73,7 @@ const SPELLS_DATABASE: Record<string, Spell> = {
     damage: 50,
     requirements: { intelligence: 10, level: 5 }
   },
-  
+
   flame_strike: {
     id: 'flame_strike',
     name: 'Golpe Flamejante',
@@ -160,7 +159,7 @@ export const useCombatStore = create<CombatState>()(
 
     initializeCombat: (attackerId: string, defenderId: string) => {
       const combatId = `combat_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-      
+
       const newCombat: CombatInstance = {
         id: combatId,
         participants: [attackerId, defenderId],
@@ -184,7 +183,7 @@ export const useCombatStore = create<CombatState>()(
       set((state) => {
         const newCombats = new Map(state.activeCombats);
         newCombats.delete(combatId);
-        
+
         return {
           activeCombats: newCombats,
           isInCombat: newCombats.size > 0
@@ -213,7 +212,7 @@ export const useCombatStore = create<CombatState>()(
             }
           }
           break;
-          
+
         case 'spell':
           if (action.spellId) {
             get().castSpell(entityId, action.spellId, action.targetId, action.targetPosition);
@@ -261,7 +260,7 @@ export const useCombatStore = create<CombatState>()(
       if (!entity) return;
 
       const newHealth = Math.max(0, entity.stats.health - damage.totalDamage);
-      
+
       get().updateEntityStats(entityId, { health: newHealth });
 
       if (newHealth <= 0) {
@@ -270,7 +269,7 @@ export const useCombatStore = create<CombatState>()(
         set((state) => ({
           combatEntities: new Map(state.combatEntities).set(entityId, updatedEntity)
         }));
-        
+
         console.log(`${entity.name} foi derrotado!`);
       }
     },
@@ -331,7 +330,7 @@ export const useCombatStore = create<CombatState>()(
     castSpell: (casterId: string, spellId: string, targetId?: string, targetPosition?: {x: number, y: number, z: number}) => {
       const caster = get().combatEntities.get(casterId);
       const spell = SPELLS_DATABASE[spellId];
-      
+
       if (!caster || !spell) return;
 
       // Verificar mana
@@ -356,7 +355,7 @@ export const useCombatStore = create<CombatState>()(
           evaded: false,
           damageType: spell.school
         };
-        
+
         if (damageResult.critical) {
           damageResult.totalDamage *= caster.stats.criticalDamage;
           damageResult.magicalDamage *= caster.stats.criticalDamage;
@@ -399,7 +398,7 @@ export const useCombatStore = create<CombatState>()(
       }
 
       let baseDamage = weapon.damage + attacker.stats.physicalDamage;
-      
+
       // Verificar crítico
       const critical = Math.random() < attacker.stats.criticalChance;
       if (critical) {

@@ -1,9 +1,8 @@
-
 import { create } from 'zustand';
 import { subscribeWithSelector } from 'zustand/middleware';
-import { weaponsDatabase } from '../constants/weapons';
 import { useNotificationStore } from '../../lib/stores/useNotificationStore';
-import { GAME_CONFIG } from '../../../shared/constants/game';
+import { GAME_CONFIG } from '../../../../shared/constants/game';
+import { weaponsDatabase } from '../constants/weapons';
 
 // Types
 export interface PlayerStats {
@@ -16,7 +15,7 @@ export interface PlayerStats {
   maxMana: number;
   stamina: number;
   maxStamina: number;
-  
+
   // Core Attributes
   strength: number;
   dexterity: number;
@@ -24,7 +23,7 @@ export interface PlayerStats {
   constitution: number;
   wisdom: number;
   charisma: number;
-  
+
   // Skills
   combat: number;
   crafting: number;
@@ -32,7 +31,7 @@ export interface PlayerStats {
   building: number;
   leadership: number;
   magic: number;
-  
+
   // Derived Stats
   attackPower: number;
   defense: number;
@@ -76,27 +75,27 @@ interface PlayerState {
   class: string;
   stats: PlayerStats;
   availablePoints: number;
-  
+
   // Position & Movement
   position: [number, number, number];
   rotation: number;
   isMoving: boolean;
-  
+
   // Inventory & Equipment
   inventory: InventoryItem[];
   equipment: Equipment;
   maxInventorySlots: number;
   currentWeight: number;
-  
+
   // Currency
   gold: number;
   gems: number;
-  
+
   // Achievements & Progress
   achievements: string[];
   questsCompleted: number;
   playTime: number;
-  
+
   // Settings
   autoPickup: boolean;
   showDamageNumbers: boolean;
@@ -109,12 +108,12 @@ interface PlayerActions {
   levelUp: () => boolean;
   allocateStatPoint: (stat: keyof PlayerStats) => boolean;
   resetStats: () => void;
-  
+
   // Position & Movement
   setPosition: (position: [number, number, number]) => void;
   setRotation: (rotation: number) => void;
   setMoving: (isMoving: boolean) => void;
-  
+
   // Health & Resources
   heal: (amount: number) => void;
   damage: (amount: number) => void;
@@ -122,7 +121,7 @@ interface PlayerActions {
   consumeMana: (amount: number) => boolean;
   restoreStamina: (amount: number) => void;
   consumeStamina: (amount: number) => boolean;
-  
+
   // Inventory Management
   addItem: (item: Omit<InventoryItem, 'id'>, quantity?: number) => boolean;
   removeItem: (itemId: string, quantity?: number) => boolean;
@@ -130,33 +129,33 @@ interface PlayerActions {
   sortInventory: () => void;
   getItemById: (itemId: string) => InventoryItem | undefined;
   getItemsByType: (type: InventoryItem['type']) => InventoryItem[];
-  
+
   // Equipment Management
   equipItem: (itemId: string, slot: keyof Equipment) => boolean;
   unequipItem: (slot: keyof Equipment) => boolean;
   canEquipItem: (itemId: string, slot: keyof Equipment) => boolean;
-  
+
   // Currency Management
   addGold: (amount: number) => void;
   spendGold: (amount: number) => boolean;
   addGems: (amount: number) => void;
   spendGems: (amount: number) => boolean;
-  
+
   // Stats & Calculations
   calculateDerivedStats: () => void;
   getTotalWeight: () => number;
   getEquipmentStats: () => Partial<PlayerStats>;
-  
+
   // Achievements & Progress
   unlockAchievement: (achievementId: string) => void;
   addPlayTime: (minutes: number) => void;
-  
+
   // Utilities
   canCarryMore: (weight: number) => boolean;
   getInventorySpace: () => number;
   exportCharacter: () => string;
   importCharacter: (data: string) => boolean;
-  
+
   // State Management
   reset: () => void;
   initialize: (name?: string, className?: string) => void;
@@ -175,21 +174,21 @@ const initialStats: PlayerStats = {
   maxMana: 50,
   stamina: 100,
   maxStamina: 100,
-  
+
   strength: 10,
   dexterity: 10,
   intelligence: 10,
   constitution: 10,
   wisdom: 10,
   charisma: 10,
-  
+
   combat: 1,
   crafting: 1,
   gathering: 1,
   building: 1,
   leadership: 1,
   magic: 1,
-  
+
   attackPower: 0,
   defense: 0,
   magicPower: 0,
@@ -204,23 +203,23 @@ const initialState: PlayerState = {
   class: 'Iniciante',
   stats: { ...initialStats },
   availablePoints: 0,
-  
+
   position: [25, 0, 25],
   rotation: 0,
   isMoving: false,
-  
+
   inventory: [],
   equipment: {},
   maxInventorySlots: 20,
   currentWeight: 0,
-  
+
   gold: 100,
   gems: 0,
-  
+
   achievements: [],
   questsCompleted: 0,
   playTime: 0,
-  
+
   autoPickup: true,
   showDamageNumbers: true,
   combatMode: 'defensive',
@@ -252,7 +251,7 @@ export const usePlayerStore = create<PlayerStore>()(
 
     levelUp: () => {
       const { stats } = get();
-      
+
       if (stats.experience < stats.experienceToNext) {
         return false;
       }
@@ -290,7 +289,7 @@ export const usePlayerStore = create<PlayerStore>()(
 
     allocateStatPoint: (stat: keyof PlayerStats) => {
       const { availablePoints, stats } = get();
-      
+
       if (availablePoints <= 0) return false;
 
       // Only allow allocation to base attributes
@@ -312,7 +311,7 @@ export const usePlayerStore = create<PlayerStore>()(
     resetStats: () => {
       const { stats } = get();
       const totalPoints = stats.level * 3 + 5; // Starting points + level ups
-      
+
       set((state) => ({
         stats: {
           ...state.stats,
@@ -410,7 +409,7 @@ export const usePlayerStore = create<PlayerStore>()(
     // Inventory Management
     addItem: (itemData: Omit<InventoryItem, 'id'>, quantity: number = 1) => {
       const { inventory, maxInventorySlots, canCarryMore } = get();
-      
+
       if (!canCarryMore(itemData.weight * quantity)) {
         useNotificationStore.getState().addNotification({
           type: 'warning',
@@ -430,7 +429,7 @@ export const usePlayerStore = create<PlayerStore>()(
 
         if (existingItem) {
           const canAdd = Math.min(quantity, existingItem.maxStack - existingItem.quantity);
-          
+
           set((state) => ({
             inventory: state.inventory.map(item =>
               item.id === existingItem.id
@@ -469,7 +468,7 @@ export const usePlayerStore = create<PlayerStore>()(
     removeItem: (itemId: string, quantity: number = 1) => {
       const { inventory } = get();
       const item = inventory.find(i => i.id === itemId);
-      
+
       if (!item || item.quantity < quantity) return false;
 
       if (item.quantity === quantity) {
@@ -491,7 +490,7 @@ export const usePlayerStore = create<PlayerStore>()(
 
     moveItem: (fromIndex: number, toIndex: number) => {
       const { inventory } = get();
-      
+
       if (fromIndex < 0 || fromIndex >= inventory.length ||
           toIndex < 0 || toIndex >= inventory.length) {
         return false;
@@ -529,7 +528,7 @@ export const usePlayerStore = create<PlayerStore>()(
     // Equipment Management
     equipItem: (itemId: string, slot: keyof Equipment) => {
       const { inventory, equipment, canEquipItem } = get();
-      
+
       if (!canEquipItem(itemId, slot)) return false;
 
       const item = inventory.find(i => i.id === itemId);
@@ -556,7 +555,7 @@ export const usePlayerStore = create<PlayerStore>()(
     unequipItem: (slot: keyof Equipment) => {
       const { equipment } = get();
       const item = equipment[slot];
-      
+
       if (!item) return false;
 
       // Add back to inventory
@@ -653,7 +652,7 @@ export const usePlayerStore = create<PlayerStore>()(
 
     getTotalWeight: () => {
       const { inventory, equipment } = get();
-      
+
       const inventoryWeight = inventory.reduce((total, item) => {
         return total + (item.weight * item.quantity);
       }, 0);
@@ -688,7 +687,7 @@ export const usePlayerStore = create<PlayerStore>()(
     // Achievements & Progress
     unlockAchievement: (achievementId: string) => {
       const { achievements } = get();
-      
+
       if (achievements.includes(achievementId)) return;
 
       set((state) => ({
@@ -737,7 +736,7 @@ export const usePlayerStore = create<PlayerStore>()(
     importCharacter: (data: string) => {
       try {
         const characterData = JSON.parse(data);
-        
+
         set((state) => ({
           ...state,
           ...characterData,
