@@ -144,3 +144,16 @@ export const useNpcMetrics = create<NPCMetricsState>()(
     }
   }))
 );
+
+// Expor store globalmente
+if (typeof window !== 'undefined') {
+  window.npcMetricsStore = {
+    initializeNPC: (id: string) => useNpcMetrics.getState().initializeNPC(id),
+    recordResourceCollection: (id: string, type: string, amount: number) => 
+      useNpcMetrics.getState().recordResourceCollection(id, type, amount),
+    updateEfficiency: (id: string, efficiency: number) => 
+      useNpcMetrics.getState().updateEfficiency(id, efficiency),
+    updateActivity: (id: string, state: string) => 
+      useNpcMetrics.getState().updateActivity(id, state)
+  };
+}

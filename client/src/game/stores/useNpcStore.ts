@@ -672,11 +672,11 @@ class NPCStateManager {
     const silo = buildings.find(b => b.id === npc.targetBuildingId && b.type === 'silo');
 
     if (silo && npc.inventory.amount > 0) {
-      // Atualizar recursos no store
+      // Atualizar recursos usando store global
       try {
-        const { useResourceStore } = await import('./useResourceStore');
-        const resourceStore = useResourceStore.getState();
-        resourceStore.updateResource(npc.inventory.type, npc.inventory.amount);
+        if (window.resourceStore) {
+          window.resourceStore.updateResource(npc.inventory.type, npc.inventory.amount);
+        }
       } catch (error) {
         console.error('Erro ao atualizar recursos:', error);
       }
@@ -746,12 +746,12 @@ class NPCStateManager {
       }
 
       // Dar XP para o trabalho atual (será feito pelo próprio store)
-      // Atualizar métricas
+      // Atualizar métricas usando store global
       try {
-        const { useNpcMetrics } = await import('./useNpcMetrics');
-        const metricsStore = useNpcMetrics.getState();
-        metricsStore.recordResourceCollection(npc.id, resourceType, 1);
-        metricsStore.updateEfficiency(npc.id, npc.skills.efficiency + 0.1);
+        if (window.npcMetricsStore) {
+          window.npcMetricsStore.recordResourceCollection(npc.id, resourceType, 1);
+          window.npcMetricsStore.updateEfficiency(npc.id, npc.skills.efficiency + 0.1);
+        }
       } catch (error) {
         console.error('Erro ao atualizar métricas:', error);
       }
@@ -870,7 +870,7 @@ export const useNpcStore = create<NPCStoreState>()(
     npcIdCounter: 0,
     resourceReservations: [],
 
-    spawnNPC: async (homeId, position, name) => {
+    spawnNPC: (homeId, position, name) => {
       const id = `npc_${get().npcIdCounter}`;
       const npcName = name || `Aldeão ${get().npcIdCounter}`;
 
@@ -922,10 +922,11 @@ export const useNpcStore = create<NPCStoreState>()(
         npcIdCounter: state.npcIdCounter + 1,
       }));
 
-      // Inicializar métricas
+      // Inicializar métricas usando store global
       try {
-        const { useNpcMetrics } = await import('./useNpcMetrics');
-        useNpcMetrics.getState().initializeNPC(id);
+        if (window.npcMetricsStore) {
+          window.npcMetricsStore.initializeNPC(id);
+        }
       } catch (error) {
         console.error('Erro ao inicializar métricas:', error);
       }
@@ -1012,17 +1013,18 @@ export const useNpcStore = create<NPCStoreState>()(
 
           const updatedNpc = { ...npc, ...updates };
 
-          // Atualizar métricas se estado mudou
+          // Atualizar métricas se estado mudou usando store global
           if (npc.state !== updatedNpc.state) {
             try {
-              const { useNpcMetrics } = await import('./useNpcMetrics');
-              useNpcMetrics.getState().updateActivity(npc.id, updatedNpc.state);
+              if (window.npcMetricsStore) {
+                window.npcMetricsStore.updateActivity(npc.id, updatedNpc.state);
+              }
             } catch (error) {
               console.error('Erro ao atualizar atividade:', error);
             }
           }
 
-                    return updatedNpc;
+          return updatedNpc;
         } catch (error) {
           console.error(`Erro ao atualizar NPC ${npc.id}:`, error);
           return npc;
