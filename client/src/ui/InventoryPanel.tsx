@@ -1,3 +1,4 @@
+
 import React, { useState, useCallback, useMemo } from "react";
 import { NPC } from "../game/stores/useNpcStore";
 import { useDraggable } from "../hooks/useDraggable";
@@ -15,6 +16,13 @@ interface InventoryItem {
   icon: string;
   skill?: string;
   equipped?: boolean;
+  rarity?: "common" | "rare" | "epic" | "legendary";
+  description?: string;
+  stats?: {
+    damage?: number;
+    defense?: number;
+    speed?: number;
+  };
 }
 
 interface EquipmentSlot {
@@ -22,90 +30,246 @@ interface EquipmentSlot {
   name: string;
   type: "weapon" | "tool" | "head" | "chest" | "boots" | "cape" | "bag" | "food" | "potion" | "mount" | "offhand";
   equipped?: InventoryItem;
+  acceptedTypes?: string[];
 }
 
 const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
   const { dragRef, position, isDragging, handleMouseDown } = useDraggable({
-    initialPosition: { x: window.innerWidth / 2 - 220, y: window.innerHeight / 2 - 300 }
+    initialPosition: { x: window.innerWidth / 2 - 350, y: window.innerHeight / 2 - 350 }
   });
 
-  // Itens iniciais baseados no NPC - Incluindo equipamentos de combate
   const [inventoryItems, setInventoryItems] = useState<InventoryItem[]>([
-    // === COMBATE CORPO A CORPO (Warrior/Plate Fighter) ===
-    { id: "iron_sword", name: "Espada de Ferro", type: "weapon", tier: 4, icon: "⚔️", skill: "sword" },
-    { id: "iron_axe", name: "Machado de Ferro", type: "weapon", tier: 4, icon: "🪓", skill: "axe" },
-    { id: "iron_mace", name: "Maça de Ferro", type: "weapon", tier: 4, icon: "🔨", skill: "mace" },
-    { id: "iron_plate", name: "Armadura de Placas", type: "armor", tier: 4, icon: "🛡️", skill: "defense" },
-    { id: "iron_helmet", name: "Capacete de Ferro", type: "armor", tier: 4, icon: "⛑️", skill: "defense" },
+    // === ARMAS LENDÁRIAS ===
+    { 
+      id: "excalibur", 
+      name: "Excalibur", 
+      type: "weapon", 
+      tier: 6, 
+      icon: "⚔️", 
+      skill: "sword", 
+      rarity: "legendary",
+      description: "Espada lendária dos reis",
+      stats: { damage: 95, speed: 85 }
+    },
+    { 
+      id: "mjolnir", 
+      name: "Mjolnir", 
+      type: "weapon", 
+      tier: 6, 
+      icon: "🔨", 
+      skill: "hammer", 
+      rarity: "legendary",
+      description: "Martelo dos deuses",
+      stats: { damage: 100, speed: 60 }
+    },
 
-    // === COMBATE À DISTÂNCIA (Hunter/Archer) ===
-    { id: "hunting_bow", name: "Arco de Caça", type: "weapon", tier: 3, icon: "🏹", skill: "bow" },
-    { id: "crossbow", name: "Besta", type: "weapon", tier: 4, icon: "🎯", skill: "crossbow" },
-    { id: "hunter_leather", name: "Couro de Caçador", type: "armor", tier: 4, icon: "🧥", skill: "defense" },
-    { id: "leather_boots", name: "Botas de Couro", type: "armor", tier: 3, icon: "👢", skill: "defense" },
+    // === COMBATE CORPO A CORPO ===
+    { 
+      id: "iron_sword", 
+      name: "Espada de Ferro", 
+      type: "weapon", 
+      tier: 4, 
+      icon: "⚔️", 
+      skill: "sword",
+      rarity: "common",
+      description: "Espada resistente de ferro forjado",
+      stats: { damage: 45, speed: 70 }
+    },
+    { 
+      id: "iron_axe", 
+      name: "Machado de Ferro", 
+      type: "weapon", 
+      tier: 4, 
+      icon: "🪓", 
+      skill: "axe",
+      rarity: "common",
+      description: "Machado pesado para combate",
+      stats: { damage: 50, speed: 55 }
+    },
+    { 
+      id: "enchanted_blade", 
+      name: "Lâmina Encantada", 
+      type: "weapon", 
+      tier: 5, 
+      icon: "🗡️", 
+      skill: "sword",
+      rarity: "epic",
+      description: "Espada imbuída com magia",
+      stats: { damage: 70, speed: 85 }
+    },
 
-    // === COMBATE MÁGICO (Mage Tower) ===
-    { id: "fire_staff", name: "Cajado de Fogo", type: "weapon", tier: 4, icon: "🔥", skill: "fire_magic" },
-    { id: "ice_staff", name: "Cajado de Gelo", type: "weapon", tier: 4, icon: "🧊", skill: "ice_magic" },
-    { id: "lightning_staff", name: "Cajado de Raio", type: "weapon", tier: 4, icon: "⚡", skill: "lightning_magic" },
-    { id: "holy_staff", name: "Cajado Sagrado", type: "weapon", tier: 4, icon: "✨", skill: "holy_magic" },
-    { id: "mage_robe", name: "Túnica de Mago", type: "armor", tier: 4, icon: "👘", skill: "defense" },
-    { id: "mage_hood", name: "Capuz de Mago", type: "armor", tier: 4, icon: "🎩", skill: "defense" },
-
-    // === COMBATE HÍBRIDO ===
-    { id: "enchanted_sword", name: "Espada Encantada", type: "weapon", tier: 5, icon: "🗡️", skill: "hybrid_combat" },
-    { id: "battle_mage_staff", name: "Cajado de Batalha", type: "weapon", tier: 5, icon: "🪄", skill: "battle_magic" },
+    // === ARMADURAS ===
+    { 
+      id: "dragon_plate", 
+      name: "Armadura de Dragão", 
+      type: "armor", 
+      tier: 6, 
+      icon: "🛡️", 
+      skill: "defense",
+      rarity: "legendary",
+      description: "Feita com escamas de dragão",
+      stats: { defense: 90 }
+    },
+    { 
+      id: "iron_helmet", 
+      name: "Capacete de Ferro", 
+      type: "armor", 
+      tier: 4, 
+      icon: "⛑️", 
+      skill: "defense",
+      rarity: "common",
+      description: "Proteção sólida para a cabeça",
+      stats: { defense: 35 }
+    },
 
     // === CONSUMÍVEIS ===
-    { id: "health_potion", name: "Poção de Vida", type: "consumable", tier: 1, icon: "🧪", skill: "alchemy" },
-    { id: "mana_potion", name: "Poção de Mana", type: "consumable", tier: 1, icon: "💙", skill: "alchemy" },
-    { id: "bread", name: "Pão", type: "consumable", tier: 1, icon: "🍞", skill: "cooking" },
-    { id: "travel_bag", name: "Bolsa de Viagem", type: "consumable", tier: 2, icon: "🎒", skill: "utility" },
+    { 
+      id: "greater_health", 
+      name: "Grande Poção de Vida", 
+      type: "consumable", 
+      tier: 4, 
+      icon: "🧪", 
+      skill: "alchemy",
+      rarity: "rare",
+      description: "Restaura muito HP",
+    },
+    { 
+      id: "mana_crystal", 
+      name: "Cristal de Mana", 
+      type: "consumable", 
+      tier: 5, 
+      icon: "💎", 
+      skill: "magic",
+      rarity: "epic",
+      description: "Energia mágica pura",
+    },
 
-    // === FERRAMENTAS BÁSICAS ===
-    { id: "pickaxe_t1", name: "Picareta T1", type: "tool", tier: 1, icon: "⛏️", skill: "mining" },
-    { id: "axe_t1", name: "Machado T1", type: "tool", tier: 1, icon: "🪓", skill: "lumberjack" },
-    { id: "sickle_t1", name: "Foice T1", type: "tool", tier: 1, icon: "🗡️", skill: "farming" },
+    // === FERRAMENTAS ===
+    { 
+      id: "master_pickaxe", 
+      name: "Picareta Mestre", 
+      type: "tool", 
+      tier: 5, 
+      icon: "⛏️", 
+      skill: "mining",
+      rarity: "rare",
+      description: "Extrai minérios raros",
+    },
 
-    // === FLECHAS ESPECIAIS ===
-    { id: "fire_arrows", name: "Flechas de Fogo", type: "consumable", tier: 3, icon: "🔥", skill: "archery" },
-    { id: "ice_arrows", name: "Flechas de Gelo", type: "consumable", tier: 3, icon: "🧊", skill: "archery" },
-    { id: "explosive_bolts", name: "Virotes Explosivos", type: "consumable", tier: 4, icon: "💥", skill: "crossbow" },
-
-    // Recursos se o NPC tiver algum
+    // Recursos do NPC
     ...(npc.inventory.amount > 0 ? [{
       id: `resource_${npc.inventory.type}`,
       name: npc.inventory.type,
       type: "resource" as const,
       tier: 1,
-      icon: npc.inventory.type === "wood" ? "🪵" : npc.inventory.type === "stone" ? "🪨" : "🌾"
+      icon: npc.inventory.type === "wood" ? "🪵" : npc.inventory.type === "stone" ? "🪨" : "🌾",
+      rarity: "common" as const,
+      description: `${npc.inventory.amount}x ${npc.inventory.type}`
     }] : [])
   ]);
 
   const [equipmentSlots, setEquipmentSlots] = useState<EquipmentSlot[]>([
-    { id: "head", name: "Head Slot", type: "head" },
-    { id: "cape", name: "Cape", type: "cape" },
-    { id: "bag", name: "Bag", type: "bag" },
-    { id: "mainhand", name: "Main Hand", type: "weapon" },
-    { id: "chest", name: "Chest Slot", type: "chest" },
-    { id: "offhand", name: "Off-Hand", type: "offhand" },
-    { id: "potion", name: "Potion", type: "potion" },
-    { id: "boots", name: "Foot Slot", type: "boots" },
-    { id: "food", name: "Food", type: "food" },
-    { id: "mount", name: "Mount", type: "mount" }
+    { 
+      id: "head", 
+      name: "Capacete", 
+      type: "head",
+      acceptedTypes: ["armor"]
+    },
+    { 
+      id: "cape", 
+      name: "Capa", 
+      type: "cape",
+      acceptedTypes: ["armor"]
+    },
+    { 
+      id: "bag", 
+      name: "Bolsa", 
+      type: "bag",
+      acceptedTypes: ["consumable"]
+    },
+    { 
+      id: "mainhand", 
+      name: "Mão Principal", 
+      type: "weapon",
+      acceptedTypes: ["weapon", "tool"]
+    },
+    { 
+      id: "chest", 
+      name: "Peitoral", 
+      type: "chest",
+      acceptedTypes: ["armor"]
+    },
+    { 
+      id: "offhand", 
+      name: "Mão Secundária", 
+      type: "offhand",
+      acceptedTypes: ["weapon", "armor", "tool"]
+    },
+    { 
+      id: "potion", 
+      name: "Poção", 
+      type: "potion",
+      acceptedTypes: ["consumable"]
+    },
+    { 
+      id: "boots", 
+      name: "Botas", 
+      type: "boots",
+      acceptedTypes: ["armor"]
+    },
+    { 
+      id: "food", 
+      name: "Comida", 
+      type: "food",
+      acceptedTypes: ["consumable"]
+    }
   ]);
 
   const [draggedItem, setDraggedItem] = useState<InventoryItem | null>(null);
-  const [gold, setGold] = useState(0);
-  const [silver, setSilver] = useState(0);
+  const [selectedItem, setSelectedItem] = useState<InventoryItem | null>(null);
+  const [filter, setFilter] = useState<string>("all");
+  const [sortBy, setSortBy] = useState<string>("tier");
+
+  const getRarityColor = (rarity?: string) => {
+    switch (rarity) {
+      case "legendary": return "from-yellow-400 to-orange-500";
+      case "epic": return "from-purple-400 to-pink-500";
+      case "rare": return "from-blue-400 to-indigo-500";
+      default: return "from-gray-300 to-gray-400";
+    }
+  };
+
+  const getRarityBorder = (rarity?: string) => {
+    switch (rarity) {
+      case "legendary": return "border-yellow-400 shadow-yellow-400/50";
+      case "epic": return "border-purple-400 shadow-purple-400/50";
+      case "rare": return "border-blue-400 shadow-blue-400/50";
+      default: return "border-gray-300 shadow-gray-300/20";
+    }
+  };
+
+  const filteredItems = useMemo(() => {
+    let filtered = inventoryItems;
+    
+    if (filter !== "all") {
+      filtered = filtered.filter(item => item.type === filter);
+    }
+
+    return filtered.sort((a, b) => {
+      if (sortBy === "tier") return b.tier - a.tier;
+      if (sortBy === "name") return a.name.localeCompare(b.name);
+      if (sortBy === "type") return a.type.localeCompare(b.type);
+      return 0;
+    });
+  }, [inventoryItems, filter, sortBy]);
 
   const handleDragStart = useCallback((item: InventoryItem, e: React.DragEvent) => {
     setDraggedItem(item);
     e.dataTransfer.setData("text/plain", item.id);
+    e.dataTransfer.effectAllowed = "move";
   }, []);
 
-  const handleDragEnd = useCallback((e: React.DragEvent) => {
-    // Só limpar se não foi um drop bem-sucedido
+  const handleDragEnd = useCallback(() => {
     setTimeout(() => setDraggedItem(null), 100);
   }, []);
 
@@ -117,39 +281,21 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
     const slot = equipmentSlots.find(s => s.id === slotId);
     if (!slot) return;
 
-    // Verificar se o tipo do item é compatível com o slot
-    const isCompatible = (
-      (slot.type === "weapon" && (draggedItem.type === "weapon" || draggedItem.type === "tool")) ||
-      (slot.type === "armor" && draggedItem.type === "armor") ||
-      (slot.type === "head" && draggedItem.type === "armor") ||
-      (slot.type === "chest" && draggedItem.type === "armor") ||
-      (slot.type === "boots" && draggedItem.type === "armor") ||
-      (slot.type === "cape" && draggedItem.type === "armor") ||
-      (slot.type === "bag" && draggedItem.type === "consumable") ||
-      (slot.type === "food" && draggedItem.type === "consumable") ||
-      (slot.type === "potion" && draggedItem.type === "consumable") ||
-      (slot.type === "mount" && draggedItem.type === "consumable") ||
-      (slot.type === "offhand" && (draggedItem.type === "weapon" || draggedItem.type === "armor"))
-    );
+    const isCompatible = slot.acceptedTypes?.includes(draggedItem.type);
 
     if (!isCompatible) {
-      console.log(`Item ${draggedItem.name} não é compatível com slot ${slot.name}`);
+      // Feedback visual de erro
+      const notification = document.createElement('div');
+      notification.className = 'fixed top-4 right-4 bg-red-500 text-white px-4 py-2 rounded-lg shadow-lg z-[10000] animate-bounce';
+      notification.textContent = `${draggedItem.name} não pode ser equipado em ${slot.name}`;
+      document.body.appendChild(notification);
+      setTimeout(() => document.body.removeChild(notification), 3000);
       return;
     }
 
     // Se já há um item equipado, retorná-lo ao inventário
     if (slot.equipped) {
-      setInventoryItems(prev => {
-        const newItems = [...prev];
-        // Encontrar o primeiro slot vazio
-        const emptyIndex = newItems.findIndex((item, index) => !item);
-        if (emptyIndex !== -1) {
-          newItems[emptyIndex] = { ...slot.equipped!, equipped: false };
-        } else {
-          newItems.push({ ...slot.equipped!, equipped: false });
-        }
-        return newItems;
-      });
+      setInventoryItems(prev => [...prev, { ...slot.equipped!, equipped: false }]);
     }
 
     // Remover item do inventário
@@ -165,170 +311,131 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
     );
 
     setDraggedItem(null);
-    console.log(`✅ ${draggedItem.name} equipado em ${slot.name}`);
 
-    // Feedback visual opcional
+    // Feedback de sucesso
     const notification = document.createElement('div');
-    notification.className = 'fixed top-4 right-4 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg z-[10000]';
-    notification.textContent = `${draggedItem.name} equipado!`;
+    notification.className = 'fixed top-4 right-4 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg z-[10000] animate-pulse';
+    notification.textContent = `✓ ${draggedItem.name} equipado!`;
     document.body.appendChild(notification);
     setTimeout(() => document.body.removeChild(notification), 2000);
   }, [draggedItem, equipmentSlots]);
-
-  const handleDropOnInventory = useCallback((e: React.DragEvent, slotIndex: number) => {
-    e.preventDefault();
-    e.stopPropagation();
-    if (!draggedItem) return;
-
-    // Se o item veio de um slot de equipamento, removê-lo de lá
-    const equippedSlot = equipmentSlots.find(s => s.equipped?.id === draggedItem.id);
-    if (equippedSlot) {
-      setEquipmentSlots(prev => 
-        prev.map(s => 
-          s.id === equippedSlot.id 
-            ? { ...s, equipped: undefined }
-            : s
-        )
-      );
-    }
-
-    // Adicionar item ao inventário se não estiver lá
-    if (!inventoryItems.find(item => item.id === draggedItem.id)) {
-      setInventoryItems(prev => {
-        const newItems = [...prev];
-        // Se o slot está vazio, colocar o item lá
-        if (!newItems[slotIndex]) {
-          newItems[slotIndex] = { ...draggedItem, equipped: false };
-        } else {
-          // Encontrar primeiro slot vazio
-          const emptyIndex = newItems.findIndex((item, index) => !item);
-          if (emptyIndex !== -1) {
-            newItems[emptyIndex] = { ...draggedItem, equipped: false };
-          } else {
-            newItems.push({ ...draggedItem, equipped: false });
-          }
-        }
-        return newItems;
-      });
-    }
-
-    setDraggedItem(null);
-  }, [draggedItem, equipmentSlots, inventoryItems]);
 
   const handleUnequip = useCallback((slotId: string) => {
     const slot = equipmentSlots.find(s => s.id === slotId);
     if (!slot?.equipped) return;
 
-    // Adicionar de volta ao inventário
     setInventoryItems(prev => [...prev, { ...slot.equipped!, equipped: false }]);
-
-    // Remover do slot
     setEquipmentSlots(prev => prev.map(s => 
-      s.id === slotId 
-        ? { ...s, equipped: undefined }
-        : s
+      s.id === slotId ? { ...s, equipped: undefined } : s
     ));
   }, [equipmentSlots]);
 
-  // Criar grid de 48 slots para o inventário
-  const inventorySlots = useMemo(() => 
-    Array.from({ length: 48 }, (_, i) => {
-      const item = inventoryItems[i];
-      return (
-        <div
-          key={i}
-          className="w-8 h-8 bg-white/20 border border-gray-300/50 rounded-md flex items-center justify-center relative cursor-pointer hover:bg-white/30 transition-colors backdrop-blur-sm"
-          onDragOver={(e) => e.preventDefault()}
-          onDrop={(e) => handleDropOnInventory(e, i)}
-        >
-          {item && (
-            <div 
-              className="text-lg relative group cursor-grab active:cursor-grabbing select-none"
-              draggable
-              onDragStart={(e) => {
-                e.stopPropagation();
-                handleDragStart(item, e);
-              }}
-              onDragEnd={handleDragEnd}
-              onMouseDown={(e) => e.stopPropagation()}
-            >
-              {item.icon}
-              <div className="absolute -bottom-1 -right-1 text-xs bg-blue-500 text-white rounded-full w-4 h-4 flex items-center justify-center text-[10px] border border-white">
-                {item.tier}
-              </div>
-              <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-10 pointer-events-none">
-                {item.name}
-              </div>
+  const ItemComponent = ({ item, index }: { item: InventoryItem; index: number }) => (
+    <div
+      className={`relative group cursor-grab active:cursor-grabbing transition-all duration-200 hover:scale-105 hover:z-10 ${
+        selectedItem?.id === item.id ? 'ring-2 ring-blue-400' : ''
+      }`}
+      draggable
+      onDragStart={(e) => handleDragStart(item, e)}
+      onDragEnd={handleDragEnd}
+      onClick={() => setSelectedItem(item)}
+    >
+      <div className={`w-12 h-12 bg-gradient-to-br ${getRarityColor(item.rarity)} rounded-lg border-2 ${getRarityBorder(item.rarity)} flex items-center justify-center shadow-lg backdrop-blur-sm relative overflow-hidden`}>
+        <div className="absolute inset-0 bg-white/10 backdrop-blur-sm"></div>
+        <span className="text-xl relative z-10">{item.icon}</span>
+        <div className="absolute -bottom-0.5 -right-0.5 text-xs bg-gray-900 text-white rounded-full w-5 h-5 flex items-center justify-center text-[10px] border border-white font-bold">
+          {item.tier}
+        </div>
+        {item.rarity === "legendary" && (
+          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent animate-pulse"></div>
+        )}
+      </div>
+      
+      {/* Tooltip melhorado */}
+      <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-20 pointer-events-none">
+        <div className="bg-gray-900 text-white text-xs px-3 py-2 rounded-lg shadow-xl border border-gray-700 min-w-max max-w-xs">
+          <div className="font-bold text-center mb-1">{item.name}</div>
+          {item.description && (
+            <div className="text-gray-300 text-center mb-2">{item.description}</div>
+          )}
+          {item.stats && (
+            <div className="space-y-1">
+              {item.stats.damage && <div className="text-red-400">⚔️ Dano: {item.stats.damage}</div>}
+              {item.stats.defense && <div className="text-blue-400">🛡️ Defesa: {item.stats.defense}</div>}
+              {item.stats.speed && <div className="text-green-400">⚡ Velocidade: {item.stats.speed}</div>}
             </div>
           )}
+          <div className={`text-center mt-2 font-semibold ${
+            item.rarity === "legendary" ? "text-yellow-400" :
+            item.rarity === "epic" ? "text-purple-400" :
+            item.rarity === "rare" ? "text-blue-400" : "text-gray-400"
+          }`}>
+            {item.rarity?.toUpperCase() || "COMUM"}
+          </div>
         </div>
-      );
-    }), [inventoryItems, handleDragStart, handleDragEnd, handleDropOnInventory]);
+      </div>
+    </div>
+  );
 
   const EquipmentSlotComponent = ({ slotId, label }: { slotId: string; label: string }) => {
     const slot = equipmentSlots.find(s => s.id === slotId);
+    const canAccept = draggedItem && slot?.acceptedTypes?.includes(draggedItem.type);
 
     return (
-      <div className="flex flex-col items-center">
-        <span className="text-xs text-gray-600 mb-1 font-medium">{label}</span>
+      <div className="flex flex-col items-center space-y-2">
+        <span className="text-xs text-gray-600 font-medium">{label}</span>
         <div
-          className={`w-10 h-10 bg-white/30 border-2 ${
-            draggedItem ? 'border-blue-400 bg-blue-50/50' : 'border-gray-300/60'
-          } rounded-lg flex items-center justify-center cursor-pointer hover:bg-white/40 transition-all duration-200 backdrop-blur-sm shadow-sm`}
+          className={`w-14 h-14 rounded-xl border-2 border-dashed transition-all duration-200 flex items-center justify-center relative overflow-hidden ${
+            draggedItem 
+              ? canAccept 
+                ? 'border-green-400 bg-green-50 shadow-lg scale-105' 
+                : 'border-red-300 bg-red-50'
+              : 'border-gray-300 bg-white/30'
+          } hover:bg-white/50`}
           onDragOver={(e) => {
             e.preventDefault();
-            e.stopPropagation();
-            // Adicionar feedback visual mais forte
-            e.currentTarget.classList.add('border-green-400', 'bg-green-100/80', 'scale-105', 'shadow-lg');
-            e.currentTarget.classList.remove('border-gray-300/60', 'border-blue-400');
+            if (canAccept) {
+              e.currentTarget.classList.add('animate-pulse');
+            }
           }}
           onDragLeave={(e) => {
-            // Só remover se realmente saiu do elemento
-            const rect = e.currentTarget.getBoundingClientRect();
-            const x = e.clientX;
-            const y = e.clientY;
-
-            if (x < rect.left || x > rect.right || y < rect.top || y > rect.bottom) {
-              e.currentTarget.classList.remove('border-green-400', 'bg-green-100/80', 'scale-105', 'shadow-lg');
-              e.currentTarget.classList.add(draggedItem ? 'border-blue-400' : 'border-gray-300/60');
-            }
+            e.currentTarget.classList.remove('animate-pulse');
           }}
           onDrop={(e) => {
-            // Remover todos os estilos de hover
-            e.currentTarget.classList.remove('border-green-400', 'bg-green-100/80', 'scale-105', 'shadow-lg');
-            e.currentTarget.classList.add('border-gray-300/60');
-            console.log(`Drop evento acionado no slot ${slotId}`);
+            e.currentTarget.classList.remove('animate-pulse');
             handleDropOnSlot(e, slotId);
           }}
-          onClick={(e) => {
-            e.stopPropagation();
-            if (slot?.equipped) {
-              console.log(`Desequipando item: ${slot.equipped.name}`);
-              handleUnequip(slotId);
-            }
-          }}
+          onClick={() => slot?.equipped && handleUnequip(slotId)}
         >
           {slot?.equipped ? (
-            <div
-              className="text-lg relative group cursor-grab active:cursor-grabbing select-none"
-              draggable
-              onDragStart={(e) => {
-                e.stopPropagation();
-                handleDragStart(slot.equipped, e);
-              }}
-              onDragEnd={handleDragEnd}
-              onMouseDown={(e) => e.stopPropagation()}
-            >
-              {slot.equipped.icon}
-              <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-10 pointer-events-none">
+            <div className="relative group">
+              <div className={`text-2xl bg-gradient-to-br ${getRarityColor(slot.equipped.rarity)} rounded-lg p-2 border ${getRarityBorder(slot.equipped.rarity)}`}>
+                {slot.equipped.icon}
+              </div>
+              <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-10">
                 {slot.equipped.name}
               </div>
             </div>
-          ) : null}
+          ) : (
+            <div className="text-gray-400 text-2xl">+</div>
+          )}
         </div>
       </div>
     );
   };
+
+  const inventorySlots = useMemo(() => 
+    Array.from({ length: 60 }, (_, i) => {
+      const item = filteredItems[i];
+      return (
+        <div
+          key={i}
+          className="w-12 h-12 bg-white/20 border border-gray-300/50 rounded-lg flex items-center justify-center relative transition-all duration-200 hover:bg-white/40 hover:border-gray-400/70"
+        >
+          {item && <ItemComponent item={item} index={i} />}
+        </div>
+      );
+    }), [filteredItems]);
 
   return (
     <div 
@@ -339,7 +446,7 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
       }}
     >
       <div 
-        className="bg-gradient-to-br from-white to-gray-50 rounded-2xl shadow-2xl w-[520px] h-[600px] overflow-hidden relative border border-gray-200"
+        className="bg-gradient-to-br from-white via-gray-50 to-gray-100 rounded-3xl shadow-2xl w-[700px] h-[720px] overflow-hidden relative border border-gray-200"
         style={{
           position: 'absolute',
           left: `${position.x}px`,
@@ -349,88 +456,144 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
         ref={dragRef}
         onMouseDown={handleMouseDown}
       >
-        {/* Header com gradiente */}
-        <div className="bg-gradient-to-r from-amber-500 to-orange-600 p-6 text-white relative overflow-hidden">
-          <div className="absolute inset-0 bg-black/10"></div>
+        {/* Header Aprimorado */}
+        <div className="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 p-6 text-white relative overflow-hidden">
+          <div className="absolute inset-0 bg-black/20 backdrop-blur-sm"></div>
+          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent animate-pulse"></div>
           <div className="relative z-10">
             <div className="flex justify-between items-center">
               <div className="flex items-center gap-4">
-                <div className="w-16 h-16 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center border-2 border-white/30">
-                  <i className="fa-solid fa-backpack text-2xl text-white"></i>
+                <div className="w-16 h-16 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center border-2 border-white/30 shadow-lg">
+                  <i className="fa-solid fa-treasure-chest text-2xl text-white"></i>
                 </div>
                 <div>
-                  <h2 className="text-2xl font-bold text-white drop-shadow-md">Inventário</h2>
+                  <h2 className="text-3xl font-bold text-white drop-shadow-lg">Inventário</h2>
                   <p className="text-white/90 font-medium">{npc.name}</p>
                 </div>
               </div>
               <button 
                 onClick={onClose}
-                className="w-10 h-10 bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-full flex items-center justify-center transition-all duration-200 border border-white/30"
+                className="w-12 h-12 bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-2xl flex items-center justify-center transition-all duration-200 border border-white/30 hover:scale-105"
               >
-                <i className="fa-solid fa-times text-white"></i>
+                <i className="fa-solid fa-times text-white text-xl"></i>
               </button>
             </div>
           </div>
         </div>
 
-        {/* Content Area */}
-        <div className="p-4 space-y-4">
+        <div className="p-6 space-y-6 h-full overflow-y-auto">
+          {/* Controles de Filtro e Ordenação */}
+          <div className="bg-white/60 backdrop-blur-sm p-4 rounded-2xl border border-gray-200 shadow-lg">
+            <div className="flex justify-between items-center gap-4">
+              <div className="flex gap-2">
+                <select 
+                  value={filter} 
+                  onChange={(e) => setFilter(e.target.value)}
+                  className="px-3 py-2 rounded-lg border border-gray-300 bg-white/80 text-sm font-medium focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                >
+                  <option value="all">Todos</option>
+                  <option value="weapon">Armas</option>
+                  <option value="armor">Armaduras</option>
+                  <option value="tool">Ferramentas</option>
+                  <option value="consumable">Consumíveis</option>
+                  <option value="resource">Recursos</option>
+                </select>
+                <select 
+                  value={sortBy} 
+                  onChange={(e) => setSortBy(e.target.value)}
+                  className="px-3 py-2 rounded-lg border border-gray-300 bg-white/80 text-sm font-medium focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                >
+                  <option value="tier">Por Tier</option>
+                  <option value="name">Por Nome</option>
+                  <option value="type">Por Tipo</option>
+                </select>
+              </div>
+              <div className="text-sm text-gray-600 font-medium">
+                {filteredItems.length} / 60 itens
+              </div>
+            </div>
+          </div>
 
-          {/* Details Section */}
-          <div className="bg-gradient-to-br from-amber-50 to-orange-50 p-4 rounded-xl border-2 border-amber-200">
-            <h3 className="text-base font-bold text-gray-800 mb-3 flex items-center gap-2">
-              <i className="fa-solid fa-user-gear text-amber-600"></i>
+          {/* Equipamentos */}
+          <div className="bg-gradient-to-br from-amber-50 to-orange-50 p-6 rounded-2xl border-2 border-amber-200 shadow-lg">
+            <h3 className="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
+              <i className="fa-solid fa-shield-halved text-amber-600"></i>
               Equipamentos
             </h3>
-
-            {/* Equipment Slots Grid */}
-            <div className="grid grid-cols-3 gap-3 mb-4">
-              {/* Row 1 */}
+            <div className="grid grid-cols-3 gap-6">
               <EquipmentSlotComponent slotId="bag" label="Bolsa" />
-              <EquipmentSlotComponent slotId="head" label="Cabeça" />
+              <EquipmentSlotComponent slotId="head" label="Capacete" />
               <EquipmentSlotComponent slotId="cape" label="Capa" />
-
-              {/* Row 2 */}
               <EquipmentSlotComponent slotId="mainhand" label="Mão Principal" />
-              <EquipmentSlotComponent slotId="chest" label="Peito" />
+              <EquipmentSlotComponent slotId="chest" label="Peitoral" />
               <EquipmentSlotComponent slotId="offhand" label="Mão Secundária" />
-
-              {/* Row 3 */}
               <EquipmentSlotComponent slotId="potion" label="Poção" />
               <EquipmentSlotComponent slotId="boots" label="Botas" />
               <EquipmentSlotComponent slotId="food" label="Comida" />
             </div>
-
-            {/* Weight bar */}
-            <div className="mt-4">
-              <div className="flex justify-between items-center mb-2">
-                <span className="text-sm text-gray-600">Peso</span>
-                <span className="text-sm text-gray-600">0%</span>
-              </div>
-              <div className="w-full h-2 bg-gray-300 rounded-full overflow-hidden">
-                <div className="w-1/4 h-full bg-gradient-to-r from-green-400 to-green-500 rounded-full transition-all"></div>
-              </div>
-            </div>
           </div>
 
-          {/* Inventory Slots */}
-          <div className="bg-gradient-to-br from-gray-50 to-gray-100 p-4 rounded-xl border-2 border-gray-200">
-            <div className="flex justify-between items-center mb-3">
-              <h3 className="text-base font-bold text-gray-800 flex items-center gap-2">
-                <i className="fa-solid fa-boxes-stacked text-gray-600"></i>
-                Slots do Inventário (48)
-              </h3>
-              <div className="text-sm text-gray-600">
-                {inventoryItems.length}/48 itens
-              </div>
-            </div>
-
-            <div className="grid grid-cols-8 gap-1 p-3 bg-white/50 rounded-lg border border-gray-200 max-h-48 overflow-y-auto custom-scrollbar">
+          {/* Grid de Inventário */}
+          <div className="bg-gradient-to-br from-gray-50 to-gray-100 p-6 rounded-2xl border-2 border-gray-200 shadow-lg">
+            <h3 className="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
+              <i className="fa-solid fa-boxes-stacked text-gray-600"></i>
+              Inventário
+            </h3>
+            <div className="grid grid-cols-10 gap-2 p-4 bg-white/50 rounded-xl border border-gray-200 max-h-80 overflow-y-auto custom-scrollbar">
               {inventorySlots}
             </div>
           </div>
 
-
+          {/* Painel de Detalhes do Item Selecionado */}
+          {selectedItem && (
+            <div className="bg-gradient-to-br from-blue-50 to-indigo-50 p-6 rounded-2xl border-2 border-blue-200 shadow-lg">
+              <h3 className="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
+                <i className="fa-solid fa-info-circle text-blue-600"></i>
+                Detalhes do Item
+              </h3>
+              <div className="flex items-start gap-4">
+                <div className={`w-16 h-16 bg-gradient-to-br ${getRarityColor(selectedItem.rarity)} rounded-xl border-2 ${getRarityBorder(selectedItem.rarity)} flex items-center justify-center shadow-lg`}>
+                  <span className="text-2xl">{selectedItem.icon}</span>
+                </div>
+                <div className="flex-1">
+                  <h4 className="text-xl font-bold text-gray-800">{selectedItem.name}</h4>
+                  <p className="text-gray-600 mb-2">{selectedItem.description}</p>
+                  <div className="flex items-center gap-4 text-sm">
+                    <span className="px-2 py-1 bg-gray-200 rounded-lg font-medium">Tier {selectedItem.tier}</span>
+                    <span className={`px-2 py-1 rounded-lg font-medium ${
+                      selectedItem.rarity === "legendary" ? "bg-yellow-200 text-yellow-800" :
+                      selectedItem.rarity === "epic" ? "bg-purple-200 text-purple-800" :
+                      selectedItem.rarity === "rare" ? "bg-blue-200 text-blue-800" : "bg-gray-200 text-gray-800"
+                    }`}>
+                      {selectedItem.rarity?.toUpperCase() || "COMUM"}
+                    </span>
+                  </div>
+                  {selectedItem.stats && (
+                    <div className="mt-3 grid grid-cols-3 gap-2">
+                      {selectedItem.stats.damage && (
+                        <div className="flex items-center gap-1 text-red-600">
+                          <i className="fa-solid fa-sword"></i>
+                          <span className="font-medium">{selectedItem.stats.damage}</span>
+                        </div>
+                      )}
+                      {selectedItem.stats.defense && (
+                        <div className="flex items-center gap-1 text-blue-600">
+                          <i className="fa-solid fa-shield"></i>
+                          <span className="font-medium">{selectedItem.stats.defense}</span>
+                        </div>
+                      )}
+                      {selectedItem.stats.speed && (
+                        <div className="flex items-center gap-1 text-green-600">
+                          <i className="fa-solid fa-bolt"></i>
+                          <span className="font-medium">{selectedItem.stats.speed}</span>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>
