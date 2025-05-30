@@ -15,30 +15,30 @@ const ResourcePanel: React.FC<ResourcePanelProps> = ({ isVisible }) => {
 
   return (
     <div
-      className={`absolute bg-gray-800 text-white p-3 rounded-lg shadow-lg ui-panel ${
+      className={`absolute bg-gray-800 text-white p-2 sm:p-3 rounded-lg shadow-lg ui-panel panel-positioned ${
         isDragging ? "z-50" : "z-10"
       }`}
       style={{
         left: position.x,
         top: position.y,
         pointerEvents: "auto",
-        width: "240px",
-        maxHeight: "350px"
+        width: "min(90vw, 280px)",
+        maxHeight: "min(80vh, 400px)"
       }}
     >
-      <h2 className="text-lg font-bold mb-2">Recursos</h2>
-      <div className="grid grid-cols-2 gap-2">
+      <h2 className="responsive-text-lg font-bold mb-2">Recursos</h2>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
         {Object.values(resourceTypes).map((resource) => (
           <div
             key={resource.id}
             className="flex items-center gap-2"
             title={resource.description}
           >
-            <i className={`${resource.icon} text-lg`} style={{ color: resource.color }}></i>
-            <div className="text-white text-sm">
+            <i className={`${resource.icon} responsive-icon-lg`} style={{ color: resource.color }}></i>
+            <div className="text-white responsive-text">
               <div className="flex justify-between">
                 <span>{resource.name}:</span>
-                <span className="ml-2 font-bold">
+                <span className="ml-1 sm:ml-2 font-bold">
                   {resources[resource.id] || 0}/{resource.maxAmount}
                 </span>
               </div>

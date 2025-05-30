@@ -108,7 +108,7 @@ const NpcPanel: React.FC<NpcPanelProps> = ({ npc, onClose }) => {
       }}
     >
       <div 
-        className="bg-gradient-to-br from-white to-gray-50 rounded-2xl shadow-2xl w-[440px] max-h-[90vh] overflow-hidden relative border border-gray-200"
+        className="bg-gradient-to-br from-white to-gray-50 rounded-2xl shadow-2xl responsive-panel-large overflow-hidden relative border border-gray-200"
         style={{
           position: 'absolute',
           left: `${position.x}px`,
@@ -119,7 +119,7 @@ const NpcPanel: React.FC<NpcPanelProps> = ({ npc, onClose }) => {
         onMouseDown={handleMouseDown}
       >
         {/* Header com gradiente */}
-        <div className={`bg-gradient-to-r ${getWorkColor(currentWork?.id)} p-6 text-white relative overflow-hidden`}>
+        <div className={`bg-gradient-to-r ${getWorkColor(currentWork?.id)} p-3 sm:p-6 text-white relative overflow-hidden`}>
           <div className="absolute inset-0 bg-black/10"></div>
           <div className="relative z-10">
             <div className="flex justify-between items-start mb-4">
@@ -188,7 +188,7 @@ const NpcPanel: React.FC<NpcPanelProps> = ({ npc, onClose }) => {
         </div>
 
         {/* Content Area */}
-        <div className="p-6 space-y-6 max-h-[calc(90vh-200px)] overflow-y-auto custom-scrollbar">
+        <div className="p-3 sm:p-6 space-y-3 sm:space-y-6 max-h-[calc(90vh-200px)] overflow-y-auto custom-scrollbar">
 
           {/* Create NPC Section for Empty Houses */}
           {isTemporaryNpc && (
@@ -239,7 +239,7 @@ const NpcPanel: React.FC<NpcPanelProps> = ({ npc, onClose }) => {
               </div>
 
               {/* Stats Grid */}
-              <div className="grid grid-cols-2 gap-4 mb-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mb-4 sm:mb-6">
                 {/* Energy */}
                 <div className="bg-white/70 p-4 rounded-lg border border-blue-200">
                   <div className="flex items-center gap-2 mb-2">
@@ -276,7 +276,7 @@ const NpcPanel: React.FC<NpcPanelProps> = ({ npc, onClose }) => {
               </div>
 
               {/* Action Buttons */}
-              <div className="grid grid-cols-2 gap-3 mb-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4 sm:mb-6">
                 <button
                   onClick={(e) => {
                     e.stopPropagation();

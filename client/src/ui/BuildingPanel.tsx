@@ -22,20 +22,20 @@ const BuildingPanel = ({ isVisible }: { isVisible: boolean }) => {
   return (
     <div
       className={cn(
-        "absolute bg-gray-800 text-white p-2 lg:p-3 rounded-lg shadow-lg ui-panel",
+        "absolute bg-gray-800 text-white p-2 sm:p-3 lg:p-4 rounded-lg shadow-lg ui-panel panel-positioned",
         isDragging ? "z-50" : "z-10"
       )}
       style={{
         left: position.x,
         top: position.y,
         pointerEvents: "auto",
-        width: "280px",
-        maxHeight: "400px"
+        width: "min(90vw, 320px)",
+        maxHeight: "min(80vh, 450px)"
       }}
     >
-      <h2 className="text-white text-center font-bold mb-3 text-base">Estruturas</h2>
+      <h2 className="text-white text-center font-bold mb-2 sm:mb-3 responsive-text-lg">Estruturas</h2>
 
-      <div className="grid grid-cols-2 gap-2">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
         {allowedBuildings.map((buildingType) => {
           const building = buildingTypes[buildingType];
           if (!building) return null;
@@ -51,7 +51,7 @@ const BuildingPanel = ({ isVisible }: { isVisible: boolean }) => {
               key={buildingType}
               onClick={() => handleSelectBuilding(buildingType)}
               className={cn(
-                "p-2 rounded-lg border transition-all duration-200 text-left",
+                "responsive-button p-2 sm:p-3 rounded-lg border transition-all duration-200 text-left",
                 isSelected
                   ? "bg-blue-600 border-blue-500 shadow-lg transform scale-105"
                   : canAfford
@@ -60,10 +60,10 @@ const BuildingPanel = ({ isVisible }: { isVisible: boolean }) => {
               )}
               disabled={!canAfford}
             >
-              <div className="text-white font-semibold text-sm mb-1">
+              <div className="text-white font-semibold responsive-text mb-1">
                 {building.name}
               </div>
-              <div className="text-xs text-gray-300 mb-2">
+              <div className="text-xs text-gray-300 mb-1 sm:mb-2">
                 {building.description}
               </div>
               <div className="text-xs text-gray-400">
