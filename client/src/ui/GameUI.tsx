@@ -41,8 +41,8 @@ const GameUI = () => {
   const isMobile = useIsMobile();
 
   // UI State
-  const [showResourcePanel, setShowResourcePanel] = useState(true);
-  const [showBuildingPanel, setShowBuildingPanel] = useState(true);
+  const [showResourcePanel, setShowResourcePanel] = useState(false);
+  const [showBuildingPanel, setShowBuildingPanel] = useState(false);
   const [showNpcMetrics, setShowNpcMetrics] = useState(false);
   const [showSeedSelection, setShowSeedSelection] = useState(false);
   const [showSiloPanel, setShowSiloPanel] = useState(false);

@@ -23,28 +23,31 @@ const ResourcePanel: React.FC<ResourcePanelProps> = ({ isVisible }) => {
         top: position.y,
         pointerEvents: "auto",
         width: "min(90vw, 280px)",
-        maxHeight: "min(80vh, 400px)"
+        height: "100vh",
+        maxHeight: "100vh"
       }}
     >
       <h2 className="responsive-text-lg font-bold mb-2">Recursos</h2>
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+      <div className="flex-1 overflow-y-auto">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2"></div>
+      </div>
         {Object.values(resourceTypes).map((resource) => (
-          <div
-            key={resource.id}
-            className="flex items-center gap-2"
-            title={resource.description}
-          >
-            <i className={`${resource.icon} responsive-icon-lg`} style={{ color: resource.color }}></i>
-            <div className="text-white responsive-text">
-              <div className="flex justify-between">
-                <span>{resource.name}:</span>
-                <span className="ml-1 sm:ml-2 font-bold">
-                  {resources[resource.id] || 0}/{resource.maxAmount}
-                </span>
+            <div
+              key={resource.id}
+              className="flex items-center gap-2"
+              title={resource.description}
+            >
+              <i className={`${resource.icon} responsive-icon-lg`} style={{ color: resource.color }}></i>
+              <div className="text-white responsive-text">
+                <div className="flex justify-between">
+                  <span>{resource.name}:</span>
+                  <span className="ml-1 sm:ml-2 font-bold">
+                    {resources[resource.id] || 0}/{resource.maxAmount}
+                  </span>
+                </div>
               </div>
             </div>
-          </div>
-        ))}
+          ))}
       </div>
     </div>
   );
