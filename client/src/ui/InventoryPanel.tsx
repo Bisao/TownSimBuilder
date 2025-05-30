@@ -316,24 +316,25 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
       return;
     }
 
-    // Executar todas as atualizações de estado em uma única operação
-    // Se já há um item equipado, retorná-lo ao inventário
+    // Atualizar estados simultaneamente para evitar problemas de sincronização
+    const currentEquippedItem = slot.equipped;
+    
     setInventoryItems(prev => {
       let newItems = [...prev];
       
       // Se há item equipado no slot, adicionar de volta ao inventário
-      if (slot.equipped) {
-        newItems.push({ ...slot.equipped, equipped: false });
+      if (currentEquippedItem) {
+        newItems.push({ ...currentEquippedItem, equipped: false });
       }
       
-      // Remover o item que está sendo equipado
+      // Remover o item que está sendo equipado do inventário
       newItems = newItems.filter(item => item.id !== itemData.id);
       
       console.log("Inventário atualizado:", {
         antes: prev.length,
         depois: newItems.length,
         itemRemovidoId: itemData.id,
-        itemAdicionadoId: slot.equipped?.id
+        itemAdicionadoId: currentEquippedItem?.id
       });
       
       return newItems;
@@ -369,17 +370,47 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
     const slot = equipmentSlots.find(s => s.id === slotId);
     if (!slot?.equipped) return;
 
-    setInventoryItems(prev => [...prev, { ...slot.equipped!, equipped: false }]);
+    const equippedItem = slot.equipped;
+
+    // Verificar se há espaço no inventário
+    if (inventoryItems.length >= 60) {
+      const notification = document.createElement('div');
+      notification.className = 'fixed top-4 right-4 bg-red-500 text-white px-4 py-2 rounded-lg shadow-lg z-[10000] animate-bounce';
+      notification.textContent = 'Inventário cheio! Não é possível desequipar o item.';
+      document.body.appendChild(notification);
+      setTimeout(() => {
+        if (document.body.contains(notification)) {
+          document.body.removeChild(notification);
+        }
+      }, 3000);
+      return;
+    }
+
+    // Adicionar item de volta ao inventário
+    setInventoryItems(prev => [...prev, { ...equippedItem, equipped: false }]);
+    
+    // Remover item do slot de equipamento
     setEquipmentSlots(prev => prev.map(s => 
       s.id === slotId ? { ...s, equipped: undefined } : s
     ));
-  }, [equipmentSlots]);
+
+    // Feedback de sucesso
+    const notification = document.createElement('div');
+    notification.className = 'fixed top-4 right-4 bg-blue-500 text-white px-4 py-2 rounded-lg shadow-lg z-[10000] animate-pulse';
+    notification.textContent = `✓ ${equippedItem.name} desequipado!`;
+    document.body.appendChild(notification);
+    setTimeout(() => {
+      if (document.body.contains(notification)) {
+        document.body.removeChild(notification);
+      }
+    }, 2000);
+  }, [equipmentSlots, inventoryItems]);
 
   const ItemComponent = ({ item, index }: { item: InventoryItem; index: number }) => (
     <div
       className={`relative group cursor-grab active:cursor-grabbing transition-all duration-200 hover:scale-105 hover:z-10 ${
         selectedItem?.id === item.id ? 'ring-2 ring-blue-400' : ''
-      }`}
+      } ${draggedItem?.id === item.id ? 'opacity-50' : ''}`}
       draggable
       onDragStart={(e) => handleDragStart(item, e)}
       onDragEnd={handleDragEnd}
@@ -431,13 +462,13 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
         <span className="text-xs text-gray-600 font-medium">{label}</span>
         <div
           data-slot={slotId}
-          className={`w-14 h-14 rounded-xl border-2 border-dashed transition-all duration-200 flex items-center justify-center relative overflow-hidden ${
+          className={`w-14 h-14 rounded-xl border-2 border-dashed transition-all duration-200 flex items-center justify-center relative overflow-hidden cursor-pointer ${
             draggedItem 
               ? canAccept 
                 ? 'border-green-400 bg-green-50 shadow-lg scale-105' 
                 : 'border-red-300 bg-red-50'
               : 'border-gray-300 bg-white/30'
-          } hover:bg-white/50`}
+          } hover:bg-white/50 ${slot?.equipped ? 'hover:border-red-400 hover:bg-red-50' : ''}`}
           onDragOver={(e) => {
             e.preventDefault();
             e.stopPropagation();
@@ -465,16 +496,23 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
           }}
           onClick={(e) => {
             e.stopPropagation();
-            if (slot?.equipped) handleUnequip(slotId);
+            if (slot?.equipped) {
+              handleUnequip(slotId);
+            }
           }}
+          title={slot?.equipped ? `Clique para desequipar ${slot.equipped.name}` : `Arraste um item para equipar em ${label}`}
         >
           {slot?.equipped ? (
-            <div className="relative group">
-              <div className={`text-2xl bg-gradient-to-br ${getRarityColor(slot.equipped.rarity)} rounded-lg p-2 border ${getRarityBorder(slot.equipped.rarity)}`}>
+            <div className="relative group w-full h-full flex items-center justify-center">
+              <div className={`text-2xl bg-gradient-to-br ${getRarityColor(slot.equipped.rarity)} rounded-lg p-2 border ${getRarityBorder(slot.equipped.rarity)} w-full h-full flex items-center justify-center`}>
                 {slot.equipped.icon}
               </div>
-              <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-10">
-                {slot.equipped.name}
+              <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-10 pointer-events-none">
+                {slot.equipped.name} - Clique para desequipar
+              </div>
+              {/* Indicador visual para desequipar */}
+              <div className="absolute top-0 right-0 w-4 h-4 bg-red-500 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                <i className="fa-solid fa-times text-white text-xs"></i>
               </div>
             </div>
           ) : (
@@ -491,12 +529,33 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
       return (
         <div
           key={i}
-          className="w-12 h-12 bg-white/20 border border-gray-300/50 rounded-lg flex items-center justify-center relative transition-all duration-200 hover:bg-white/40 hover:border-gray-400/70"
+          className={`w-12 h-12 bg-white/20 border border-gray-300/50 rounded-lg flex items-center justify-center relative transition-all duration-200 hover:bg-white/40 hover:border-gray-400/70 ${
+            draggedItem && !item ? 'border-blue-300 bg-blue-50' : ''
+          }`}
+          onDragOver={(e) => {
+            if (!item) {
+              e.preventDefault();
+              e.stopPropagation();
+              e.dataTransfer.dropEffect = "move";
+            }
+          }}
+          onDrop={(e) => {
+            if (!item && draggedItem) {
+              e.preventDefault();
+              e.stopPropagation();
+              
+              // Se o item vem de um slot de equipamento, desequipá-lo
+              const equippedSlot = equipmentSlots.find(slot => slot.equipped?.id === draggedItem.id);
+              if (equippedSlot) {
+                handleUnequip(equippedSlot.id);
+              }
+            }
+          }}
         >
           {item && <ItemComponent item={item} index={i} />}
         </div>
       );
-    }), [filteredItems]);
+    }), [filteredItems, draggedItem, equipmentSlots, handleUnequip]);
 
   return (
     <div 
