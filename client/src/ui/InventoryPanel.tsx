@@ -78,42 +78,70 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
 
   const handleDropOnSlot = useCallback((e: React.DragEvent, slotId: string) => {
     e.preventDefault();
+    e.stopPropagation();
     if (!draggedItem) return;
 
     const slot = equipmentSlots.find(s => s.id === slotId);
     if (!slot) return;
 
-    // Verificar se o item pode ser equipado no slot
-    const canEquip = (
+    // Verificar se o tipo do item é compatível com o slot
+    const isCompatible = (
       (slot.type === "weapon" && (draggedItem.type === "weapon" || draggedItem.type === "tool")) ||
-      (slot.type === "head" && draggedItem.type === "armor") ||
-      (slot.type === "chest" && draggedItem.type === "armor") ||
-      (slot.type === "boots" && draggedItem.type === "armor") ||
-      (slot.type === "cape" && draggedItem.type === "armor") ||
-      (slot.type === "bag" && draggedItem.type === "armor") ||
-      (slot.type === "food" && draggedItem.type === "consumable") ||
-      (slot.type === "potion" && draggedItem.type === "consumable") ||
-      (slot.type === "offhand" && (draggedItem.type === "weapon" || draggedItem.type === "tool"))
+      (slot.type === draggedItem.type) ||
+      (slot.type === "offhand" && draggedItem.type === "weapon")
     );
 
-    if (!canEquip) return;
-
-    // Desequipar item anterior se houver
-    if (slot.equipped) {
-      setInventoryItems(prev => [...prev, { ...slot.equipped!, equipped: false }]);
+    if (!isCompatible) {
+      console.log(`Item ${draggedItem.name} não é compatível com slot ${slot.name}`);
+      return;
     }
 
-    // Equipar novo item
-    setEquipmentSlots(prev => prev.map(s => 
-      s.id === slotId 
-        ? { ...s, equipped: { ...draggedItem, equipped: true } }
-        : s
-    ));
+    // Se já há um item equipado, retorná-lo ao inventário
+    if (slot.equipped) {
+      setInventoryItems(prev => [...prev, slot.equipped!]);
+    }
 
     // Remover item do inventário
     setInventoryItems(prev => prev.filter(item => item.id !== draggedItem.id));
-    setDraggedItem(null);
+
+    // Equipar item no slot
+    setEquipmentSlots(prev => 
+      prev.map(s => 
+        s.id === slotId 
+          ? { ...s, equipped: draggedItem }
+          : s
+      )
+    );
+
+    console.log(`${draggedItem.name} equipado em ${slot.name}`);
   }, [draggedItem, equipmentSlots]);
+
+  const handleDropOnInventory = useCallback((e: React.DragEvent, slotIndex: number) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (!draggedItem) return;
+
+    // Se o item veio de um slot de equipamento, removê-lo de lá
+    const equippedSlot = equipmentSlots.find(s => s.equipped?.id === draggedItem.id);
+    if (equippedSlot) {
+      setEquipmentSlots(prev => 
+        prev.map(s => 
+          s.id === equippedSlot.id 
+            ? { ...s, equipped: undefined }
+            : s
+        )
+      );
+    }
+
+    // Adicionar item ao inventário se não estiver lá
+    if (!inventoryItems.find(item => item.id === draggedItem.id)) {
+      setInventoryItems(prev => {
+        const newItems = [...prev];
+        newItems[slotIndex] = draggedItem;
+        return newItems;
+      });
+    }
+  }, [draggedItem, equipmentSlots, inventoryItems]);
 
   const handleUnequip = useCallback((slotId: string) => {
     const slot = equipmentSlots.find(s => s.id === slotId);
@@ -139,13 +167,18 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
           key={i}
           className="w-10 h-10 bg-white/20 border border-gray-300/50 rounded-lg flex items-center justify-center relative cursor-pointer hover:bg-white/30 transition-colors backdrop-blur-sm"
           onDragOver={(e) => e.preventDefault()}
+          onDrop={(e) => handleDropOnInventory(e, i)}
         >
           {item && (
             <div 
-              className="text-lg relative group cursor-grab active:cursor-grabbing"
+              className="text-lg relative group cursor-grab active:cursor-grabbing select-none"
               draggable
-              onDragStart={(e) => handleDragStart(item, e)}
+              onDragStart={(e) => {
+                e.stopPropagation();
+                handleDragStart(item, e);
+              }}
               onDragEnd={handleDragEnd}
+              onMouseDown={(e) => e.stopPropagation()}
             >
               {item.icon}
               <div className="absolute -bottom-1 -right-1 text-xs bg-blue-500 text-white rounded-full w-4 h-4 flex items-center justify-center text-[10px] border border-white">
@@ -158,7 +191,7 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
           )}
         </div>
       );
-    }), [inventoryItems, handleDragStart, handleDragEnd]);
+    }), [inventoryItems, handleDragStart, handleDragEnd, handleDropOnInventory]);
 
   const EquipmentSlotComponent = ({ slotId, label }: { slotId: string; label: string }) => {
     const slot = equipmentSlots.find(s => s.id === slotId);
@@ -168,7 +201,10 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
         <span className="text-xs text-gray-600 mb-1 font-medium">{label}</span>
         <div
           className="w-12 h-12 bg-white/30 border-2 border-gray-300/60 rounded-lg flex items-center justify-center cursor-pointer hover:bg-white/40 transition-colors backdrop-blur-sm shadow-sm"
-          onDragOver={(e) => e.preventDefault()}
+          onDragOver={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+          }}
           onDrop={(e) => handleDropOnSlot(e, slotId)}
           onClick={(e) => {
             e.stopPropagation();
@@ -176,7 +212,16 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
           }}
         >
           {slot?.equipped ? (
-            <div className="text-lg relative group">
+            <div
+              className="text-lg relative group cursor-grab active:cursor-grabbing select-none"
+              draggable
+              onDragStart={(e) => {
+                e.stopPropagation();
+                handleDragStart(slot.equipped, e);
+              }}
+              onDragEnd={handleDragEnd}
+              onMouseDown={(e) => e.stopPropagation()}
+            >
               {slot.equipped.icon}
               <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-10 pointer-events-none">
                 {slot.equipped.name}
