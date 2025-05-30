@@ -15,15 +15,12 @@ import NpcPanel from "./NpcPanel";
 import { useKeyboardControls } from "@react-three/drei";
 import { NPC } from "../game/stores/useNpcStore";
 import { useIsMobile } from "../hooks/use-is-mobile";
-import MarketWindow from "./MarketWindow";
+// Sistemas removidos: Market, Research, Economy, Events, MapEditor
 import NpcMetricsPanel from "./NpcMetricsPanel";
 import SeedSelectionPanel from "./SeedSelectionPanel";
 import SiloPanel from "./SiloPanel";
-import MapEditorPanel from "./MapEditorPanel";
-import ResearchPanel from "./ResearchPanel";
-import EconomyPanel from "./EconomyPanel";
+// Sistemas removidos: Market, Research, Economy, Events, MapEditor
 import CombatPanel from "./CombatPanel";
-import EventPanel from "./EventPanel";
 import DummyStatsPanel from "./DummyStatsPanel";
 import { useDraggable } from "../hooks/useDraggable";
 
@@ -387,18 +384,12 @@ const GameUI = () => {
       <ResourcePanel isVisible={showResourcePanel} />
       <BuildingPanel isVisible={showBuildingPanel} />
 
-      {showResearchPanel && <ResearchPanel />}
-      {showEventPanel && <EventPanel />}
-      {showEconomyPanel && <EconomyPanel />}
-      {showNpcMetrics && <NpcMetricsPanel />}
-      {showMapEditor && <MapEditorPanel isVisible={showMapEditor} />}
+      {/* Sistemas removidos: Market, Research, Economy, Events, MapEditor */}
 
-      {/* Market Window */}
-      {showMarket && (
-        <div className="absolute top-16 left-4 z-20">
-          <MarketWindow />
-        </div>
-      )}
+      {showNpcMetrics && <NpcMetricsPanel />}
+      <MapEditorPanel isVisible={showMapEditor} />
+
+      {/* Sistemas removidos: Market, Research, Economy, Events, MapEditor */}
 
       {/* Other UI components */}
       {selectedNpc && (

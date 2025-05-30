@@ -219,7 +219,7 @@ const World: React.FC<WorldProps> = ({ onMarketSelect }) => {
         [25, 25], [20, 20], [30, 30], [15, 25], [35, 25],
         [25, 15], [25, 35], [20, 30], [30, 20], [10, 10]
       ];
-      
+
       for (const pos of positions) {
         const success = useBuildingStore.getState().placeBuilding('market', pos as [number, number], 0, true);
         if (success) {

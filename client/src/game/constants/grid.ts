@@ -1,21 +1,18 @@
-
 // Constantes centralizadas do grid
 export const GRID_CONFIG = {
   // Tamanho padrão do grid para o jogo
   DEFAULT_SIZE: 50,
-  
+
   // Tamanho para validação de posicionamento de edifícios
   BUILDING_GRID_SIZE: 50,
-  
+
   // Margem das bordas para recursos naturais
   RESOURCE_MARGIN: 8,
-  
+
   // Distância mínima entre recursos naturais
   MIN_RESOURCE_DISTANCE: 3,
-  
-  // Limites para o editor de mapa
-  EDITOR_MIN_SIZE: 10,
-  EDITOR_MAX_SIZE: 200,
+
+  // Editor constants removidos
 };
 
 // Função utilitária para validar posições no grid

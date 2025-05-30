@@ -29,14 +29,9 @@ export interface GameState {
   showBuildingPanel: boolean;
   showNpcPanel: boolean;
   showResourcePanel: boolean;
-  showMarketWindow: boolean;
   showNpcMetrics: boolean;
   showSeedSelection: boolean;
   showSiloPanel: boolean;
-  showMapEditor: boolean;
-  showResearchPanel: boolean;
-  showEconomyPanel: boolean;
-  showEventPanel: boolean;
   selectedNpc: string | null;
   selectedBuilding: any | null;
   selectedSilo: any | null;
@@ -106,14 +101,9 @@ export const useGameStore = create<GameState>()(
     showBuildingPanel: false,
     showNpcPanel: false,
     showResourcePanel: true,
-    showMarketWindow: false,
     showNpcMetrics: false,
     showSeedSelection: false,
     showSiloPanel: false,
-    showMapEditor: false,
-    showResearchPanel: false,
-    showEconomyPanel: false,
-    showEventPanel: false,
     selectedNpc: null,
     selectedBuilding: null,
     selectedSilo: null,
@@ -155,14 +145,9 @@ export const useGameStore = create<GameState>()(
 
     toggleNpcPanel: () => set((state) => ({ showNpcPanel: !state.showNpcPanel })),
     toggleResourcePanel: () => set((state) => ({ showResourcePanel: !state.showResourcePanel })),
-    toggleMarketWindow: () => set((state) => ({ showMarketWindow: !state.showMarketWindow })),
     toggleNpcMetrics: () => set((state) => ({ showNpcMetrics: !state.showNpcMetrics })),
     toggleSeedSelection: () => set((state) => ({ showSeedSelection: !state.showSeedSelection })),
     toggleSiloPanel: () => set((state) => ({ showSiloPanel: !state.showSiloPanel })),
-    toggleMapEditor: () => set((state) => ({ showMapEditor: !state.showMapEditor })),
-    toggleResearchPanel: () => set((state) => ({ showResearchPanel: !state.showResearchPanel })),
-    toggleEconomyPanel: () => set((state) => ({ showEconomyPanel: !state.showEconomyPanel })),
-    toggleEventPanel: () => set((state) => ({ showEventPanel: !state.showEventPanel })),
 
     setSelectedNpc: (npcId) => set({ selectedNpc: npcId }),
     setSelectedBuilding: (building) => set({ selectedBuilding: building }),
