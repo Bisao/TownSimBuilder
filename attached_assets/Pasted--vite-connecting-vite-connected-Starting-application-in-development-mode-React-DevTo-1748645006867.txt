@@ -1,0 +1,36 @@
+[vite] connecting...
+[vite] connected.
+🚀 Starting application in development mode
+📊 React DevTools available
+✅ Application initialized successfully
+Current game phase: login
+🚀 Starting application in development mode
+📊 React DevTools available
+✅ Application initialized successfully
+Aplicação inicializada com sucesso
+Current game phase: login
+🚀 Starting application in development mode
+📊 React DevTools available
+✅ Application initialized successfully
+Aplicação inicializada com sucesso
+Inicializando sistema de áudio
+Sistema de áudio inicializado
+Sistema de áudio inicializado com sucesso
+object null is not iterable (cannot read property Symbol(Symbol.iterator))
+Global error: 
+TypeError {}
+
+Global error: 
+TypeError {}
+Warning: Cannot update a component (&#x60;NotificationContainer&#x60;) while rendering a different component (&#x60;GameUI&#x60;). To locate the bad setState() call inside &#x60;GameUI&#x60;, follow the stack trace as described in https://reactjs.org/link/setstate-in-render
+    at GameUI (https://0a7aa26e-2441-494e-8a3c-d618b458c8af-00-b4nb1u4zvwup.worf.replit.dev/src/ui/GameUI.tsx:35:19)
+    at https://0a7aa26e-2441-494e-8a3c-d618b458c8af-00-b4nb1u4zvwup.worf.replit.dev/src/App.tsx?v=37U11d2UmjWD_4-tphxlc:58:59
+    at div
+    at HooksErrorBoundary (https://0a7aa26e-2441-494e-8a3c-d618b458c8af-00-b4nb1u4zvwup.worf.replit.dev/src/components/ui/hooks-error-boundary.tsx:7:5)
+    at ErrorBoundary (https://0a7aa26e-2441-494e-8a3c-d618b458c8af-00-b4nb1u4zvwup.worf.replit.dev/src/components/ui/error-boundary.tsx:10:5)
+    at App (https://0a7aa26e-2441-494e-8a3c-d618b458c8af-00-b4nb1u4zvwup.worf.replit.dev/src/App.tsx?v=37U11d2UmjWD_4-tphxlc:155:21)
+    at ErrorBoundary (https://0a7aa26e-2441-494e-8a3c-d618b458c8af-00-b4nb1u4zvwup.worf.replit.dev/src/components/ui/error-boundary.tsx:10:5)
+    at AppWrapper
+    at QueryClientProvider (https://0a7aa26e-2441-494e-8a3c-d618b458c8af-00-b4nb1u4zvwup.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=31832269:2909:3)
+    at ErrorBoundary (https://0a7aa26e-2441-494e-8a3c-d618b458c8af-00-b4nb1u4zvwup.worf.replit.dev/src/components/ui/error-boundary.tsx:10:5)
+    at AppWrapper
