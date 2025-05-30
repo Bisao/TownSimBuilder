@@ -11,6 +11,8 @@
   animation: shimmer 1.5s infinite;
 }
 
+@import './styles/ui-system.css';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
