@@ -28,7 +28,7 @@ const NpcPanel: React.FC<NpcPanelProps> = ({ npc, onClose }) => {
   const [showInventory, setShowInventory] = useState(false);
   const [showNpcCreation, setShowNpcCreation] = useState(false);
   const [showTasks, setShowTasks] = useState(false);
-  
+
 
   if (!npc) return null;
 
@@ -216,194 +216,196 @@ const NpcPanel: React.FC<NpcPanelProps> = ({ npc, onClose }) => {
             </div>
           )}
 
-          {/* Stats Cards */}
-          <div className="grid grid-cols-2 gap-4">
-            <div className="bg-gradient-to-br from-blue-50 to-indigo-50 p-4 rounded-xl border border-blue-200">
-              <div className="flex items-center gap-3 mb-3">
-                <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-lg flex items-center justify-center">
-                  <i className="fa-solid fa-bolt text-white"></i>
+          {/* Main NPC Info - Only show when NPC exists */}
+          {!isTemporaryNpc && (
+            <div className={`p-6 rounded-xl border-2 ${getWorkBg(npc.assignedWork)}`}>
+              {/* Header */}
+              <div className="flex items-center gap-4 mb-6">
+                <div className={`w-16 h-16 bg-gradient-to-br ${getWorkColor(npc.assignedWork)} rounded-full flex items-center justify-center shadow-lg`}>
+                  <i className={`fa-solid ${currentWork?.icon || 'fa-user'} text-white text-2xl`}></i>
                 </div>
-                <div>
-                  <h4 className="font-semibold text-gray-800">Energia</h4>
-                  <p className="text-sm text-gray-600">{npc.needs.energy.toFixed(0)}%</p>
-                </div>
-              </div>
-              <div className="h-2 bg-blue-200 rounded-full overflow-hidden">
-                <div 
-                  className="h-full bg-gradient-to-r from-blue-500 to-indigo-600 transition-all duration-500" 
-                  style={{width: `${npc.needs.energy}%`}}
-                ></div>
-              </div>
-            </div>
-
-            <div className="bg-gradient-to-br from-yellow-50 to-orange-50 p-4 rounded-xl border border-yellow-200">
-              <div className="flex items-center gap-3 mb-3">
-                <div className="w-10 h-10 bg-gradient-to-br from-yellow-500 to-orange-600 rounded-lg flex items-center justify-center">
-                  <i className="fa-solid fa-smile text-white"></i>
-                </div>
-                <div>
-                  <h4 className="font-semibold text-gray-800">Satisfação</h4>
-                  <p className="text-sm text-gray-600">{npc.needs.satisfaction.toFixed(0)}%</p>
-                </div>
-              </div>
-              <div className="h-2 bg-yellow-200 rounded-full overflow-hidden">
-                <div 
-                  className="h-full bg-gradient-to-r from-yellow-500 to-orange-600 transition-all duration-500" 
-                  style={{width: `${npc.needs.satisfaction}%`}}
-                ></div>
-              </div>
-            </div>
-          </div>
-
-          
-
-          {/* Main Actions */}
-          <div className="space-y-4">
-            {/* Primary Action - Tasks */}
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                setShowTasks(true);
-              }}
-              className="w-full p-6 bg-gradient-to-br from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700 text-white rounded-xl font-semibold transition-all duration-200 flex items-center justify-center gap-3 shadow-lg hover:shadow-xl transform hover:scale-105"
-            >
-              <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center">
-                <i className="fa-solid fa-tasks text-xl"></i>
-              </div>
-              <div className="text-left">
-                <div className="text-lg font-bold">Gerenciar Tarefas</div>
-                <div className="text-sm text-purple-100">Atribuir trabalhos e ações específicas</div>
-              </div>
-            </button>
-
-            {/* Secondary Actions */}
-            <div className="grid grid-cols-2 gap-3">
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setShowSkillTree(true);
-                }}
-                className="p-4 bg-gradient-to-br from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white rounded-xl font-semibold transition-all duration-200 flex items-center justify-center gap-2 shadow-lg hover:shadow-xl"
-              >
-                <i className="fa-solid fa-sitemap"></i>
-                Habilidades
-              </button>
-
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setShowInventory(true);
-                }}
-                className="p-4 bg-gradient-to-br from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white rounded-xl font-semibold transition-all duration-200 flex items-center justify-center gap-2 shadow-lg hover:shadow-xl"
-              >
-                <i className="fa-solid fa-backpack"></i>
-                Inventário
-              </button>
-            </div>
-
-            {/* Inventory Display */}
-            <div className="p-4 bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl border border-gray-200">
-              <div className="flex items-center gap-2 mb-2">
-                <i className="fa-solid fa-box text-gray-600"></i>
-                <span className="text-sm font-medium text-gray-700">Inventário Atual</span>
-              </div>
-              {npc.inventory.type ? (
-                <div className="flex items-center justify-between">
-                  <p className="text-sm text-gray-600 capitalize">{npc.inventory.type}</p>
-                  <span className="px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-xs font-medium">
-                    {npc.inventory.amount}
-                  </span>
-                </div>
-              ) : (
-                <p className="text-sm text-gray-500 italic">Vazio</p>
-              )}
-            </div>
-          </div>
-
-          {/* Control Mode */}
-          <div className="bg-gradient-to-br from-slate-50 to-gray-100 p-5 rounded-xl border border-gray-200">
-            <h3 className="font-bold text-lg text-gray-800 mb-4 flex items-center gap-2">
-              <i className="fa-solid fa-gamepad text-gray-600"></i>
-              Modo de Controle
-            </h3>
-
-            <div className="flex gap-3 mb-4">
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  useNpcStore.getState().setNpcControlMode(npc.id, "autonomous");
-                  const gameStore = useGameStore.getState();
-                  gameStore.setControlledNpc(null);
-                  useGameStore.setState({ isManualControl: false });
-                  const { updateCameraPosition, updateCameraTarget } = useGameStore.getState();
-                  updateCameraPosition([20, 20, 20]);
-                  updateCameraTarget([0, 0, 0]);
-                }}
-                className={`flex-1 px-4 py-3 rounded-lg font-semibold transition-all duration-200 ${
-                  npc.controlMode === "autonomous" 
-                    ? "bg-gradient-to-r from-blue-500 to-indigo-600 text-white shadow-lg" 
-                    : "bg-white text-gray-600 hover:bg-gray-50 border border-gray-300"
-                }`}
-              >
-                <i className="fa-solid fa-robot mr-2"></i>
-                Autônomo
-              </button>
-
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  useNpcStore.getState().setNpcControlMode(npc.id, "manual");
-                  const gameStore = useGameStore.getState();
-                  gameStore.setControlledNpc(npc.id);
-                  useGameStore.setState({ isManualControl: true });
-                  window.dispatchEvent(new CustomEvent('focusOnNpc', { 
-                    detail: { 
-                      position: npc.position,
-                      npcId: npc.id,
-                      followMode: true
-                    } 
-                  }));
-                }}
-                className={`flex-1 px-4 py-3 rounded-lg font-semibold transition-all duration-200 ${
-                  npc.controlMode === "manual" 
-                    ? "bg-gradient-to-r from-green-500 to-emerald-600 text-white shadow-lg" 
-                    : "bg-white text-gray-600 hover:bg-gray-50 border border-gray-300"
-                }`}
-              >
-                <i className="fa-solid fa-gamepad mr-2"></i>
-                Manual
-              </button>
-            </div>
-
-            {npc.controlMode === "manual" && (
-              <div className="p-4 bg-gradient-to-br from-green-50 to-emerald-50 rounded-lg border border-green-200">
-                <p className="font-semibold text-green-800 mb-3 flex items-center gap-2">
-                  <i className="fa-solid fa-gamepad"></i>
-                  Controle Manual Ativo
-                </p>
-                <div className="grid grid-cols-2 gap-2 text-xs text-green-700">
-                  <div className="flex items-center gap-1">
-                    <kbd className="px-1 py-0.5 bg-white rounded text-green-800 font-mono">WASD</kbd>
-                    <span>Movimento</span>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <kbd className="px-1 py-0.5 bg-white rounded text-green-800 font-mono">SPACE</kbd>
-                    <span>Ação</span>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <kbd className="px-1 py-0.5 bg-white rounded text-green-800 font-mono">SHIFT</kbd>
-                    <span>Correr</span>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <kbd className="px-1 py-0.5 bg-white rounded text-green-800 font-mono">ESC</kbd>
-                    <span>Sair</span>
+                <div className="flex-1">
+                  <h2 className="text-2xl font-bold text-gray-800 mb-1">{npc.name}</h2>
+                  <div className="flex items-center gap-2 text-gray-600">
+                    <i className="fa-solid fa-home text-sm"></i>
+                    <span className="text-sm">{npcType?.name || 'Aldeão'}</span>
+                    {currentWork && (
+                      <>
+                        <span className="text-gray-400">•</span>
+                        <span className="text-sm font-medium">{currentWork.name}</span>
+                      </>
+                    )}
                   </div>
                 </div>
               </div>
-            )}
-          </div>
 
-          
+              {/* Stats Grid */}
+              <div className="grid grid-cols-2 gap-4 mb-6">
+                {/* Energy */}
+                <div className="bg-white/70 p-4 rounded-lg border border-blue-200">
+                  <div className="flex items-center gap-2 mb-2">
+                    <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
+                      <i className="fa-solid fa-bolt text-white text-sm"></i>
+                    </div>
+                    <span className="font-semibold text-gray-700">Energia</span>
+                  </div>
+                  <div className="text-2xl font-bold text-blue-600 mb-1">{Math.round(npc.needs.energy)}%</div>
+                  <div className="w-full bg-gray-200 rounded-full h-2">
+                    <div 
+                      className="bg-gradient-to-r from-blue-400 to-blue-600 h-2 rounded-full transition-all duration-300"
+                      style={{ width: `${npc.needs.energy}%` }}
+                    ></div>
+                  </div>
+                </div>
+
+                {/* Satisfaction */}
+                <div className="bg-white/70 p-4 rounded-lg border border-orange-200">
+                  <div className="flex items-center gap-2 mb-2">
+                    <div className="w-8 h-8 bg-orange-500 rounded-full flex items-center justify-center">
+                      <i className="fa-solid fa-smile text-white text-sm"></i>
+                    </div>
+                    <span className="font-semibold text-gray-700">Satisfação</span>
+                  </div>
+                  <div className="text-2xl font-bold text-orange-600 mb-1">{Math.round(npc.needs.satisfaction)}%</div>
+                  <div className="w-full bg-gray-200 rounded-full h-2">
+                    <div 
+                      className="bg-gradient-to-r from-orange-400 to-orange-600 h-2 rounded-full transition-all duration-300"
+                      style={{ width: `${npc.needs.satisfaction}%` }}
+                    ></div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="grid grid-cols-2 gap-3 mb-6">
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setShowTasks(true);
+                  }}
+                  className="flex items-center justify-center gap-2 p-4 bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700 text-white rounded-lg font-medium transition-all shadow-lg hover:shadow-xl transform hover:scale-105"
+                >
+                  <i className="fa-solid fa-tasks"></i>
+                  Gerenciar Tarefas
+                </button>
+
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setShowSkillTree(true);
+                  }}
+                  className="flex items-center justify-center gap-2 p-4 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white rounded-lg font-medium transition-all shadow-lg hover:shadow-xl transform hover:scale-105"
+                >
+                  <i className="fa-solid fa-tree"></i>
+                  Habilidades
+                </button>
+
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setShowInventory(true);
+                  }}
+                  className="flex items-center justify-center gap-2 p-4 bg-gradient-to-r from-orange-500 to-red-600 hover:from-orange-600 hover:to-red-700 text-white rounded-lg font-medium transition-all shadow-lg hover:shadow-xl transform hover:scale-105"
+                >
+                  <i className="fa-solid fa-backpack"></i>
+                  Inventário
+                </button>
+
+                <button
+                  onClick={handleWorkClick}
+                  className="flex items-center justify-center gap-2 p-4 bg-gradient-to-r from-blue-500 to-cyan-600 hover:from-blue-600 hover:to-cyan-700 text-white rounded-lg font-medium transition-all shadow-lg hover:shadow-xl transform hover:scale-105"
+                >
+                  <i className="fa-solid fa-hammer"></i>
+                  Trabalhar
+                </button>
+              </div>
+
+              {/* Current Status */}
+              <div className="bg-white/50 p-4 rounded-lg border border-gray-200">
+                <h3 className="font-semibold text-gray-700 mb-3 flex items-center gap-2">
+                  <i className="fa-solid fa-info-circle text-blue-500"></i>
+                  Status Atual
+                </h3>
+                <div className="grid grid-cols-2 gap-3 text-sm">
+                  <div>
+                    <span className="text-gray-600">Estado:</span>
+                    <div className="font-medium text-gray-800">{stateTranslations[npc.state] || npc.state}</div>
+                  </div>
+                  <div>
+                    <span className="text-gray-600">Horário:</span>
+                    <div className="font-medium text-gray-800">{scheduleTranslations[npc.currentSchedule] || npc.currentSchedule}</div>
+                  </div>
+                  <div>
+                    <span className="text-gray-600">Nível:</span>
+                    <div className="font-medium text-purple-600">{npc.currentLevel || 1}</div>
+                  </div>
+                  <div>
+                    <span className="text-gray-600">Experiência:</span>
+                    <div className="font-medium text-green-600">{Math.round(npc.skills?.experience || 0)} XP</div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Inventory Display */}
+              <div className="bg-white/50 p-4 rounded-lg border border-gray-200 mt-4">
+                <h3 className="font-semibold text-gray-700 mb-2 flex items-center gap-2">
+                  <i className="fa-solid fa-box text-gray-600"></i>
+                  Inventário Atual
+                </h3>
+                <div className="text-gray-600">
+                  {npc.inventory.amount > 0 ? (
+                    <div className="flex items-center gap-2">
+                      <span className="font-medium text-gray-800">{npc.inventory.type}</span>
+                      <span className="text-gray-500">×</span>
+                      <span className="font-bold text-blue-600">{npc.inventory.amount}</span>
+                    </div>
+                  ) : (
+                    <span className="italic">Vazio</span>
+                  )}
+                </div>
+              </div>
+
+              {/* Control Mode */}
+              <div className="bg-white/50 p-4 rounded-lg border border-gray-200 mt-4">
+                <h3 className="font-semibold text-gray-700 mb-3 flex items-center gap-2">
+                  <i className="fa-solid fa-gamepad text-purple-500"></i>
+                  Modo de Controle
+                </h3>
+                <div className="flex gap-2">
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      useNpcStore.getState().setNpcControlMode(npc.id, "autonomous");
+                    }}
+                    className={`flex-1 p-3 rounded-lg font-medium transition-all ${
+                      npc.controlMode === "autonomous"
+                        ? "bg-blue-500 text-white shadow-lg"
+                        : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                    }`}
+                  >
+                    <i className="fa-solid fa-robot mr-2"></i>
+                    Autônomo
+                  </button>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      useNpcStore.getState().setNpcControlMode(npc.id, "manual");
+                    }}
+                    className={`flex-1 p-3 rounded-lg font-medium transition-all ${
+                      npc.controlMode === "manual"
+                        ? "bg-green-500 text-white shadow-lg"
+                        : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                    }`}
+                  >
+                    <i className="fa-solid fa-hand text-sm mr-2"></i>
+                    Manual
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
+
         </div>
       </div>
 
@@ -468,7 +470,7 @@ const NpcPanel: React.FC<NpcPanelProps> = ({ npc, onClose }) => {
         />
       )}
 
-      
+
     </div>
   );
 };
