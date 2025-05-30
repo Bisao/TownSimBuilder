@@ -1,0 +1,59 @@
+2:37:49 PM [vite] hmr update /src/game/components/World.tsx, /src/index.css?v=qEGasTDh5VZe6Fsiuxd-0
+2:37:50 PM [vite] Internal server error: /home/runner/workspace/client/src/game/components/World.tsx: Identifier 'useBuildingStore' has already been declared. (22:9)
+
+  20 | import { useNpcStore } from "../stores/useNpcStore";
+  21 | import { useResourceStore } from "../stores/useResourceStore";
+> 22 | import { useBuildingStore } from '../stores/useBuildingStore';
+     |          ^
+  23 | import { useDummyStore } from '../stores/useDummyStore';
+  24 |
+  25 | // Constants
+  Plugin: vite:react-babel
+  File: /home/runner/workspace/client/src/game/components/World.tsx:22:9
+  20 |  import { useNpcStore } from "../stores/useNpcStore";
+  21 |  import { useResourceStore } from "../stores/useResourceStore";
+  22 |  import { useBuildingStore } from '../stores/useBuildingStore';
+     |           ^
+  23 |  import { useDummyStore } from '../stores/useDummyStore';
+  24 |  
+      at toParseError (/home/runner/workspace/node_modules/@babel/parser/src/parse-error.ts:95:45)
+      at raise (/home/runner/workspace/node_modules/@babel/parser/src/tokenizer/index.ts:1503:19)
+      at declareName (/home/runner/workspace/node_modules/@babel/parser/src/plugins/typescript/scope.ts:72:21)
+      at declareNameFromIdentifier (/home/runner/workspace/node_modules/@babel/parser/src/parser/lval.ts:753:16)
+      at checkIdentifier (/home/runner/workspace/node_modules/@babel/parser/src/parser/lval.ts:748:12)
+      at checkLVal (/home/runner/workspace/node_modules/@babel/parser/src/parser/lval.ts:650:12)
+      at finishImportSpecifier (/home/runner/workspace/node_modules/@babel/parser/src/parser/statement.ts:3187:10)
+      at parseImportSpecifier (/home/runner/workspace/node_modules/@babel/parser/src/parser/statement.ts:3444:17)
+      at parseImportSpecifier (/home/runner/workspace/node_modules/@babel/parser/src/plugins/typescript/index.ts:4321:20)
+      at parseNamedImportSpecifiers (/home/runner/workspace/node_modules/@babel/parser/src/parser/statement.ts:3405:36)
+      at parseImportSpecifiersAndAfter (/home/runner/workspace/node_modules/@babel/parser/src/parser/statement.ts:3137:37)
+      at parseImport (/home/runner/workspace/node_modules/@babel/parser/src/parser/statement.ts:3106:17)
+      at parseImport (/home/runner/workspace/node_modules/@babel/parser/src/plugins/typescript/index.ts:2983:28)
+      at parseStatementContent (/home/runner/workspace/node_modules/@babel/parser/src/parser/statement.ts:613:25)
+      at parseStatementContent (/home/runner/workspace/node_modules/@babel/parser/src/plugins/typescript/index.ts:3147:20)
+      at parseStatementLike (/home/runner/workspace/node_modules/@babel/parser/src/parser/statement.ts:449:17)
+      at parseModuleItem (/home/runner/workspace/node_modules/@babel/parser/src/parser/statement.ts:386:17)
+      at parseBlockOrModuleBlockBody (/home/runner/workspace/node_modules/@babel/parser/src/parser/statement.ts:1414:16)
+      at parseBlockBody (/home/runner/workspace/node_modules/@babel/parser/src/parser/statement.ts:1388:10)
+      at parseProgram (/home/runner/workspace/node_modules/@babel/parser/src/parser/statement.ts:225:10)
+      at parseTopLevel (/home/runner/workspace/node_modules/@babel/parser/src/parser/statement.ts:203:25)
+      at parse (/home/runner/workspace/node_modules/@babel/parser/src/parser/index.ts:93:10)
+      at parse (/home/runner/workspace/node_modules/@babel/parser/src/plugins/typescript/index.ts:4271:20)
+      at parse (/home/runner/workspace/node_modules/@babel/parser/src/index.ts:92:38)
+      at parser (/home/runner/workspace/node_modules/@babel/core/src/parser/index.ts:28:19)
+      at parser.next (<anonymous>)
+      at normalizeFile (/home/runner/workspace/node_modules/@babel/core/src/transformation/normalize-file.ts:49:24)
+      at normalizeFile.next (<anonymous>)
+      at run (/home/runner/workspace/node_modules/@babel/core/src/transformation/index.ts:40:36)
+      at run.next (<anonymous>)
+      at transform (/home/runner/workspace/node_modules/@babel/core/src/transform.ts:29:20)
+      at transform.next (<anonymous>)
+      at step (/home/runner/workspace/node_modules/gensync/index.js:261:32)
+      at /home/runner/workspace/node_modules/gensync/index.js:273:13
+      at async.call.result.err.err (/home/runner/workspace/node_modules/gensync/index.js:223:11)
+      at /home/runner/workspace/node_modules/gensync/index.js:189:28
+      at <anonymous> (/home/runner/workspace/node_modules/@babel/core/src/gensync-utils/async.ts:90:7)
+      at /home/runner/workspace/node_modules/gensync/index.js:113:33
+      at step (/home/runner/workspace/node_modules/gensync/index.js:287:14)
+      at /home/runner/workspace/node_modules/gensync/index.js:273:13
+      at async.call.result.err.err (/home/runner/workspace/node_modules/gensync/index.js:223:11)
