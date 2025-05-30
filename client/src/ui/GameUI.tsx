@@ -1,28 +1,32 @@
-import { useEffect, useState, useRef, useCallback } from "react";
+import React, { useEffect, useState, useRef, useCallback } from "react";
 import { useGameStore } from "../game/stores/useGameStore";
-import { Controls } from "../game/types/controls";
 import { useResourceStore } from "../game/stores/useResourceStore";
 import { useBuildingStore } from "../game/stores/useBuildingStore";
-import { useNpcStore } from "../game/stores/useNpcStore";
+import { useNpcStore, NPC } from "../game/stores/useNpcStore";
 import { useAudio } from "../lib/stores/useAudio";
-import { Building } from "../game/stores/useBuildingStore";
+import { useKeyboardControls } from "@react-three/drei";
+import { useIsMobile } from "../hooks/useIsMobile";
+
+// Import UI Components
 import ResourcePanel from "./ResourcePanel";
 import BuildingPanel from "./BuildingPanel";
 import NpcPanel from "./NpcPanel";
-import { useKeyboardControls } from "@react-three/drei";
-import { NPC } from "../game/stores/useNpcStore";
-import { useIsMobile } from "../hooks/use-is-mobile";
 import NpcMetricsPanel from "./NpcMetricsPanel";
 import SeedSelectionPanel from "./SeedSelectionPanel";
 import SiloPanel from "./SiloPanel";
 import CombatPanel from "./CombatPanel";
 import DummyStatsPanel from "./DummyStatsPanel";
-import { useDraggable } from "../hooks/useDraggable";
+import NotificationContainer from "./NotificationContainer";
 
-// Economy and Research systems removed
+// Import Controls
+import { Controls } from "../game/types/controls";
 
-const GameUI = () => {
-  // Game stores
+interface GameUIProps {
+  className?: string;
+}
+
+const GameUI: React.FC<GameUIProps> = ({ className = "" }) => {
+  // Game state
   const {
     isPaused,
     timeSpeed,
@@ -40,590 +44,356 @@ const GameUI = () => {
   const { resources } = useResourceStore();
   const { npcs, updateNpc } = useNpcStore();
   const { isMuted, toggleMute, initAudio } = useAudio();
+
+  // Device detection
   const isMobile = useIsMobile();
 
-  // UI State
-  const [showResourcePanel, setShowResourcePanel] = useState(false);
-  const [showBuildingPanel, setShowBuildingPanel] = useState(false);
-  const [showNpcMetrics, setShowNpcMetrics] = useState(false);
-  const [showSeedSelection, setShowSeedSelection] = useState(false);
-  const [showSiloPanel, setShowSiloPanel] = useState(false);
-  const [showNpcPanel, setShowNpcPanel] = useState(false);
-  const [showCombat, setShowCombat] = useState(false);
-  const [showDummyStats, setShowDummyStats] = useState(false);
+  // Panel visibility state
+  const [panels, setPanels] = useState({
+    resources: false,
+    buildings: false,
+    npcMetrics: false,
+    seedSelection: false,
+    silo: false,
+    npc: false,
+    combat: false,
+    dummyStats: false,
+  });
 
   // Selection state
-  const [selectedNpc, setSelectedNpc] = useState<NPC | null>(null);
-  const [selectedNpcId, setSelectedNpcId] = useState<string | null>(null);
-  const [selectedSiloId, setSelectedSiloId] = useState<string | null>(null);
-  const [selectedCombatEntityId, setSelectedCombatEntityId] = useState<string | null>(null);
+  const [selectedEntities, setSelectedEntities] = useState({
+    npc: null as NPC | null,
+    npcId: null as string | null,
+    siloId: null as string | null,
+    combatEntityId: null as string | null,
+  });
 
-  // Refs for cleanup
+  // Keyboard controls
+  const [, get] = useKeyboardControls<Controls>();
+
+  // Refs
   const gameLoopRef = useRef<NodeJS.Timeout | null>(null);
   const isInitializedRef = useRef(false);
 
-  // Error handling state
-  const [errors, setErrors] = useState<string[]>([]);
-
-  // Game initialization with error handling
-  useEffect(() => {
-    if (isInitializedRef.current) return;
-
-    const initializeSystems = async () => {
-      try {
-        console.log("Initializing game systems...");
-
-        // Initialize resource store with error handling
-        const resourceStore = useResourceStore.getState();
-        if (resourceStore && typeof resourceStore.initResources === 'function') {
-          resourceStore.initResources();
-        } else {
-          console.warn("Resource store initialization method not available");
-        }
-
-        isInitializedRef.current = true;
-        console.log("Game systems initialized successfully");
-
-        // Initialize audio system
-        initAudio();
-      } catch (error) {
-        console.error("Error initializing game systems:", error);
-        setErrors(prev => [...prev, "Failed to initialize game systems"]);
-      }
-    };
-
-    initializeSystems();
+  // Panel management utilities
+  const togglePanel = useCallback((panelName: keyof typeof panels) => {
+    setPanels(prev => ({
+      ...prev,
+      [panelName]: !prev[panelName]
+    }));
   }, []);
 
-  // Optimized game loop with better error handling
-  useEffect(() => {
-    if (isPaused || !isInitializedRef.current) {
-      if (gameLoopRef.current) {
-        clearInterval(gameLoopRef.current);
-        gameLoopRef.current = null;
-      }
-      return;
-    }
+  const closePanel = useCallback((panelName: keyof typeof panels) => {
+    setPanels(prev => ({
+      ...prev,
+      [panelName]: false
+    }));
+  }, []);
 
-    const updateGameSystems = () => {
-      try {
-        const deltaTime = 0.016; // ~60 FPS
-        const currentTime = Date.now();
+  const openPanel = useCallback((panelName: keyof typeof panels) => {
+    setPanels(prev => ({
+      ...prev,
+      [panelName]: true
+    }));
+  }, []);
 
-        // Update NPCs with safety checks
-        const npcStore = useNpcStore.getState();
-        if (npcStore && typeof npcStore.updateNPCs === 'function') {
-          npcStore.updateNPCs(deltaTime);
-        }
+  // Entity selection utilities
+  const selectEntity = useCallback((entityType: keyof typeof selectedEntities, entity: any) => {
+    setSelectedEntities(prev => ({
+      ...prev,
+      [entityType]: entity
+    }));
+  }, []);
 
-        // Update building production with safety checks
-        const buildingStore = useBuildingStore.getState();
-        if (buildingStore && typeof buildingStore.updateProduction === 'function') {
-          buildingStore.updateProduction(currentTime);
-        }
+  const clearSelection = useCallback((entityType: keyof typeof selectedEntities) => {
+    setSelectedEntities(prev => ({
+      ...prev,
+      [entityType]: null
+    }));
+  }, []);
 
-        // Clear old errors
-        setErrors([]);
-      } catch (error) {
-        console.error("Error in game loop:", error);
-        setErrors(prev => [...prev.slice(-4), `Game loop error: ${error instanceof Error ? error.message : 'Unknown error'}`]);
-      }
-    };
-
-    gameLoopRef.current = setInterval(updateGameSystems, 16);
-
-    return () => {
-      if (gameLoopRef.current) {
-        clearInterval(gameLoopRef.current);
-        gameLoopRef.current = null;
-      }
-    };
-  }, [isPaused]);
-
-  // Keyboard shortcuts with improved error handling
-  const handleKeyDown = useCallback((event: KeyboardEvent) => {
-    try {
-      // Prevent default browser shortcuts
-      if (event.ctrlKey || event.metaKey) return;
-
-      switch (event.key.toLowerCase()) {
-        case 'r':
-          setShowResourcePanel(prev => !prev);
-          break;
-        case 'b':
-          setShowBuildingPanel(prev => !prev);
-          break;
-        case 'n':
-          setShowNpcMetrics(prev => !prev);
-          break;
-        case 'u':
-          toggleMute();
-          break;
-        case 'p':
-          const gameStore = useGameStore.getState();
-          if (gameStore) {
-            if (gameStore.isPaused) {
-              gameStore.resumeTime();
-            } else {
-              gameStore.pauseTime();
-            }
-          }
-          break;
-        case '[':
-          useGameStore.getState()?.decreaseTimeSpeed?.();
-          break;
-        case ']':
-          useGameStore.getState()?.increaseTimeSpeed?.();
-          break;
-        case 'escape':
-          // Close all panels
-          setSelectedNpc(null);
-          setShowNpcPanel(false);
-          setShowSiloPanel(false);
-          setShowSeedSelection(false);
-          setShowCombat(false);
-          setShowDummyStats(false);
-          break;
-      }
-    } catch (error) {
-      console.error("Error handling keyboard shortcut:", error);
-      setErrors(prev => [...prev.slice(-4), `Keyboard error: ${error instanceof Error ? error.message : 'Unknown error'}`]);
-    }
-  }, [toggleMute]);
-
-  // Game event handlers
+  // Event handlers
   const handleNpcClick = useCallback((event: CustomEvent) => {
-    try {
-      setSelectedNpc(event.detail);
-      setShowNpcPanel(true);
-    } catch (error) {
-      console.error("Error handling NPC click:", error);
+    const npc = event.detail as NPC;
+    selectEntity('npc', npc);
+    openPanel('npc');
+  }, [selectEntity, openPanel]);
+
+  const handleSiloClick = useCallback((event: CustomEvent) => {
+    const siloId = event.detail as string;
+    selectEntity('siloId', siloId);
+    openPanel('silo');
+  }, [selectEntity, openPanel]);
+
+  const handleCombatEntityClick = useCallback((event: CustomEvent) => {
+    const entityId = event.detail as string;
+    selectEntity('combatEntityId', entityId);
+    openPanel('combat');
+  }, [selectEntity, openPanel]);
+
+  const handleSeedSelect = useCallback((seedType: string) => {
+    if (selectedEntities.npc) {
+      updateNpc(selectedEntities.npc.id, {
+        farmerData: {
+          ...selectedEntities.npc.farmerData,
+          selectedSeed: seedType
+        }
+      });
     }
-  }, []);
+    closePanel('seedSelection');
+  }, [selectedEntities.npc, updateNpc, closePanel]);
 
-  const handleHouseClick = useCallback((e: CustomEvent<{building: Building, npc: NPC | null, hasNpc: boolean}>) => {
-    try {
-      const { building, npc, hasNpc } = e.detail;
+  const handleKeyboardControls = useCallback(() => {
+    const controls = get();
 
-      if (hasNpc && npc) {
-        setSelectedNpc(npc);
-      } else {
-        // Create temporary NPC for house display
-        const tempNpc: NPC = {
-          id: `temp_${building.id}`,
-          type: 'villager',
-          homeId: building.id,
-          position: [building.position[0] + 0.5, 0, building.position[1] + 0.5],
-          targetPosition: null,
-          targetBuildingId: null,
-          targetResource: null,
-          state: "idle",
-          workProgress: 0,
-          lastResourceTime: 0,
-          lastMoveTime: Date.now(),
-          stuckTimer: 0,
-          isPlayerControlled: false,
-          controlMode: "autonomous",
-          inventory: { type: '', amount: 0 },
-          needs: {
-            energy: 100,
-            satisfaction: 100,
-            health: 100,
-            hunger: 100
-          },
-          memory: {
-            lastVisitedPositions: [],
-            knownResources: [],
-            failedAttempts: 0,
-            lastTaskCompletion: Date.now(),
-            efficiency: 1.0
-          },
-          currentSchedule: "home",
-          name: `Casa ${building.type}`,
-          skills: {
-            gathering: 0,
-            working: 0,
-            efficiency: 0,
-            experience: 0
-          },
-          currentLevel: 1,
-          equipment: {}
-        };
-        setSelectedNpc(tempNpc);
-      }
+    // Time controls
+    if (controls.pause) pauseTime();
+    if (controls.resume) resumeTime();
+    if (controls.increaseSpeed) increaseTimeSpeed();
+    if (controls.decreaseSpeed) decreaseTimeSpeed();
 
-      setShowNpcPanel(true);
-    } catch (error) {
-      console.error("Error handling house click:", error);
-    }
-  }, []);
+    // Panel toggles
+    if (controls.toggleResources) togglePanel('resources');
+    if (controls.toggleBuildings) togglePanel('buildings');
+    if (controls.toggleNpcMetrics) togglePanel('npcMetrics');
+  }, [get, pauseTime, resumeTime, increaseTimeSpeed, decreaseTimeSpeed, togglePanel]);
 
-  const handleSiloClick = useCallback((event: CustomEvent<Building>) => {
-    try {
-      const building = event.detail;
-      setSelectedSiloId(building.id);
-      setShowSiloPanel(true);
-    } catch (error) {
-      console.error("Error handling silo click:", error);
-    }
-  }, []);
-
-  const handleCombatStart = useCallback((event: CustomEvent<{entityId: string}>) => {
-    try {
-      const { entityId } = event.detail;
-      setSelectedCombatEntityId(entityId);
-      setShowCombat(true);
-    } catch (error) {
-      console.error("Error handling combat start:", error);
-    }
-  }, []);
-
-  // Event listeners setup
+  // Initialize audio and setup event listeners
   useEffect(() => {
-    window.addEventListener('keydown', handleKeyDown);
+    if (!isInitializedRef.current) {
+      initAudio();
+      isInitializedRef.current = true;
+    }
+
+    // Add event listeners
     window.addEventListener('npcClick', handleNpcClick as EventListener);
-    window.addEventListener('houseClick', handleHouseClick as EventListener);
     window.addEventListener('siloClick', handleSiloClick as EventListener);
-    window.addEventListener('combatStart', handleCombatStart as EventListener);
+    window.addEventListener('combatEntityClick', handleCombatEntityClick as EventListener);
 
     return () => {
-      window.removeEventListener('keydown', handleKeyDown);
       window.removeEventListener('npcClick', handleNpcClick as EventListener);
-      window.removeEventListener('houseClick', handleHouseClick as EventListener);
       window.removeEventListener('siloClick', handleSiloClick as EventListener);
-      window.removeEventListener('combatStart', handleCombatStart as EventListener);
+      window.removeEventListener('combatEntityClick', handleCombatEntityClick as EventListener);
     };
-  }, [handleKeyDown, handleNpcClick, handleHouseClick, handleSiloClick, handleCombatStart]);
+  }, [handleNpcClick, handleSiloClick, handleCombatEntityClick, initAudio]);
 
-  // Utility functions
-  const formatTime = useCallback((cycle: number) => {
-    const hours = Math.floor(cycle * 24);
-    const minutes = Math.floor((cycle * 24 * 60) % 60);
+  // Game loop for keyboard controls
+  useEffect(() => {
+    const gameLoop = () => {
+      handleKeyboardControls();
+    };
+
+    gameLoopRef.current = setInterval(gameLoop, 16); // ~60 FPS
+
+    return () => {
+      if (gameLoopRef.current) {
+        clearInterval(gameLoopRef.current);
+      }
+    };
+  }, [handleKeyboardControls]);
+
+  // Format time cycle display
+  const formatTime = useCallback((timeValue: number) => {
+    const hours = Math.floor(timeValue / 60);
+    const minutes = Math.floor(timeValue % 60);
     return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
   }, []);
 
-  const getTimePeriod = useCallback((cycle: number) => {
-    const hours = cycle * 24;
-    if (hours >= 6 && hours < 12) return "Manhã";
-    if (hours >= 12 && hours < 18) return "Tarde";
-    if (hours >= 18 && hours < 24) return "Noite";
-    return "Madrugada";
-  }, []);
-
-  const handleSeedSelect = useCallback((seedType: string) => {
-    try {
-      if (selectedNpcId) {
-        const targetNpc = npcs.find(n => n.id === selectedNpcId);
-        if (targetNpc) {
-          updateNpc(selectedNpcId, {
-            farmerData: {
-              ...(targetNpc.farmerData || {}),
-              selectedSeed: seedType
-            }
-          });
-        }
-      }
-      setShowSeedSelection(false);
-    } catch (error) {
-      console.error("Error selecting seed:", error);
-    }
-  }, [selectedNpcId, npcs, updateNpc]);
-
-  const closeSiloPanel = useCallback(() => {
-    setShowSiloPanel(false);
-    setSelectedSiloId(null);
-  }, []);
-
-  const closeNpcPanel = useCallback(() => {
-    setSelectedNpc(null);
-    setShowNpcPanel(false);
-  }, []);
-
-  const closeCombatPanel = useCallback(() => {
-    setShowCombat(false);
-    setSelectedCombatEntityId(null);
-  }, []);
+  // Format time speed display
+  const getTimeSpeedDisplay = useCallback(() => {
+    const speedMap: Record<number, string> = {
+      0: "Pausado",
+      1: "Normal",
+      2: "2x",
+      3: "3x",
+      4: "4x",
+      5: "5x"
+    };
+    return speedMap[timeSpeed] || `${timeSpeed}x`;
+  }, [timeSpeed]);
 
   return (
-    <>
-      {/* Error Display */}
-      {errors.length > 0 && (
-        <div className="absolute top-16 right-4 z-50 bg-red-900/90 text-white p-3 rounded-lg max-w-md">
-          <h4 className="font-bold text-sm mb-2">Errors:</h4>
-          {errors.map((error, index) => (
-            <p key={index} className="text-xs mb-1">{error}</p>
-          ))}
-          <button 
-            onClick={() => setErrors([])}
-            className="text-xs bg-red-700 px-2 py-1 rounded mt-2"
+    <div className={`game-ui ${className}`}>
+      {/* Game Controls HUD */}
+      <div className="fixed top-4 left-4 z-40 space-y-2">
+        {/* Time and Game Info */}
+        <div className="bg-glass-bg backdrop-blur-lg border border-glass-border rounded-lg p-3 shadow-lg">
+          <div className="flex items-center gap-4 text-white text-sm">
+            <div className="flex items-center gap-2">
+              <i className="fa-solid fa-clock text-fantasy-accent"></i>
+              <span className="font-medium">{formatTime(timeCycle.currentTime)}</span>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <i className={`fa-solid ${isPaused ? 'fa-pause' : 'fa-play'} text-fantasy-accent`}></i>
+              <span className="font-medium">{getTimeSpeedDisplay()}</span>
+            </div>
+
+            {isManualControl && controlledNpcId && (
+              <div className="flex items-center gap-2">
+                <i className="fa-solid fa-gamepad text-green-400"></i>
+                <span className="text-green-400 font-medium">Controle Manual</span>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Game Mode Indicator */}
+        <div className="bg-glass-bg backdrop-blur-lg border border-glass-border rounded-lg p-2 shadow-lg">
+          <div className="flex items-center gap-2 text-white text-xs">
+            <i className="fa-solid fa-gamepad text-fantasy-accent"></i>
+            <span className="capitalize font-medium">{gameMode}</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Audio Controls */}
+      <div className="fixed top-4 right-4 z-40">
+        <button
+          onClick={toggleMute}
+          className="w-10 h-10 bg-glass-bg backdrop-blur-lg border border-glass-border rounded-lg 
+                     flex items-center justify-center text-white hover:bg-glass-bg-bright 
+                     transition-all duration-200 shadow-lg"
+          aria-label={isMuted ? 'Ativar som' : 'Desativar som'}
+        >
+          <i className={`fa-solid ${isMuted ? 'fa-volume-mute' : 'fa-volume-up'} text-fantasy-accent`}></i>
+        </button>
+      </div>
+
+      {/* Bottom Panel Controls */}
+      <div className="fixed bottom-4 left-1/2 transform -translate-x-1/2 z-40">
+        <div className="flex items-center gap-2 bg-glass-bg backdrop-blur-lg border border-glass-border 
+                        rounded-xl p-2 shadow-lg">
+          <button
+            onClick={() => togglePanel('resources')}
+            className={`px-4 py-2 rounded-lg font-medium text-sm transition-all duration-200 
+                       flex items-center gap-2 ${
+                         panels.resources 
+                           ? 'bg-fantasy-primary text-white shadow-md' 
+                           : 'text-fantasy-light hover:bg-glass-bg-bright'
+                       }`}
+            aria-label="Toggle resources panel"
           >
-            Clear
+            <i className="fa-solid fa-coins"></i>
+            {!isMobile && <span>Recursos</span>}
+          </button>
+
+          <button
+            onClick={() => togglePanel('buildings')}
+            className={`px-4 py-2 rounded-lg font-medium text-sm transition-all duration-200 
+                       flex items-center gap-2 ${
+                         panels.buildings 
+                           ? 'bg-fantasy-primary text-white shadow-md' 
+                           : 'text-fantasy-light hover:bg-glass-bg-bright'
+                       }`}
+            aria-label="Toggle buildings panel"
+          >
+            <i className="fa-solid fa-building"></i>
+            {!isMobile && <span>Construções</span>}
+          </button>
+
+          <button
+            onClick={() => togglePanel('npcMetrics')}
+            className={`px-4 py-2 rounded-lg font-medium text-sm transition-all duration-200 
+                       flex items-center gap-2 ${
+                         panels.npcMetrics 
+                           ? 'bg-fantasy-primary text-white shadow-md' 
+                           : 'text-fantasy-light hover:bg-glass-bg-bright'
+                       }`}
+            aria-label="Toggle NPC metrics panel"
+          >
+            <i className="fa-solid fa-users"></i>
+            {!isMobile && <span>NPCs</span>}
+          </button>
+
+          <button
+            onClick={() => togglePanel('dummyStats')}
+            className={`px-4 py-2 rounded-lg font-medium text-sm transition-all duration-200 
+                       flex items-center gap-2 ${
+                         panels.dummyStats 
+                           ? 'bg-fantasy-primary text-white shadow-md' 
+                           : 'text-fantasy-light hover:bg-glass-bg-bright'
+                       }`}
+            aria-label="Toggle dummy stats panel"
+          >
+            <i className="fa-solid fa-crosshairs"></i>
+            {!isMobile && <span>Treino</span>}
           </button>
         </div>
+      </div>
+
+      {/* Persistent Panels */}
+      {panels.resources && (
+        <ResourcePanel 
+          isVisible={panels.resources} 
+          onClose={() => closePanel('resources')} 
+        />
       )}
 
-      {/* Top HUD */}
-      <div className="absolute top-1 left-1 right-1 sm:top-2 sm:left-2 sm:right-2 lg:top-4 lg:left-4 lg:right-4 z-10 pointer-events-none">
-        <div className="flex justify-between items-start gap-2">
-          {/* Left side - Game info */}
-          <div className="bg-black/50 text-white p-1.5 sm:p-2 lg:p-3 rounded-lg backdrop-blur-sm pointer-events-auto min-w-0 flex-1 max-w-[45%]">
-            <div className="flex items-center gap-1 sm:gap-2 lg:gap-4">
-              <div className="responsive-text min-w-0">
-                <div className="font-semibold truncate">{formatTime(timeCycle)}</div>
-                <div className="text-[10px] sm:text-xs opacity-80 truncate">{getTimePeriod(timeCycle)}</div>
-              </div>
-              <div className="responsive-text min-w-0">
-                <div className="font-semibold truncate">Vel: {timeSpeed.toFixed(1)}x</div>
-                <div className="text-[10px] sm:text-xs opacity-80 truncate">{isPaused ? "PAUSADO" : "RODANDO"}</div>
-              </div>
-            </div>
-          </div>
-
-          {/* Right side - Mode info */}
-          <div className="bg-black/50 text-white p-1.5 sm:p-2 lg:p-3 rounded-lg backdrop-blur-sm pointer-events-auto min-w-0 flex-1 max-w-[45%]">
-            <div className="responsive-text min-w-0">
-              <div className="font-semibold truncate">Modo: {gameMode === "build" ? "Construção" : "Visualização"}</div>
-              {isManualControl && controlledNpcId && (
-                <div className="text-[10px] sm:text-xs opacity-80 truncate">Controlando: {controlledNpcId}</div>
-              )}
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Player Info Panel - Above Skills */}
-      {selectedNpc && (
-        <div className="absolute bottom-16 sm:bottom-20 left-1/2 transform -translate-x-1/2 z-10 pointer-events-none max-w-[95vw]">
-          <div className="bg-black/80 backdrop-blur-sm rounded-lg px-2 sm:px-4 py-1 sm:py-2 border border-gray-600 pointer-events-auto">
-            <div className="flex items-center gap-2 sm:gap-4 text-white text-xs sm:text-sm overflow-x-auto">
-              {/* NPC Avatar and Name */}
-              <div className="flex items-center gap-1 sm:gap-2 flex-shrink-0">
-                <div className="w-6 h-6 sm:w-8 sm:h-8 bg-gradient-to-br from-blue-400 to-purple-500 rounded-full flex items-center justify-center border-2 border-white/30">
-                  <i className="fa-solid fa-user text-white text-[10px] sm:text-xs"></i>
-                </div>
-                <span className="font-semibold truncate max-w-20 sm:max-w-none">{selectedNpc.name}</span>
-              </div>
-
-              {/* Level */}
-              <div className="flex items-center gap-1">
-                <i className="fa-solid fa-star text-yellow-400"></i>
-                <span>Nv. {selectedNpc.currentLevel}</span>
-              </div>
-
-              {/* Health */}
-              <div className="flex items-center gap-1">
-                <i className="fa-solid fa-heart text-red-400"></i>
-                <span>{selectedNpc.currentHealth}/{selectedNpc.maxHealth}</span>
-              </div>
-
-              {/* Energy */}
-              <div className="flex items-center gap-1">
-                <i className="fa-solid fa-bolt text-blue-400"></i>
-                <span>{selectedNpc.currentEnergy}/{selectedNpc.maxEnergy}</span>
-              </div>
-
-              {/* Fame Points */}
-              <div className="flex items-center gap-1">
-                <i className="fa-solid fa-trophy text-yellow-400"></i>
-                <span>{selectedNpc.famePoints || 0}</span>
-              </div>
-
-              {/* Current Activity */}
-              {selectedNpc.currentActivity && (
-                <div className="flex items-center gap-1">
-                  <i className="fa-solid fa-cog text-green-400 animate-spin"></i>
-                  <span className="text-green-300">{selectedNpc.currentActivity}</span>
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
+      {panels.buildings && (
+        <BuildingPanel 
+          isVisible={panels.buildings} 
+          onClose={() => closePanel('buildings')} 
+        />
       )}
 
-      {/* Skills Bar */}
-      <div className="absolute bottom-1 sm:bottom-2 left-1/2 transform -translate-x-1/2 z-10 pointer-events-none">
-        <div className="flex items-center gap-1 sm:gap-2 pointer-events-auto overflow-x-auto max-w-[95vw] px-2">
-          {/* Skill buttons with circular design similar to Albion Online */}
-          <div className="w-8 h-8 sm:w-12 sm:h-12 bg-gradient-to-b from-gray-600 to-gray-800 rounded-full border-2 border-gray-500 flex items-center justify-center cursor-pointer hover:border-yellow-400 transition-all group relative flex-shrink-0">
-            <i className="fa-solid fa-axe text-white text-sm sm:text-lg"></i>
-            <div className="absolute -bottom-0.5 -right-0.5 sm:-bottom-1 sm:-right-1 w-3 h-3 sm:w-5 sm:h-5 bg-gray-700 rounded-full border border-gray-400 flex items-center justify-center">
-              <span className="text-[8px] sm:text-xs text-white font-bold">Q</span>
-            </div>
-            <div className="absolute top-full mt-1 left-1/2 transform -translate-x-1/2 bg-black/80 text-white text-[10px] sm:text-xs px-1 sm:px-2 py-0.5 sm:py-1 rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity z-50">
-              Machado de Lenhador
-            </div>
-          </div>
+      {panels.npcMetrics && (
+        <NpcMetricsPanel 
+          isVisible={panels.npcMetrics} 
+          onClose={() => closePanel('npcMetrics')} 
+        />
+      )}
 
-          <div className="w-8 h-8 sm:w-12 sm:h-12 bg-gradient-to-b from-orange-500 to-red-600 rounded-full border-2 border-orange-400 flex items-center justify-center cursor-pointer hover:border-yellow-400 transition-all group relative flex-shrink-0">
-            <i className="fa-solid fa-fire text-white text-sm sm:text-lg"></i>
-            <div className="absolute -bottom-0.5 -right-0.5 sm:-bottom-1 sm:-right-1 w-3 h-3 sm:w-5 sm:h-5 bg-gray-700 rounded-full border border-gray-400 flex items-center justify-center">
-              <span className="text-[8px] sm:text-xs text-white font-bold">W</span>
-            </div>
-            <div className="absolute top-full mt-1 left-1/2 transform -translate-x-1/2 bg-black/80 text-white text-xs px-2 py-1 rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity">
-              Bola de Fogo
-            </div>
-          </div>
-
-          <div className="w-12 h-12 bg-gradient-to-b from-gray-600 to-gray-800 rounded-full border-2 border-gray-500 flex items-center justify-center cursor-pointer hover:border-yellow-400 transition-all group relative">
-            <i className="fa-solid fa-sword text-white text-lg"></i>
-            <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-gray-700 rounded-full border border-gray-400 flex items-center justify-center">
-              <span className="text-xs text-white font-bold">E</span>
-            </div>
-            <div className="absolute top-full mt-1 left-1/2 transform -translate-x-1/2 bg-black/80 text-white text-xs px-2 py-1 rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity">
-              Espada
-            </div>
-          </div>
-
-          <div className="w-12 h-12 bg-gradient-to-b from-gray-600 to-gray-800 rounded-full border-2 border-gray-500 flex items-center justify-center cursor-pointer hover:border-yellow-400 transition-all group relative">
-            <i className="fa-solid fa-shield text-white text-lg"></i>
-            <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-gray-700 rounded-full border border-gray-400 flex items-center justify-center">
-              <span className="text-xs text-white font-bold">R</span>
-            </div>
-            <div className="absolute top-full mt-1 left-1/2 transform -translate-x-1/2 bg-black/80 text-white text-xs px-2 py-1 rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity">
-              Escudo
-            </div>
-          </div>
-
-          <div className="w-12 h-12 bg-gradient-to-b from-green-500 to-green-700 rounded-full border-2 border-green-400 flex items-center justify-center cursor-pointer hover:border-yellow-400 transition-all group relative">
-            <i className="fa-solid fa-leaf text-white text-lg"></i>
-            <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-gray-700 rounded-full border border-gray-400 flex items-center justify-center">
-              <span className="text-xs text-white font-bold">T</span>
-            </div>
-            <div className="absolute top-full mt-1 left-1/2 transform -translate-x-1/2 bg-black/80 text-white text-xs px-2 py-1 rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity">
-              Cura Natural
-            </div>
-          </div>
-
-          <div className="w-12 h-12 bg-gradient-to-b from-gray-600 to-gray-800 rounded-full border-2 border-gray-500 flex items-center justify-center cursor-pointer hover:border-yellow-400 transition-all group relative">
-            <i className="fa-solid fa-pickaxe text-white text-lg"></i>
-            <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-gray-700 rounded-full border border-gray-400 flex items-center justify-center">
-              <span className="text-xs text-white font-bold">Y</span>
-            </div>
-            <div className="absolute top-full mt-1 left-1/2 transform -translate-x-1/2 bg-black/80 text-white text-xs px-2 py-1 rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity">
-              Picareta de Mineração
-            </div>
-          </div>
-
-          <div className="w-12 h-12 bg-gradient-to-b from-blue-500 to-blue-700 rounded-full border-2 border-blue-400 flex items-center justify-center cursor-pointer hover:border-yellow-400 transition-all group relative">
-            <i className="fa-solid fa-wind text-white text-lg"></i>
-            <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-gray-700 rounded-full border border-gray-400 flex items-center justify-center">
-              <span className="text-xs text-white font-bold">U</span>
-            </div>
-            <div className="absolute top-full mt-1 left-1/2 transform -translate-x-1/2 bg-black/80 text-white text-xs px-2 py-1 rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity">
-              Velocidade do Vento
-            </div>
-          </div>
-
-          <div className="w-12 h-12 bg-gradient-to-b from-gray-600 to-gray-800 rounded-full border-2 border-gray-500 flex items-center justify-center cursor-pointer hover:border-yellow-400 transition-all group relative">
-            <i className="fa-solid fa-user text-white text-lg"></i>
-            <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-gray-700 rounded-full border border-gray-400 flex items-center justify-center">
-              <span className="text-xs text-white font-bold">I</span>
-            </div>
-            <div className="absolute top-full mt-1 left-1/2 transform -translate-x-1/2 bg-black/80 text-white text-xs px-2 py-1 rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity">
-              Personagem
-            </div>
-          </div>
-
-          <div className="w-12 h-12 bg-gradient-to-b from-gray-600 to-gray-800 rounded-full border-2 border-gray-500 flex items-center justify-center cursor-pointer hover:border-yellow-400 transition-all group relative">
-            <i className="fa-solid fa-tools text-white text-lg"></i>
-            <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-gray-700 rounded-full border border-gray-400 flex items-center justify-center">
-              <span className="text-xs text-white font-bold">O</span>
-            </div>
-            <div className="absolute top-full mt-1 left-1/2 transform -translate-x-1/2 bg-black/80 text-white text-xs px-2 py-1 rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity">
-              Ferramentas
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Control Panel - moved higher */}
-      <div className="absolute bottom-12 sm:bottom-16 lg:bottom-20 left-1 right-1 sm:left-2 sm:right-2 lg:left-4 lg:right-4 z-10 pointer-events-none">
-        <div className="flex justify-center">
-          <div className="bg-black/50 text-white p-1 sm:p-2 lg:p-3 rounded-lg backdrop-blur-sm pointer-events-auto max-w-full overflow-x-auto">
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-1 lg:gap-2 text-[10px] sm:text-xs min-w-max">
-              <button
-                onClick={() => setShowResourcePanel(!showResourcePanel)}
-                className={`px-1 sm:px-2 lg:px-3 py-0.5 sm:py-1 rounded whitespace-nowrap ${showResourcePanel ? 'bg-blue-600' : 'bg-gray-600'} hover:bg-blue-700 transition-colors`}
-                title="Toggle Resource Panel (R)"
-              >
-                <span className="sm:hidden">Rec</span>
-                <span className="hidden sm:inline">Recursos (R)</span>
-              </button>
-              <button
-                onClick={() => setShowBuildingPanel(!showBuildingPanel)}
-                className={`px-2 lg:px-3 py-1 rounded whitespace-nowrap responsive-text ${showBuildingPanel ? 'bg-blue-600' : 'bg-gray-600'} hover:bg-blue-700 transition-colors`}
-                title="Toggle Building Panel (B)"
-              >
-                Construções (B)
-              </button>
-              <button
-                onClick={() => setShowNpcMetrics(!showNpcMetrics)}
-                className={`px-2 lg:px-3 py-1 rounded whitespace-nowrap responsive-text ${showNpcMetrics ? 'bg-blue-600' : 'bg-gray-600'} hover:bg-blue-700 transition-colors`}
-                title="Toggle NPC Metrics (N)"
-              >
-                Métricas (N)
-              </button>
-              <button
-                onClick={toggleMute}
-                className={`px-2 lg:px-3 py-1 rounded whitespace-nowrap responsive-text ${!isMuted ? 'bg-green-600' : 'bg-gray-600'} hover:bg-green-700 transition-colors`}
-                title="Toggle Audio (U)"
-              >
-                Áudio (U)
-              </button>
-              <button
-                onClick={() => setShowDummyStats(!showDummyStats)}
-                className={`px-2 lg:px-3 py-1 rounded whitespace-nowrap responsive-text ${showDummyStats ? 'bg-purple-600' : 'bg-gray-600'} hover:bg-purple-700 transition-colors`}
-                title="Toggle Dummy Stats"
-              >
-                Dummy Stats
-              </button>
-              {/* Economy, Research and Market systems removed */}
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Panels */}
-      {showResourcePanel && <ResourcePanel isVisible={showResourcePanel} />}
-      {showBuildingPanel && <BuildingPanel isVisible={showBuildingPanel} />}
-      {showNpcMetrics && <NpcMetricsPanel />}
+      {panels.dummyStats && (
+        <DummyStatsPanel 
+          isVisible={panels.dummyStats}
+          onClose={() => closePanel('dummyStats')}
+        />
+      )}
 
       {/* Modal Panels */}
-      {selectedNpc && showNpcPanel && (
-        <NpcPanel npc={selectedNpc} onClose={closeNpcPanel} />
+      {panels.npc && selectedEntities.npc && (
+        <NpcPanel 
+          npc={selectedEntities.npc} 
+          onClose={() => {
+            closePanel('npc');
+            clearSelection('npc');
+          }} 
+        />
       )}
 
-      {showSeedSelection && (
+      {panels.seedSelection && (
         <SeedSelectionPanel
-          isOpen={showSeedSelection}
-          onClose={() => setShowSeedSelection(false)}
+          isOpen={panels.seedSelection}
+          onClose={() => closePanel('seedSelection')}
           onSeedSelect={handleSeedSelect}
         />
       )}
 
-      {showSiloPanel && selectedSiloId && (
+      {panels.silo && selectedEntities.siloId && (
         <SiloPanel
-          isOpen={showSiloPanel}
-          onClose={closeSiloPanel}
-          siloId={selectedSiloId}
+          isOpen={panels.silo}
+          onClose={() => {
+            closePanel('silo');
+            clearSelection('siloId');
+          }}
+          siloId={selectedEntities.siloId}
         />
       )}
 
-      {showCombat && selectedCombatEntityId && (
+      {panels.combat && selectedEntities.combatEntityId && (
         <CombatPanel
-          entityId={selectedCombatEntityId}
-          onClose={closeCombatPanel}
+          entityId={selectedEntities.combatEntityId}
+          onClose={() => {
+            closePanel('combat');
+            clearSelection('combatEntityId');
+          }}
         />
       )}
 
-      {showDummyStats && (
-        <DummyStatsPanel 
-          isVisible={showDummyStats}
-          onClose={() => setShowDummyStats(false)}
-        />
-      )}
-      {/* Economy, Research and Market panels removed */}
-    </>
+      {/* Notification System */}
+      <NotificationContainer />
+    </div>
   );
 };
 

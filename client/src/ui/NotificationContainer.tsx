@@ -1,71 +1,143 @@
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNotificationStore } from '../lib/stores/useNotificationStore';
-import { getNotificationClasses, cn, ANIMATION_CLASSES } from '../lib/ui-system';
-import { X, CheckCircle, AlertCircle, AlertTriangle, Info } from 'lucide-react';
+
+interface Notification {
+  id: string;
+  type: 'success' | 'warning' | 'error' | 'info';
+  title: string;
+  message: string;
+  duration: number;
+  timestamp: number;
+  icon?: string;
+  actions?: NotificationAction[];
+}
+
+interface NotificationAction {
+  id: string;
+  label: string;
+  action: () => void;
+  style: 'primary' | 'secondary' | 'danger';
+}
 
 const NotificationContainer: React.FC = () => {
   const { notifications, removeNotification } = useNotificationStore();
+  const [mounted, setMounted] = useState(false);
 
-  const getIcon = (type: string) => {
-    switch (type) {
-      case 'success':
-        return <CheckCircle className="w-5 h-5" />;
-      case 'error':
-        return <AlertCircle className="w-5 h-5" />;
-      case 'warning':
-        return <AlertTriangle className="w-5 h-5" />;
-      case 'info':
-        return <Info className="w-5 h-5" />;
-      default:
-        return <Info className="w-5 h-5" />;
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const getNotificationIcon = (type: string, customIcon?: string) => {
+    if (customIcon) return customIcon;
+    
+    const iconMap: Record<string, string> = {
+      success: 'fa-check-circle',
+      warning: 'fa-exclamation-triangle',
+      error: 'fa-times-circle',
+      info: 'fa-info-circle'
+    };
+    
+    return iconMap[type] || 'fa-bell';
+  };
+
+  const getNotificationStyle = (type: string) => {
+    const styleMap: Record<string, string> = {
+      success: 'border-l-green-500 bg-green-50/90 text-green-800',
+      warning: 'border-l-yellow-500 bg-yellow-50/90 text-yellow-800',
+      error: 'border-l-red-500 bg-red-50/90 text-red-800',
+      info: 'border-l-blue-500 bg-blue-50/90 text-blue-800'
+    };
+    
+    return styleMap[type] || 'border-l-gray-500 bg-gray-50/90 text-gray-800';
+  };
+
+  const handleNotificationClick = (notification: Notification) => {
+    if (notification.actions && notification.actions.length === 1) {
+      notification.actions[0].action();
+      removeNotification(notification.id);
     }
   };
 
-  if (notifications.length === 0) {
-    return null;
-  }
+  const handleActionClick = (action: NotificationAction, notificationId: string, event: React.MouseEvent) => {
+    event.stopPropagation();
+    action.action();
+    removeNotification(notificationId);
+  };
+
+  const handleDismiss = (notificationId: string, event: React.MouseEvent) => {
+    event.stopPropagation();
+    removeNotification(notificationId);
+  };
+
+  if (!mounted) return null;
 
   return (
-    <div className="fixed top-4 right-4 z-50 space-y-2 max-w-sm">
+    <div className="notification-container fixed top-4 right-4 z-50 space-y-2 max-w-sm w-full pointer-events-none">
       {notifications.map((notification) => (
         <div
           key={notification.id}
-          className={cn(
-            getNotificationClasses(notification.type),
-            ANIMATION_CLASSES.slideIn
-          )}
+          className={`
+            notification pointer-events-auto transform transition-all duration-300 ease-out
+            ${getNotificationStyle(notification.type)}
+            bg-white/95 backdrop-blur-lg border-l-4 rounded-lg shadow-lg p-4
+            hover:shadow-xl hover:scale-105 cursor-pointer
+            animate-slideInRight
+          `}
+          onClick={() => handleNotificationClick(notification)}
+          role="alert"
+          aria-live="polite"
         >
           <div className="flex items-start gap-3">
+            {/* Icon */}
             <div className="flex-shrink-0 mt-0.5">
-              {getIcon(notification.type)}
+              <i 
+                className={`fa-solid ${getNotificationIcon(notification.type, notification.icon)} text-lg`}
+                aria-hidden="true"
+              />
             </div>
-            
+
+            {/* Content */}
             <div className="flex-1 min-w-0">
-              <h4 className="font-semibold text-sm">
-                {notification.title}
-              </h4>
-              {notification.message && (
-                <p className="mt-1 text-sm opacity-90">
-                  {notification.message}
-                </p>
-              )}
-              
-              {notification.actions && (
-                <div className="mt-3 flex gap-2">
-                  {notification.actions.map((action, index) => (
+              <div className="flex items-start justify-between gap-2">
+                <div className="flex-1">
+                  <h4 className="font-semibold text-sm leading-tight">
+                    {notification.title}
+                  </h4>
+                  <p className="text-xs mt-1 leading-relaxed opacity-90">
+                    {notification.message}
+                  </p>
+                </div>
+
+                {/* Dismiss Button */}
+                <button
+                  onClick={(e) => handleDismiss(notification.id, e)}
+                  className="flex-shrink-0 w-6 h-6 rounded-full hover:bg-black/10 
+                           flex items-center justify-center transition-colors duration-200
+                           focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-current"
+                  aria-label="Fechar notificação"
+                >
+                  <i className="fa-solid fa-times text-xs opacity-60 hover:opacity-100"></i>
+                </button>
+              </div>
+
+              {/* Actions */}
+              {notification.actions && notification.actions.length > 1 && (
+                <div className="flex gap-2 mt-3">
+                  {notification.actions.map((action) => (
                     <button
-                      key={index}
-                      onClick={() => {
-                        action.action();
-                        removeNotification(notification.id);
-                      }}
-                      className={cn(
-                        "px-3 py-1 rounded text-xs font-medium transition-colors",
-                        action.variant === 'secondary'
-                          ? "bg-white/10 hover:bg-white/20"
-                          : "bg-white/20 hover:bg-white/30"
-                      )}
+                      key={action.id}
+                      onClick={(e) => handleActionClick(action, notification.id, e)}
+                      className={`
+                        px-3 py-1 rounded-md text-xs font-medium transition-colors duration-200
+                        focus:outline-none focus:ring-2 focus:ring-offset-1
+                        ${action.style === 'primary' 
+                          ? 'bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-500' 
+                          : action.style === 'danger'
+                          ? 'bg-red-600 text-white hover:bg-red-700 focus:ring-red-500'
+                          : 'bg-gray-200 text-gray-800 hover:bg-gray-300 focus:ring-gray-500'
+                        }
+                      `}
                     >
                       {action.label}
                     </button>
@@ -73,14 +145,21 @@ const NotificationContainer: React.FC = () => {
                 </div>
               )}
             </div>
-            
-            <button
-              onClick={() => removeNotification(notification.id)}
-              className="flex-shrink-0 p-1 rounded-full hover:bg-white/10 transition-colors"
-            >
-              <X className="w-4 h-4" />
-            </button>
           </div>
+
+          {/* Progress Bar for timed notifications */}
+          {notification.duration > 0 && (
+            <div className="absolute bottom-0 left-0 right-0 h-1 bg-black/10 rounded-b-lg overflow-hidden">
+              <div 
+                className="h-full bg-current opacity-30 animate-shrinkWidth"
+                style={{
+                  animationDuration: `${notification.duration}ms`,
+                  animationTimingFunction: 'linear',
+                  animationFillMode: 'forwards'
+                }}
+              />
+            </div>
+          )}
         </div>
       ))}
     </div>
