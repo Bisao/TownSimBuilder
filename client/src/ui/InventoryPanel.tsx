@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React, { useState, useCallback, useMemo } from "react";
 import { NPC } from "../game/stores/useNpcStore";
 import { useDraggable } from "../hooks/useDraggable";
 
@@ -68,15 +68,15 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
   const [gold, setGold] = useState(0);
   const [silver, setSilver] = useState(0);
 
-  const handleDragStart = (item: InventoryItem) => {
+  const handleDragStart = useCallback((item: InventoryItem) => {
     setDraggedItem(item);
-  };
+  }, []);
 
-  const handleDragEnd = () => {
+  const handleDragEnd = useCallback(() => {
     setDraggedItem(null);
-  };
+  }, []);
 
-  const handleDropOnSlot = (slotId: string) => {
+  const handleDropOnSlot = useCallback((slotId: string) => {
     if (!draggedItem) return;
 
     const slot = equipmentSlots.find(s => s.id === slotId);
@@ -112,9 +112,9 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
     // Remover item do inventário
     setInventoryItems(prev => prev.filter(item => item.id !== draggedItem.id));
     setDraggedItem(null);
-  };
+  }, [draggedItem, equipmentSlots]);
 
-  const handleUnequip = (slotId: string) => {
+  const handleUnequip = useCallback((slotId: string) => {
     const slot = equipmentSlots.find(s => s.id === slotId);
     if (!slot?.equipped) return;
 
@@ -127,33 +127,34 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
         ? { ...s, equipped: undefined }
         : s
     ));
-  };
+  }, [equipmentSlots]);
 
   // Criar grid de 48 slots para o inventário
-  const inventorySlots = Array.from({ length: 48 }, (_, i) => {
-    const item = inventoryItems[i];
-    return (
-      <div
-        key={i}
-        className="w-10 h-10 bg-amber-800/30 border border-amber-700/50 flex items-center justify-center relative cursor-pointer hover:bg-amber-700/40 transition-colors"
-        draggable={!!item}
-        onDragStart={() => item && handleDragStart(item)}
-        onDragEnd={handleDragEnd}
-      >
-        {item && (
-          <div className="text-sm relative group">
-            {item.icon}
-            <div className="absolute -bottom-1 -right-1 text-xs bg-yellow-600 text-white rounded-full w-3 h-3 flex items-center justify-center text-[10px]">
-              {item.tier}
+  const inventorySlots = useMemo(() => 
+    Array.from({ length: 48 }, (_, i) => {
+      const item = inventoryItems[i];
+      return (
+        <div
+          key={i}
+          className="w-10 h-10 bg-amber-800/30 border border-amber-700/50 flex items-center justify-center relative cursor-pointer hover:bg-amber-700/40 transition-colors"
+          draggable={!!item}
+          onDragStart={() => item && handleDragStart(item)}
+          onDragEnd={handleDragEnd}
+        >
+          {item && (
+            <div className="text-sm relative group">
+              {item.icon}
+              <div className="absolute -bottom-1 -right-1 text-xs bg-yellow-600 text-white rounded-full w-3 h-3 flex items-center justify-center text-[10px]">
+                {item.tier}
+              </div>
+              <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-black text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-10">
+                {item.name}
+              </div>
             </div>
-            <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-black text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-10">
-              {item.name}
-            </div>
-          </div>
-        )}
-      </div>
-    );
-  });
+          )}
+        </div>
+      );
+    }), [inventoryItems, handleDragStart, handleDragEnd]);
 
   return (
     <div 
@@ -206,13 +207,27 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
                 <span className="text-xs text-amber-800 mb-1">Bag</span>
                 <div
                   className="w-12 h-12 bg-amber-300/50 border-2 border-amber-600 flex items-center justify-center cursor-pointer hover:bg-amber-400/50 transition-colors"
-                  onDragOver={(e) => e.preventDefault()}
-                  onDrop={() => handleDropOnSlot('bag')}
-                  onClick={() => equipmentSlots.find(s => s.id === 'bag')?.equipped && handleUnequip('bag')}
+                  onDragOver={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                  }}
+                  onDrop={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    handleDropOnSlot('bag');
+                  }}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    const slot = equipmentSlots.find(s => s.id === 'bag');
+                    if (slot?.equipped) handleUnequip('bag');
+                  }}
                 >
-                  {equipmentSlots.find(s => s.id === 'bag')?.equipped ? (
-                    <span className="text-lg">{equipmentSlots.find(s => s.id === 'bag')?.equipped?.icon}</span>
-                  ) : null}
+                  {(() => {
+                    const slot = equipmentSlots.find(s => s.id === 'bag');
+                    return slot?.equipped ? (
+                      <span className="text-lg">{slot.equipped.icon}</span>
+                    ) : null;
+                  })()}
                 </div>
               </div>
               
@@ -220,13 +235,27 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
                 <span className="text-xs text-amber-800 mb-1">Head Slot</span>
                 <div
                   className="w-12 h-12 bg-amber-300/50 border-2 border-amber-600 flex items-center justify-center cursor-pointer hover:bg-amber-400/50 transition-colors"
-                  onDragOver={(e) => e.preventDefault()}
-                  onDrop={() => handleDropOnSlot('head')}
-                  onClick={() => equipmentSlots.find(s => s.id === 'head')?.equipped && handleUnequip('head')}
+                  onDragOver={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                  }}
+                  onDrop={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    handleDropOnSlot('head');
+                  }}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    const slot = equipmentSlots.find(s => s.id === 'head');
+                    if (slot?.equipped) handleUnequip('head');
+                  }}
                 >
-                  {equipmentSlots.find(s => s.id === 'head')?.equipped ? (
-                    <span className="text-lg">{equipmentSlots.find(s => s.id === 'head')?.equipped?.icon}</span>
-                  ) : null}
+                  {(() => {
+                    const slot = equipmentSlots.find(s => s.id === 'head');
+                    return slot?.equipped ? (
+                      <span className="text-lg">{slot.equipped.icon}</span>
+                    ) : null;
+                  })()}
                 </div>
               </div>
               
@@ -234,13 +263,27 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
                 <span className="text-xs text-amber-800 mb-1">Cape</span>
                 <div
                   className="w-12 h-12 bg-amber-300/50 border-2 border-amber-600 flex items-center justify-center cursor-pointer hover:bg-amber-400/50 transition-colors"
-                  onDragOver={(e) => e.preventDefault()}
-                  onDrop={() => handleDropOnSlot('cape')}
-                  onClick={() => equipmentSlots.find(s => s.id === 'cape')?.equipped && handleUnequip('cape')}
+                  onDragOver={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                  }}
+                  onDrop={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    handleDropOnSlot('cape');
+                  }}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    const slot = equipmentSlots.find(s => s.id === 'cape');
+                    if (slot?.equipped) handleUnequip('cape');
+                  }}
                 >
-                  {equipmentSlots.find(s => s.id === 'cape')?.equipped ? (
-                    <span className="text-lg">{equipmentSlots.find(s => s.id === 'cape')?.equipped?.icon}</span>
-                  ) : null}
+                  {(() => {
+                    const slot = equipmentSlots.find(s => s.id === 'cape');
+                    return slot?.equipped ? (
+                      <span className="text-lg">{slot.equipped.icon}</span>
+                    ) : null;
+                  })()}
                 </div>
               </div>
 
