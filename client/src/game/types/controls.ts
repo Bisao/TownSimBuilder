@@ -1,4 +1,3 @@
-
 export type InputType = 'keyboard' | 'mouse' | 'touch' | 'gamepad';
 export type ActionType = 'press' | 'hold' | 'release' | 'move' | 'scroll' | 'drag';
 export type ControlScheme = 'default' | 'wasd' | 'arrows' | 'custom';
@@ -352,3 +351,22 @@ export const createDefaultControls = (): ControlsState => ({
     },
   },
 });
+
+export type SwipeDirection = 'up' | 'down' | 'left' | 'right';
+
+// Controls enum for keyboard mapping
+export enum ControlsEnum {
+  forward = 'forward',
+  backward = 'backward',
+  leftward = 'leftward',
+  rightward = 'rightward',
+  zoomIn = 'zoomIn',
+  zoomOut = 'zoomOut',
+  rotateCW = 'rotateCW',
+  rotateCCW = 'rotateCCW',
+  place = 'place',
+  cancel = 'cancel',
+  pauseTime = 'pauseTime',
+  increaseTimeSpeed = 'increaseTimeSpeed',
+  decreaseTimeSpeed = 'decreaseTimeSpeed',
+}

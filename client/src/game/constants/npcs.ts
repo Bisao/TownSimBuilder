@@ -397,5 +397,57 @@ export const canUnlockNPC = (npcId: string, gameState: any): boolean => {
   return true;
 };
 
+// Work types definition
+export const workTypes = {
+  miner: {
+    id: 'miner',
+    name: 'Minerador',
+    icon: 'fa-pickaxe',
+    description: 'Extrai minérios e pedras',
+    requiredBuildings: ['mine'],
+    resources: ['stone', 'iron', 'coal'],
+  },
+  lumberjack: {
+    id: 'lumberjack',
+    name: 'Lenhador',
+    icon: 'fa-tree',
+    description: 'Corta árvores e coleta madeira',
+    requiredBuildings: ['lumbermill'],
+    resources: ['wood'],
+  },
+  farmer: {
+    id: 'farmer',
+    name: 'Fazendeiro',
+    icon: 'fa-seedling',
+    description: 'Cultiva plantas e cuida dos animais',
+    requiredBuildings: ['farm'],
+    resources: ['food', 'wheat', 'vegetables'],
+  },
+  baker: {
+    id: 'baker',
+    name: 'Padeiro',
+    icon: 'fa-bread-slice',
+    description: 'Produz pães e alimentos processados',
+    requiredBuildings: ['bakery'],
+    resources: ['bread', 'pastries'],
+  },
+  builder: {
+    id: 'builder',
+    name: 'Construtor',
+    icon: 'fa-hammer',
+    description: 'Constrói e repara edificações',
+    requiredBuildings: ['workshop'],
+    resources: [],
+  },
+  guard: {
+    id: 'guard',
+    name: 'Guarda',
+    icon: 'fa-shield',
+    description: 'Protege a comunidade',
+    requiredBuildings: ['barracks'],
+    resources: [],
+  },
+} as const;
+
 // Legacy exports for compatibility
 export const npcTypes = NPC_DEFINITIONS;

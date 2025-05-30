@@ -9,7 +9,7 @@ import { useAudio } from '@/lib/stores/useAudio';
 import { useGame } from '@/lib/stores/useGame';
 import { useNotificationStore } from '@/lib/stores/useNotificationStore';
 import { Interface } from '@/components/ui/interface';
-import { NotificationContainer } from '@/ui/NotificationContainer';
+import NotificationContainer from '@/ui/NotificationContainer';
 import World from '@/game/components/World';
 import GameUI from '@/ui/GameUI';
 import MarketWindow from '@/ui/MarketWindow';
