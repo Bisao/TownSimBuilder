@@ -1,0 +1,662 @@
+chunk-6CHFNV4N.js?v=31832269:17705 The above error occurred in the <ForwardRef(Canvas)> component:
+
+    at Canvas (https://075d4af8-ea07-4c21-bb01-fbed5c183116-00-35u38kt9415gp.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-6CHFNV4N.js?v=31832269:17774:3)
+    at FiberProvider (https://075d4af8-ea07-4c21-bb01-fbed5c183116-00-35u38kt9415gp.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-6CHFNV4N.js?v=31832269:17708:21)
+    at CanvasWrapper
+    at KeyboardControls (https://075d4af8-ea07-4c21-bb01-fbed5c183116-00-35u38kt9415gp.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@react-three_drei.js?v=31832269:9069:8)
+    at div
+    at https://075d4af8-ea07-4c21-bb01-fbed5c183116-00-35u38kt9415gp.riker.replit.dev/src/App.tsx?v=qC52RnPqfsraiGnflLuUI:68:59
+    at div
+    at HooksErrorBoundary (https://075d4af8-ea07-4c21-bb01-fbed5c183116-00-35u38kt9415gp.riker.replit.dev/src/components/ui/hooks-error-boundary.tsx:7:5)
+    at ErrorBoundary (https://075d4af8-ea07-4c21-bb01-fbed5c183116-00-35u38kt9415gp.riker.replit.dev/src/components/ui/error-boundary.tsx:10:5)
+    at App (https://075d4af8-ea07-4c21-bb01-fbed5c183116-00-35u38kt9415gp.riker.replit.dev/src/App.tsx?v=qC52RnPqfsraiGnflLuUI:209:21)
+    at ErrorBoundary (https://075d4af8-ea07-4c21-bb01-fbed5c183116-00-35u38kt9415gp.riker.replit.dev/src/components/ui/error-boundary.tsx:10:5)
+    at AppWrapper
+    at QueryClientProvider (https://075d4af8-ea07-4c21-bb01-fbed5c183116-00-35u38kt9415gp.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=31832269:2909:3)
+    at ErrorBoundary (https://075d4af8-ea07-4c21-bb01-fbed5c183116-00-35u38kt9415gp.riker.replit.dev/src/components/ui/error-boundary.tsx:10:5)
+    at AppWrapper
+
+React will try to recreate this component tree from scratch using the error boundary you provided, HooksErrorBoundary.
+console.error @ chunk-6CHFNV4N.js?v=31832269:17705
+logCapturedError @ chunk-LPPTHLN7.js?v=31832269:14032
+callback @ chunk-LPPTHLN7.js?v=31832269:14078
+callCallback @ chunk-LPPTHLN7.js?v=31832269:11248
+commitUpdateQueue @ chunk-LPPTHLN7.js?v=31832269:11265
+commitLayoutEffectOnFiber @ chunk-LPPTHLN7.js?v=31832269:17075
+commitLayoutMountEffects_complete @ chunk-LPPTHLN7.js?v=31832269:17980
+commitLayoutEffects_begin @ chunk-LPPTHLN7.js?v=31832269:17969
+commitLayoutEffects @ chunk-LPPTHLN7.js?v=31832269:17920
+commitRootImpl @ chunk-LPPTHLN7.js?v=31832269:19353
+commitRoot @ chunk-LPPTHLN7.js?v=31832269:19277
+finishConcurrentRender @ chunk-LPPTHLN7.js?v=31832269:18760
+performConcurrentWorkOnRoot @ chunk-LPPTHLN7.js?v=31832269:18718
+workLoop @ chunk-LPPTHLN7.js?v=31832269:197
+flushWork @ chunk-LPPTHLN7.js?v=31832269:176
+performWorkUntilDeadline @ chunk-LPPTHLN7.js?v=31832269:384
+GameUI.tsx:89 KeyboardControls context not available, using fallback
+GameUI @ GameUI.tsx:89
+renderWithHooks @ chunk-LPPTHLN7.js?v=31832269:11548
+updateFunctionComponent @ chunk-LPPTHLN7.js?v=31832269:14582
+beginWork @ chunk-LPPTHLN7.js?v=31832269:15924
+beginWork$1 @ chunk-LPPTHLN7.js?v=31832269:19753
+performUnitOfWork @ chunk-LPPTHLN7.js?v=31832269:19198
+workLoopSync @ chunk-LPPTHLN7.js?v=31832269:19137
+renderRootSync @ chunk-LPPTHLN7.js?v=31832269:19116
+performConcurrentWorkOnRoot @ chunk-LPPTHLN7.js?v=31832269:18678
+workLoop @ chunk-LPPTHLN7.js?v=31832269:197
+flushWork @ chunk-LPPTHLN7.js?v=31832269:176
+performWorkUntilDeadline @ chunk-LPPTHLN7.js?v=31832269:384
+GameUI.tsx:89 KeyboardControls context not available, using fallback
+GameUI @ GameUI.tsx:89
+renderWithHooks @ chunk-LPPTHLN7.js?v=31832269:11548
+updateFunctionComponent @ chunk-LPPTHLN7.js?v=31832269:14587
+beginWork @ chunk-LPPTHLN7.js?v=31832269:15924
+beginWork$1 @ chunk-LPPTHLN7.js?v=31832269:19753
+performUnitOfWork @ chunk-LPPTHLN7.js?v=31832269:19198
+workLoopSync @ chunk-LPPTHLN7.js?v=31832269:19137
+renderRootSync @ chunk-LPPTHLN7.js?v=31832269:19116
+performConcurrentWorkOnRoot @ chunk-LPPTHLN7.js?v=31832269:18678
+workLoop @ chunk-LPPTHLN7.js?v=31832269:197
+flushWork @ chunk-LPPTHLN7.js?v=31832269:176
+performWorkUntilDeadline @ chunk-LPPTHLN7.js?v=31832269:384
+chunk-664ZIH6C.js?v=31832269:17835 THREE.WebGLRenderer: Context Lost.
+main.tsx:23 Global error: ReferenceError: initResources is not defined
+    at World (World.tsx:78:34)
+    at renderWithHooks (chunk-6CHFNV4N.js?v=31832269:5892:26)
+    at mountIndeterminateComponent (chunk-6CHFNV4N.js?v=31832269:9375:21)
+    at beginWork (chunk-6CHFNV4N.js?v=31832269:10358:22)
+    at HTMLUnknownElement.callCallback2 (chunk-6CHFNV4N.js?v=31832269:10589:22)
+    at Object.invokeGuardedCallbackDev (chunk-6CHFNV4N.js?v=31832269:10614:24)
+    at invokeGuardedCallback (chunk-6CHFNV4N.js?v=31832269:10646:39)
+    at beginWork$1 (chunk-6CHFNV4N.js?v=31832269:14200:15)
+    at performUnitOfWork (chunk-6CHFNV4N.js?v=31832269:13664:20)
+    at workLoopSync (chunk-6CHFNV4N.js?v=31832269:13604:13)
+console.error @ chunk-6CHFNV4N.js?v=31832269:17705
+handleGlobalError @ main.tsx:23
+invokeGuardedCallbackDev @ chunk-6CHFNV4N.js?v=31832269:10614
+invokeGuardedCallback @ chunk-6CHFNV4N.js?v=31832269:10646
+beginWork$1 @ chunk-6CHFNV4N.js?v=31832269:14200
+performUnitOfWork @ chunk-6CHFNV4N.js?v=31832269:13664
+workLoopSync @ chunk-6CHFNV4N.js?v=31832269:13604
+renderRootSync @ chunk-6CHFNV4N.js?v=31832269:13583
+performConcurrentWorkOnRoot @ chunk-6CHFNV4N.js?v=31832269:13115
+workLoop @ chunk-6CHFNV4N.js?v=31832269:274
+flushWork @ chunk-6CHFNV4N.js?v=31832269:253
+performWorkUntilDeadline @ chunk-6CHFNV4N.js?v=31832269:461
+App.tsx:168 Global error: ReferenceError: initResources is not defined
+    at World (World.tsx:78:34)
+    at renderWithHooks (chunk-6CHFNV4N.js?v=31832269:5892:26)
+    at mountIndeterminateComponent (chunk-6CHFNV4N.js?v=31832269:9375:21)
+    at beginWork (chunk-6CHFNV4N.js?v=31832269:10358:22)
+    at HTMLUnknownElement.callCallback2 (chunk-6CHFNV4N.js?v=31832269:10589:22)
+    at Object.invokeGuardedCallbackDev (chunk-6CHFNV4N.js?v=31832269:10614:24)
+    at invokeGuardedCallback (chunk-6CHFNV4N.js?v=31832269:10646:39)
+    at beginWork$1 (chunk-6CHFNV4N.js?v=31832269:14200:15)
+    at performUnitOfWork (chunk-6CHFNV4N.js?v=31832269:13664:20)
+    at workLoopSync (chunk-6CHFNV4N.js?v=31832269:13604:13)
+World.tsx:78 Uncaught ReferenceError: initResources is not defined
+    at World (World.tsx:78:34)
+    at renderWithHooks (chunk-6CHFNV4N.js?v=31832269:5892:26)
+    at mountIndeterminateComponent (chunk-6CHFNV4N.js?v=31832269:9375:21)
+    at beginWork (chunk-6CHFNV4N.js?v=31832269:10358:22)
+    at HTMLUnknownElement.callCallback2 (chunk-6CHFNV4N.js?v=31832269:10589:22)
+    at Object.invokeGuardedCallbackDev (chunk-6CHFNV4N.js?v=31832269:10614:24)
+    at invokeGuardedCallback (chunk-6CHFNV4N.js?v=31832269:10646:39)
+    at beginWork$1 (chunk-6CHFNV4N.js?v=31832269:14200:15)
+    at performUnitOfWork (chunk-6CHFNV4N.js?v=31832269:13664:20)
+    at workLoopSync (chunk-6CHFNV4N.js?v=31832269:13604:13)
+World @ World.tsx:78
+renderWithHooks @ chunk-6CHFNV4N.js?v=31832269:5892
+mountIndeterminateComponent @ chunk-6CHFNV4N.js?v=31832269:9375
+beginWork @ chunk-6CHFNV4N.js?v=31832269:10358
+callCallback2 @ chunk-6CHFNV4N.js?v=31832269:10589
+invokeGuardedCallbackDev @ chunk-6CHFNV4N.js?v=31832269:10614
+invokeGuardedCallback @ chunk-6CHFNV4N.js?v=31832269:10646
+beginWork$1 @ chunk-6CHFNV4N.js?v=31832269:14200
+performUnitOfWork @ chunk-6CHFNV4N.js?v=31832269:13664
+workLoopSync @ chunk-6CHFNV4N.js?v=31832269:13604
+renderRootSync @ chunk-6CHFNV4N.js?v=31832269:13583
+performConcurrentWorkOnRoot @ chunk-6CHFNV4N.js?v=31832269:13115
+workLoop @ chunk-6CHFNV4N.js?v=31832269:274
+flushWork @ chunk-6CHFNV4N.js?v=31832269:253
+performWorkUntilDeadline @ chunk-6CHFNV4N.js?v=31832269:461
+main.tsx:23 Global error: ReferenceError: initResources is not defined
+    at World (World.tsx:78:34)
+    at renderWithHooks (chunk-6CHFNV4N.js?v=31832269:5892:26)
+    at mountIndeterminateComponent (chunk-6CHFNV4N.js?v=31832269:9375:21)
+    at beginWork (chunk-6CHFNV4N.js?v=31832269:10358:22)
+    at HTMLUnknownElement.callCallback2 (chunk-6CHFNV4N.js?v=31832269:10589:22)
+    at Object.invokeGuardedCallbackDev (chunk-6CHFNV4N.js?v=31832269:10614:24)
+    at invokeGuardedCallback (chunk-6CHFNV4N.js?v=31832269:10646:39)
+    at beginWork$1 (chunk-6CHFNV4N.js?v=31832269:14200:15)
+    at performUnitOfWork (chunk-6CHFNV4N.js?v=31832269:13664:20)
+    at workLoopSync (chunk-6CHFNV4N.js?v=31832269:13604:13)
+console.error @ chunk-6CHFNV4N.js?v=31832269:17705
+handleGlobalError @ main.tsx:23
+invokeGuardedCallbackDev @ chunk-6CHFNV4N.js?v=31832269:10614
+invokeGuardedCallback @ chunk-6CHFNV4N.js?v=31832269:10646
+beginWork$1 @ chunk-6CHFNV4N.js?v=31832269:14200
+performUnitOfWork @ chunk-6CHFNV4N.js?v=31832269:13664
+workLoopSync @ chunk-6CHFNV4N.js?v=31832269:13604
+renderRootSync @ chunk-6CHFNV4N.js?v=31832269:13583
+recoverFromConcurrentError @ chunk-6CHFNV4N.js?v=31832269:13173
+performConcurrentWorkOnRoot @ chunk-6CHFNV4N.js?v=31832269:13121
+workLoop @ chunk-6CHFNV4N.js?v=31832269:274
+flushWork @ chunk-6CHFNV4N.js?v=31832269:253
+performWorkUntilDeadline @ chunk-6CHFNV4N.js?v=31832269:461
+App.tsx:168 Global error: ReferenceError: initResources is not defined
+    at World (World.tsx:78:34)
+    at renderWithHooks (chunk-6CHFNV4N.js?v=31832269:5892:26)
+    at mountIndeterminateComponent (chunk-6CHFNV4N.js?v=31832269:9375:21)
+    at beginWork (chunk-6CHFNV4N.js?v=31832269:10358:22)
+    at HTMLUnknownElement.callCallback2 (chunk-6CHFNV4N.js?v=31832269:10589:22)
+    at Object.invokeGuardedCallbackDev (chunk-6CHFNV4N.js?v=31832269:10614:24)
+    at invokeGuardedCallback (chunk-6CHFNV4N.js?v=31832269:10646:39)
+    at beginWork$1 (chunk-6CHFNV4N.js?v=31832269:14200:15)
+    at performUnitOfWork (chunk-6CHFNV4N.js?v=31832269:13664:20)
+    at workLoopSync (chunk-6CHFNV4N.js?v=31832269:13604:13)
+World.tsx:78 Uncaught ReferenceError: initResources is not defined
+    at World (World.tsx:78:34)
+    at renderWithHooks (chunk-6CHFNV4N.js?v=31832269:5892:26)
+    at mountIndeterminateComponent (chunk-6CHFNV4N.js?v=31832269:9375:21)
+    at beginWork (chunk-6CHFNV4N.js?v=31832269:10358:22)
+    at HTMLUnknownElement.callCallback2 (chunk-6CHFNV4N.js?v=31832269:10589:22)
+    at Object.invokeGuardedCallbackDev (chunk-6CHFNV4N.js?v=31832269:10614:24)
+    at invokeGuardedCallback (chunk-6CHFNV4N.js?v=31832269:10646:39)
+    at beginWork$1 (chunk-6CHFNV4N.js?v=31832269:14200:15)
+    at performUnitOfWork (chunk-6CHFNV4N.js?v=31832269:13664:20)
+    at workLoopSync (chunk-6CHFNV4N.js?v=31832269:13604:13)
+World @ World.tsx:78
+renderWithHooks @ chunk-6CHFNV4N.js?v=31832269:5892
+mountIndeterminateComponent @ chunk-6CHFNV4N.js?v=31832269:9375
+beginWork @ chunk-6CHFNV4N.js?v=31832269:10358
+callCallback2 @ chunk-6CHFNV4N.js?v=31832269:10589
+invokeGuardedCallbackDev @ chunk-6CHFNV4N.js?v=31832269:10614
+invokeGuardedCallback @ chunk-6CHFNV4N.js?v=31832269:10646
+beginWork$1 @ chunk-6CHFNV4N.js?v=31832269:14200
+performUnitOfWork @ chunk-6CHFNV4N.js?v=31832269:13664
+workLoopSync @ chunk-6CHFNV4N.js?v=31832269:13604
+renderRootSync @ chunk-6CHFNV4N.js?v=31832269:13583
+recoverFromConcurrentError @ chunk-6CHFNV4N.js?v=31832269:13173
+performConcurrentWorkOnRoot @ chunk-6CHFNV4N.js?v=31832269:13121
+workLoop @ chunk-6CHFNV4N.js?v=31832269:274
+flushWork @ chunk-6CHFNV4N.js?v=31832269:253
+performWorkUntilDeadline @ chunk-6CHFNV4N.js?v=31832269:461
+chunk-6CHFNV4N.js?v=31832269:17705 The above error occurred in the <World> component:
+
+    at World (https://075d4af8-ea07-4c21-bb01-fbed5c183116-00-35u38kt9415gp.riker.replit.dev/src/game/components/World.tsx:31:18)
+    at Suspense
+    at Suspense
+    at ErrorBoundary (https://075d4af8-ea07-4c21-bb01-fbed5c183116-00-35u38kt9415gp.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-6CHFNV4N.js?v=31832269:16028:5)
+    at FiberProvider (https://075d4af8-ea07-4c21-bb01-fbed5c183116-00-35u38kt9415gp.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-6CHFNV4N.js?v=31832269:17708:21)
+    at Provider (https://075d4af8-ea07-4c21-bb01-fbed5c183116-00-35u38kt9415gp.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-6CHFNV4N.js?v=31832269:17317:3)
+
+React will try to recreate this component tree from scratch using the error boundary you provided, ErrorBoundary.
+console.error @ chunk-6CHFNV4N.js?v=31832269:17705
+logCapturedError @ chunk-6CHFNV4N.js?v=31832269:7765
+callback @ chunk-6CHFNV4N.js?v=31832269:7811
+callCallback @ chunk-6CHFNV4N.js?v=31832269:3716
+commitUpdateQueue @ chunk-6CHFNV4N.js?v=31832269:3733
+commitLayoutEffectOnFiber @ chunk-6CHFNV4N.js?v=31832269:11066
+commitLayoutMountEffects_complete @ chunk-6CHFNV4N.js?v=31832269:12040
+commitLayoutEffects_begin @ chunk-6CHFNV4N.js?v=31832269:12029
+commitLayoutEffects @ chunk-6CHFNV4N.js?v=31832269:11980
+commitRootImpl @ chunk-6CHFNV4N.js?v=31832269:13818
+commitRoot @ chunk-6CHFNV4N.js?v=31832269:13743
+finishConcurrentRender @ chunk-6CHFNV4N.js?v=31832269:13197
+performConcurrentWorkOnRoot @ chunk-6CHFNV4N.js?v=31832269:13155
+workLoop @ chunk-6CHFNV4N.js?v=31832269:274
+flushWork @ chunk-6CHFNV4N.js?v=31832269:253
+performWorkUntilDeadline @ chunk-6CHFNV4N.js?v=31832269:461
+main.tsx:23 Global error: ReferenceError: initResources is not defined
+    at World (World.tsx:78:34)
+    at renderWithHooks (chunk-6CHFNV4N.js?v=31832269:5892:26)
+    at mountIndeterminateComponent (chunk-6CHFNV4N.js?v=31832269:9375:21)
+    at beginWork (chunk-6CHFNV4N.js?v=31832269:10358:22)
+    at beginWork$1 (chunk-6CHFNV4N.js?v=31832269:14188:22)
+    at performUnitOfWork (chunk-6CHFNV4N.js?v=31832269:13664:20)
+    at workLoopSync (chunk-6CHFNV4N.js?v=31832269:13604:13)
+    at renderRootSync (chunk-6CHFNV4N.js?v=31832269:13583:15)
+    at recoverFromConcurrentError (chunk-6CHFNV4N.js?v=31832269:13173:28)
+    at performConcurrentWorkOnRoot (chunk-6CHFNV4N.js?v=31832269:13121:30)
+console.error @ chunk-6CHFNV4N.js?v=31832269:17705
+handleGlobalError @ main.tsx:23
+invokeGuardedCallbackDev @ chunk-LPPTHLN7.js?v=31832269:3699
+invokeGuardedCallback @ chunk-LPPTHLN7.js?v=31832269:3733
+beginWork$1 @ chunk-LPPTHLN7.js?v=31832269:19765
+performUnitOfWork @ chunk-LPPTHLN7.js?v=31832269:19198
+workLoopSync @ chunk-LPPTHLN7.js?v=31832269:19137
+renderRootSync @ chunk-LPPTHLN7.js?v=31832269:19116
+performConcurrentWorkOnRoot @ chunk-LPPTHLN7.js?v=31832269:18678
+workLoop @ chunk-LPPTHLN7.js?v=31832269:197
+flushWork @ chunk-LPPTHLN7.js?v=31832269:176
+performWorkUntilDeadline @ chunk-LPPTHLN7.js?v=31832269:384
+App.tsx:168 Global error: ReferenceError: initResources is not defined
+    at World (World.tsx:78:34)
+    at renderWithHooks (chunk-6CHFNV4N.js?v=31832269:5892:26)
+    at mountIndeterminateComponent (chunk-6CHFNV4N.js?v=31832269:9375:21)
+    at beginWork (chunk-6CHFNV4N.js?v=31832269:10358:22)
+    at beginWork$1 (chunk-6CHFNV4N.js?v=31832269:14188:22)
+    at performUnitOfWork (chunk-6CHFNV4N.js?v=31832269:13664:20)
+    at workLoopSync (chunk-6CHFNV4N.js?v=31832269:13604:13)
+    at renderRootSync (chunk-6CHFNV4N.js?v=31832269:13583:15)
+    at recoverFromConcurrentError (chunk-6CHFNV4N.js?v=31832269:13173:28)
+    at performConcurrentWorkOnRoot (chunk-6CHFNV4N.js?v=31832269:13121:30)
+chunk-6CHFNV4N.js?v=31832269:17814 Uncaught ReferenceError: initResources is not defined
+    at World (World.tsx:78:34)
+    at renderWithHooks (chunk-6CHFNV4N.js?v=31832269:5892:26)
+    at mountIndeterminateComponent (chunk-6CHFNV4N.js?v=31832269:9375:21)
+    at beginWork (chunk-6CHFNV4N.js?v=31832269:10358:22)
+    at beginWork$1 (chunk-6CHFNV4N.js?v=31832269:14188:22)
+    at performUnitOfWork (chunk-6CHFNV4N.js?v=31832269:13664:20)
+    at workLoopSync (chunk-6CHFNV4N.js?v=31832269:13604:13)
+    at renderRootSync (chunk-6CHFNV4N.js?v=31832269:13583:15)
+    at recoverFromConcurrentError (chunk-6CHFNV4N.js?v=31832269:13173:28)
+    at performConcurrentWorkOnRoot (chunk-6CHFNV4N.js?v=31832269:13121:30)
+World @ World.tsx:78
+renderWithHooks @ chunk-6CHFNV4N.js?v=31832269:5892
+mountIndeterminateComponent @ chunk-6CHFNV4N.js?v=31832269:9375
+beginWork @ chunk-6CHFNV4N.js?v=31832269:10358
+beginWork$1 @ chunk-6CHFNV4N.js?v=31832269:14188
+performUnitOfWork @ chunk-6CHFNV4N.js?v=31832269:13664
+workLoopSync @ chunk-6CHFNV4N.js?v=31832269:13604
+renderRootSync @ chunk-6CHFNV4N.js?v=31832269:13583
+recoverFromConcurrentError @ chunk-6CHFNV4N.js?v=31832269:13173
+performConcurrentWorkOnRoot @ chunk-6CHFNV4N.js?v=31832269:13121
+workLoop @ chunk-6CHFNV4N.js?v=31832269:274
+flushWork @ chunk-6CHFNV4N.js?v=31832269:253
+performWorkUntilDeadline @ chunk-6CHFNV4N.js?v=31832269:461
+GameUI.tsx:89 KeyboardControls context not available, using fallback
+GameUI @ GameUI.tsx:89
+renderWithHooks @ chunk-LPPTHLN7.js?v=31832269:11548
+mountIndeterminateComponent @ chunk-LPPTHLN7.js?v=31832269:14926
+beginWork @ chunk-LPPTHLN7.js?v=31832269:15914
+beginWork$1 @ chunk-LPPTHLN7.js?v=31832269:19753
+performUnitOfWork @ chunk-LPPTHLN7.js?v=31832269:19198
+workLoopSync @ chunk-LPPTHLN7.js?v=31832269:19137
+renderRootSync @ chunk-LPPTHLN7.js?v=31832269:19116
+performConcurrentWorkOnRoot @ chunk-LPPTHLN7.js?v=31832269:18678
+workLoop @ chunk-LPPTHLN7.js?v=31832269:197
+flushWork @ chunk-LPPTHLN7.js?v=31832269:176
+performWorkUntilDeadline @ chunk-LPPTHLN7.js?v=31832269:384
+GameUI.tsx:89 KeyboardControls context not available, using fallback
+GameUI @ GameUI.tsx:89
+renderWithHooks @ chunk-LPPTHLN7.js?v=31832269:11548
+mountIndeterminateComponent @ chunk-LPPTHLN7.js?v=31832269:14976
+beginWork @ chunk-LPPTHLN7.js?v=31832269:15914
+beginWork$1 @ chunk-LPPTHLN7.js?v=31832269:19753
+performUnitOfWork @ chunk-LPPTHLN7.js?v=31832269:19198
+workLoopSync @ chunk-LPPTHLN7.js?v=31832269:19137
+renderRootSync @ chunk-LPPTHLN7.js?v=31832269:19116
+performConcurrentWorkOnRoot @ chunk-LPPTHLN7.js?v=31832269:18678
+workLoop @ chunk-LPPTHLN7.js?v=31832269:197
+flushWork @ chunk-LPPTHLN7.js?v=31832269:176
+performWorkUntilDeadline @ chunk-LPPTHLN7.js?v=31832269:384
+main.tsx:23 Global error: ReferenceError: initResources is not defined
+    at World (World.tsx:78:34)
+    at renderWithHooks (chunk-6CHFNV4N.js?v=31832269:5892:26)
+    at mountIndeterminateComponent (chunk-6CHFNV4N.js?v=31832269:9375:21)
+    at beginWork (chunk-6CHFNV4N.js?v=31832269:10358:22)
+    at beginWork$1 (chunk-6CHFNV4N.js?v=31832269:14188:22)
+    at performUnitOfWork (chunk-6CHFNV4N.js?v=31832269:13664:20)
+    at workLoopSync (chunk-6CHFNV4N.js?v=31832269:13604:13)
+    at renderRootSync (chunk-6CHFNV4N.js?v=31832269:13583:15)
+    at recoverFromConcurrentError (chunk-6CHFNV4N.js?v=31832269:13173:28)
+    at performConcurrentWorkOnRoot (chunk-6CHFNV4N.js?v=31832269:13121:30)
+console.error @ chunk-6CHFNV4N.js?v=31832269:17705
+handleGlobalError @ main.tsx:23
+invokeGuardedCallbackDev @ chunk-LPPTHLN7.js?v=31832269:3699
+invokeGuardedCallback @ chunk-LPPTHLN7.js?v=31832269:3733
+beginWork$1 @ chunk-LPPTHLN7.js?v=31832269:19765
+performUnitOfWork @ chunk-LPPTHLN7.js?v=31832269:19198
+workLoopSync @ chunk-LPPTHLN7.js?v=31832269:19137
+renderRootSync @ chunk-LPPTHLN7.js?v=31832269:19116
+recoverFromConcurrentError @ chunk-LPPTHLN7.js?v=31832269:18736
+performConcurrentWorkOnRoot @ chunk-LPPTHLN7.js?v=31832269:18684
+workLoop @ chunk-LPPTHLN7.js?v=31832269:197
+flushWork @ chunk-LPPTHLN7.js?v=31832269:176
+performWorkUntilDeadline @ chunk-LPPTHLN7.js?v=31832269:384
+App.tsx:168 Global error: ReferenceError: initResources is not defined
+    at World (World.tsx:78:34)
+    at renderWithHooks (chunk-6CHFNV4N.js?v=31832269:5892:26)
+    at mountIndeterminateComponent (chunk-6CHFNV4N.js?v=31832269:9375:21)
+    at beginWork (chunk-6CHFNV4N.js?v=31832269:10358:22)
+    at beginWork$1 (chunk-6CHFNV4N.js?v=31832269:14188:22)
+    at performUnitOfWork (chunk-6CHFNV4N.js?v=31832269:13664:20)
+    at workLoopSync (chunk-6CHFNV4N.js?v=31832269:13604:13)
+    at renderRootSync (chunk-6CHFNV4N.js?v=31832269:13583:15)
+    at recoverFromConcurrentError (chunk-6CHFNV4N.js?v=31832269:13173:28)
+    at performConcurrentWorkOnRoot (chunk-6CHFNV4N.js?v=31832269:13121:30)
+chunk-6CHFNV4N.js?v=31832269:17814 Uncaught ReferenceError: initResources is not defined
+    at World (World.tsx:78:34)
+    at renderWithHooks (chunk-6CHFNV4N.js?v=31832269:5892:26)
+    at mountIndeterminateComponent (chunk-6CHFNV4N.js?v=31832269:9375:21)
+    at beginWork (chunk-6CHFNV4N.js?v=31832269:10358:22)
+    at beginWork$1 (chunk-6CHFNV4N.js?v=31832269:14188:22)
+    at performUnitOfWork (chunk-6CHFNV4N.js?v=31832269:13664:20)
+    at workLoopSync (chunk-6CHFNV4N.js?v=31832269:13604:13)
+    at renderRootSync (chunk-6CHFNV4N.js?v=31832269:13583:15)
+    at recoverFromConcurrentError (chunk-6CHFNV4N.js?v=31832269:13173:28)
+    at performConcurrentWorkOnRoot (chunk-6CHFNV4N.js?v=31832269:13121:30)
+World @ World.tsx:78
+renderWithHooks @ chunk-6CHFNV4N.js?v=31832269:5892
+mountIndeterminateComponent @ chunk-6CHFNV4N.js?v=31832269:9375
+beginWork @ chunk-6CHFNV4N.js?v=31832269:10358
+beginWork$1 @ chunk-6CHFNV4N.js?v=31832269:14188
+performUnitOfWork @ chunk-6CHFNV4N.js?v=31832269:13664
+workLoopSync @ chunk-6CHFNV4N.js?v=31832269:13604
+renderRootSync @ chunk-6CHFNV4N.js?v=31832269:13583
+recoverFromConcurrentError @ chunk-6CHFNV4N.js?v=31832269:13173
+performConcurrentWorkOnRoot @ chunk-6CHFNV4N.js?v=31832269:13121
+workLoop @ chunk-6CHFNV4N.js?v=31832269:274
+flushWork @ chunk-6CHFNV4N.js?v=31832269:253
+performWorkUntilDeadline @ chunk-6CHFNV4N.js?v=31832269:461
+GameUI.tsx:89 KeyboardControls context not available, using fallback
+GameUI @ GameUI.tsx:89
+renderWithHooks @ chunk-LPPTHLN7.js?v=31832269:11548
+mountIndeterminateComponent @ chunk-LPPTHLN7.js?v=31832269:14926
+beginWork @ chunk-LPPTHLN7.js?v=31832269:15914
+beginWork$1 @ chunk-LPPTHLN7.js?v=31832269:19753
+performUnitOfWork @ chunk-LPPTHLN7.js?v=31832269:19198
+workLoopSync @ chunk-LPPTHLN7.js?v=31832269:19137
+renderRootSync @ chunk-LPPTHLN7.js?v=31832269:19116
+recoverFromConcurrentError @ chunk-LPPTHLN7.js?v=31832269:18736
+performConcurrentWorkOnRoot @ chunk-LPPTHLN7.js?v=31832269:18684
+workLoop @ chunk-LPPTHLN7.js?v=31832269:197
+flushWork @ chunk-LPPTHLN7.js?v=31832269:176
+performWorkUntilDeadline @ chunk-LPPTHLN7.js?v=31832269:384
+GameUI.tsx:89 KeyboardControls context not available, using fallback
+GameUI @ GameUI.tsx:89
+renderWithHooks @ chunk-LPPTHLN7.js?v=31832269:11548
+mountIndeterminateComponent @ chunk-LPPTHLN7.js?v=31832269:14976
+beginWork @ chunk-LPPTHLN7.js?v=31832269:15914
+beginWork$1 @ chunk-LPPTHLN7.js?v=31832269:19753
+performUnitOfWork @ chunk-LPPTHLN7.js?v=31832269:19198
+workLoopSync @ chunk-LPPTHLN7.js?v=31832269:19137
+renderRootSync @ chunk-LPPTHLN7.js?v=31832269:19116
+recoverFromConcurrentError @ chunk-LPPTHLN7.js?v=31832269:18736
+performConcurrentWorkOnRoot @ chunk-LPPTHLN7.js?v=31832269:18684
+workLoop @ chunk-LPPTHLN7.js?v=31832269:197
+flushWork @ chunk-LPPTHLN7.js?v=31832269:176
+performWorkUntilDeadline @ chunk-LPPTHLN7.js?v=31832269:384
+chunk-6CHFNV4N.js?v=31832269:17705 The above error occurred in the <ForwardRef(Canvas)> component:
+
+    at Canvas (https://075d4af8-ea07-4c21-bb01-fbed5c183116-00-35u38kt9415gp.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-6CHFNV4N.js?v=31832269:17774:3)
+    at FiberProvider (https://075d4af8-ea07-4c21-bb01-fbed5c183116-00-35u38kt9415gp.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-6CHFNV4N.js?v=31832269:17708:21)
+    at CanvasWrapper
+    at KeyboardControls (https://075d4af8-ea07-4c21-bb01-fbed5c183116-00-35u38kt9415gp.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@react-three_drei.js?v=31832269:9069:8)
+    at div
+    at https://075d4af8-ea07-4c21-bb01-fbed5c183116-00-35u38kt9415gp.riker.replit.dev/src/App.tsx?v=qC52RnPqfsraiGnflLuUI:68:59
+    at div
+    at HooksErrorBoundary (https://075d4af8-ea07-4c21-bb01-fbed5c183116-00-35u38kt9415gp.riker.replit.dev/src/components/ui/hooks-error-boundary.tsx:7:5)
+    at ErrorBoundary (https://075d4af8-ea07-4c21-bb01-fbed5c183116-00-35u38kt9415gp.riker.replit.dev/src/components/ui/error-boundary.tsx:10:5)
+    at App (https://075d4af8-ea07-4c21-bb01-fbed5c183116-00-35u38kt9415gp.riker.replit.dev/src/App.tsx?v=qC52RnPqfsraiGnflLuUI:209:21)
+    at ErrorBoundary (https://075d4af8-ea07-4c21-bb01-fbed5c183116-00-35u38kt9415gp.riker.replit.dev/src/components/ui/error-boundary.tsx:10:5)
+    at AppWrapper
+    at QueryClientProvider (https://075d4af8-ea07-4c21-bb01-fbed5c183116-00-35u38kt9415gp.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=31832269:2909:3)
+    at ErrorBoundary (https://075d4af8-ea07-4c21-bb01-fbed5c183116-00-35u38kt9415gp.riker.replit.dev/src/components/ui/error-boundary.tsx:10:5)
+    at AppWrapper
+
+React will try to recreate this component tree from scratch using the error boundary you provided, HooksErrorBoundary.
+console.error @ chunk-6CHFNV4N.js?v=31832269:17705
+logCapturedError @ chunk-LPPTHLN7.js?v=31832269:14032
+callback @ chunk-LPPTHLN7.js?v=31832269:14078
+callCallback @ chunk-LPPTHLN7.js?v=31832269:11248
+commitUpdateQueue @ chunk-LPPTHLN7.js?v=31832269:11265
+commitLayoutEffectOnFiber @ chunk-LPPTHLN7.js?v=31832269:17075
+commitLayoutMountEffects_complete @ chunk-LPPTHLN7.js?v=31832269:17980
+commitLayoutEffects_begin @ chunk-LPPTHLN7.js?v=31832269:17969
+commitLayoutEffects @ chunk-LPPTHLN7.js?v=31832269:17920
+commitRootImpl @ chunk-LPPTHLN7.js?v=31832269:19353
+commitRoot @ chunk-LPPTHLN7.js?v=31832269:19277
+finishConcurrentRender @ chunk-LPPTHLN7.js?v=31832269:18760
+performConcurrentWorkOnRoot @ chunk-LPPTHLN7.js?v=31832269:18718
+workLoop @ chunk-LPPTHLN7.js?v=31832269:197
+flushWork @ chunk-LPPTHLN7.js?v=31832269:176
+performWorkUntilDeadline @ chunk-LPPTHLN7.js?v=31832269:384
+GameUI.tsx:89 KeyboardControls context not available, using fallback
+GameUI @ GameUI.tsx:89
+renderWithHooks @ chunk-LPPTHLN7.js?v=31832269:11548
+updateFunctionComponent @ chunk-LPPTHLN7.js?v=31832269:14582
+beginWork @ chunk-LPPTHLN7.js?v=31832269:15924
+beginWork$1 @ chunk-LPPTHLN7.js?v=31832269:19753
+performUnitOfWork @ chunk-LPPTHLN7.js?v=31832269:19198
+workLoopSync @ chunk-LPPTHLN7.js?v=31832269:19137
+renderRootSync @ chunk-LPPTHLN7.js?v=31832269:19116
+performConcurrentWorkOnRoot @ chunk-LPPTHLN7.js?v=31832269:18678
+workLoop @ chunk-LPPTHLN7.js?v=31832269:197
+flushWork @ chunk-LPPTHLN7.js?v=31832269:176
+performWorkUntilDeadline @ chunk-LPPTHLN7.js?v=31832269:384
+GameUI.tsx:89 KeyboardControls context not available, using fallback
+GameUI @ GameUI.tsx:89
+renderWithHooks @ chunk-LPPTHLN7.js?v=31832269:11548
+updateFunctionComponent @ chunk-LPPTHLN7.js?v=31832269:14587
+beginWork @ chunk-LPPTHLN7.js?v=31832269:15924
+beginWork$1 @ chunk-LPPTHLN7.js?v=31832269:19753
+performUnitOfWork @ chunk-LPPTHLN7.js?v=31832269:19198
+workLoopSync @ chunk-LPPTHLN7.js?v=31832269:19137
+renderRootSync @ chunk-LPPTHLN7.js?v=31832269:19116
+performConcurrentWorkOnRoot @ chunk-LPPTHLN7.js?v=31832269:18678
+workLoop @ chunk-LPPTHLN7.js?v=31832269:197
+flushWork @ chunk-LPPTHLN7.js?v=31832269:176
+performWorkUntilDeadline @ chunk-LPPTHLN7.js?v=31832269:384
+chunk-664ZIH6C.js?v=31832269:17835 THREE.WebGLRenderer: Context Lost.
+main.tsx:23 Global error: ReferenceError: initResources is not defined
+    at World (World.tsx:78:34)
+    at renderWithHooks (chunk-6CHFNV4N.js?v=31832269:5892:26)
+    at mountIndeterminateComponent (chunk-6CHFNV4N.js?v=31832269:9375:21)
+    at beginWork (chunk-6CHFNV4N.js?v=31832269:10358:22)
+    at HTMLUnknownElement.callCallback2 (chunk-6CHFNV4N.js?v=31832269:10589:22)
+    at Object.invokeGuardedCallbackDev (chunk-6CHFNV4N.js?v=31832269:10614:24)
+    at invokeGuardedCallback (chunk-6CHFNV4N.js?v=31832269:10646:39)
+    at beginWork$1 (chunk-6CHFNV4N.js?v=31832269:14200:15)
+    at performUnitOfWork (chunk-6CHFNV4N.js?v=31832269:13664:20)
+    at workLoopSync (chunk-6CHFNV4N.js?v=31832269:13604:13)
+console.error @ chunk-6CHFNV4N.js?v=31832269:17705
+handleGlobalError @ main.tsx:23
+invokeGuardedCallbackDev @ chunk-6CHFNV4N.js?v=31832269:10614
+invokeGuardedCallback @ chunk-6CHFNV4N.js?v=31832269:10646
+beginWork$1 @ chunk-6CHFNV4N.js?v=31832269:14200
+performUnitOfWork @ chunk-6CHFNV4N.js?v=31832269:13664
+workLoopSync @ chunk-6CHFNV4N.js?v=31832269:13604
+renderRootSync @ chunk-6CHFNV4N.js?v=31832269:13583
+performConcurrentWorkOnRoot @ chunk-6CHFNV4N.js?v=31832269:13115
+workLoop @ chunk-6CHFNV4N.js?v=31832269:274
+flushWork @ chunk-6CHFNV4N.js?v=31832269:253
+performWorkUntilDeadline @ chunk-6CHFNV4N.js?v=31832269:461
+App.tsx:168 Global error: ReferenceError: initResources is not defined
+    at World (World.tsx:78:34)
+    at renderWithHooks (chunk-6CHFNV4N.js?v=31832269:5892:26)
+    at mountIndeterminateComponent (chunk-6CHFNV4N.js?v=31832269:9375:21)
+    at beginWork (chunk-6CHFNV4N.js?v=31832269:10358:22)
+    at HTMLUnknownElement.callCallback2 (chunk-6CHFNV4N.js?v=31832269:10589:22)
+    at Object.invokeGuardedCallbackDev (chunk-6CHFNV4N.js?v=31832269:10614:24)
+    at invokeGuardedCallback (chunk-6CHFNV4N.js?v=31832269:10646:39)
+    at beginWork$1 (chunk-6CHFNV4N.js?v=31832269:14200:15)
+    at performUnitOfWork (chunk-6CHFNV4N.js?v=31832269:13664:20)
+    at workLoopSync (chunk-6CHFNV4N.js?v=31832269:13604:13)
+World.tsx:78 Uncaught ReferenceError: initResources is not defined
+    at World (World.tsx:78:34)
+    at renderWithHooks (chunk-6CHFNV4N.js?v=31832269:5892:26)
+    at mountIndeterminateComponent (chunk-6CHFNV4N.js?v=31832269:9375:21)
+    at beginWork (chunk-6CHFNV4N.js?v=31832269:10358:22)
+    at HTMLUnknownElement.callCallback2 (chunk-6CHFNV4N.js?v=31832269:10589:22)
+    at Object.invokeGuardedCallbackDev (chunk-6CHFNV4N.js?v=31832269:10614:24)
+    at invokeGuardedCallback (chunk-6CHFNV4N.js?v=31832269:10646:39)
+    at beginWork$1 (chunk-6CHFNV4N.js?v=31832269:14200:15)
+    at performUnitOfWork (chunk-6CHFNV4N.js?v=31832269:13664:20)
+    at workLoopSync (chunk-6CHFNV4N.js?v=31832269:13604:13)
+World @ World.tsx:78
+renderWithHooks @ chunk-6CHFNV4N.js?v=31832269:5892
+mountIndeterminateComponent @ chunk-6CHFNV4N.js?v=31832269:9375
+beginWork @ chunk-6CHFNV4N.js?v=31832269:10358
+callCallback2 @ chunk-6CHFNV4N.js?v=31832269:10589
+invokeGuardedCallbackDev @ chunk-6CHFNV4N.js?v=31832269:10614
+invokeGuardedCallback @ chunk-6CHFNV4N.js?v=31832269:10646
+beginWork$1 @ chunk-6CHFNV4N.js?v=31832269:14200
+performUnitOfWork @ chunk-6CHFNV4N.js?v=31832269:13664
+workLoopSync @ chunk-6CHFNV4N.js?v=31832269:13604
+renderRootSync @ chunk-6CHFNV4N.js?v=31832269:13583
+performConcurrentWorkOnRoot @ chunk-6CHFNV4N.js?v=31832269:13115
+workLoop @ chunk-6CHFNV4N.js?v=31832269:274
+flushWork @ chunk-6CHFNV4N.js?v=31832269:253
+performWorkUntilDeadline @ chunk-6CHFNV4N.js?v=31832269:461
+main.tsx:23 Global error: ReferenceError: initResources is not defined
+    at World (World.tsx:78:34)
+    at renderWithHooks (chunk-6CHFNV4N.js?v=31832269:5892:26)
+    at mountIndeterminateComponent (chunk-6CHFNV4N.js?v=31832269:9375:21)
+    at beginWork (chunk-6CHFNV4N.js?v=31832269:10358:22)
+    at HTMLUnknownElement.callCallback2 (chunk-6CHFNV4N.js?v=31832269:10589:22)
+    at Object.invokeGuardedCallbackDev (chunk-6CHFNV4N.js?v=31832269:10614:24)
+    at invokeGuardedCallback (chunk-6CHFNV4N.js?v=31832269:10646:39)
+    at beginWork$1 (chunk-6CHFNV4N.js?v=31832269:14200:15)
+    at performUnitOfWork (chunk-6CHFNV4N.js?v=31832269:13664:20)
+    at workLoopSync (chunk-6CHFNV4N.js?v=31832269:13604:13)
+console.error @ chunk-6CHFNV4N.js?v=31832269:17705
+handleGlobalError @ main.tsx:23
+invokeGuardedCallbackDev @ chunk-6CHFNV4N.js?v=31832269:10614
+invokeGuardedCallback @ chunk-6CHFNV4N.js?v=31832269:10646
+beginWork$1 @ chunk-6CHFNV4N.js?v=31832269:14200
+performUnitOfWork @ chunk-6CHFNV4N.js?v=31832269:13664
+workLoopSync @ chunk-6CHFNV4N.js?v=31832269:13604
+renderRootSync @ chunk-6CHFNV4N.js?v=31832269:13583
+recoverFromConcurrentError @ chunk-6CHFNV4N.js?v=31832269:13173
+performConcurrentWorkOnRoot @ chunk-6CHFNV4N.js?v=31832269:13121
+workLoop @ chunk-6CHFNV4N.js?v=31832269:274
+flushWork @ chunk-6CHFNV4N.js?v=31832269:253
+performWorkUntilDeadline @ chunk-6CHFNV4N.js?v=31832269:461
+App.tsx:168 Global error: ReferenceError: initResources is not defined
+    at World (World.tsx:78:34)
+    at renderWithHooks (chunk-6CHFNV4N.js?v=31832269:5892:26)
+    at mountIndeterminateComponent (chunk-6CHFNV4N.js?v=31832269:9375:21)
+    at beginWork (chunk-6CHFNV4N.js?v=31832269:10358:22)
+    at HTMLUnknownElement.callCallback2 (chunk-6CHFNV4N.js?v=31832269:10589:22)
+    at Object.invokeGuardedCallbackDev (chunk-6CHFNV4N.js?v=31832269:10614:24)
+    at invokeGuardedCallback (chunk-6CHFNV4N.js?v=31832269:10646:39)
+    at beginWork$1 (chunk-6CHFNV4N.js?v=31832269:14200:15)
+    at performUnitOfWork (chunk-6CHFNV4N.js?v=31832269:13664:20)
+    at workLoopSync (chunk-6CHFNV4N.js?v=31832269:13604:13)
+World.tsx:78 Uncaught ReferenceError: initResources is not defined
+    at World (World.tsx:78:34)
+    at renderWithHooks (chunk-6CHFNV4N.js?v=31832269:5892:26)
+    at mountIndeterminateComponent (chunk-6CHFNV4N.js?v=31832269:9375:21)
+    at beginWork (chunk-6CHFNV4N.js?v=31832269:10358:22)
+    at HTMLUnknownElement.callCallback2 (chunk-6CHFNV4N.js?v=31832269:10589:22)
+    at Object.invokeGuardedCallbackDev (chunk-6CHFNV4N.js?v=31832269:10614:24)
+    at invokeGuardedCallback (chunk-6CHFNV4N.js?v=31832269:10646:39)
+    at beginWork$1 (chunk-6CHFNV4N.js?v=31832269:14200:15)
+    at performUnitOfWork (chunk-6CHFNV4N.js?v=31832269:13664:20)
+    at workLoopSync (chunk-6CHFNV4N.js?v=31832269:13604:13)
+World @ World.tsx:78
+renderWithHooks @ chunk-6CHFNV4N.js?v=31832269:5892
+mountIndeterminateComponent @ chunk-6CHFNV4N.js?v=31832269:9375
+beginWork @ chunk-6CHFNV4N.js?v=31832269:10358
+callCallback2 @ chunk-6CHFNV4N.js?v=31832269:10589
+invokeGuardedCallbackDev @ chunk-6CHFNV4N.js?v=31832269:10614
+invokeGuardedCallback @ chunk-6CHFNV4N.js?v=31832269:10646
+beginWork$1 @ chunk-6CHFNV4N.js?v=31832269:14200
+performUnitOfWork @ chunk-6CHFNV4N.js?v=31832269:13664
+workLoopSync @ chunk-6CHFNV4N.js?v=31832269:13604
+renderRootSync @ chunk-6CHFNV4N.js?v=31832269:13583
+recoverFromConcurrentError @ chunk-6CHFNV4N.js?v=31832269:13173
+performConcurrentWorkOnRoot @ chunk-6CHFNV4N.js?v=31832269:13121
+workLoop @ chunk-6CHFNV4N.js?v=31832269:274
+flushWork @ chunk-6CHFNV4N.js?v=31832269:253
+performWorkUntilDeadline @ chunk-6CHFNV4N.js?v=31832269:461
+chunk-6CHFNV4N.js?v=31832269:17705 The above error occurred in the <World> component:
+
+    at World (https://075d4af8-ea07-4c21-bb01-fbed5c183116-00-35u38kt9415gp.riker.replit.dev/src/game/components/World.tsx:31:18)
+    at Suspense
+    at Suspense
+    at ErrorBoundary (https://075d4af8-ea07-4c21-bb01-fbed5c183116-00-35u38kt9415gp.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-6CHFNV4N.js?v=31832269:16028:5)
+    at FiberProvider (https://075d4af8-ea07-4c21-bb01-fbed5c183116-00-35u38kt9415gp.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-6CHFNV4N.js?v=31832269:17708:21)
+    at Provider (https://075d4af8-ea07-4c21-bb01-fbed5c183116-00-35u38kt9415gp.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-6CHFNV4N.js?v=31832269:17317:3)
+
+React will try to recreate this component tree from scratch using the error boundary you provided, ErrorBoundary.
+console.error @ chunk-6CHFNV4N.js?v=31832269:17705
+logCapturedError @ chunk-6CHFNV4N.js?v=31832269:7765
+callback @ chunk-6CHFNV4N.js?v=31832269:7811
+callCallback @ chunk-6CHFNV4N.js?v=31832269:3716
+commitUpdateQueue @ chunk-6CHFNV4N.js?v=31832269:3733
+commitLayoutEffectOnFiber @ chunk-6CHFNV4N.js?v=31832269:11066
+commitLayoutMountEffects_complete @ chunk-6CHFNV4N.js?v=31832269:12040
+commitLayoutEffects_begin @ chunk-6CHFNV4N.js?v=31832269:12029
+commitLayoutEffects @ chunk-6CHFNV4N.js?v=31832269:11980
+commitRootImpl @ chunk-6CHFNV4N.js?v=31832269:13818
+commitRoot @ chunk-6CHFNV4N.js?v=31832269:13743
+finishConcurrentRender @ chunk-6CHFNV4N.js?v=31832269:13197
+performConcurrentWorkOnRoot @ chunk-6CHFNV4N.js?v=31832269:13155
+workLoop @ chunk-6CHFNV4N.js?v=31832269:274
+flushWork @ chunk-6CHFNV4N.js?v=31832269:253
+performWorkUntilDeadline @ chunk-6CHFNV4N.js?v=31832269:461
+main.tsx:23 Global error: ReferenceError: initResources is not defined
+    at World (World.tsx:78:34)
+    at renderWithHooks (chunk-6CHFNV4N.js?v=31832269:5892:26)
+    at mountIndeterminateComponent (chunk-6CHFNV4N.js?v=31832269:9375:21)
+    at beginWork (chunk-6CHFNV4N.js?v=31832269:10358:22)
+    at beginWork$1 (chunk-6CHFNV4N.js?v=31832269:14188:22)
+    at performUnitOfWork (chunk-6CHFNV4N.js?v=31832269:13664:20)
+    at workLoopSync (chunk-6CHFNV4N.js?v=31832269:13604:13)
+    at renderRootSync (chunk-6CHFNV4N.js?v=31832269:13583:15)
+    at recoverFromConcurrentError (chunk-6CHFNV4N.js?v=31832269:13173:28)
+    at performConcurrentWorkOnRoot (chunk-6CHFNV4N.js?v=31832269:13121:30)
+console.error @ chunk-6CHFNV4N.js?v=31832269:17705
+handleGlobalError @ main.tsx:23
+invokeGuardedCallbackDev @ chunk-LPPTHLN7.js?v=31832269:3699
+invokeGuardedCallback @ chunk-LPPTHLN7.js?v=31832269:3733
+beginWork$1 @ chunk-LPPTHLN7.js?v=31832269:19765
+performUnitOfWork @ chunk-LPPTHLN7.js?v=31832269:19198
+workLoopSync @ chunk-LPPTHLN7.js?v=31832269:19137
+renderRootSync @ chunk-LPPTHLN7.js?v=31832269:19116
+performConcurrentWorkOnRoot @ chunk-LPPTHLN7.js?v=31832269:18678
+workLoop @ chunk-LPPTHLN7.js?v=31832269:197
+flushWork @ chunk-LPPTHLN7.js?v=31832269:176
+performWorkUntilDeadline @ chunk-LPPTHLN7.js?v=31832269:384
+App.tsx:168 Global error: ReferenceError: initResources is not defined
+    at World (World.tsx:78:34)
+    at renderWithHooks (chunk-6CHFNV4N.js?v=31832269:5892:26)
+    at mountIndeterminateComponent (chunk-6CHFNV4N.js?v=31832269:9375:21)
+    at beginWork (chunk-6CHFNV4N.js?v=31832269:10358:22)
+    at beginWork$1 (chunk-6CHFNV4N.js?v=31832269:14188:22)
+    at performUnitOfWork (chunk-6CHFNV4N.js?v=31832269:13664:20)
+    at workLoopSync (chunk-6CHFNV4N.js?v=31832269:13604:13)
+    at renderRootSync (chunk-6CHFNV4N.js?v=31832269:13583:15)
+    at recoverFromConcurrentError (chunk-6CHFNV4N.js?v=31832269:13173:28)
+    at performConcurrentWorkOnRoot (chunk-6CHFNV4N.js?v=31832269:13121:30)
+chunk-6CHFNV4N.js?v=31832269:17814 Uncaught ReferenceError: initResources is not defined
+    at World (World.tsx:78:34)
+    at renderWithHooks (chunk-6CHFNV4N.js?v=31832269:5892:26)
+    at mountIndeterminateComponent (chunk-6CHFNV4N.js?v=31832269:9375:21)
+    at beginWork (chunk-6CHFNV4N.js?v=31832269:10358:22)
+    at beginWork$1 (chunk-6CHFNV4N.js?v=31832269:14188:22)
+    at performUnitOfWork (chunk-6CHFNV4N.js?v=31832269:13664:20)
+    at workLoopSync (chunk-6CHFNV4N.js?v=31832269:13604:13)
+    at renderRootSync (chunk-6CHFNV4N.js?v=31832269:13583:15)
+    at recoverFromConcurrentError (chunk-6CHFNV4N.js?v=31832269:13173:28)
+    at performConcurrentWorkOnRoot (chunk-6CHFNV4N.js?v=31832269:13121:30)
+World @ World.tsx:78
+renderWithHooks @ chunk-6CHFNV4N.js?v=31832269:5892
+mountIndeterminateComponent @ chunk-6CHFNV4N.js?v=31832269:9375
+beginWork @ chunk-6CHFNV4N.js?v=31832269:10358
+beginWork$1 @ chunk-6CHFNV4N.js?v=31832269:14188
+performUnitOfWork @ chunk-6CHFNV4N.js?v=31832269:13664
+workLoopSync @ chunk-6CHFNV4N.js?v=31832269:13604
+renderRootSync @ chunk-6CHFNV4N.js?v=31832269:13583
+recoverFromConcurrentError @ chunk-6CHFNV4N.js?v=31832269:13173
+performConcurrentWorkOnRoot @ chunk-6CHFNV4N.js?v=31832269:13121
+workLoop @ chunk-6CHFNV4N.js?v=31832269:274
+flushWork @ chunk-6CHFNV4N.js?v=31832269:253
+performWorkUntilDeadline @ chunk-6CHFNV4N.js?v=31832269:461
+GameUI.tsx:89 KeyboardControls context not available, using fallback
+GameUI @ GameUI.tsx:89
+renderWithHooks @ chunk-LPPTHLN7.js?v=31832269:11548
+mountIndeterminateComponent @ chunk-LPPTHLN7.js?v=31832269:14926
+beginWork @ chunk-LPPTHLN7.js?v=31832269:15914
+beginWork$1 @ chunk-LPPTHLN7.js?v=31832269:19753
+performUnitOfWork @ chunk-LPPTHLN7.js?v=31832269:19198
+workLoopSync @ chunk-LPPTHLN7.js?v=31832269:19137
+renderRootSync @ chunk-LPPTHLN7.js?v=31832269:19116
+performConcurrentWorkOnRoot @ chunk-LPPTHLN7.js?v=31832269:18678
+workLoop @ chunk-LPPTHLN7.js?v=31832269:197
+flushWork @ chunk-LPPTHLN7.js?v=31832269:176
+performWorkUntilDeadline @ chunk-LPPTHLN7.js?v=31832269:384
