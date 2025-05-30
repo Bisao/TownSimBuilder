@@ -1,4 +1,3 @@
-
 import React, { Suspense, useEffect, useState, memo, useCallback } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { KeyboardControls, Preload } from '@react-three/drei';
@@ -15,251 +14,169 @@ import GameUI from '@/ui/GameUI';
 import MarketWindow from '@/ui/MarketWindow';
 import { ControlsEnum } from '@/game/types/controls';
 import { BuildingType } from '@/game/constants/buildings';
-import { GAME_CONFIG } from '@shared/constants/game';
+import { GAME_CONFIG } from '../../../shared/constants/game';
 import '@fontsource/inter/400.css';
 import '@fontsource/inter/500.css';
 import '@fontsource/inter/600.css';
 import '@fontsource/inter/700.css';
 
 // Keyboard controls configuration
-const KEYBOARD_MAP = [
+const keyboardMap = [
   { name: ControlsEnum.forward, keys: ['ArrowUp', 'KeyW'] },
   { name: ControlsEnum.backward, keys: ['ArrowDown', 'KeyS'] },
-  { name: ControlsEnum.leftward, keys: ['ArrowLeft', 'KeyA'] },
-  { name: ControlsEnum.rightward, keys: ['ArrowRight', 'KeyD'] },
-  { name: ControlsEnum.zoomIn, keys: ['Equal', 'NumpadAdd'] },
-  { name: ControlsEnum.zoomOut, keys: ['Minus', 'NumpadSubtract'] },
-  { name: ControlsEnum.rotateCW, keys: ['KeyE'] },
-  { name: ControlsEnum.rotateCCW, keys: ['KeyQ'] },
+  { name: ControlsEnum.left, keys: ['ArrowLeft', 'KeyA'] },
+  { name: ControlsEnum.right, keys: ['ArrowRight', 'KeyD'] },
+  { name: ControlsEnum.jump, keys: ['Space'] },
+  { name: ControlsEnum.shift, keys: ['ShiftLeft'] },
+  { name: ControlsEnum.escape, keys: ['Escape'] },
+  { name: ControlsEnum.enter, keys: ['Enter'] },
+  { name: ControlsEnum.interact, keys: ['KeyE'] },
+  { name: ControlsEnum.attack, keys: ['KeyF'] },
   { name: ControlsEnum.place, keys: ['Space'] },
   { name: ControlsEnum.cancel, keys: ['Escape'] },
-  { name: ControlsEnum.pauseTime, keys: ['KeyP'] },
-  { name: ControlsEnum.increaseTimeSpeed, keys: ['BracketRight'] },
-  { name: ControlsEnum.decreaseTimeSpeed, keys: ['BracketLeft'] },
-] as const;
+  { name: ControlsEnum.inventory, keys: ['KeyI'] },
+  { name: ControlsEnum.map, keys: ['KeyM'] },
+  { name: ControlsEnum.skills, keys: ['KeyK'] },
+  { name: ControlsEnum.buildings, keys: ['KeyB'] },
+  { name: ControlsEnum.research, keys: ['KeyR'] },
+  { name: ControlsEnum.economy, keys: ['KeyY'] },
+];
 
-// Canvas configuration
-const CANVAS_CONFIG = {
-  shadows: true,
-  camera: {
-    position: [20, 20, 20] as [number, number, number],
-    fov: 50,
-    near: 0.1,
-    far: 1000,
-  },
-  gl: {
-    antialias: true,
-    alpha: false,
-    powerPreference: 'high-performance' as const,
-  },
-} as const;
-
-// Audio assets configuration
-const AUDIO_ASSETS = {
-  background: {
-    src: '/sounds/background.mp3',
-    loop: true,
-    volume: 0.3,
-  },
-  hit: {
-    src: '/sounds/hit.mp3',
-    volume: 0.5,
-  },
-  success: {
-    src: '/sounds/success.mp3',
-    volume: 0.5,
-  },
-} as const;
-
-// Loading component
-const LoadingScreen = memo(() => (
-  <div className="fixed inset-0 flex items-center justify-center bg-gradient-primary">
-    <div className="text-center space-y-4">
-      <LoadingSpinner className="w-12 h-12 mx-auto" />
-      <div className="text-xl font-semibold text-white">
-        Carregando jogo...
-      </div>
-      <div className="text-sm text-white/80">
-        Preparando o mundo virtual
-      </div>
-    </div>
-  </div>
-));
-
-LoadingScreen.displayName = 'LoadingScreen';
-
-// Error fallback component
-const ErrorFallback = memo(({ error, resetError }: { error: Error; resetError: () => void }) => (
-  <div className="fixed inset-0 flex items-center justify-center bg-red-50">
-    <div className="text-center space-y-4 p-8 max-w-md">
-      <div className="text-2xl font-bold text-red-600">
-        Oops! Algo deu errado
-      </div>
-      <div className="text-gray-600">
-        {error.message || 'Erro inesperado no jogo'}
-      </div>
-      <button
-        onClick={resetError}
-        className="btn btn-primary"
-      >
-        Tentar novamente
-      </button>
-    </div>
-  </div>
-));
-
-ErrorFallback.displayName = 'ErrorFallback';
-
-// Game canvas component
-const GameCanvas = memo(({ onMarketSelect }: { onMarketSelect: (building: BuildingType | null) => void }) => (
-  <Canvas {...CANVAS_CONFIG}>
-    <color attach="background" args={['#87CEEB']} />
-    <Suspense fallback={null}>
-      <World onMarketSelect={onMarketSelect} />
-      <Preload all />
-    </Suspense>
-  </Canvas>
-));
-
-GameCanvas.displayName = 'GameCanvas';
-
-// Audio hook
-const useAudioSetup = () => {
-  const audioStore = useAudio();
-  const notificationStore = useNotificationStore();
-  
-  // Safety guards
-  if (!audioStore || !notificationStore) {
-    console.warn('Audio or notification store not available');
-    return;
-  }
-  
-  const { setBackgroundMusic, setHitSound, setSuccessSound } = audioStore;
-  const { addNotification } = notificationStore;
-
-  useEffect(() => {
-    const loadAudio = async () => {
-      try {
-        // Background music
-        const bgMusic = new Audio(AUDIO_ASSETS.background.src);
-        bgMusic.loop = AUDIO_ASSETS.background.loop;
-        bgMusic.volume = AUDIO_ASSETS.background.volume;
-        setBackgroundMusic(bgMusic);
-
-        // Sound effects
-        const hitSound = new Audio(AUDIO_ASSETS.hit.src);
-        hitSound.volume = AUDIO_ASSETS.hit.volume;
-        setHitSound(hitSound);
-
-        const successSound = new Audio(AUDIO_ASSETS.success.src);
-        successSound.volume = AUDIO_ASSETS.success.volume;
-        setSuccessSound(successSound);
-
-        console.log('Sistema de áudio inicializado com sucesso');
-      } catch (error) {
-        console.error('Erro ao carregar áudio:', error);
-        addNotification({
-          id: Date.now().toString(),
-          type: 'warning',
-          title: 'Áudio',
-          message: 'Não foi possível carregar alguns arquivos de áudio',
-          duration: 5000,
-        });
-      }
-    };
-
-    loadAudio();
-  }, [setBackgroundMusic, setHitSound, setSuccessSound, addNotification]);
-};
-
-// Game component
+// Game component - memoized for performance
 const Game = memo(() => {
-  const [selectedMarket, setSelectedMarket] = useState<BuildingType | null>(null);
+  const [selectedBuildingType, setSelectedBuildingType] = useState<BuildingType | null>(null);
+  const [marketBuilding, setMarketBuilding] = useState<any>(null);
 
-  const handleMarketSelect = useCallback((building: BuildingType | null) => {
-    setSelectedMarket(building);
+  const handleBuildingSelect = useCallback((buildingType: BuildingType | null) => {
+    setSelectedBuildingType(buildingType);
+  }, []);
+
+  const handleMarketSelect = useCallback((building: any) => {
+    setMarketBuilding(building);
   }, []);
 
   const handleMarketClose = useCallback(() => {
-    setSelectedMarket(null);
+    setMarketBuilding(null);
   }, []);
 
   return (
-    <div className="relative w-full h-screen overflow-hidden">
-      <KeyboardControls map={KEYBOARD_MAP}>
-        <ErrorBoundary
-          fallback={ErrorFallback}
-          onError={(error) => {
-            console.error('Erro no canvas 3D:', error);
-          }}
-        >
-          <GameCanvas onMarketSelect={handleMarketSelect} />
-        </ErrorBoundary>
-        
-        <GameUI />
-        
+    <>
+      <div className="fixed inset-0 bg-gradient-to-b from-blue-900 to-blue-600">
+        <KeyboardControls map={keyboardMap}>
+          <Canvas
+            camera={{
+              position: [10, 10, 10],
+              fov: 60,
+              near: 0.1,
+              far: 1000
+            }}
+            shadows
+            className="w-full h-full"
+          >
+            <Suspense fallback={null}>
+              <World
+                selectedBuildingType={selectedBuildingType}
+                onMarketSelect={handleMarketSelect}
+              />
+              <Preload all />
+            </Suspense>
+          </Canvas>
+        </KeyboardControls>
+      </div>
+
+      <GameUI onBuildingSelect={handleBuildingSelect} />
+
+      {marketBuilding && (
         <MarketWindow
-          isOpen={selectedMarket !== null}
+          building={marketBuilding}
           onClose={handleMarketClose}
         />
-      </KeyboardControls>
-      
-      <NotificationContainer />
-    </div>
+      )}
+    </>
   );
 });
 
 Game.displayName = 'Game';
 
 // Main App component
-const App: React.FC = () => {
-  const [isLoading, setIsLoading] = useState(true);
+function App() {
   const { phase } = useGame();
+  const { initAudio } = useAudio();
+  const addNotification = useNotificationStore((state) => state.addNotification);
 
-  // Setup audio
-  useAudioSetup();
-
-  // Initialize app
   useEffect(() => {
-    const initializeApp = async () => {
-      try {
-        // Simulate some initialization time
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        
-        console.log('Aplicação inicializada com sucesso');
-        setIsLoading(false);
-      } catch (error) {
-        console.error('Erro na inicialização:', error);
-        setIsLoading(false);
-      }
-    };
+    console.log('🚀 Starting application in development mode');
 
-    initializeApp();
+    if (typeof window !== 'undefined') {
+      console.log('📊 React DevTools available');
+    }
+
+    console.log('✅ Application initialized successfully');
   }, []);
 
-  // Show loading screen
-  if (isLoading) {
-    return <LoadingScreen />;
-  }
+  useEffect(() => {
+    // Initialize audio system
+    const handleFirstUserInteraction = () => {
+      initAudio();
+      console.log('Sistema de áudio inicializado com sucesso');
 
-  // Show interface for non-playing phases
-  if (phase !== 'playing') {
-    return (
-      <ErrorBoundary fallback={ErrorFallback}>
-        <Interface />
-        <NotificationContainer />
-      </ErrorBoundary>
-    );
-  }
+      // Remove event listeners after first interaction
+      document.removeEventListener('click', handleFirstUserInteraction);
+      document.removeEventListener('keydown', handleFirstUserInteraction);
+      document.removeEventListener('touchstart', handleFirstUserInteraction);
+    };
 
-  // Show game
+    // Add event listeners for first user interaction
+    document.addEventListener('click', handleFirstUserInteraction);
+    document.addEventListener('keydown', handleFirstUserInteraction);
+    document.addEventListener('touchstart', handleFirstUserInteraction);
+
+    return () => {
+      document.removeEventListener('click', handleFirstUserInteraction);
+      document.removeEventListener('keydown', handleFirstUserInteraction);
+      document.removeEventListener('touchstart', handleFirstUserInteraction);
+    };
+  }, [initAudio]);
+
+  useEffect(() => {
+    // Global error handler
+    const handleGlobalError = (event: ErrorEvent) => {
+      console.log('Global error:', event.error);
+      addNotification({
+        type: 'error',
+        title: 'Erro no Sistema',
+        message: 'Ocorreu um erro inesperado. Verifique o console para detalhes.',
+      });
+    };
+
+    window.addEventListener('error', handleGlobalError);
+    return () => window.removeEventListener('error', handleGlobalError);
+  }, [addNotification]);
+
+  useEffect(() => {
+    console.log('Aplicação inicializada com sucesso');
+  }, []);
+
   return (
-    <ErrorBoundary fallback={ErrorFallback}>
+    <ErrorBoundary>
       <HooksErrorBoundary>
-        <Game />
+        <div className="w-screen h-screen overflow-hidden bg-gray-900 text-white">
+          {phase === 'login' && <Interface />}
+          {phase === 'playing' && <Game />}
+          <NotificationContainer />
+        </div>
       </HooksErrorBoundary>
+    </ErrorBoundary>
+  );
+}
+
+// App wrapper with error boundary
+const AppWrapper = () => {
+  return (
+    <ErrorBoundary>
+      <App />
     </ErrorBoundary>
   );
 };
 
-export default memo(App);
+export default AppWrapper;
