@@ -1,3 +1,4 @@
+
 import React, { useRef, useEffect, useState, useMemo } from 'react';
 import { useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
@@ -17,24 +18,29 @@ const Npc: React.FC<NpcProps> = ({ npc }) => {
   const rightArmRef = useRef<THREE.Mesh>(null);
   const particlesRef = useRef<THREE.Points>(null);
   const groupRef = useRef<THREE.Group>(null);
-  const lastPositionRef = useRef<[number, number, number]>(npc.position);
+  const lastPositionRef = useRef<[number, number, number]>(npc?.position || [0, 0, 0]);
 
   // Store hooks - always call these first
   const gameStore = useGameStore();
 
-  // Conditional logic after hooks
-  const isControlled = gameStore.isManualControl && gameStore.controlledNpcId === npc.id;
+  // Early return check after all hooks - but only if npc is null/undefined
+  if (!npc) {
+    return null;
+  }
 
-  // Early return check after all hooks
-  if (!npc) return null;
+  // Safe to use npc properties after null check
+  const isControlled = gameStore.isManualControl && gameStore.controlledNpcId === npc.id;
+  const npcType = npcTypes[npc.type];
+
+  // If npcType doesn't exist, return null
+  if (!npcType) {
+    return null;
+  }
 
   const handleClick = (event: THREE.Event) => {
     event.stopPropagation();
     window.dispatchEvent(new CustomEvent('npcClick', { detail: npc }));
   };
-
-  const npcType = npcTypes[npc.type];
-  if (!npcType) return null;
 
   // Criar geometria de partículas
   const particles = useMemo(() => {
