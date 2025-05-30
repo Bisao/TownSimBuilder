@@ -169,11 +169,11 @@ class NPCUtils {
     return availableResources.reduce((nearest, resource) => {
       const dist = Math.hypot(
         resource.position[0] - npc.position[0],
-        resource.position[1] - npc.position[2]
+        resource.position[2] - npc.position[2]
       );
       const nearestDist = Math.hypot(
         nearest.position[0] - npc.position[0],
-        nearest.position[1] - npc.position[2]
+        nearest.position[2] - npc.position[2]
       );
       return dist < nearestDist ? resource : nearest;
     });
@@ -186,11 +186,11 @@ class NPCUtils {
     return silos.reduce((best, silo) => {
       const distance = Math.hypot(
         silo.position[0] - npc.position[0],
-        silo.position[1] - npc.position[2]
+        silo.position[2] - npc.position[2]
       );
       const bestDistance = Math.hypot(
         best.position[0] - npc.position[0],
-        best.position[1] - npc.position[2]
+        best.position[2] - npc.position[2]
       );
       return distance < bestDistance ? silo : best;
     });
@@ -880,7 +880,7 @@ export const useNpcStore = create<NPCStoreState>()(
           // Atualizar métricas se estado mudou
           if (npc.state !== updatedNpc.state) {
             import('./useNpcMetrics').then(({ useNpcMetrics }) => {
-              useNpcMetrics.getState().updateActivity(npc.id, updatedNpc.state);
+              Applying skill bonuses to resource gathering in the NPC store.              useNpcMetrics.getState().updateActivity(npc.id, updatedNpc.state);
             }).catch(console.error);
           }
 
