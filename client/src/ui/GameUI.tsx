@@ -4,9 +4,6 @@ import { Controls } from "../game/types/controls";
 import { useResourceStore } from "../game/stores/useResourceStore";
 import { useBuildingStore } from "../game/stores/useBuildingStore";
 import { useNpcStore } from "../game/stores/useNpcStore";
-import { useEconomyStore } from "../game/stores/useEconomyStore";
-import { useEventStore } from "../game/stores/useEventStore";
-import { useResearchStore } from "../game/stores/useResearchStore";
 import { useAudio } from "../lib/stores/useAudio";
 import { Building } from "../game/stores/useBuildingStore";
 import ResourcePanel from "./ResourcePanel";
@@ -15,11 +12,9 @@ import NpcPanel from "./NpcPanel";
 import { useKeyboardControls } from "@react-three/drei";
 import { NPC } from "../game/stores/useNpcStore";
 import { useIsMobile } from "../hooks/use-is-mobile";
-// Sistemas removidos: Market, Research, Economy, Events, MapEditor
 import NpcMetricsPanel from "./NpcMetricsPanel";
 import SeedSelectionPanel from "./SeedSelectionPanel";
 import SiloPanel from "./SiloPanel";
-// Sistemas removidos: Market, Research, Economy, Events, MapEditor
 import CombatPanel from "./CombatPanel";
 import DummyStatsPanel from "./DummyStatsPanel";
 import { useDraggable } from "../hooks/useDraggable";
@@ -47,17 +42,11 @@ const GameUI = () => {
   // UI State
   const [showResourcePanel, setShowResourcePanel] = useState(true);
   const [showBuildingPanel, setShowBuildingPanel] = useState(true);
-  const [showResearchPanel, setShowResearchPanel] = useState(false);
-  const [showEventPanel, setShowEventPanel] = useState(false);
-  const [showEconomyPanel, setShowEconomyPanel] = useState(false);
   const [showNpcMetrics, setShowNpcMetrics] = useState(false);
-  const [showMapEditor, setShowMapEditor] = useState(false);
-  const [showMarket, setShowMarket] = useState(false);
   const [showSeedSelection, setShowSeedSelection] = useState(false);
   const [showSiloPanel, setShowSiloPanel] = useState(false);
   const [showNpcPanel, setShowNpcPanel] = useState(false);
   const [showCombat, setShowCombat] = useState(false);
-  const [showEvents, setShowEvents] = useState(false);
   const [showDummyStats, setShowDummyStats] = useState(false);
 
   // Selection state
@@ -71,7 +60,6 @@ const GameUI = () => {
     const initializeSystems = () => {
       try {
         useResourceStore.getState().initResources();
-        useResearchStore.getState().initResearches();
         console.log("Game systems initialized successfully");
       } catch (error) {
         console.error("Error initializing game systems:", error);
@@ -100,24 +88,6 @@ const GameUI = () => {
           if (buildingStore && typeof buildingStore.updateProduction === 'function') {
             buildingStore.updateProduction(Date.now());
           }
-
-          // Update economy
-          const economyStore = useEconomyStore.getState();
-          if (economyStore && typeof economyStore.calculateTaxes === 'function') {
-            economyStore.calculateTaxes();
-          }
-
-          // Update events
-          const eventStore = useEventStore.getState();
-          if (eventStore && typeof eventStore.updateEvents === 'function') {
-            eventStore.updateEvents(deltaTime);
-          }
-
-          // Update research
-          const researchStore = useResearchStore.getState();
-          if (researchStore && typeof researchStore.updateResearch === 'function') {
-            researchStore.updateResearch(deltaTime);
-          }
         } catch (error) {
           console.error("Error in game loop:", error);
           // Optionally pause the game on critical errors
@@ -144,24 +114,8 @@ const GameUI = () => {
         setShowBuildingPanel(prev => !prev);
       }
 
-      if (event.key === 't' || event.key === 'T') {
-        setShowResearchPanel(prev => !prev);
-      }
-
       if (event.key === 'n' || event.key === 'N') {
         setShowNpcMetrics(prev => !prev);
-      }
-
-      if (event.key === 'm' || event.key === 'M') {
-        setShowMapEditor(prev => !prev);
-      }
-
-      if (event.key === 'e' || event.key === 'E') {
-        setShowEconomyPanel(prev => !prev);
-      }
-
-      if (event.key === 'v' || event.key === 'V') {
-        setShowEventPanel(prev => !prev);
       }
 
       // Audio toggle
@@ -320,7 +274,7 @@ const GameUI = () => {
       <div className="absolute bottom-2 left-2 right-2 lg:bottom-4 lg:left-4 lg:right-4 z-10 pointer-events-none">
         <div className="flex justify-center">
           <div className="bg-black/50 text-white p-2 lg:p-3 rounded-lg backdrop-blur-sm pointer-events-auto max-w-full overflow-x-auto">
-            <div className="grid grid-cols-4 lg:grid-cols-8 gap-1 lg:gap-2 text-xs min-w-max">
+            <div className="grid grid-cols-3 lg:grid-cols-6 gap-1 lg:gap-2 text-xs min-w-max">
               <button
                 onClick={() => setShowResourcePanel(!showResourcePanel)}
                 className={`px-2 lg:px-3 py-1 rounded whitespace-nowrap responsive-text ${showResourcePanel ? 'bg-blue-600' : 'bg-gray-600'} hover:bg-blue-700 transition-colors`}
@@ -334,34 +288,10 @@ const GameUI = () => {
                 Construções (B)
               </button>
               <button
-                onClick={() => setShowResearchPanel(!showResearchPanel)}
-                className={`px-2 lg:px-3 py-1 rounded whitespace-nowrap responsive-text ${showResearchPanel ? 'bg-blue-600' : 'bg-gray-600'} hover:bg-blue-700 transition-colors`}
-              >
-                Pesquisa (T)
-              </button>
-              <button
-                onClick={() => setShowEconomyPanel(!showEconomyPanel)}
-                className={`px-2 lg:px-3 py-1 rounded whitespace-nowrap responsive-text ${showEconomyPanel ? 'bg-blue-600' : 'bg-gray-600'} hover:bg-blue-700 transition-colors`}
-              >
-                Economia (E)
-              </button>
-              <button
-                onClick={() => setShowEventPanel(!showEventPanel)}
-                className={`px-2 lg:px-3 py-1 rounded whitespace-nowrap responsive-text ${showEventPanel ? 'bg-blue-600' : 'bg-gray-600'} hover:bg-blue-700 transition-colors`}
-              >
-                Eventos (V)
-              </button>
-              <button
                 onClick={() => setShowNpcMetrics(!showNpcMetrics)}
                 className={`px-2 lg:px-3 py-1 rounded whitespace-nowrap responsive-text ${showNpcMetrics ? 'bg-blue-600' : 'bg-gray-600'} hover:bg-blue-700 transition-colors`}
               >
                 Métricas (N)
-              </button>
-              <button
-                onClick={() => setShowMapEditor(!showMapEditor)}
-                className={`px-2 lg:px-3 py-1 rounded whitespace-nowrap responsive-text ${showMapEditor ? 'bg-blue-600' : 'bg-gray-600'} hover:bg-blue-700 transition-colors`}
-              >
-                Editor (M)
               </button>
               <button
                 onClick={() => {
@@ -384,12 +314,7 @@ const GameUI = () => {
       <ResourcePanel isVisible={showResourcePanel} />
       <BuildingPanel isVisible={showBuildingPanel} />
 
-      {/* Sistemas removidos: Market, Research, Economy, Events, MapEditor */}
-
       {showNpcMetrics && <NpcMetricsPanel />}
-      <MapEditorPanel isVisible={showMapEditor} />
-
-      {/* Sistemas removidos: Market, Research, Economy, Events, MapEditor */}
 
       {/* Other UI components */}
       {selectedNpc && (
@@ -424,12 +349,6 @@ const GameUI = () => {
           siloId={selectedSiloId}
         />
       )}
-
-      {/* Painel de Eventos */}
-      <EventPanel 
-        isVisible={showEvents}
-        onClose={() => setShowEvents(false)}
-      />
 
       {/* Painel de Estatísticas do Dummy */}
       <DummyStatsPanel 
