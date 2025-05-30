@@ -18,7 +18,7 @@ interface Task {
 }
 
 const TaskPanel: React.FC<TaskPanelProps> = ({ npc, onClose }) => {
-  const { startNpcWork, setNpcControlMode } = useNpcStore();
+  const { startNpcWork, setNpcControlMode, assignWork } = useNpcStore();
 
   const { dragRef, position, isDragging, handleMouseDown } = useDraggable({
     initialPosition: { x: window.innerWidth / 2 - 200, y: window.innerHeight / 2 - 300 }
@@ -140,102 +140,55 @@ const TaskPanel: React.FC<TaskPanelProps> = ({ npc, onClose }) => {
   };
 
   const handleTaskStart = (taskId: string) => {
-    // Colocar NPC em modo autônomo para executar a tarefa
-    setNpcControlMode(npc.id, "autonomous");
+    try {
+      // Colocar NPC em modo autônomo para executar a tarefa
+      setNpcControlMode(npc.id, "autonomous");
 
-    // Se for aldeão, mudar temporariamente o tipo para executar o trabalho
-    if (npc.type === "villager") {
-      let newType = npc.type;
+      // Atribuir trabalho baseado na tarefa
       switch (taskId) {
         case "mining":
-          newType = "miner";
+          assignWork(npc.id, "miner");
           break;
         case "lumbering":
-          newType = "lumberjack";
+          assignWork(npc.id, "lumberjack");
           break;
         case "farming":
-          newType = "farmer";
+          assignWork(npc.id, "farmer");
           break;
         case "baking":
-          newType = "baker";
+          assignWork(npc.id, "baker");
+          break;
+        case "transport":
+          // Não precisa atribuir trabalho específico para transporte
+          break;
+        case "rest":
+          // Para descansar, remove trabalho atual
+          assignWork(npc.id, null);
           break;
       }
 
-      // Atualizar o tipo do NPC temporariamente
-      useNpcStore.setState(state => ({
-        npcs: state.npcs.map(n => 
-          n.id === npc.id 
-            ? { 
-                ...n, 
-                type: newType,
-                // Se for fazendeiro, adicionar dados necessários
-                ...(newType === "farmer" && !n.farmerData && {
-                  farmerData: {
-                    currentTask: "waiting",
-                    targetFarmId: null,
-                    targetSiloId: null,
-                    selectedSeed: null
-                  }
-                })
-              }
-            : n
-        )
-      }));
+      // Iniciar trabalho
+      startNpcWork(npc.id);
+
+      console.log(`Tarefa ${taskId} iniciada para NPC ${npc.id}`);
+      onClose();
+    } catch (error) {
+      console.error(`Erro ao iniciar tarefa ${taskId}:`, error);
     }
-
-    switch (taskId) {
-      case "mining":
-      case "lumbering":
-      case "farming":
-      case "baking":
-        startNpcWork(npc.id);
-        break;
-
-      case "transport":
-        // NPC automaticamente irá para silo se tiver itens
-        if (npc.inventory.amount > 0) {
-          useNpcStore.setState(state => ({
-            npcs: state.npcs.map(n => 
-              n.id === npc.id 
-                ? { ...n, state: "idle" as const }
-                : n
-            )
-          }));
-        }
-        break;
-
-      case "rest":
-        // Forçar NPC a ir para casa
-        useNpcStore.setState(state => ({
-          npcs: state.npcs.map(n => 
-            n.id === npc.id 
-              ? { 
-                  ...n, 
-                  state: "idle" as const,
-                  targetPosition: null,
-                  targetResource: null,
-                  targetBuildingId: null
-                }
-              : n
-          )
-        }));
-        break;
-    }
-
-    onClose();
   };
 
   const tasks = getTasks();
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[9999] pointer-events-auto"
+    <div 
+      className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[9999] pointer-events-auto"
       onClick={(e) => {
         if (e.target === e.currentTarget) onClose();
         e.stopPropagation();
       }}
     >
       <div 
-        className="bg-white rounded-xl w-96 max-h-[80vh] overflow-hidden relative shadow-2xl"
+        className="bg-gradient-to-br from-white to-gray-50 rounded-2xl shadow-2xl responsive-panel-medium overflow-hidden relative border border-gray-200"
         style={{
           position: 'absolute',
           left: `${position.x}px`,
@@ -246,129 +199,103 @@ const TaskPanel: React.FC<TaskPanelProps> = ({ npc, onClose }) => {
         onMouseDown={handleMouseDown}
       >
         {/* Header */}
-        <div className="flex justify-between items-center p-4 border-b border-gray-200 bg-gradient-to-r from-blue-500 to-purple-600">
-          <div className="flex items-center gap-3">
-            <div className="w-8 h-8 bg-white rounded-full flex items-center justify-center">
-              <i className="fa-solid fa-tasks text-blue-600"></i>
-            </div>
-            <h2 className="text-lg font-bold text-white">Tarefas Disponíveis</h2>
-          </div>
-          <button 
-            onClick={onClose}
-            className="text-white hover:text-gray-200 transition-colors"
-          >
-            <i className="fa-solid fa-times"></i>
-          </button>
-        </div>
+        <div className="bg-gradient-to-r from-purple-600 to-indigo-700 p-6 text-white relative overflow-hidden">
+          <div className="absolute inset-0 bg-black/10"></div>
+          <div className="relative z-10">
+            <div className="flex justify-between items-start">
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center border-2 border-white/30">
+                  <i className="fa-solid fa-tasks text-xl text-white"></i>
+                </div>
+                <div>
+                  <h2 className="text-2xl font-bold text-white drop-shadow-md">Gerenciar Tarefas</h2>
+                  <p className="text-white/90 font-medium">{npc.name}</p>
+                </div>
+              </div>
 
-        {/* NPC Info */}
-        <div className="p-4 bg-gray-50 border-b border-gray-200">
-          <div className="flex items-center gap-3">
-            <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
-              npc.type === "miner" ? "bg-orange-100" :
-              npc.type === "lumberjack" ? "bg-green-100" :
-              npc.type === "farmer" ? "bg-yellow-100" : "bg-blue-100"
-            }`}>
-              <i className={`fa-solid ${
-                npc.type === "miner" ? "fa-helmet-safety" :
-                npc.type === "lumberjack" ? "fa-tree" :
-                npc.type === "farmer" ? "fa-wheat-awn" : "fa-bread-slice"
-              } ${
-                npc.type === "miner" ? "text-orange-600" :
-                npc.type === "lumberjack" ? "text-green-600" :
-                npc.type === "farmer" ? "text-yellow-600" : "text-blue-600"
-              }`}></i>
-            </div>
-            <div>
-              <h3 className="font-semibold text-gray-800">{npc.name}</h3>
-              <p className="text-sm text-gray-600">
-                {npc.type === "miner" ? "Minerador" :
-                 npc.type === "lumberjack" ? "Lenhador" :
-                 npc.type === "farmer" ? "Fazendeiro" : "Padeiro"}
-              </p>
+              <button 
+                onClick={onClose}
+                className="w-10 h-10 bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-full flex items-center justify-center transition-all duration-200 border border-white/30"
+              >
+                <i className="fa-solid fa-times text-white"></i>
+              </button>
             </div>
           </div>
         </div>
 
-        {/* Tasks List */}
-        <div className="max-h-96 overflow-y-auto">
-          {tasks.map((task) => (
-            <div 
-              key={task.id}
-              className={`p-4 border-b border-gray-100 transition-colors ${
-                task.available 
-                  ? "hover:bg-gray-50 cursor-pointer" 
-                  : "bg-gray-100 cursor-not-allowed opacity-60"
-              }`}
-              onClick={() => task.available && handleTaskStart(task.id)}
-            >
-              <div className="flex items-start gap-3">
-                <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
-                  task.available ? "bg-blue-100" : "bg-gray-200"
-                }`}>
-                  <i className={`fa-solid ${task.icon} ${
-                    task.available ? task.color : "text-gray-400"
-                  }`}></i>
-                </div>
-                <div className="flex-1">
-                  <h4 className={`font-medium ${
-                    task.available ? "text-gray-800" : "text-gray-500"
-                  }`}>
-                    {task.name}
-                  </h4>
-                  <p className={`text-sm mt-1 ${
-                    task.available ? "text-gray-600" : "text-gray-400"
-                  }`}>
-                    {task.description}
-                  </p>
-                  {task.requirements && (
-                    <div className="mt-2">
-                      <p className="text-xs text-gray-500 mb-1">Requisitos:</p>
-                      <ul className="text-xs text-gray-500">
-                        {task.requirements.map((req, index) => (
-                          <li key={index} className="flex items-center gap-1">
-                            <i className="fa-solid fa-check text-green-500 text-xs"></i>
-                            {req}
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  )}
-                </div>
-                {task.available && (
-                  <div className="text-blue-500">
-                    <i className="fa-solid fa-play text-sm"></i>
+        {/* Content */}
+        <div className="p-6 max-h-[70vh] overflow-y-auto custom-scrollbar">
+          <div className="space-y-4">
+            {tasks.map((task) => (
+              <div
+                key={task.id}
+                className={`p-4 rounded-xl border-2 transition-all ${
+                  task.available 
+                    ? "bg-white hover:bg-gray-50 border-gray-200 hover:border-purple-300 cursor-pointer" 
+                    : "bg-gray-100 border-gray-300 opacity-50 cursor-not-allowed"
+                }`}
+                onClick={() => task.available && handleTaskStart(task.id)}
+              >
+                <div className="flex items-center gap-4">
+                  <div className={`w-12 h-12 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-full flex items-center justify-center shadow-lg`}>
+                    <i className={`fa-solid ${task.icon} text-white text-lg`}></i>
                   </div>
-                )}
+
+                  <div className="flex-1">
+                    <h3 className={`font-bold text-lg ${task.color} mb-1`}>{task.name}</h3>
+                    <p className="text-gray-600 text-sm mb-2">{task.description}</p>
+
+                    {task.requirements && (
+                      <div className="flex flex-wrap gap-1">
+                        {task.requirements.map((req, index) => (
+                          <span
+                            key={index}
+                            className="px-2 py-1 bg-gray-200 text-gray-700 rounded-md text-xs"
+                          >
+                            {req}
+                          </span>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="flex items-center">
+                    {task.available ? (
+                      <i className="fa-solid fa-play text-green-600 text-xl"></i>
+                    ) : (
+                      <i className="fa-solid fa-lock text-gray-400 text-xl"></i>
+                    )}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Status atual do NPC */}
+          <div className="mt-6 p-4 bg-gradient-to-br from-blue-50 to-indigo-50 border border-blue-200 rounded-xl">
+            <h3 className="font-semibold text-blue-800 mb-3 flex items-center gap-2">
+              <i className="fa-solid fa-info-circle"></i>
+              Status Atual
+            </h3>
+            <div className="grid grid-cols-2 gap-3 text-sm">
+              <div>
+                <span className="text-blue-600 font-medium">Trabalho:</span>
+                <div className="text-blue-800">{npc.assignedWork || "Nenhum"}</div>
+              </div>
+              <div>
+                <span className="text-blue-600 font-medium">Estado:</span>
+                <div className="text-blue-800">{npc.state}</div>
+              </div>
+              <div>
+                <span className="text-blue-600 font-medium">Energia:</span>
+                <div className="text-blue-800">{Math.round(npc.needs.energy)}%</div>
+              </div>
+              <div>
+                <span className="text-blue-600 font-medium">Satisfação:</span>
+                <div className="text-blue-800">{Math.round(npc.needs.satisfaction)}%</div>
               </div>
             </div>
-          ))}
-        </div>
-
-        {/* Footer */}
-        <div className="p-4 bg-gray-50 border-t border-gray-200">
-          <div className="flex items-center gap-2 text-sm text-gray-600">
-            <i className="fa-solid fa-info-circle text-blue-500"></i>
-            <span>Clique em uma tarefa para iniciar automaticamente</span>
           </div>
-
-          {npc.type === "villager" && (
-            <div className="mt-2 p-2 bg-green-100 rounded-lg border border-green-200">
-              <p className="text-xs text-green-700">
-                <i className="fa-solid fa-star"></i>
-                {" "}Aldeões são versáteis e podem realizar qualquer trabalho disponível.
-              </p>
-            </div>
-          )}
-
-          {npc.controlMode === "manual" && (
-            <div className="mt-2 p-2 bg-yellow-100 rounded-lg border border-yellow-200">
-              <p className="text-xs text-yellow-700">
-                <i className="fa-solid fa-exclamation-triangle"></i>
-                {" "}NPC está em modo manual. As tarefas mudarão para modo autônomo.
-              </p>
-            </div>
-          )}
         </div>
       </div>
     </div>
