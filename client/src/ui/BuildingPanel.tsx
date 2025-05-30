@@ -92,7 +92,7 @@ const BuildingPanel: React.FC<BuildingPanelProps> = ({ isVisible, onClose }) => 
                   <Button 
                     variant="secondary" 
                     size="sm"
-                    onClick={() => placeBuilding(buildingType)}
+                    onClick={() => placeBuilding(buildingType as BuildingType, [0, 0])}
                   >
                     Construir
                   </Button>

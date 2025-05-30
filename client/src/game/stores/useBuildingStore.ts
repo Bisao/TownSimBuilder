@@ -458,6 +458,13 @@ export const useBuildingStore = create<BuildingStore>()(
 
     canPlaceBuilding: (type: BuildingType, position: [number, number]) => {
       const { getBuildingAt } = get();
+      
+      // Verificar se position é um array válido
+      if (!Array.isArray(position) || position.length < 2) {
+        console.warn('Invalid position provided to canPlaceBuilding:', position);
+        return false;
+      }
+      
       const [x, z] = position;
 
       // Check if building type exists
