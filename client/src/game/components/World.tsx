@@ -56,9 +56,6 @@ const World: React.FC<WorldProps> = ({ selectedBuildingType, onMarketSelect }) =
   const { naturalResources, generateNaturalResources, clearAllNaturalResources } = useResourceStore();
   const { addDummy } = useDummyStore();
 
-  // Natural resources state
-  const [naturalResources, setNaturalResources] = useState<NaturalResource[]>([]);
-
   // Initialize world
   useEffect(() => {
     if (!isInitialized) {
@@ -71,7 +68,7 @@ const World: React.FC<WorldProps> = ({ selectedBuildingType, onMarketSelect }) =
       initResources();
 
       // Generate natural resources
-      generateNaturalResources();
+      generateNaturalResourcesLocal();
 
       // Create initial market
       createInitialMarket();
@@ -81,9 +78,8 @@ const World: React.FC<WorldProps> = ({ selectedBuildingType, onMarketSelect }) =
   }, [isInitialized, initialize, initResources]);
 
   // Natural resources generation disabled
-  const generateNaturalResources = () => {
+  const generateNaturalResourcesLocal = () => {
     // Disabled to keep grid clean
-    setNaturalResources([]);
     window.naturalResources = [];
   };
 
@@ -98,7 +94,7 @@ const World: React.FC<WorldProps> = ({ selectedBuildingType, onMarketSelect }) =
       // Update natural resources state if changes occurred
       const updatedResources = window.naturalResources.filter(r => !r.lastCollected);
       if (updatedResources.length !== naturalResources.filter(r => !r.lastCollected).length) {
-        setNaturalResources([...window.naturalResources]);
+        // Natural resources are managed by the store
       }
     }
   });
