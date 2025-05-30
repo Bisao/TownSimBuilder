@@ -90,7 +90,7 @@ const Npc: React.FC<NpcProps> = ({ npc }) => {
         }}
       >
         <CharacterModel
-          position={npc.position}
+          position={[0, 0, 0]}
           color={color}
           scale={0.8}
           rotation={[0, 0, 0]}
