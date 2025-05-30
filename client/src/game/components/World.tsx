@@ -53,7 +53,7 @@ const World: React.FC<WorldProps> = ({ selectedBuildingType, onMarketSelect }) =
   // Store states
   const { isInitialized, initialize, gameMode, isManualControl, controlledNpcId } = useGameStore();
   const { buildings, placeBuilding, selectedBuildingType: storeBuildingType, setSelectedBuildingType, clearAllBuildings } = useBuildingStore();
-  const { naturalResources, generateNaturalResources, clearAllNaturalResources } = useResourceStore();
+  const { naturalResources, clearAllNaturalResources } = useResourceStore();
   const { addDummy } = useDummyStore();
 
   // Initialize world
@@ -121,8 +121,6 @@ const World: React.FC<WorldProps> = ({ selectedBuildingType, onMarketSelect }) =
   };
 
   useEffect(() => {
-    generateNaturalResources(30);
-
     // Add global event listener for clearing grid
     const handleClearGrid = () => {
       handleClearAll();
@@ -133,7 +131,7 @@ const World: React.FC<WorldProps> = ({ selectedBuildingType, onMarketSelect }) =
     return () => {
       window.removeEventListener('clearGrid', handleClearGrid);
     };
-  }, [generateNaturalResources]);
+  }, []);
 
   // Training dummy addition disabled to keep grid clean
 
