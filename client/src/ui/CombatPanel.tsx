@@ -79,27 +79,34 @@ const CombatPanel: React.FC<CombatPanelProps> = ({ entityId, onClose }) => {
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-2 sm:p-4">
-      <div className="bg-white rounded-lg shadow-xl w-full max-w-xs sm:max-w-lg lg:max-w-xl h-full max-h-[95vh] sm:max-h-[90vh] overflow-hidden">
-      {/* Header */}
       <div 
-        className="bg-gradient-to-r from-red-800 to-red-600 p-4 rounded-t-lg cursor-move"
+        className="bg-white rounded-lg shadow-xl w-full max-w-xs sm:max-w-lg lg:max-w-xl h-full max-h-[95vh] sm:max-h-[90vh] overflow-hidden"
+        style={{
+          position: 'absolute',
+          left: `${position.x}px`,
+          top: `${position.y}px`,
+          cursor: isDragging ? 'grabbing' : 'grab',
+        }}
+        ref={dragRef}
         onMouseDown={handleMouseDown}
       >
-        <div className="flex justify-between items-center">
-          <h2 className="text-xl font-bold text-white flex items-center gap-2">
-            <i className="fa-solid fa-sword"></i>
-            Combate - {entity.name}
-          </h2>
-          <button 
-            onClick={onClose}
-            className="w-8 h-8 bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-full flex items-center justify-center transition-all duration-200"
-          >
-            <i className="fa-solid fa-times text-white"></i>
-          </button>
+        {/* Header */}
+        <div className="bg-gradient-to-r from-red-800 to-red-600 p-4 rounded-t-lg">
+          <div className="flex justify-between items-center">
+            <h2 className="text-xl font-bold text-white flex items-center gap-2">
+              <i className="fa-solid fa-sword"></i>
+              Combate - {entity.name}
+            </h2>
+            <button 
+              onClick={onClose}
+              className="w-8 h-8 bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-full flex items-center justify-center transition-all duration-200"
+            >
+              <i className="fa-solid fa-times text-white"></i>
+            </button>
+          </div>
         </div>
-      </div>
 
-      <div className="p-6 space-y-6">
+        <div className="p-6 space-y-6 max-h-[calc(90vh-200px)] overflow-y-auto">
         {/* Status do Combatente */}
         <div className="bg-gray-800 rounded-lg p-4">
           <h3 className="text-lg font-semibold text-white mb-3">Status</h3>
