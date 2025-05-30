@@ -29,9 +29,8 @@ const ResourcePanel: React.FC<ResourcePanelProps> = ({ isVisible }) => {
     >
       <h2 className="responsive-text-lg font-bold mb-2">Recursos</h2>
       <div className="flex-1 overflow-y-auto">
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2"></div>
-      </div>
-        {Object.values(resourceTypes).map((resource) => (
+        <div className="grid grid-cols-1 gap-2">
+          {Object.values(resourceTypes).map((resource) => (
             <div
               key={resource.id}
               className="flex items-center gap-2"
@@ -48,6 +47,7 @@ const ResourcePanel: React.FC<ResourcePanelProps> = ({ isVisible }) => {
               </div>
             </div>
           ))}
+        </div>
       </div>
     </div>
   );
