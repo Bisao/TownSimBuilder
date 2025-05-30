@@ -16,6 +16,59 @@ interface NpcPanelProps {
 }
 
 const NpcPanel: React.FC<NpcPanelProps> = ({ npc, onClose }) => {
+  const { updateNpc, deleteNpc } = useNpcStore();
+  const { buildings } = useBuildingStore();
+  const { setManualControl } = useGameStore();
+  const { isDragging, position, handleMouseDown } = useDraggable("npc-panel");
+  const [showSeedSelection, setShowSeedSelection] = useState(false);
+  const [showSkillTree, setShowSkillTree] = useState(false);
+  const [showInventory, setShowInventory] = useState(false);
+  const [showNpcCreation, setShowNpcCreation] = useState(false);
+  const [showTaskPanel, setShowTaskPanel] = useState(false);
+
+  if (!npc) return null;
+
+  const npcType = npcTypes.find(type => type.id === npc.type);
+  const currentWork = npc.workType ? workTypes.find(work => work.id === npc.workType) : null;
+  const npcHome = npc.homeId ? buildings.find(b => b.id === npc.homeId) : null;
+
+  const stateTranslations = {
+    idle: "Ocioso",
+    moving: "Movendo",
+    working: "Trabalhando",
+    resting: "Descansando",
+    gathering: "Coletando",
+    hunting: "Caçando",
+    farming: "Fazendeiro",
+    trading: "Comerciando",
+    building: "Construindo",
+    researching: "Pesquisando"
+  };
+
+  const handleDeleteNpc = () => {
+    if (window.confirm(`Tem certeza que deseja deletar ${npc.name}?`)) {
+      deleteNpc(npc.id);
+      onClose();
+    }
+  };
+
+  const handleManualControl = () => {
+    setManualControl(npc.id);
+  };
+
+  return (
+    <>
+      <div
+        className={`fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-gradient-to-br from-gray-900 to-gray-800 text-white rounded-xl shadow-2xl border border-gray-700 responsive-panel-large ui-panel overflow-hidden ${
+          isDragging ? "z-50" : "z-20"
+        }`}
+        style={{
+          transform: `translate(${position.x - window.innerWidth/2}px, ${position.y - window.innerHeight/2}px)`,
+          pointerEvents: "auto",
+        }}
+      >
+
+const NpcPanel: React.FC<NpcPanelProps> = ({ npc, onClose }) => {
   const { updateNpc, spawnNPC } = useNpcStore();
   const { buildings } = useBuildingStore();
 

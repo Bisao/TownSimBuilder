@@ -284,16 +284,16 @@ const GameUI = () => {
   return (
     <>
       {/* Top HUD */}
-      <div className="absolute top-4 left-4 right-4 z-10 pointer-events-none">
+      <div className="absolute top-2 left-2 right-2 lg:top-4 lg:left-4 lg:right-4 z-10 pointer-events-none">
         <div className="flex justify-between items-start">
           {/* Left side - Game info */}
-          <div className="bg-black/50 text-white p-3 rounded-lg backdrop-blur-sm pointer-events-auto">
-            <div className="flex items-center gap-4">
-              <div className="text-sm">
+          <div className="bg-black/50 text-white p-2 lg:p-3 rounded-lg backdrop-blur-sm pointer-events-auto">
+            <div className="flex items-center gap-2 lg:gap-4">
+              <div className="responsive-text">
                 <div className="font-semibold">{formatTime(timeCycle)}</div>
                 <div className="text-xs opacity-80">{getTimePeriod(timeCycle)}</div>
               </div>
-              <div className="text-sm">
+              <div className="responsive-text">
                 <div className="font-semibold">Velocidade: {timeSpeed.toFixed(1)}x</div>
                 <div className="text-xs opacity-80">{isPaused ? "PAUSADO" : "RODANDO"}</div>
               </div>
@@ -301,8 +301,8 @@ const GameUI = () => {
           </div>
 
           {/* Right side - Mode info */}
-          <div className="bg-black/50 text-white p-3 rounded-lg backdrop-blur-sm pointer-events-auto">
-            <div className="text-sm">
+          <div className="bg-black/50 text-white p-2 lg:p-3 rounded-lg backdrop-blur-sm pointer-events-auto">
+            <div className="responsive-text">
               <div className="font-semibold">Modo: {gameMode === "build" ? "Construção" : "Visualização"}</div>
               {isManualControl && controlledNpcId && (
                 <div className="text-xs opacity-80">Controlando NPC: {controlledNpcId}</div>
@@ -313,49 +313,49 @@ const GameUI = () => {
       </div>
 
       {/* Bottom HUD */}
-      <div className="absolute bottom-4 left-4 right-4 z-10 pointer-events-none">
+      <div className="absolute bottom-2 left-2 right-2 lg:bottom-4 lg:left-4 lg:right-4 z-10 pointer-events-none">
         <div className="flex justify-center">
-          <div className="bg-black/50 text-white p-3 rounded-lg backdrop-blur-sm pointer-events-auto">
-            <div className="grid grid-cols-8 gap-2 text-xs">
+          <div className="bg-black/50 text-white p-2 lg:p-3 rounded-lg backdrop-blur-sm pointer-events-auto max-w-full overflow-x-auto">
+            <div className="grid grid-cols-4 lg:grid-cols-8 gap-1 lg:gap-2 text-xs min-w-max">
               <button
                 onClick={() => setShowResourcePanel(!showResourcePanel)}
-                className={`px-3 py-1 rounded ${showResourcePanel ? 'bg-blue-600' : 'bg-gray-600'} hover:bg-blue-700 transition-colors`}
+                className={`px-2 lg:px-3 py-1 rounded whitespace-nowrap responsive-text ${showResourcePanel ? 'bg-blue-600' : 'bg-gray-600'} hover:bg-blue-700 transition-colors`}
               >
                 Recursos (R)
               </button>
               <button
                 onClick={() => setShowBuildingPanel(!showBuildingPanel)}
-                className={`px-3 py-1 rounded ${showBuildingPanel ? 'bg-blue-600' : 'bg-gray-600'} hover:bg-blue-700 transition-colors`}
+                className={`px-2 lg:px-3 py-1 rounded whitespace-nowrap responsive-text ${showBuildingPanel ? 'bg-blue-600' : 'bg-gray-600'} hover:bg-blue-700 transition-colors`}
               >
                 Construções (B)
               </button>
               <button
                 onClick={() => setShowResearchPanel(!showResearchPanel)}
-                className={`px-3 py-1 rounded ${showResearchPanel ? 'bg-blue-600' : 'bg-gray-600'} hover:bg-blue-700 transition-colors`}
+                className={`px-2 lg:px-3 py-1 rounded whitespace-nowrap responsive-text ${showResearchPanel ? 'bg-blue-600' : 'bg-gray-600'} hover:bg-blue-700 transition-colors`}
               >
                 Pesquisa (T)
               </button>
               <button
                 onClick={() => setShowEconomyPanel(!showEconomyPanel)}
-                className={`px-3 py-1 rounded ${showEconomyPanel ? 'bg-blue-600' : 'bg-gray-600'} hover:bg-blue-700 transition-colors`}
+                className={`px-2 lg:px-3 py-1 rounded whitespace-nowrap responsive-text ${showEconomyPanel ? 'bg-blue-600' : 'bg-gray-600'} hover:bg-blue-700 transition-colors`}
               >
                 Economia (E)
               </button>
               <button
                 onClick={() => setShowEventPanel(!showEventPanel)}
-                className={`px-3 py-1 rounded ${showEventPanel ? 'bg-blue-600' : 'bg-gray-600'} hover:bg-blue-700 transition-colors`}
+                className={`px-2 lg:px-3 py-1 rounded whitespace-nowrap responsive-text ${showEventPanel ? 'bg-blue-600' : 'bg-gray-600'} hover:bg-blue-700 transition-colors`}
               >
                 Eventos (V)
               </button>
               <button
                 onClick={() => setShowNpcMetrics(!showNpcMetrics)}
-                className={`px-3 py-1 rounded ${showNpcMetrics ? 'bg-blue-600' : 'bg-gray-600'} hover:bg-blue-700 transition-colors`}
+                className={`px-2 lg:px-3 py-1 rounded whitespace-nowrap responsive-text ${showNpcMetrics ? 'bg-blue-600' : 'bg-gray-600'} hover:bg-blue-700 transition-colors`}
               >
                 Métricas (N)
               </button>
               <button
                 onClick={() => setShowMapEditor(!showMapEditor)}
-                className={`px-3 py-1 rounded ${showMapEditor ? 'bg-blue-600' : 'bg-gray-600'} hover:bg-blue-700 transition-colors`}
+                className={`px-2 lg:px-3 py-1 rounded whitespace-nowrap responsive-text ${showMapEditor ? 'bg-blue-600' : 'bg-gray-600'} hover:bg-blue-700 transition-colors`}
               >
                 Editor (M)
               </button>
@@ -367,7 +367,7 @@ const GameUI = () => {
                     playBackgroundMusic();
                   }
                 }}
-                className={`px-3 py-1 rounded ${isBackgroundMusicPlaying ? 'bg-green-600' : 'bg-gray-600'} hover:bg-green-700 transition-colors`}
+                className={`px-2 lg:px-3 py-1 rounded whitespace-nowrap responsive-text ${isBackgroundMusicPlaying ? 'bg-green-600' : 'bg-gray-600'} hover:bg-green-700 transition-colors`}
               >
                 Áudio (U)
               </button>

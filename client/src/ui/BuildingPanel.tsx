@@ -1,4 +1,3 @@
-
 import React from "react";
 import { useGameStore } from "../game/stores/useGameStore";
 import { useResourceStore } from "../game/stores/useResourceStore";
@@ -21,18 +20,16 @@ const BuildingPanel = ({ isVisible }: { isVisible: boolean }) => {
   if (!isVisible) return null;
 
   return (
-    <div 
-      ref={dragRef}
+    <div
       className={cn(
-        "absolute top-20 right-4 bg-gradient-to-br from-gray-900/95 to-black/95 rounded-xl p-4 shadow-lg border border-gray-800 w-80",
-        isDragging && "opacity-80"
+        "absolute bg-gray-800 text-white p-3 lg:p-4 rounded-lg shadow-lg responsive-panel ui-panel",
+        isDragging ? "z-50" : "z-10"
       )}
       style={{
-        left: `${position.x}px`,
-        top: `${position.y}px`,
-        cursor: isDragging ? 'grabbing' : 'grab',
+        left: position.x,
+        top: position.y,
+        pointerEvents: "auto",
       }}
-      onMouseDown={handleMouseDown}
     >
       <h2 className="text-white text-center font-bold mb-4 text-lg">Estruturas</h2>
 

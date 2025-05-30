@@ -16,6 +16,21 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Responsive UI scaling */
+@media (min-width: 1920px) {
+  .ui-panel {
+    transform: scale(1.2);
+    transform-origin: top left;
+  }
+}
+
+@media (min-width: 2560px) {
+  .ui-panel {
+    transform: scale(1.5);
+    transform-origin: top left;
+  }
+}
+
 /* Custom scrollbar styles */
 .custom-scrollbar::-webkit-scrollbar {
   width: 6px;
@@ -42,6 +57,17 @@
   border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
+/* Responsive panel sizes */
+.responsive-panel {
+  width: clamp(300px, 25vw, 400px);
+  max-height: clamp(300px, 70vh, 800px);
+}
+
+.responsive-panel-large {
+  width: clamp(400px, 35vw, 600px);
+  max-height: clamp(400px, 80vh, 900px);
+}
+
 /* Improved kbd styling */
 kbd {
   @apply inline-flex items-center justify-center px-2 py-1 text-xs font-mono font-semibold bg-white border border-gray-300 rounded shadow-sm;
@@ -60,6 +86,19 @@ kbd {
 /* Custom utilities for skill tree */
 .bg-gradient-radial {
   background: radial-gradient(circle, var(--tw-gradient-stops));
+}
+
+/* Responsive text scaling */
+.responsive-text {
+  font-size: clamp(0.75rem, 1.5vw, 1rem);
+}
+
+.responsive-text-lg {
+  font-size: clamp(1rem, 2vw, 1.25rem);
+}
+
+.responsive-text-xl {
+  font-size: clamp(1.25rem, 2.5vw, 1.5rem);
 }
 
 @layer base {
