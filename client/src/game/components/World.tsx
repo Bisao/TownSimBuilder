@@ -27,7 +27,8 @@ import { resourceTypes } from "../constants/resources";
 import { GRID_CONFIG } from "../constants/grid";
 
 interface WorldProps {
-  onMarketSelect?: (building: BuildingType) => void;
+  selectedBuildingType?: BuildingType | null;
+  onMarketSelect?: (building: any) => void;
 }
 
 // Natural Resources Interface
@@ -44,7 +45,7 @@ declare global {
   }
 }
 
-const World: React.FC<WorldProps> = ({ onMarketSelect }) => {
+const World: React.FC<WorldProps> = ({ selectedBuildingType, onMarketSelect }) => {
   const worldRef = useRef<THREE.Group>(null);
   const [isWorldInitialized, setIsWorldInitialized] = useState(false);
   const MAP_SIZE = GRID_CONFIG.DEFAULT_SIZE;

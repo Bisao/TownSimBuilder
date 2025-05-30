@@ -3,7 +3,6 @@ import { Canvas } from '@react-three/fiber';
 import { KeyboardControls, Preload } from '@react-three/drei';
 import { ErrorBoundary } from '@/components/ui/error-boundary';
 import { HooksErrorBoundary } from '@/components/ui/hooks-error-boundary';
-import { LoadingSpinner } from '@/components/ui/loading-spinner';
 import { useAudio } from '@/lib/stores/useAudio';
 import { useGame } from '@/lib/stores/useGame';
 import { useNotificationStore } from '@/lib/stores/useNotificationStore';
@@ -12,6 +11,13 @@ import NotificationContainer from '@/ui/NotificationContainer';
 import World from '@/game/components/World';
 import GameUI from '@/ui/GameUI';
 import MarketWindow from '@/ui/MarketWindow';
+
+// Simple loading component
+const LoadingSpinner = () => (
+  <div className="flex items-center justify-center">
+    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white"></div>
+  </div>
+);
 import { ControlsEnum } from '@/game/types/controls';
 import { BuildingType } from '@/game/constants/buildings';
 import { GAME_CONFIG } from '../../../shared/constants/game';

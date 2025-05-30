@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { useNotificationStore } from '../lib/stores/useNotificationStore';
 
@@ -30,14 +29,14 @@ const NotificationContainer: React.FC = () => {
 
   const getNotificationIcon = (type: string, customIcon?: string) => {
     if (customIcon) return customIcon;
-    
+
     const iconMap: Record<string, string> = {
       success: 'fa-check-circle',
       warning: 'fa-exclamation-triangle',
       error: 'fa-times-circle',
       info: 'fa-info-circle'
     };
-    
+
     return iconMap[type] || 'fa-bell';
   };
 
@@ -48,7 +47,7 @@ const NotificationContainer: React.FC = () => {
       error: 'border-l-red-500 bg-red-50/90 text-red-800',
       info: 'border-l-blue-500 bg-blue-50/90 text-blue-800'
     };
-    
+
     return styleMap[type] || 'border-l-gray-500 bg-gray-50/90 text-gray-800';
   };
 

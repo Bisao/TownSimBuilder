@@ -23,26 +23,33 @@ import { Controls } from "../game/types/controls";
 
 interface GameUIProps {
   className?: string;
+  onBuildingSelect?: (buildingType: any) => void;
 }
 
-const GameUI: React.FC<GameUIProps> = ({ className = "" }) => {
-  // Game state
+const GameUI: React.FC<GameUIProps> = ({ className = "", onBuildingSelect }) => {
+  // Game state with safe defaults
+  const gameStore = useGameStore();
   const {
-    isPaused,
-    timeSpeed,
-    timeCycle,
-    gameMode,
-    isManualControl,
-    controlledNpcId,
-    pauseTime,
-    resumeTime,
-    increaseTimeSpeed,
-    decreaseTimeSpeed,
-  } = useGameStore();
+    isPaused = false,
+    timeSpeed = 1,
+    timeCycle = { currentTime: 0 },
+    gameMode = 'play',
+    isManualControl = false,
+    controlledNpcId = null,
+    pauseTime = () => {},
+    resumeTime = () => {},
+    increaseTimeSpeed = () => {},
+    decreaseTimeSpeed = () => {},
+  } = gameStore || {};
 
-  const { buildings } = useBuildingStore();
-  const { resources } = useResourceStore();
-  const { npcs, updateNpc } = useNpcStore();
+  const buildingStore = useBuildingStore();
+  const { buildings = [] } = buildingStore || {};
+  
+  const resourceStore = useResourceStore();
+  const { resources = {} } = resourceStore || {};
+  
+  const npcStore = useNpcStore();
+  const { npcs = [], updateNpc = () => {} } = npcStore || {};
   const { isMuted, toggleMute, initAudio } = useAudio();
 
   // Device detection
@@ -69,7 +76,8 @@ const GameUI: React.FC<GameUIProps> = ({ className = "" }) => {
   });
 
   // Keyboard controls
-  const [, get] = useKeyboardControls<Controls>();
+  const keyboardControls = useKeyboardControls<Controls>();
+  const [, get] = Array.isArray(keyboardControls) ? keyboardControls : [null, () => ({})];
 
   // Refs
   const gameLoopRef = useRef<NodeJS.Timeout | null>(null);
