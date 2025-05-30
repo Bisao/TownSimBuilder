@@ -1,0 +1,36 @@
+object null is not iterable (cannot read property Symbol(Symbol.iterator))
+Global error: 
+TypeError {}
+
+Global error: 
+TypeError {}
+object null is not iterable (cannot read property Symbol(Symbol.iterator))
+Global error: 
+TypeError {}
+
+Global error: 
+TypeError {}
+The above error occurred in the <GameUI> component:
+
+    at GameUI (https://0a7aa26e-2441-494e-8a3c-d618b458c8af-00-b4nb1u4zvwup.worf.replit.dev/src/ui/GameUI.tsx:35:19)
+    at https://0a7aa26e-2441-494e-8a3c-d618b458c8af-00-b4nb1u4zvwup.worf.replit.dev/src/App.tsx?v=1IhiYe38sGTzo8sA8StjF:59:59
+    at div
+    at HooksErrorBoundary (https://0a7aa26e-2441-494e-8a3c-d618b458c8af-00-b4nb1u4zvwup.worf.replit.dev/src/components/ui/hooks-error-boundary.tsx:7:5)
+    at ErrorBoundary (https://0a7aa26e-2441-494e-8a3c-d618b458c8af-00-b4nb1u4zvwup.worf.replit.dev/src/components/ui/error-boundary.tsx:10:5)
+    at App (https://0a7aa26e-2441-494e-8a3c-d618b458c8af-00-b4nb1u4zvwup.worf.replit.dev/src/App.tsx?v=1IhiYe38sGTzo8sA8StjF:200:21)
+    at ErrorBoundary (https://0a7aa26e-2441-494e-8a3c-d618b458c8af-00-b4nb1u4zvwup.worf.replit.dev/src/components/ui/error-boundary.tsx:10:5)
+    at AppWrapper
+    at QueryClientProvider (https://0a7aa26e-2441-494e-8a3c-d618b458c8af-00-b4nb1u4zvwup.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=31832269:2909:3)
+    at ErrorBoundary (https://0a7aa26e-2441-494e-8a3c-d618b458c8af-00-b4nb1u4zvwup.worf.replit.dev/src/components/ui/error-boundary.tsx:10:5)
+    at AppWrapper
+
+React will try to recreate this component tree from scratch using the error boundary you provided, ErrorBoundary.
+ErrorBoundary caught an error: 
+TypeError {}
+ 
+Object {componentStack: "↵    at GameUI…"}
+
+at t.value (https://0a7aa26e-2441-494e-8a3c-d618b458c8af-00-b4nb1u4zvwup.worf.replit.dev/__replco/static/devtools/eruda/3.2.3/eruda.js:2:17465)
+at new t (https://0a7aa26e-2441-494e-8a3c-d618b458c8af-00-b4nb1u4zvwup.worf.replit.dev/__replco/static/devtools/eruda/3.2.3/eruda.js:2:12630)
+at t.value (https://0a7aa26e-2441-494e-8a3c-d618b458c8af-00-b4nb1u4zvwup.worf.replit.dev/__replco/static/devtools/eruda/3.2.3/eruda.js:2:32766)
+at https://0a7aa26e-2441-494e-8a3c-d618b458c8af-00-b4nb1u4zvwup.worf.replit.dev/__replco/static/devtools/eruda/3.2.3/eruda.js:2:34400
