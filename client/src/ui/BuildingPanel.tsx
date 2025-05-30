@@ -5,6 +5,7 @@ import { useGameStore } from '../game/stores/useGameStore';
 import { buildingTypes } from '../game/constants/buildings';
 import { useDraggable } from '../hooks/useDraggable';
 import { useIsMobile } from '../hooks/useIsMobile';
+import { BuildingType } from '../game/constants/buildings';
 
 interface BuildingPanelProps {
   isVisible: boolean;

@@ -3,6 +3,7 @@ import React, { Suspense, useEffect, useState, memo, useCallback } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { KeyboardControls, Preload } from '@react-three/drei';
 import { ErrorBoundary } from '@/components/ui/error-boundary';
+import { HooksErrorBoundary } from '@/components/ui/hooks-error-boundary';
 import { LoadingSpinner } from '@/components/ui/loading-spinner';
 import { useAudio } from '@/lib/stores/useAudio';
 import { useGame } from '@/lib/stores/useGame';
@@ -124,8 +125,17 @@ GameCanvas.displayName = 'GameCanvas';
 
 // Audio hook
 const useAudioSetup = () => {
-  const { setBackgroundMusic, setHitSound, setSuccessSound } = useAudio();
-  const { addNotification } = useNotificationStore();
+  const audioStore = useAudio();
+  const notificationStore = useNotificationStore();
+  
+  // Safety guards
+  if (!audioStore || !notificationStore) {
+    console.warn('Audio or notification store not available');
+    return;
+  }
+  
+  const { setBackgroundMusic, setHitSound, setSuccessSound } = audioStore;
+  const { addNotification } = notificationStore;
 
   useEffect(() => {
     const loadAudio = async () => {
@@ -245,7 +255,9 @@ const App: React.FC = () => {
   // Show game
   return (
     <ErrorBoundary fallback={ErrorFallback}>
-      <Game />
+      <HooksErrorBoundary>
+        <Game />
+      </HooksErrorBoundary>
     </ErrorBoundary>
   );
 };

@@ -11,6 +11,15 @@ interface NpcProps {
 }
 
 const Npc: React.FC<NpcProps> = ({ npc }) => {
+  const meshRef = useRef<THREE.Mesh>(null);
+  const mixerRef = useRef<THREE.AnimationMixer | null>(null);
+  //const { nodes, materials, animations } = useGLTF('/models/character-base.glb');
+
+  // Move conditional return after all hooks
+  if (!npc || !npc.position) {
+    return null;
+  }
+
   const groupRef = useRef<THREE.Group>(null);
   const textRef = useRef<THREE.Group>(null);
 
@@ -65,9 +74,7 @@ const Npc: React.FC<NpcProps> = ({ npc }) => {
   }, [npc]);
 
   // Validações após todos os hooks
-  if (!npc || !npc.position) {
-    return null;
-  }
+
 
   const handleClick = (event: any) => {
     event.stopPropagation();
