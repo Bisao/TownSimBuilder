@@ -32,10 +32,9 @@ const NpcPanel: React.FC<NpcPanelProps> = ({ npc, onClose }) => {
 
   if (!npc) return null;
 
-  // Removido: auto-start de trabalho - agora só inicia manualmente via botão
-
   const npcType = npcTypes[npc.type];
   const currentWork = npc.assignedWork ? workTypes[npc.assignedWork] : null;
+
   const stateTranslations = {
     idle: "Parado",
     moving: "Movendo",
@@ -53,17 +52,15 @@ const NpcPanel: React.FC<NpcPanelProps> = ({ npc, onClose }) => {
   };
 
   const { dragRef, position, isDragging, handleMouseDown } = useDraggable({
-    initialPosition: { x: window.innerWidth / 2 - 192, y: window.innerHeight / 2 - 200 }
+    initialPosition: { x: window.innerWidth / 2 - 220, y: window.innerHeight / 2 - 350 }
   });
 
   const handleWorkClick = () => {
-    // Ativar NPC para trabalhar manualmente
     useNpcStore.getState().startNpcWork(npc.id);
   };
 
   const handleCreateNpc = () => {
     if (isTemporaryNpc && building) {
-      // Criar um novo NPC real para esta casa
       const newNpcId = spawnNPC(
         building.position,
         'villager',
@@ -74,7 +71,6 @@ const NpcPanel: React.FC<NpcPanelProps> = ({ npc, onClose }) => {
       if (newNpcId) {
         const newNpc = useNpcStore.getState().npcs.find(n => n.id === newNpcId);
         if (newNpc) {
-          // Fechar o painel temporário e reabrir com o NPC real
           onClose();
           setTimeout(() => {
             window.dispatchEvent(new CustomEvent('npcClick', { detail: newNpc }));
@@ -84,16 +80,36 @@ const NpcPanel: React.FC<NpcPanelProps> = ({ npc, onClose }) => {
     }
   };
 
+  const getWorkColor = (workId?: string) => {
+    switch (workId) {
+      case "miner": return "from-blue-500 to-cyan-600";
+      case "lumberjack": return "from-green-500 to-emerald-600";
+      case "farmer": return "from-yellow-500 to-amber-600";
+      case "baker": return "from-orange-500 to-red-600";
+      default: return "from-gray-500 to-slate-600";
+    }
+  };
+
+  const getWorkBg = (workId?: string) => {
+    switch (workId) {
+      case "miner": return "bg-gradient-to-br from-blue-50 to-cyan-50 border-blue-200";
+      case "lumberjack": return "bg-gradient-to-br from-green-50 to-emerald-50 border-green-200";
+      case "farmer": return "bg-gradient-to-br from-yellow-50 to-amber-50 border-yellow-200";
+      case "baker": return "bg-gradient-to-br from-orange-50 to-red-50 border-orange-200";
+      default: return "bg-gradient-to-br from-gray-50 to-slate-50 border-gray-200";
+    }
+  };
+
   return (
     <div 
-      className="fixed inset-0 bg-black/50 flex items-center justify-center z-[9999] pointer-events-auto"
+      className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[9999] pointer-events-auto"
       onClick={(e) => {
         if (e.target === e.currentTarget) onClose();
         e.stopPropagation();
       }}
     >
       <div 
-        className="bg-white rounded-xl p-6 w-96 max-h-[90vh] overflow-y-auto relative"
+        className="bg-gradient-to-br from-white to-gray-50 rounded-2xl shadow-2xl w-[440px] max-h-[90vh] overflow-hidden relative border border-gray-200"
         style={{
           position: 'absolute',
           left: `${position.x}px`,
@@ -103,183 +119,87 @@ const NpcPanel: React.FC<NpcPanelProps> = ({ npc, onClose }) => {
         ref={dragRef}
         onMouseDown={handleMouseDown}
       >
-        <div className="flex justify-between items-center mb-6">
-            <div className="flex items-center gap-3">
-              <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
-                currentWork?.id === "miner" ? "bg-blue-100" :
-                currentWork?.id === "lumberjack" ? "bg-green-100" :
-                currentWork?.id === "farmer" ? "bg-yellow-100" :
-                currentWork?.id === "baker" ? "bg-orange-100" : "bg-gray-100"
-              }`}>
-                <i className={`fa-solid ${
-                  currentWork?.icon || "fa-user"
-                } text-xl ${
-                  currentWork?.id === "miner" ? "text-blue-600" :
-                  currentWork?.id === "lumberjack" ? "text-green-600" :
-                  currentWork?.id === "farmer" ? "text-yellow-600" :
-                  currentWork?.id === "baker" ? "text-orange-600" : "text-gray-600"
-                }`}></i>
-              </div>
-              <div>
-                <h2 className="text-xl font-bold">{npc.name}</h2>
-                <p className="text-sm text-gray-600">
-                  {currentWork ? currentWork.name : "Sem trabalho"}
-                </p>
-              </div>
-            </div>
-            <div className="flex gap-2">
-              <button 
-                onClick={(e) => {
-                  e.stopPropagation();
-                  // Disparar evento para focar a câmera no NPC
-                  window.dispatchEvent(new CustomEvent('focusOnNpc', { 
-                    detail: { 
-                      position: npc.position,
-                      npcId: npc.id 
-                    } 
-                  }));
-                }}
-                className="text-blue-500 hover:text-blue-700 transition-colors p-2 rounded-lg hover:bg-blue-50"
-                title="Focar câmera no NPC"
-              >
-                👁️
-              </button>
-              <button 
-                onClick={onClose}
-                className="text-gray-500 hover:text-gray-700 transition-colors"
-              >
-                <i className="fa-solid fa-times"></i>
-              </button>
-            </div>
-          </div>
-
-        <div className="space-y-4">
-          <div className="bg-gray-50 p-4 rounded-lg">
-            <h3 className="font-semibold mb-2 text-gray-700">Status</h3>
-            <div className="grid grid-cols-2 gap-2">
-              <div className="flex items-center gap-2">
-                <i className="fa-solid fa-circle-dot text-green-500"></i>
-                <span>{stateTranslations[npc.state]}</span>
-              </div>
-              {npc.workProgress > 0 && (
-                <div className="col-span-2 mt-2">
-                  <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
-                    <div 
-                      className="h-full bg-green-500 transition-all duration-300" 
-                      style={{width: `${npc.workProgress * 100}%`}}
-                    ></div>
+        {/* Header com gradiente */}
+        <div className={`bg-gradient-to-r ${getWorkColor(currentWork?.id)} p-6 text-white relative overflow-hidden`}>
+          <div className="absolute inset-0 bg-black/10"></div>
+          <div className="relative z-10">
+            <div className="flex justify-between items-start mb-4">
+              <div className="flex items-center gap-4">
+                <div className="relative">
+                  <div className="w-16 h-16 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center border-2 border-white/30">
+                    <i className={`fa-solid ${currentWork?.icon || "fa-user"} text-2xl text-white`}></i>
                   </div>
-                </div>
-              )}
-            </div>
-          </div>
-
-          <div className="bg-gray-50 p-4 rounded-lg">
-            <h3 className="font-semibold mb-2 text-gray-700">Necessidades</h3>
-            <div className="space-y-2">
-              <div>
-                <div className="flex justify-between mb-1">
-                  <span>Energia</span>
-                  <span>{npc.needs.energy.toFixed(1)}%</span>
-                </div>
-                <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
-                  <div 
-                    className="h-full bg-blue-500" 
-                    style={{width: `${npc.needs.energy}%`}}
-                  ></div>
-                </div>
-              </div>
-              <div>
-                <div className="flex justify-between mb-1">
-                  <span>Satisfação</span>
-                  <span>{npc.needs.satisfaction.toFixed(1)}%</span>
-                </div>
-                <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
-                  <div 
-                    className="h-full bg-yellow-500" 
-                    style={{width: `${npc.needs.satisfaction}%`}}
-                  ></div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-gray-50 p-4 rounded-lg">
-            <h3 className="font-semibold mb-2 text-gray-700">Trabalho</h3>
-            <div className="space-y-2">
-              {currentWork ? (
-                <div>
-                  <div className="flex items-center justify-between mb-2">
-                    <div className="flex items-center gap-2">
-                      <i className={`fa-solid ${currentWork.icon} text-sm`}></i>
-                      <span className="font-medium">{currentWork.name}</span>
-                    </div>
-                    <span className="text-sm text-gray-500">Nível {npc.currentLevel}</span>
-                  </div>
-                  
-                  {npc.assignedWork && npc.workExperience[npc.assignedWork] && (
-                    <div>
-                      <div className="flex justify-between text-sm mb-1">
-                        <span>Experiência</span>
-                        <span>{npc.workExperience[npc.assignedWork]} XP</span>
-                      </div>
-                      <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
-                        <div 
-                          className="h-full bg-blue-500" 
-                          style={{width: `${(npc.workExperience[npc.assignedWork] % 100)}%`}}
-                        ></div>
-                      </div>
+                  {npc.controlMode === "manual" && (
+                    <div className="absolute -top-1 -right-1 w-6 h-6 bg-green-400 rounded-full flex items-center justify-center border-2 border-white">
+                      <i className="fa-solid fa-gamepad text-xs text-white"></i>
                     </div>
                   )}
-                  
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      removeWork(npc.id);
-                    }}
-                    className="w-full mt-2 px-3 py-1 bg-red-500 hover:bg-red-600 text-white rounded text-sm transition-colors"
-                  >
-                    Remover Trabalho
-                  </button>
                 </div>
-              ) : (
-                <div className="text-center">
-                  <p className="text-gray-500 mb-2">Nenhum trabalho atribuído</p>
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setShowWorkSelection(true);
-                    }}
-                    className="w-full px-3 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded transition-colors"
-                  >
-                    Atribuir Trabalho
-                  </button>
+                <div>
+                  <h2 className="text-2xl font-bold text-white drop-shadow-md">{npc.name}</h2>
+                  <p className="text-white/90 font-medium">
+                    {currentWork ? currentWork.name : "Sem trabalho"}
+                  </p>
+                  <div className="flex items-center gap-2 mt-1">
+                    <div className={`w-2 h-2 rounded-full ${
+                      npc.state === "working" ? "bg-green-400" :
+                      npc.state === "moving" ? "bg-yellow-400" :
+                      npc.state === "resting" ? "bg-blue-400" : "bg-gray-300"
+                    }`}></div>
+                    <span className="text-sm text-white/80">{stateTranslations[npc.state]}</span>
+                  </div>
                 </div>
-              )}
-            </div>
-          </div>
+              </div>
 
-          <div className="bg-gray-50 p-4 rounded-lg">
-            <h3 className="font-semibold mb-2 text-gray-700">Inventário</h3>
-            <p className="flex items-center gap-2">
-              <i className="fa-solid fa-box text-gray-500"></i>
-              {npc.inventory.type ? (
-                <span>{npc.inventory.type}: {npc.inventory.amount}</span>
-              ) : (
-                <span className="text-gray-500">Vazio</span>
-              )}
-            </p>
+              <div className="flex gap-2">
+                <button 
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    window.dispatchEvent(new CustomEvent('focusOnNpc', { 
+                      detail: { 
+                        position: npc.position,
+                        npcId: npc.id 
+                      } 
+                    }));
+                  }}
+                  className="w-10 h-10 bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-full flex items-center justify-center transition-all duration-200 border border-white/30"
+                  title="Focar câmera no NPC"
+                >
+                  <i className="fa-solid fa-eye text-white"></i>
+                </button>
+                <button 
+                  onClick={onClose}
+                  className="w-10 h-10 bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-full flex items-center justify-center transition-all duration-200 border border-white/30"
+                >
+                  <i className="fa-solid fa-times text-white"></i>
+                </button>
+              </div>
+            </div>
+
+            {/* Progress Bar */}
+            {npc.workProgress > 0 && (
+              <div className="bg-white/20 rounded-full h-2 overflow-hidden backdrop-blur-sm">
+                <div 
+                  className="h-full bg-white/80 transition-all duration-300 rounded-full" 
+                  style={{width: `${npc.workProgress * 100}%`}}
+                ></div>
+              </div>
+            )}
           </div>
+        </div>
+
+        {/* Content Area */}
+        <div className="p-6 space-y-6 max-h-[calc(90vh-200px)] overflow-y-auto custom-scrollbar">
 
           {/* Create NPC Section for Empty Houses */}
           {isTemporaryNpc && (
-            <div className="bg-gradient-to-br from-blue-50 to-purple-50 p-6 rounded-lg border-2 border-blue-200 mb-4">
+            <div className="bg-gradient-to-br from-indigo-50 to-purple-50 p-6 rounded-xl border-2 border-indigo-200">
               <div className="text-center">
-                <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <i className="fa-solid fa-home text-white text-2xl"></i>
+                <div className="w-20 h-20 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
+                  <i className="fa-solid fa-home text-white text-3xl"></i>
                 </div>
-                <h3 className="font-bold text-lg text-gray-800 mb-2">Casa Vazia</h3>
-                <p className="text-gray-600 mb-4">
+                <h3 className="font-bold text-xl text-gray-800 mb-3">Casa Vazia</h3>
+                <p className="text-gray-600 mb-6 leading-relaxed">
                   Esta casa não possui um morador. Você pode criar um novo NPC para habitar este local.
                 </p>
                 <button
@@ -287,190 +207,81 @@ const NpcPanel: React.FC<NpcPanelProps> = ({ npc, onClose }) => {
                     e.stopPropagation();
                     setShowNpcCreation(true);
                   }}
-                  className="w-full px-6 py-3 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white rounded-lg font-medium transition-all flex items-center justify-center gap-2 shadow-lg hover:shadow-xl"
+                  className="w-full px-6 py-4 bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white rounded-xl font-semibold transition-all flex items-center justify-center gap-3 shadow-lg hover:shadow-xl transform hover:scale-105"
                 >
                   <i className="fa-solid fa-user-plus text-lg"></i>
                   Criar Novo NPC
                 </button>
-                <div className="mt-3 text-xs text-gray-500 flex items-center justify-center gap-1">
-                  <i className="fa-solid fa-info-circle"></i>
-                  <span>Inspire-se no sistema de criação do Albion Online</span>
-                </div>
               </div>
             </div>
           )}
 
-          <div className="bg-gray-50 p-4 rounded-lg">
-            <h3 className="font-semibold mb-2 text-gray-700">Modo de Controle</h3>
-
-            {/* Tasks Button */}
-            <div className="mb-4">
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setShowTasks(true);
-                }}
-                className="w-full px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg font-medium transition-colors flex items-center justify-center gap-2"
-              >
-                <i className="fa-solid fa-tasks"></i>
-                📋 Tarefas
-              </button>
-            </div>
-
-            {/* Skill Tree Button */}
-            <div className="mb-4">
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setShowSkillTree(true);
-                }}
-                className="w-full px-4 py-2 bg-purple-500 hover:bg-purple-600 text-white rounded-lg font-medium transition-colors flex items-center justify-center gap-2"
-              >
-                <i className="fa-solid fa-sitemap"></i>
-                🌟 Árvore de Habilidades
-              </button>
-            </div>
-
-            {/* Inventory Button */}
-            <div className="mb-4">
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setShowInventory(true);
-                }}
-                className="w-full px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white rounded-lg font-medium transition-colors flex items-center justify-center gap-2"
-              >
-                <i className="fa-solid fa-backpack"></i>
-                📦 Inventário
-              </button>
-            </div>
-
-            <div className="flex gap-2 mb-4">
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  
-                  // Definir modo autônomo no NPC
-                  useNpcStore.getState().setNpcControlMode(npc.id, "autonomous");
-                  
-                  // Remover controle do GameStore
-                  const gameStore = useGameStore.getState();
-                  gameStore.setControlledNpc(null);
-                  
-                  // Desativar modo manual
-                  useGameStore.setState({ isManualControl: false });
-
-                  // Resetar câmera para posição padrão
-                  const { updateCameraPosition, updateCameraTarget } = useGameStore.getState();
-                  updateCameraPosition([20, 20, 20]);
-                  updateCameraTarget([0, 0, 0]);
-                  
-                  console.log(`Modo autônomo ativado para NPC ${npc.id}`);
-                }}
-                className={`flex-1 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
-                  npc.controlMode === "autonomous" 
-                    ? "bg-blue-500 text-white" 
-                    : "bg-gray-200 text-gray-600 hover:bg-gray-300"
-                }`}
-              >
-                🤖 Autônomo
-              </button>
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  
-                  // Primeiro definir o modo manual no NPC
-                  useNpcStore.getState().setNpcControlMode(npc.id, "manual");
-                  
-                  // Depois definir como controlado no GameStore
-                  const gameStore = useGameStore.getState();
-                  gameStore.setControlledNpc(npc.id);
-                  
-                  // Ativar modo manual
-                  useGameStore.setState({ isManualControl: true });
-
-                  // Disparar evento para focar câmera no NPC
-                  window.dispatchEvent(new CustomEvent('focusOnNpc', { 
-                    detail: { 
-                      position: npc.position,
-                      npcId: npc.id,
-                      followMode: true
-                    } 
-                  }));
-                  
-                  console.log(`Modo manual ativado para NPC ${npc.id}`);
-                }}
-                className={`flex-1 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
-                  npc.controlMode === "manual" 
-                    ? "bg-green-500 text-white" 
-                    : "bg-gray-200 text-gray-600 hover:bg-gray-300"
-                }`}
-              >
-                🎮 Manual
-              </button>
-            </div>
-
-            {npc.controlMode === "manual" && (
-              <div className="mb-4 p-3 bg-green-50 rounded-lg border border-green-200">
-                <p className="text-sm text-green-700 font-medium mb-2">
-                  🎮 Controle Manual Ativo
-                </p>
-                <div className="text-xs text-green-600 space-y-1">
-                  <div>WASD - Movimento</div>
-                  <div>Espaço - Ação (trabalhar/coletar)</div>
-                  <div>ESC - Sair do controle</div>
+          {/* Stats Cards */}
+          <div className="grid grid-cols-2 gap-4">
+            <div className="bg-gradient-to-br from-blue-50 to-indigo-50 p-4 rounded-xl border border-blue-200">
+              <div className="flex items-center gap-3 mb-3">
+                <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-lg flex items-center justify-center">
+                  <i className="fa-solid fa-bolt text-white"></i>
+                </div>
+                <div>
+                  <h4 className="font-semibold text-gray-800">Energia</h4>
+                  <p className="text-sm text-gray-600">{npc.needs.energy.toFixed(0)}%</p>
                 </div>
               </div>
-            )}
+              <div className="h-2 bg-blue-200 rounded-full overflow-hidden">
+                <div 
+                  className="h-full bg-gradient-to-r from-blue-500 to-indigo-600 transition-all duration-500" 
+                  style={{width: `${npc.needs.energy}%`}}
+                ></div>
+              </div>
+            </div>
+
+            <div className="bg-gradient-to-br from-yellow-50 to-orange-50 p-4 rounded-xl border border-yellow-200">
+              <div className="flex items-center gap-3 mb-3">
+                <div className="w-10 h-10 bg-gradient-to-br from-yellow-500 to-orange-600 rounded-lg flex items-center justify-center">
+                  <i className="fa-solid fa-smile text-white"></i>
+                </div>
+                <div>
+                  <h4 className="font-semibold text-gray-800">Satisfação</h4>
+                  <p className="text-sm text-gray-600">{npc.needs.satisfaction.toFixed(0)}%</p>
+                </div>
+              </div>
+              <div className="h-2 bg-yellow-200 rounded-full overflow-hidden">
+                <div 
+                  className="h-full bg-gradient-to-r from-yellow-500 to-orange-600 transition-all duration-500" 
+                  style={{width: `${npc.needs.satisfaction}%`}}
+                ></div>
+              </div>
+            </div>
           </div>
 
-          <div className="bg-gray-50 p-4 rounded-lg">
-            <h3 className="font-semibold mb-2 text-gray-700">Trabalho Autônomo</h3>
-            {npc.assignedWork === "miner" && npc.controlMode === "autonomous" && (
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleWorkClick();
-                }}
-                className={`w-full px-4 py-2 rounded-lg pointer-events-auto relative z-[10000] ${
-                  npc.state === "gathering" || npc.state === "moving"
-                    ? "bg-gray-200 cursor-not-allowed" 
-                    : "bg-blue-500 hover:bg-blue-600 text-white"
-                } font-medium transition-colors`}
-                disabled={npc.state === "gathering" || npc.state === "moving"}
-              >
-                {npc.state === "gathering" ? "Minerando..." : 
-                 npc.state === "searching" ? "Procurando Pedra..." : 
-                 npc.state === "moving" ? "Movendo..." : "Iniciar Mineração"}
-              </button>
-            )}
-             {npc.assignedWork === "lumberjack" && npc.controlMode === "autonomous" && (
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleWorkClick();
-                }}
-                className={`w-full px-4 py-2 rounded-lg ${
-                  npc.state === "gathering" || npc.state === "moving"
-                    ? "bg-gray-200 cursor-not-allowed" 
-                    : "bg-green-500 hover:bg-green-600"
-                } text-white font-medium transition-colors`}
-                disabled={npc.state === "gathering" || npc.state === "moving"}
-              >
-                {npc.state === "gathering" ? "Cortando..." : 
-                 npc.state === "searching" ? "Procurando Madeira..." : 
-                 npc.state === "moving" ? "Movendo..." : "Iniciar Corte"}
-              </button>
-            )}
-            {npc.assignedWork === "farmer" && npc.controlMode === "autonomous" && (
-              <div className="space-y-3">
-                {npc.farmerData?.selectedSeed && (
-                  <div className="p-3 bg-yellow-50 rounded-lg border border-yellow-200">
-                    <div className="flex items-center gap-2">
-                      <span className="text-yellow-600">🌱</span>
-                      <span className="text-sm font-medium">
-                        Semente selecionada: {npc.farmerData.selectedSeed}
-                      </span>
+          {/* Work Section */}
+          <div className={`p-5 rounded-xl border-2 ${getWorkBg(currentWork?.id)}`}>
+            <div className="flex items-center gap-3 mb-4">
+              <div className={`w-12 h-12 bg-gradient-to-br ${getWorkColor(currentWork?.id)} rounded-xl flex items-center justify-center shadow-lg`}>
+                <i className={`fa-solid ${currentWork?.icon || "fa-briefcase"} text-white text-lg`}></i>
+              </div>
+              <div className="flex-1">
+                <h3 className="font-bold text-lg text-gray-800">Trabalho</h3>
+                {currentWork && (
+                  <p className="text-sm text-gray-600">Nível {npc.currentLevel}</p>
+                )}
+              </div>
+            </div>
+
+            {currentWork ? (
+              <div className="space-y-4">
+                {npc.assignedWork && npc.workExperience[npc.assignedWork] && (
+                  <div>
+                    <div className="flex justify-between text-sm mb-2">
+                      <span className="font-medium text-gray-700">Experiência</span>
+                      <span className="text-gray-600">{npc.workExperience[npc.assignedWork]} XP</span>
+                    </div>
+                    <div className="h-3 bg-white/60 rounded-full overflow-hidden">
+                      <div 
+                        className={`h-full bg-gradient-to-r ${getWorkColor(currentWork?.id)} transition-all duration-500`}
+                        style={{width: `${(npc.workExperience[npc.assignedWork] % 100)}%`}}
+                      ></div>
                     </div>
                   </div>
                 )}
@@ -478,223 +289,324 @@ const NpcPanel: React.FC<NpcPanelProps> = ({ npc, onClose }) => {
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
-                    setShowSeedSelection(true);
+                    removeWork(npc.id);
                   }}
-                  className="w-full px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg font-medium transition-colors"
+                  className="w-full px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg font-medium transition-all duration-200 shadow-md hover:shadow-lg"
                 >
-                  🌱 Selecionar Semente
-                </button>
-
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    if (!npc.farmerData?.selectedSeed) {
-                      setShowSeedSelection(true);
-                      return;
-                    }
-
-                    // Iniciar trabalho manual do fazendeiro
-                    const updatedNpc = {
-                      ...npc,
-                      state: "idle" as const,
-                      workProgress: 0,
-                      targetResource: null,
-                      targetPosition: null,
-                      farmerData: {
-                        ...npc.farmerData,
-                        currentTask: "waiting" as const
-                      },
-                      needs: {
-                        ...npc.needs,
-                        energy: Math.max(npc.needs.energy, 70),
-                        satisfaction: Math.max(npc.needs.satisfaction, 70)
-                      }
-                    };
-
-                    useNpcStore.setState(state => ({
-                      npcs: state.npcs.map(n => n.id === npc.id ? updatedNpc : n)
-                    }));
-
-                    console.log(`Fazendeiro iniciado manualmente com semente: ${npc.farmerData.selectedSeed}`);
-                  }}
-                  className={`w-full px-4 py-2 rounded-lg ${
-                    npc.state === "working" || npc.state === "planting" || npc.state === "harvesting"
-                      ? "bg-gray-200 cursor-not-allowed" 
-                      : "bg-yellow-500 hover:bg-yellow-600"
-                  } text-white font-medium transition-colors`}
-                  disabled={npc.state === "working" || npc.state === "planting" || npc.state === "harvesting"}
-                >
-                  {npc.state === "planting" ? "Plantando..." : 
-                   npc.state === "harvesting" ? "Colhendo..." :
-                   npc.state === "working" ? "Trabalhando..." : "Iniciar Cultivo"}
+                  <i className="fa-solid fa-times mr-2"></i>
+                  Remover Trabalho
                 </button>
               </div>
-            )}
-            {npc.assignedWork === "baker" && npc.controlMode === "autonomous" && (
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleWorkClick();
-                }}
-                className={`w-full px-4 py-2 rounded-lg ${
-                  npc.state === "working" 
-                    ? "bg-gray-200 cursor-not-allowed" 
-                    : "bg-orange-500 hover:bg-orange-600"
-                } text-white font-medium transition-colors`}
-                disabled={npc.state === "working"}
-              >
-                {npc.state === "working" ? "Assando..." : "Assar"}
-              </button>
-            )}
-
-            {!npc.assignedWork && npc.controlMode === "autonomous" && (
-              <div className="text-center p-4 bg-yellow-50 rounded-lg border border-yellow-200">
-                <p className="text-yellow-700 mb-2">
-                  Este NPC não tem trabalho atribuído
-                </p>
+            ) : (
+              <div className="text-center">
+                <p className="text-gray-600 mb-4">Nenhum trabalho atribuído</p>
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
                     setShowWorkSelection(true);
                   }}
-                  className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded font-medium transition-colors"
+                  className="w-full px-4 py-3 bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white rounded-lg font-semibold transition-all duration-200 shadow-md hover:shadow-lg"
                 >
+                  <i className="fa-solid fa-plus mr-2"></i>
                   Atribuir Trabalho
                 </button>
               </div>
             )}
+          </div>
+
+          {/* Quick Actions */}
+          <div className="grid grid-cols-2 gap-3">
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                setShowTasks(true);
+              }}
+              className="p-4 bg-gradient-to-br from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700 text-white rounded-xl font-semibold transition-all duration-200 flex items-center justify-center gap-2 shadow-lg hover:shadow-xl"
+            >
+              <i className="fa-solid fa-tasks"></i>
+              Tarefas
+            </button>
+
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                setShowSkillTree(true);
+              }}
+              className="p-4 bg-gradient-to-br from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white rounded-xl font-semibold transition-all duration-200 flex items-center justify-center gap-2 shadow-lg hover:shadow-xl"
+            >
+              <i className="fa-solid fa-sitemap"></i>
+              Skills
+            </button>
+
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                setShowInventory(true);
+              }}
+              className="p-4 bg-gradient-to-br from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white rounded-xl font-semibold transition-all duration-200 flex items-center justify-center gap-2 shadow-lg hover:shadow-xl"
+            >
+              <i className="fa-solid fa-backpack"></i>
+              Inventário
+            </button>
+
+            <div className="p-4 bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl border border-gray-200">
+              <div className="flex items-center gap-2 mb-2">
+                <i className="fa-solid fa-box text-gray-600"></i>
+                <span className="text-sm font-medium text-gray-700">Inventário</span>
+              </div>
+              {npc.inventory.type ? (
+                <p className="text-sm text-gray-600">{npc.inventory.type}: {npc.inventory.amount}</p>
+              ) : (
+                <p className="text-sm text-gray-500">Vazio</p>
+              )}
+            </div>
+          </div>
+
+          {/* Control Mode */}
+          <div className="bg-gradient-to-br from-slate-50 to-gray-100 p-5 rounded-xl border border-gray-200">
+            <h3 className="font-bold text-lg text-gray-800 mb-4 flex items-center gap-2">
+              <i className="fa-solid fa-gamepad text-gray-600"></i>
+              Modo de Controle
+            </h3>
+
+            <div className="flex gap-3 mb-4">
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  useNpcStore.getState().setNpcControlMode(npc.id, "autonomous");
+                  const gameStore = useGameStore.getState();
+                  gameStore.setControlledNpc(null);
+                  useGameStore.setState({ isManualControl: false });
+                  const { updateCameraPosition, updateCameraTarget } = useGameStore.getState();
+                  updateCameraPosition([20, 20, 20]);
+                  updateCameraTarget([0, 0, 0]);
+                }}
+                className={`flex-1 px-4 py-3 rounded-lg font-semibold transition-all duration-200 ${
+                  npc.controlMode === "autonomous" 
+                    ? "bg-gradient-to-r from-blue-500 to-indigo-600 text-white shadow-lg" 
+                    : "bg-white text-gray-600 hover:bg-gray-50 border border-gray-300"
+                }`}
+              >
+                <i className="fa-solid fa-robot mr-2"></i>
+                Autônomo
+              </button>
+
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  useNpcStore.getState().setNpcControlMode(npc.id, "manual");
+                  const gameStore = useGameStore.getState();
+                  gameStore.setControlledNpc(npc.id);
+                  useGameStore.setState({ isManualControl: true });
+                  window.dispatchEvent(new CustomEvent('focusOnNpc', { 
+                    detail: { 
+                      position: npc.position,
+                      npcId: npc.id,
+                      followMode: true
+                    } 
+                  }));
+                }}
+                className={`flex-1 px-4 py-3 rounded-lg font-semibold transition-all duration-200 ${
+                  npc.controlMode === "manual" 
+                    ? "bg-gradient-to-r from-green-500 to-emerald-600 text-white shadow-lg" 
+                    : "bg-white text-gray-600 hover:bg-gray-50 border border-gray-300"
+                }`}
+              >
+                <i className="fa-solid fa-gamepad mr-2"></i>
+                Manual
+              </button>
+            </div>
 
             {npc.controlMode === "manual" && (
-              <div className="space-y-3">
-                <div className="text-center p-4 bg-green-50 rounded-lg border border-green-200">
-                  <div className="text-sm font-medium text-green-700 mb-2">
-                    🎮 Modo Manual Ativo
+              <div className="p-4 bg-gradient-to-br from-green-50 to-emerald-50 rounded-lg border border-green-200">
+                <p className="font-semibold text-green-800 mb-3 flex items-center gap-2">
+                  <i className="fa-solid fa-gamepad"></i>
+                  Controle Manual Ativo
+                </p>
+                <div className="grid grid-cols-2 gap-2 text-xs text-green-700">
+                  <div className="flex items-center gap-1">
+                    <kbd className="px-1 py-0.5 bg-white rounded text-green-800 font-mono">WASD</kbd>
+                    <span>Movimento</span>
                   </div>
-                  <div className="grid grid-cols-2 gap-2 text-xs text-green-600">
-                    <div>WASD - Movimento</div>
-                    <div>Shift - Correr</div>
-                    <div>Espaço - Ação</div>
-                    <div>Tab - Trocar NPC</div>
-                    <div>H - Ocultar HUD</div>
-                    <div>ESC - Sair</div>
+                  <div className="flex items-center gap-1">
+                    <kbd className="px-1 py-0.5 bg-white rounded text-green-800 font-mono">SPACE</kbd>
+                    <span>Ação</span>
                   </div>
-                </div>
-
-                {/* Status Bars */}
-                <div className="space-y-2">
-                  <div className="flex items-center gap-2">
-                    <span className="text-xs">⚡ Energia:</span>
-                    <div className="flex-1 h-2 bg-gray-200 rounded-full overflow-hidden">
-                      <div 
-                        className={`h-full transition-all duration-300 ${
-                          npc.needs.energy > 60 ? 'bg-yellow-400' : 
-                          npc.needs.energy > 30 ? 'bg-orange-400' : 'bg-red-400'
-                        }`}
-                        style={{ width: `${npc.needs.energy}%` }}
-                      />
-                    </div>
-                    <span className="text-xs">{Math.round(npc.needs.energy)}</span>
+                  <div className="flex items-center gap-1">
+                    <kbd className="px-1 py-0.5 bg-white rounded text-green-800 font-mono">SHIFT</kbd>
+                    <span>Correr</span>
                   </div>
-
-                  <div className="flex items-center gap-2">
-                    <span className="text-xs">😊 Satisfação:</span>
-                    <div className="flex-1 h-2 bg-gray-200 rounded-full overflow-hidden">
-                      <div 
-                        className={`h-full transition-all duration-300 ${
-                          npc.needs.satisfaction > 60 ? 'bg-green-400' : 
-                          npc.needs.satisfaction > 30 ? 'bg-yellow-400' : 'bg-red-400'
-                        }`}
-                        style={{ width: `${npc.needs.satisfaction}%` }}
-                      />
-                    </div>
-                    <span className="text-xs">{Math.round(npc.needs.satisfaction)}</span>
-                  </div>
-
-                  <div className="flex items-center gap-2">
-                    <span className="text-xs">📦 Inventário:</span>
-                    <div className="flex-1 text-xs">
-                      {npc.inventory.amount > 0 ? (
-                        <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded">
-                          {npc.inventory.amount}x {npc.inventory.type}
-                        </span>
-                      ) : (
-                        <span className="text-gray-500">Vazio</span>
-                      )}
-                    </div>
-                  </div>
-                </div>
-
-                {/* Comandos Rápidos */}
-                <div className="space-y-2">
-                  <div className="text-xs font-medium text-gray-700">Comandos Rápidos:</div>
-                  <div className="grid grid-cols-2 gap-2">
-                    <button
-                      onClick={() => {
-                        // Comando para ir para casa
-                        const buildings = useBuildingStore.getState().buildings;
-                        const home = buildings.find(b => b.id === npc.homeId);
-                        if (home) {
-                          useNpcStore.setState(state => ({
-                            npcs: state.npcs.map(n => 
-                              n.id === npc.id 
-                                ? {
-                                    ...n,
-                                    targetPosition: [home.position[0] + 0.5, 0, home.position[1] + 0.5],
-                                    state: "moving" as const
-                                  }
-                                : n
-                            )
-                          }));
-                        }
-                      }}
-                      className="px-2 py-1 bg-blue-500 hover:bg-blue-600 text-white text-xs rounded transition-colors"
-                    >
-                      🏠 Ir para Casa
-                    </button>
-
-                    <button
-                      onClick={() => {
-                        // Comando para procurar silo mais próximo
-                        const buildings = useBuildingStore.getState().buildings;
-                        const silos = buildings.filter(b => b.type === 'silo');
-                        if (silos.length > 0) {
-                          const nearestSilo = silos.reduce((nearest, silo) => {
-                            const currentDist = Math.hypot(silo.position[0] - npc.position[0], silo.position[1] - npc.position[2]);
-                            const nearestDist = Math.hypot(nearest.position[0] - npc.position[0], nearest.position[1] - npc.position[2]);
-                            return currentDist < nearestDist ? silo : nearest;
-                          });
-
-                          useNpcStore.setState(state => ({
-                            npcs: state.npcs.map(n => 
-                              n.id === npc.id 
-                                ? {
-                                    ...n,
-                                    targetPosition: [nearestSilo.position[0] + 0.5, 0, nearestSilo.position[1] + 0.5],
-                                    targetBuildingId: nearestSilo.id,
-                                    state: "moving" as const
-                                  }
-                                : n
-                            )
-                          }));
-                        }
-                      }}
-                      className="px-2 py-1 bg-purple-500 hover:bg-purple-600 text-white text-xs rounded transition-colors"
-                      disabled={npc.inventory.amount === 0}
-                    >
-                      🏗️ Ir ao Silo
-                    </button>
+                  <div className="flex items-center gap-1">
+                    <kbd className="px-1 py-0.5 bg-white rounded text-green-800 font-mono">ESC</kbd>
+                    <span>Sair</span>
                   </div>
                 </div>
               </div>
             )}
           </div>
+
+          {/* Work Actions */}
+          {npc.controlMode === "autonomous" && (
+            <div className="bg-gradient-to-br from-indigo-50 to-blue-50 p-5 rounded-xl border border-indigo-200">
+              <h3 className="font-bold text-lg text-gray-800 mb-4 flex items-center gap-2">
+                <i className="fa-solid fa-play text-indigo-600"></i>
+                Trabalho Autônomo
+              </h3>
+
+              {npc.assignedWork === "miner" && (
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleWorkClick();
+                  }}
+                  className={`w-full px-4 py-3 rounded-lg font-semibold transition-all duration-200 ${
+                    npc.state === "gathering" || npc.state === "moving"
+                      ? "bg-gray-300 cursor-not-allowed text-gray-600" 
+                      : "bg-gradient-to-r from-blue-500 to-cyan-600 hover:from-blue-600 hover:to-cyan-700 text-white shadow-lg hover:shadow-xl"
+                  }`}
+                  disabled={npc.state === "gathering" || npc.state === "moving"}
+                >
+                  <i className="fa-solid fa-hammer mr-2"></i>
+                  {npc.state === "gathering" ? "Minerando..." : 
+                   npc.state === "searching" ? "Procurando Pedra..." : 
+                   npc.state === "moving" ? "Movendo..." : "Iniciar Mineração"}
+                </button>
+              )}
+
+              {npc.assignedWork === "lumberjack" && (
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleWorkClick();
+                  }}
+                  className={`w-full px-4 py-3 rounded-lg font-semibold transition-all duration-200 ${
+                    npc.state === "gathering" || npc.state === "moving"
+                      ? "bg-gray-300 cursor-not-allowed text-gray-600" 
+                      : "bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white shadow-lg hover:shadow-xl"
+                  }`}
+                  disabled={npc.state === "gathering" || npc.state === "moving"}
+                >
+                  <i className="fa-solid fa-tree mr-2"></i>
+                  {npc.state === "gathering" ? "Cortando..." : 
+                   npc.state === "searching" ? "Procurando Madeira..." : 
+                   npc.state === "moving" ? "Movendo..." : "Iniciar Corte"}
+                </button>
+              )}
+
+              {npc.assignedWork === "farmer" && (
+                <div className="space-y-3">
+                  {npc.farmerData?.selectedSeed && (
+                    <div className="p-3 bg-yellow-100 rounded-lg border border-yellow-300">
+                      <div className="flex items-center gap-2">
+                        <i className="fa-solid fa-seedling text-yellow-600"></i>
+                        <span className="text-sm font-medium text-yellow-800">
+                          Semente: {npc.farmerData.selectedSeed}
+                        </span>
+                      </div>
+                    </div>
+                  )}
+
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setShowSeedSelection(true);
+                    }}
+                    className="w-full px-4 py-3 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white rounded-lg font-semibold transition-all duration-200 shadow-lg hover:shadow-xl"
+                  >
+                    <i className="fa-solid fa-seedling mr-2"></i>
+                    Selecionar Semente
+                  </button>
+
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      if (!npc.farmerData?.selectedSeed) {
+                        setShowSeedSelection(true);
+                        return;
+                      }
+                      const updatedNpc = {
+                        ...npc,
+                        state: "idle" as const,
+                        workProgress: 0,
+                        targetResource: null,
+                        targetPosition: null,
+                        farmerData: {
+                          ...npc.farmerData,
+                          currentTask: "waiting" as const
+                        },
+                        needs: {
+                          ...npc.needs,
+                          energy: Math.max(npc.needs.energy, 70),
+                          satisfaction: Math.max(npc.needs.satisfaction, 70)
+                        }
+                      };
+
+                      useNpcStore.setState(state => ({
+                        npcs: state.npcs.map(n => n.id === npc.id ? updatedNpc : n)
+                      }));
+                    }}
+                    className={`w-full px-4 py-3 rounded-lg font-semibold transition-all duration-200 ${
+                      npc.state === "working" || npc.state === "planting" || npc.state === "harvesting"
+                        ? "bg-gray-300 cursor-not-allowed text-gray-600" 
+                        : "bg-gradient-to-r from-yellow-500 to-amber-600 hover:from-yellow-600 hover:to-amber-700 text-white shadow-lg hover:shadow-xl"
+                    }`}
+                    disabled={npc.state === "working" || npc.state === "planting" || npc.state === "harvesting"}
+                  >
+                    <i className="fa-solid fa-wheat-awn mr-2"></i>
+                    {npc.state === "planting" ? "Plantando..." : 
+                     npc.state === "harvesting" ? "Colhendo..." :
+                     npc.state === "working" ? "Trabalhando..." : "Iniciar Cultivo"}
+                  </button>
+                </div>
+              )}
+
+              {npc.assignedWork === "baker" && (
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleWorkClick();
+                  }}
+                  className={`w-full px-4 py-3 rounded-lg font-semibold transition-all duration-200 ${
+                    npc.state === "working" 
+                      ? "bg-gray-300 cursor-not-allowed text-gray-600" 
+                      : "bg-gradient-to-r from-orange-500 to-red-600 hover:from-orange-600 hover:to-red-700 text-white shadow-lg hover:shadow-xl"
+                  }`}
+                  disabled={npc.state === "working"}
+                >
+                  <i className="fa-solid fa-bread-slice mr-2"></i>
+                  {npc.state === "working" ? "Assando..." : "Assar"}
+                </button>
+              )}
+
+              {!npc.assignedWork && (
+                <div className="text-center p-6 bg-yellow-50 rounded-lg border border-yellow-200">
+                  <div className="w-16 h-16 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i className="fa-solid fa-exclamation-triangle text-yellow-600 text-xl"></i>
+                  </div>
+                  <p className="text-yellow-800 font-medium mb-4">
+                    Este NPC não tem trabalho atribuído
+                  </p>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setShowWorkSelection(true);
+                    }}
+                    className="px-6 py-3 bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white rounded-lg font-semibold transition-all duration-200 shadow-lg hover:shadow-xl"
+                  >
+                    <i className="fa-solid fa-plus mr-2"></i>
+                    Atribuir Trabalho
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
         </div>
       </div>
 
+      {/* Modals */}
       {showSeedSelection && (
         <SeedSelectionPanel
           onSeedSelect={(seedType) => {
-            // Atualizar o NPC com a semente selecionada
             useNpcStore.setState(state => ({
               npcs: state.npcs.map(n => 
                 n.id === npc.id 
@@ -734,7 +646,6 @@ const NpcPanel: React.FC<NpcPanelProps> = ({ npc, onClose }) => {
           housePosition={building.position}
           onClose={() => setShowNpcCreation(false)}
           onNpcCreated={(npcId) => {
-            // Fechar o painel atual e reabrir com o novo NPC
             onClose();
             setTimeout(() => {
               const newNpc = useNpcStore.getState().npcs.find(n => n.id === npcId);
@@ -754,27 +665,28 @@ const NpcPanel: React.FC<NpcPanelProps> = ({ npc, onClose }) => {
       )}
 
       {showWorkSelection && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[10000]"
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[10000]"
              onClick={(e) => {
                if (e.target === e.currentTarget) setShowWorkSelection(false);
                e.stopPropagation();
              }}>
-          <div className="bg-white rounded-xl p-6 w-96 max-h-[90vh] overflow-y-auto">
-            <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-bold">Escolher Trabalho</h3>
-              <button 
-                onClick={() => setShowWorkSelection(false)}
-                className="text-gray-500 hover:text-gray-700"
-              >
-                <i className="fa-solid fa-times"></i>
-              </button>
+          <div className="bg-white rounded-2xl shadow-2xl w-[500px] max-h-[90vh] overflow-hidden border border-gray-200">
+            <div className="bg-gradient-to-r from-blue-500 to-indigo-600 p-6 text-white">
+              <div className="flex justify-between items-center">
+                <h3 className="text-xl font-bold">Escolher Trabalho</h3>
+                <button 
+                  onClick={() => setShowWorkSelection(false)}
+                  className="w-8 h-8 bg-white/20 hover:bg-white/30 rounded-full flex items-center justify-center transition-colors"
+                >
+                  <i className="fa-solid fa-times text-white"></i>
+                </button>
+              </div>
+              <p className="text-white/90 mt-2">
+                Escolha um trabalho para {npc.name}. Eles ganharão experiência realizando esse trabalho.
+              </p>
             </div>
 
-            <p className="text-gray-600 mb-4">
-              Escolha um trabalho para {npc.name}. Eles ganharão experiência realizando esse trabalho.
-            </p>
-
-            <div className="space-y-2">
+            <div className="p-6 space-y-3 max-h-[60vh] overflow-y-auto">
               {Object.values(workTypes).map(work => (
                 <button
                   key={work.id}
@@ -783,26 +695,16 @@ const NpcPanel: React.FC<NpcPanelProps> = ({ npc, onClose }) => {
                     assignWork(npc.id, work.id);
                     setShowWorkSelection(false);
                   }}
-                  className="w-full p-3 text-left rounded-lg border hover:bg-gray-50 transition-colors"
+                  className="w-full p-4 text-left rounded-xl border border-gray-200 hover:bg-gray-50 transition-all duration-200 hover:shadow-lg"
                 >
-                  <div className="flex items-center gap-3">
-                    <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
-                      work.id === "miner" ? "bg-blue-100" :
-                      work.id === "lumberjack" ? "bg-green-100" :
-                      work.id === "farmer" ? "bg-yellow-100" :
-                      work.id === "baker" ? "bg-orange-100" : "bg-purple-100"
-                    }`}>
-                      <i className={`fa-solid ${work.icon} ${
-                        work.id === "miner" ? "text-blue-600" :
-                        work.id === "lumberjack" ? "text-green-600" :
-                        work.id === "farmer" ? "text-yellow-600" :
-                        work.id === "baker" ? "text-orange-600" : "text-purple-600"
-                      }`}></i>
+                  <div className="flex items-center gap-4">
+                    <div className={`w-14 h-14 rounded-xl flex items-center justify-center shadow-lg bg-gradient-to-br ${getWorkColor(work.id)}`}>
+                      <i className={`fa-solid ${work.icon} text-white text-xl`}></i>
                     </div>
                     <div className="flex-1">
-                      <div className="font-medium">{work.name}</div>
-                      <div className="text-sm text-gray-500">{work.description}</div>
-                      <div className="text-xs text-gray-400 capitalize">
+                      <div className="font-semibold text-lg text-gray-800">{work.name}</div>
+                      <div className="text-sm text-gray-600 mb-1">{work.description}</div>
+                      <div className="text-xs text-gray-500 capitalize">
                         Categoria: {work.category}
                       </div>
                     </div>
