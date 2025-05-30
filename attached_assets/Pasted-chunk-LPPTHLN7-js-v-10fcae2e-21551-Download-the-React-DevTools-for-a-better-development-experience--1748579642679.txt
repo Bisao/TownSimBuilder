@@ -1,0 +1,59 @@
+chunk-LPPTHLN7.js?v=10fcae2e:21551 Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools
+App.tsx:58 Sistema de áudio inicializado
+interface.tsx:19 Current game phase: login
+useResourceStore.ts:39 Resources initialized: Object
+GameUI.tsx:71 Game systems initialized successfully
+World.tsx:60 Initializing game world and resources
+useGameStore.ts:123 Initializing game store
+useResourceStore.ts:39 Resources initialized: Object
+useResourceStore.ts:140 Generated 30 map resources with cluster distribution
+World.tsx:206 Generated 30 natural resources
+useBuildingStore.ts:48 Cannot place building market at position [32, 9]
+placeBuilding @ useBuildingStore.ts:48
+CameraControls.tsx:36 Camera initialized: Object
+PlacementIndicator.tsx:79 Building house placed at 5,2
+2Building.tsx:41 Failed to load wood texture, using fallback
+Building @ Building.tsx:41
+useBuildingStore.ts:100 Building house placed at [5, 2]
+14Building.tsx:41 Failed to load wood texture, using fallback
+Building @ Building.tsx:41
+chunk-6CHFNV4N.js?v=10fcae2e:15672 Uncaught Error: Could not load /textures/wood_fallback.jpg: undefined
+    at chunk-6CHFNV4N.js?v=10fcae2e:17015:39
+    at HTMLImageElement.onImageError (chunk-664ZIH6C.js?v=10fcae2e:26475:20)
+2Building.tsx:41 Failed to load wood texture, using fallback
+Building @ Building.tsx:41
+chunk-6CHFNV4N.js?v=10fcae2e:15672 Uncaught Error: Could not load /textures/wood_fallback.jpg: undefined
+    at chunk-6CHFNV4N.js?v=10fcae2e:17015:39
+    at HTMLImageElement.onImageError (chunk-664ZIH6C.js?v=10fcae2e:26475:20)
+chunk-6CHFNV4N.js?v=10fcae2e:17705 The above error occurred in the <Building> component:
+
+    at Building (https://a43774af-ee20-4bf7-be69-b9c3cd259639-00-e7tvkf4qik8d.riker.replit.dev/src/game/components/Building.tsx:23:21)
+    at group
+    at World (https://a43774af-ee20-4bf7-be69-b9c3cd259639-00-e7tvkf4qik8d.riker.replit.dev/src/game/components/World.tsx:34:18)
+    at Suspense
+    at Suspense
+    at ErrorBoundary (https://a43774af-ee20-4bf7-be69-b9c3cd259639-00-e7tvkf4qik8d.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-6CHFNV4N.js?v=10fcae2e:16028:5)
+    at FiberProvider (https://a43774af-ee20-4bf7-be69-b9c3cd259639-00-e7tvkf4qik8d.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-6CHFNV4N.js?v=10fcae2e:17708:21)
+    at Provider (https://a43774af-ee20-4bf7-be69-b9c3cd259639-00-e7tvkf4qik8d.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-6CHFNV4N.js?v=10fcae2e:17317:3)
+
+React will try to recreate this component tree from scratch using the error boundary you provided, ErrorBoundary.
+console.error @ chunk-6CHFNV4N.js?v=10fcae2e:17705
+2chunk-6CHFNV4N.js?v=10fcae2e:17814 Uncaught Error: Could not load /textures/wood_fallback.jpg: undefined
+    at chunk-6CHFNV4N.js?v=10fcae2e:17015:39
+    at HTMLImageElement.onImageError (chunk-664ZIH6C.js?v=10fcae2e:26475:20)
+chunk-6CHFNV4N.js?v=10fcae2e:17705 The above error occurred in the <ForwardRef(Canvas)> component:
+
+    at Canvas (https://a43774af-ee20-4bf7-be69-b9c3cd259639-00-e7tvkf4qik8d.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-6CHFNV4N.js?v=10fcae2e:17774:3)
+    at FiberProvider (https://a43774af-ee20-4bf7-be69-b9c3cd259639-00-e7tvkf4qik8d.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-6CHFNV4N.js?v=10fcae2e:17708:21)
+    at CanvasWrapper
+    at KeyboardControls (https://a43774af-ee20-4bf7-be69-b9c3cd259639-00-e7tvkf4qik8d.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@react-three_drei.js?v=46e88fe7:9069:8)
+    at div
+    at App (https://a43774af-ee20-4bf7-be69-b9c3cd259639-00-e7tvkf4qik8d.riker.replit.dev/src/App.tsx?v=4B2Rxh7RHjkgVYHfFyrwJ:31:39)
+    at QueryClientProvider (https://a43774af-ee20-4bf7-be69-b9c3cd259639-00-e7tvkf4qik8d.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=92c1e57a:2909:3)
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+console.error @ chunk-6CHFNV4N.js?v=10fcae2e:17705
+chunk-LPPTHLN7.js?v=10fcae2e:19413 Uncaught Error: Could not load /textures/wood_fallback.jpg: undefined
+    at chunk-6CHFNV4N.js?v=10fcae2e:17015:39
+    at HTMLImageElement.onImageError (chunk-664ZIH6C.js?v=10fcae2e:26475:20)
