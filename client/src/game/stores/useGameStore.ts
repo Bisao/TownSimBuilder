@@ -75,6 +75,7 @@ export interface GameState {
   updateCameraRotation: (rotation: number) => void;
 
   setControlledNpc: (npcId: string | null) => void;
+  setIsManualControl: (manual: boolean) => void;
 }
 
 export const useGameStore = create<GameState>()(
@@ -173,6 +174,7 @@ export const useGameStore = create<GameState>()(
         isManualControl: npcId !== null 
       });
     },
+    setIsManualControl: (manual) => set({ isManualControl: manual }),
 
     // Nova função para ser chamada após o posicionamento bem-sucedido
     onBuildingPlaced: () => {
@@ -186,6 +188,6 @@ export const useGameStore = create<GameState>()(
     // Camera methods
     updateCameraPosition: (position) => set({ cameraPosition: position }),
     updateCameraTarget: (target) => set({ cameraTarget: target }),
-    updateCameraRotation: (rotation) => set({ cameraRotation: rotation }),
+    updateCameraRotation: (rotation: number) => set({ cameraRotation: rotation }),
   }))
 );
