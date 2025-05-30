@@ -33,14 +33,25 @@ const Building = ({ building, onMarketSelect }: BuildingProps) => {
     return npcs.filter(npc => npc.homeId === building.id);
   }, [npcs, building.id, building.type]);
 
-  // Load texture with fallback
-  let woodTexture;
-  try {
-    woodTexture = useTexture("/textures/wood.jpg");
-  } catch (error) {
-    console.warn("Failed to load wood texture, using fallback");
-    woodTexture = useTexture("/textures/wood_fallback.jpg");
-  }
+  const [textureUrl, setTextureUrl] = useState('/textures/wood.jpg');
+
+  // Material de fallback para quando as texturas falharem
+  const fallbackMaterial = useMemo(() => 
+    new THREE.MeshLambertMaterial({ color: 0x8B4513 }), // Cor marrom
+    []
+  );
+
+  const texture = useTexture(textureUrl, (texture) => {
+    // Textura carregada com sucesso
+    texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
+    texture.repeat.set(1, 1);
+  }, (error) => {
+    console.log('Failed to load texture:', textureUrl);
+    // Se falhar, usar uma cor sólida em vez de outra textura
+    if (textureUrl !== 'fallback') {
+      setTextureUrl('fallback');
+    }
+  });
 
   // Calculate position (centered on grid cell)
   const [posX, posZ] = building.position;
@@ -623,7 +634,8 @@ const Building = ({ building, onMarketSelect }: BuildingProps) => {
             <meshStandardMaterial color="#A0A0A0" metalness={0.8} flatShading />
           </mesh>
           <mesh position={[0.15, 0.02, 0]}>
-            <boxGeometry args={[0.02, 0.02, 1]} />
+            <boxGeometry args={[```text
+0.02, 0.02, 1]} />
             <meshStandardMaterial color="#A0A0A0" metalness={0.8} flatShading />
           </mesh>
 
