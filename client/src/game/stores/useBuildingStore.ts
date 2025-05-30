@@ -249,7 +249,6 @@ export const useBuildingStore = create<BuildingStore>()(
       }));
       console.log('All buildings cleared from grid');
     },
-    },
 
     // Production
     updateProduction: (currentTime: number) => {
