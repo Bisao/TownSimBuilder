@@ -409,7 +409,7 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
       return (
         <div
           key={i}
-          className="w-12 h-12 bg-amber-100/60 border border-amber-300/50 rounded-lg flex items-center justify-center relative hover:bg-amber-200/60 transition-colors"
+          className="w-10 h-10 sm:w-12 sm:h-12 bg-amber-100/60 border border-amber-300/50 rounded-lg flex items-center justify-center relative hover:bg-amber-200/60 transition-colors"
           onDragOver={(e) => {
             if (!item) {
               e.preventDefault();
@@ -453,11 +453,13 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
       }}
     >
       <div 
-        className="bg-gradient-to-b from-amber-200 via-amber-100 to-amber-50 rounded-2xl shadow-2xl w-[400px] h-[700px] overflow-hidden relative border-2 border-amber-300"
+        className="bg-gradient-to-b from-amber-200 via-amber-100 to-amber-50 rounded-2xl shadow-2xl overflow-hidden relative border-2 border-amber-300
+                   w-[95vw] max-w-[400px] h-[85vh] max-h-[700px] min-w-[320px] min-h-[500px]
+                   sm:w-[400px] sm:h-[700px]"
         style={{
           position: 'absolute',
-          left: `${position.x}px`,
-          top: `${position.y}px`,
+          left: `${Math.max(10, Math.min(position.x, window.innerWidth - 400))}px`,
+          top: `${Math.max(10, Math.min(position.y, window.innerHeight - 700))}px`,
           cursor: isDragging ? 'grabbing' : 'grab',
         }}
         ref={dragRef}
@@ -472,58 +474,58 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
         }}
       >
         {/* Header */}
-        <div className="bg-gradient-to-r from-amber-600 to-amber-700 p-4 text-white relative">
+        <div className="bg-gradient-to-r from-amber-600 to-amber-700 p-2 sm:p-4 text-white relative">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center border-2 border-white/30">
-                <i className="fa-solid fa-user text-xl"></i>
+            <div className="flex items-center gap-2 sm:gap-3">
+              <div className="w-8 h-8 sm:w-12 sm:h-12 bg-white/20 rounded-full flex items-center justify-center border-2 border-white/30">
+                <i className="fa-solid fa-user text-sm sm:text-xl"></i>
               </div>
               <div>
-                <h2 className="text-lg font-bold">{npc.name}'s</h2>
-                <p className="text-sm text-amber-100">Inventory</p>
+                <h2 className="text-sm sm:text-lg font-bold">{npc.name}'s</h2>
+                <p className="text-xs sm:text-sm text-amber-100">Inventory</p>
               </div>
             </div>
             <button 
               onClick={onClose}
-              className="w-8 h-8 bg-gray-600 hover:bg-gray-700 rounded-full flex items-center justify-center transition-colors"
+              className="w-6 h-6 sm:w-8 sm:h-8 bg-gray-600 hover:bg-gray-700 rounded-full flex items-center justify-center transition-colors"
             >
-              <i className="fa-solid fa-times text-white text-sm"></i>
+              <i className="fa-solid fa-times text-white text-xs sm:text-sm"></i>
             </button>
           </div>
         </div>
 
         {/* Equipment Section - Fixed */}
-        <div className="p-4 pb-0">
+        <div className="p-2 sm:p-4 pb-0">
           {/* Equipment Grid */}
-          <div className="mb-4">
-            <div className="flex justify-between items-start">
+          <div className="mb-2 sm:mb-4">
+            <div className="flex justify-between items-start gap-1 sm:gap-0">
               {/* Left Side - Resources */}
-              <div className="flex flex-col gap-2 w-16">
-                <div className="flex items-center gap-1 text-sm">
+              <div className="flex flex-col gap-1 sm:gap-2 w-12 sm:w-16">
+                <div className="flex items-center gap-1 text-xs sm:text-sm">
                   <span className="text-yellow-600">💰</span>
                   <span className="font-medium">0</span>
                 </div>
-                <div className="flex items-center gap-1 text-sm">
+                <div className="flex items-center gap-1 text-xs sm:text-sm">
                   <span className="text-blue-600">💎</span>
                   <span className="font-medium">17</span>
                 </div>
               </div>
 
               {/* Center - Equipment Slots */}
-              <div className="flex-1 px-4">
+              <div className="flex-1 px-1 sm:px-4">
                 <div className="relative">
                   {/* Character Silhouette Background */}
                   <div className="absolute inset-0 flex items-center justify-center opacity-20">
-                    <i className="fa-solid fa-user text-8xl text-gray-500"></i>
+                    <i className="fa-solid fa-user text-4xl sm:text-8xl text-gray-500"></i>
                   </div>
 
                   {/* Equipment Grid 3x4 */}
-                  <div className="relative z-10 grid grid-cols-3 gap-2">
+                  <div className="relative z-10 grid grid-cols-3 gap-1 sm:gap-2">
                     {equipmentSlots.map((slot) => (
                       <div
                         key={slot.id}
                         data-slot={slot.id}
-                        className={`w-14 h-14 bg-amber-100/60 border-2 border-amber-300/50 rounded-lg flex items-center justify-center relative cursor-pointer transition-all hover:bg-amber-200/60 ${
+                        className={`w-10 h-10 sm:w-14 sm:h-14 bg-amber-100/60 border-2 border-amber-300/50 rounded-lg flex items-center justify-center relative cursor-pointer transition-all hover:bg-amber-200/60 ${
                           draggedItem ? 'hover:border-green-400 hover:bg-green-50' : ''
                         }`}
                         onDragOver={(e) => {
@@ -548,13 +550,13 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
                             onDragStart={(e) => handleDragStart(slot.equipped!, e, slot.id)}
                             onDragEnd={handleDragEnd}
                           >
-                            <span className="text-xl">{slot.equipped.icon}</span>
-                            <div className="absolute top-0 right-0 w-3 h-3 bg-red-500 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                              <i className="fa-solid fa-times text-white text-xs"></i>
+                            <span className="text-sm sm:text-xl">{slot.equipped.icon}</span>
+                            <div className="absolute top-0 right-0 w-2 h-2 sm:w-3 sm:h-3 bg-red-500 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                              <i className="fa-solid fa-times text-white text-[8px] sm:text-xs"></i>
                             </div>
                           </div>
                         ) : (
-                          <div className="text-gray-400 text-lg">+</div>
+                          <div className="text-gray-400 text-sm sm:text-lg">+</div>
                         )}
                       </div>
                     ))}
@@ -563,28 +565,28 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
               </div>
 
               {/* Right Side - Buttons */}
-              <div className="flex flex-col gap-2 w-20">
-                <button className="bg-amber-600 hover:bg-amber-700 text-white px-3 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-1">
-                  <i className="fa-solid fa-list"></i>
-                  <span>Loadouts</span>
+              <div className="flex flex-col gap-1 sm:gap-2 w-16 sm:w-20">
+                <button className="bg-amber-600 hover:bg-amber-700 text-white px-1 sm:px-3 py-1 sm:py-2 rounded-lg text-xs sm:text-sm font-medium transition-colors flex items-center gap-1">
+                  <i className="fa-solid fa-list text-xs sm:text-sm"></i>
+                  <span className="hidden sm:inline">Loadouts</span>
                 </button>
-                <button className="bg-amber-600 hover:bg-amber-700 text-white px-3 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-1">
-                  <i className="fa-solid fa-shirt"></i>
-                  <span>Wardrobe</span>
+                <button className="bg-amber-600 hover:bg-amber-700 text-white px-1 sm:px-3 py-1 sm:py-2 rounded-lg text-xs sm:text-sm font-medium transition-colors flex items-center gap-1">
+                  <i className="fa-solid fa-shirt text-xs sm:text-sm"></i>
+                  <span className="hidden sm:inline">Wardrobe</span>
                 </button>
               </div>
             </div>
           </div>
 
           {/* Weight Bar */}
-          <div className="mb-4">
-            <div className="flex justify-between items-center text-sm mb-1">
+          <div className="mb-2 sm:mb-4">
+            <div className="flex justify-between items-center text-xs sm:text-sm mb-1">
               <span className="text-gray-600">Weight</span>
               <span className="text-gray-800">{totalWeight.toFixed(1)}/{maxWeight}</span>
             </div>
-            <div className="w-full bg-gray-300 rounded-full h-2">
+            <div className="w-full bg-gray-300 rounded-full h-1.5 sm:h-2">
               <div 
-                className={`h-2 rounded-full transition-all duration-300 ${
+                className={`h-1.5 sm:h-2 rounded-full transition-all duration-300 ${
                   weightPercentage > 90 ? 'bg-red-500' :
                   weightPercentage > 75 ? 'bg-orange-500' :
                   weightPercentage > 50 ? 'bg-yellow-500' : 'bg-green-500'
@@ -596,11 +598,11 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
         </div>
 
         {/* Scrollable Inventory Section */}
-        <div className="flex-1 px-4 pb-4 overflow-hidden">
+        <div className="flex-1 px-2 sm:px-4 pb-2 sm:pb-4 overflow-hidden">
           <div className="h-full flex">
             {/* Inventory Grid - Scrollable */}
-            <div className="flex-1 overflow-y-auto pr-2">
-              <div className="grid grid-cols-5 gap-1 p-2 bg-amber-50/50 rounded-lg border border-amber-200">
+            <div className="flex-1 overflow-y-auto pr-1 sm:pr-2">
+              <div className="grid grid-cols-4 sm:grid-cols-5 gap-1 p-1 sm:p-2 bg-amber-50/50 rounded-lg border border-amber-200">
                 {inventorySlots}
               </div>
             </div>
@@ -614,24 +616,24 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
           </div>
 
           {/* Bottom Bar */}
-          <div className="flex items-center justify-between text-sm text-gray-600 pt-4 mt-4 border-t border-amber-200">
-            <div className="flex items-center gap-4">
-              <div className="w-6 h-6 bg-gray-400 rounded-full flex items-center justify-center">
-                <i className="fa-solid fa-cog text-white text-xs"></i>
+          <div className="flex items-center justify-between text-xs sm:text-sm text-gray-600 pt-2 sm:pt-4 mt-2 sm:mt-4 border-t border-amber-200">
+            <div className="flex items-center gap-2 sm:gap-4">
+              <div className="w-5 h-5 sm:w-6 sm:h-6 bg-gray-400 rounded-full flex items-center justify-center">
+                <i className="fa-solid fa-cog text-white text-[10px] sm:text-xs"></i>
               </div>
-              <div className="w-6 h-6 bg-gray-400 rounded-full flex items-center justify-center">
-                <i className="fa-solid fa-user text-white text-xs"></i>
+              <div className="w-5 h-5 sm:w-6 sm:h-6 bg-gray-400 rounded-full flex items-center justify-center">
+                <i className="fa-solid fa-user text-white text-[10px] sm:text-xs"></i>
               </div>
-              <div className="w-6 h-6 bg-gray-400 rounded-full flex items-center justify-center">
-                <i className="fa-solid fa-coins text-white text-xs"></i>
+              <div className="w-5 h-5 sm:w-6 sm:h-6 bg-gray-400 rounded-full flex items-center justify-center">
+                <i className="fa-solid fa-coins text-white text-[10px] sm:text-xs"></i>
               </div>
-              <div className="w-6 h-6 bg-gray-400 rounded-full flex items-center justify-center">
-                <i className="fa-solid fa-chart-line text-white text-xs"></i>
+              <div className="w-5 h-5 sm:w-6 sm:h-6 bg-gray-400 rounded-full flex items-center justify-center">
+                <i className="fa-solid fa-chart-line text-white text-[10px] sm:text-xs"></i>
               </div>
             </div>
             <div className="text-right">
-              <div className="text-xs text-gray-500">Est. Market Value</div>
-              <div className="font-bold text-gray-800">{totalValue}</div>
+              <div className="text-[10px] sm:text-xs text-gray-500">Est. Market Value</div>
+              <div className="font-bold text-gray-800 text-xs sm:text-sm">{totalValue}</div>
             </div>
           </div>
         </div>

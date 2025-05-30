@@ -361,28 +361,28 @@ const GameUI = () => {
       )}
 
       {/* Top HUD */}
-      <div className="absolute top-2 left-2 right-2 lg:top-4 lg:left-4 lg:right-4 z-10 pointer-events-none">
-        <div className="flex justify-between items-start">
+      <div className="absolute top-1 left-1 right-1 sm:top-2 sm:left-2 sm:right-2 lg:top-4 lg:left-4 lg:right-4 z-10 pointer-events-none">
+        <div className="flex justify-between items-start gap-2">
           {/* Left side - Game info */}
-          <div className="bg-black/50 text-white p-2 lg:p-3 rounded-lg backdrop-blur-sm pointer-events-auto">
-            <div className="flex items-center gap-2 lg:gap-4">
-              <div className="responsive-text">
-                <div className="font-semibold">{formatTime(timeCycle)}</div>
-                <div className="text-xs opacity-80">{getTimePeriod(timeCycle)}</div>
+          <div className="bg-black/50 text-white p-1.5 sm:p-2 lg:p-3 rounded-lg backdrop-blur-sm pointer-events-auto min-w-0 flex-1 max-w-[45%]">
+            <div className="flex items-center gap-1 sm:gap-2 lg:gap-4">
+              <div className="responsive-text min-w-0">
+                <div className="font-semibold truncate">{formatTime(timeCycle)}</div>
+                <div className="text-[10px] sm:text-xs opacity-80 truncate">{getTimePeriod(timeCycle)}</div>
               </div>
-              <div className="responsive-text">
-                <div className="font-semibold">Velocidade: {timeSpeed.toFixed(1)}x</div>
-                <div className="text-xs opacity-80">{isPaused ? "PAUSADO" : "RODANDO"}</div>
+              <div className="responsive-text min-w-0">
+                <div className="font-semibold truncate">Vel: {timeSpeed.toFixed(1)}x</div>
+                <div className="text-[10px] sm:text-xs opacity-80 truncate">{isPaused ? "PAUSADO" : "RODANDO"}</div>
               </div>
             </div>
           </div>
 
           {/* Right side - Mode info */}
-          <div className="bg-black/50 text-white p-2 lg:p-3 rounded-lg backdrop-blur-sm pointer-events-auto">
-            <div className="responsive-text">
-              <div className="font-semibold">Modo: {gameMode === "build" ? "Construção" : "Visualização"}</div>
+          <div className="bg-black/50 text-white p-1.5 sm:p-2 lg:p-3 rounded-lg backdrop-blur-sm pointer-events-auto min-w-0 flex-1 max-w-[45%]">
+            <div className="responsive-text min-w-0">
+              <div className="font-semibold truncate">Modo: {gameMode === "build" ? "Construção" : "Visualização"}</div>
               {isManualControl && controlledNpcId && (
-                <div className="text-xs opacity-80">Controlando NPC: {controlledNpcId}</div>
+                <div className="text-[10px] sm:text-xs opacity-80 truncate">Controlando: {controlledNpcId}</div>
               )}
             </div>
           </div>
@@ -391,15 +391,15 @@ const GameUI = () => {
 
       {/* Player Info Panel - Above Skills */}
       {selectedNpc && (
-        <div className="absolute bottom-20 left-1/2 transform -translate-x-1/2 z-10 pointer-events-none">
-          <div className="bg-black/80 backdrop-blur-sm rounded-lg px-4 py-2 border border-gray-600 pointer-events-auto">
-            <div className="flex items-center gap-4 text-white text-sm">
+        <div className="absolute bottom-16 sm:bottom-20 left-1/2 transform -translate-x-1/2 z-10 pointer-events-none max-w-[95vw]">
+          <div className="bg-black/80 backdrop-blur-sm rounded-lg px-2 sm:px-4 py-1 sm:py-2 border border-gray-600 pointer-events-auto">
+            <div className="flex items-center gap-2 sm:gap-4 text-white text-xs sm:text-sm overflow-x-auto">
               {/* NPC Avatar and Name */}
-              <div className="flex items-center gap-2">
-                <div className="w-8 h-8 bg-gradient-to-br from-blue-400 to-purple-500 rounded-full flex items-center justify-center border-2 border-white/30">
-                  <i className="fa-solid fa-user text-white text-xs"></i>
+              <div className="flex items-center gap-1 sm:gap-2 flex-shrink-0">
+                <div className="w-6 h-6 sm:w-8 sm:h-8 bg-gradient-to-br from-blue-400 to-purple-500 rounded-full flex items-center justify-center border-2 border-white/30">
+                  <i className="fa-solid fa-user text-white text-[10px] sm:text-xs"></i>
                 </div>
-                <span className="font-semibold">{selectedNpc.name}</span>
+                <span className="font-semibold truncate max-w-20 sm:max-w-none">{selectedNpc.name}</span>
               </div>
 
               {/* Level */}
@@ -439,23 +439,23 @@ const GameUI = () => {
       )}
 
       {/* Skills Bar */}
-      <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 z-10 pointer-events-none">
-        <div className="flex items-center gap-2 pointer-events-auto">
+      <div className="absolute bottom-1 sm:bottom-2 left-1/2 transform -translate-x-1/2 z-10 pointer-events-none">
+        <div className="flex items-center gap-1 sm:gap-2 pointer-events-auto overflow-x-auto max-w-[95vw] px-2">
           {/* Skill buttons with circular design similar to Albion Online */}
-          <div className="w-12 h-12 bg-gradient-to-b from-gray-600 to-gray-800 rounded-full border-2 border-gray-500 flex items-center justify-center cursor-pointer hover:border-yellow-400 transition-all group relative">
-            <i className="fa-solid fa-axe text-white text-lg"></i>
-            <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-gray-700 rounded-full border border-gray-400 flex items-center justify-center">
-              <span className="text-xs text-white font-bold">Q</span>
+          <div className="w-8 h-8 sm:w-12 sm:h-12 bg-gradient-to-b from-gray-600 to-gray-800 rounded-full border-2 border-gray-500 flex items-center justify-center cursor-pointer hover:border-yellow-400 transition-all group relative flex-shrink-0">
+            <i className="fa-solid fa-axe text-white text-sm sm:text-lg"></i>
+            <div className="absolute -bottom-0.5 -right-0.5 sm:-bottom-1 sm:-right-1 w-3 h-3 sm:w-5 sm:h-5 bg-gray-700 rounded-full border border-gray-400 flex items-center justify-center">
+              <span className="text-[8px] sm:text-xs text-white font-bold">Q</span>
             </div>
-            <div className="absolute top-full mt-1 left-1/2 transform -translate-x-1/2 bg-black/80 text-white text-xs px-2 py-1 rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity">
+            <div className="absolute top-full mt-1 left-1/2 transform -translate-x-1/2 bg-black/80 text-white text-[10px] sm:text-xs px-1 sm:px-2 py-0.5 sm:py-1 rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity z-50">
               Machado de Lenhador
             </div>
           </div>
 
-          <div className="w-12 h-12 bg-gradient-to-b from-orange-500 to-red-600 rounded-full border-2 border-orange-400 flex items-center justify-center cursor-pointer hover:border-yellow-400 transition-all group relative">
-            <i className="fa-solid fa-fire text-white text-lg"></i>
-            <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-gray-700 rounded-full border border-gray-400 flex items-center justify-center">
-              <span className="text-xs text-white font-bold">W</span>
+          <div className="w-8 h-8 sm:w-12 sm:h-12 bg-gradient-to-b from-orange-500 to-red-600 rounded-full border-2 border-orange-400 flex items-center justify-center cursor-pointer hover:border-yellow-400 transition-all group relative flex-shrink-0">
+            <i className="fa-solid fa-fire text-white text-sm sm:text-lg"></i>
+            <div className="absolute -bottom-0.5 -right-0.5 sm:-bottom-1 sm:-right-1 w-3 h-3 sm:w-5 sm:h-5 bg-gray-700 rounded-full border border-gray-400 flex items-center justify-center">
+              <span className="text-[8px] sm:text-xs text-white font-bold">W</span>
             </div>
             <div className="absolute top-full mt-1 left-1/2 transform -translate-x-1/2 bg-black/80 text-white text-xs px-2 py-1 rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity">
               Bola de Fogo
@@ -535,16 +535,17 @@ const GameUI = () => {
       </div>
 
       {/* Control Panel - moved higher */}
-      <div className="absolute bottom-16 left-2 right-2 lg:bottom-20 lg:left-4 lg:right-4 z-10 pointer-events-none">
+      <div className="absolute bottom-12 sm:bottom-16 lg:bottom-20 left-1 right-1 sm:left-2 sm:right-2 lg:left-4 lg:right-4 z-10 pointer-events-none">
         <div className="flex justify-center">
-          <div className="bg-black/50 text-white p-2 lg:p-3 rounded-lg backdrop-blur-sm pointer-events-auto max-w-full overflow-x-auto">
-            <div className="grid grid-cols-3 lg:grid-cols-6 gap-1 lg:gap-2 text-xs min-w-max">
+          <div className="bg-black/50 text-white p-1 sm:p-2 lg:p-3 rounded-lg backdrop-blur-sm pointer-events-auto max-w-full overflow-x-auto">
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-1 lg:gap-2 text-[10px] sm:text-xs min-w-max">
               <button
                 onClick={() => setShowResourcePanel(!showResourcePanel)}
-                className={`px-2 lg:px-3 py-1 rounded whitespace-nowrap responsive-text ${showResourcePanel ? 'bg-blue-600' : 'bg-gray-600'} hover:bg-blue-700 transition-colors`}
+                className={`px-1 sm:px-2 lg:px-3 py-0.5 sm:py-1 rounded whitespace-nowrap ${showResourcePanel ? 'bg-blue-600' : 'bg-gray-600'} hover:bg-blue-700 transition-colors`}
                 title="Toggle Resource Panel (R)"
               >
-                Recursos (R)
+                <span className="sm:hidden">Rec</span>
+                <span className="hidden sm:inline">Recursos (R)</span>
               </button>
               <button
                 onClick={() => setShowBuildingPanel(!showBuildingPanel)}
