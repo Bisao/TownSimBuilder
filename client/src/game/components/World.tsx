@@ -46,7 +46,7 @@ const World: React.FC<WorldProps> = ({ onMarketSelect }) => {
   const [isWorldInitialized, setIsWorldInitialized] = useState(false);
 
   // Store states
-  const { isInitialized, initialize, gameMode } = useGameStore();
+  const { isInitialized, initialize, gameMode, isManualControl, controlledNpcId } = useGameStore();
   const { buildings, placeBuilding } = useBuildingStore();
   const { npcs, spawnNPC } = useNpcStore();
   const { initResources, initializeResources } = useResourceStore();
