@@ -46,7 +46,6 @@ export const useBuildingStore = create<BuildingState>()(
       
       // Check if we can place the building
       if (!buildingType || !get().canPlaceBuilding(type, position)) {
-        console.warn(`Cannot place building ${type} at position [${position[0]}, ${position[1]}]`);
         return false;
       }
       
