@@ -1,4 +1,3 @@
-
 import React, { useState, useCallback, useMemo, useEffect } from "react";
 import { NPC, useNpcStore } from "../game/stores/useNpcStore";
 import { useDraggable } from "../hooks/useDraggable";
@@ -50,7 +49,7 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
     initialPosition: { x: window.innerWidth / 2 - 350, y: window.innerHeight / 2 - 350 }
   });
 
-  
+
 
   const [inventoryItems, setInventoryItems] = useState<InventoryItem[]>([
     // === ITEMS NÍVEL 1 ===
@@ -97,7 +96,7 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
       durability: { current: 100, max: 100 },
       requirements: { level: 1, skills: { dagger: 1 } }
     },
-    
+
     // Armaduras Básicas
     { 
       id: "cloth_cap", 
@@ -651,7 +650,7 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
   // Função para calcular stats totais
   const calculateTotalStats = useCallback(() => {
     let totalStats = { damage: 0, defense: 0, speed: 0, health: 0 };
-    
+
     equipmentSlots.forEach(slot => {
       if (slot.equipped?.stats) {
         totalStats.damage += slot.equipped.stats.damage || 0;
@@ -666,7 +665,7 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
 
   const filteredItems = useMemo(() => {
     let filtered = inventoryItems;
-    
+
     if (filter !== "all") {
       filtered = filtered.filter(item => item.type === filter);
     }
@@ -705,13 +704,13 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
   const handleDropOnSlot = useCallback((e: React.DragEvent, slotId: string) => {
     e.preventDefault();
     e.stopPropagation();
-    
+
     console.log("Drop on slot:", slotId);
-    
+
     const itemId = e.dataTransfer.getData("text/plain");
     let itemData: InventoryItem | null = null;
     let fromSlot: string | null = null;
-    
+
     try {
       const jsonData = e.dataTransfer.getData("application/json");
       if (jsonData) {
@@ -722,12 +721,12 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
     } catch (error) {
       console.warn("Failed to parse drag data:", error);
     }
-    
+
     // Fallback para buscar o item
     if (!itemData) {
       itemData = draggedItem || inventoryItems.find(item => item.id === itemId);
     }
-    
+
     if (!itemData) {
       console.error("Item não encontrado:", itemId);
       showNotification("Item não encontrado", 'error');
@@ -755,7 +754,7 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
 
     // Sistema de troca segura de equipamentos
     const currentEquippedItem = targetSlot.equipped;
-    
+
     // Se o item vem de outro slot, trocar os itens
     if (fromSlot && fromSlot !== slotId) {
       setEquipmentSlots(prev => {
@@ -769,7 +768,7 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
           }
           return slot;
         });
-        
+
         // Salvar equipamentos no NPC
         const equipment = newSlots.reduce((acc, slot) => {
           if (slot.equipped) {
@@ -777,24 +776,24 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
           }
           return acc;
         }, {} as Record<string, InventoryItem>);
-        
+
         updateNpc(npc.id, { equipment });
-        
+
         return newSlots;
       });
     } else {
       // Item vem do inventário
       setInventoryItems(prev => {
         let newItems = [...prev];
-        
+
         // Se há item equipado no slot, adicionar de volta ao inventário
         if (currentEquippedItem) {
           newItems.push({ ...currentEquippedItem, equipped: false });
         }
-        
+
         // Remover o item que está sendo equipado do inventário
         newItems = newItems.filter(item => item.id !== itemData!.id);
-        
+
         return newItems;
       });
 
@@ -805,7 +804,7 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
             ? { ...s, equipped: { ...itemData!, equipped: true } }
             : s
         );
-        
+
         // Salvar equipamentos no NPC
         const equipment = newSlots.reduce((acc, slot) => {
           if (slot.equipped) {
@@ -813,9 +812,9 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
           }
           return acc;
         }, {} as Record<string, InventoryItem>);
-        
+
         updateNpc(npc.id, { equipment });
-        
+
         return newSlots;
       });
     }
@@ -838,13 +837,13 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
 
     // Adicionar item de volta ao inventário
     setInventoryItems(prev => [...prev, { ...equippedItem, equipped: false }]);
-    
+
     // Remover item do slot de equipamento
     setEquipmentSlots(prev => {
       const newSlots = prev.map(s => 
         s.id === slotId ? { ...s, equipped: undefined } : s
       );
-      
+
       // Salvar equipamentos no NPC
       const equipment = newSlots.reduce((acc, slot) => {
         if (slot.equipped) {
@@ -852,9 +851,9 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
         }
         return acc;
       }, {} as Record<string, InventoryItem>);
-      
+
       updateNpc(npc.id, { equipment });
-      
+
       return newSlots;
     });
 
@@ -870,7 +869,7 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
           : item
       )
     );
-    
+
     setEquipmentSlots(prev =>
       prev.map(slot =>
         slot.equipped?.id === itemId && slot.equipped.durability
@@ -902,15 +901,17 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
         onDragEnd={handleDragEnd}
         onClick={() => setSelectedItem(item)}
       >
-        <div className={`w-12 h-12 bg-gradient-to-br ${getRarityColor(item.rarity)} rounded-lg border-2 ${getRarityBorder(item.rarity)} flex items-center justify-center shadow-lg backdrop-blur-sm relative overflow-hidden`}>
+        <div
+          className={`w-10 h-10 bg-gradient-to-br ${getRarityColor(item.rarity)} rounded-lg border-2 ${getRarityBorder(item.rarity)} flex items-center justify-center shadow-lg backdrop-blur-sm relative overflow-hidden`}
+        >
           <div className="absolute inset-0 bg-white/10 backdrop-blur-sm"></div>
-          <span className="text-xl relative z-10">{item.icon}</span>
-          
+          <span className="text-lg relative z-10">{item.icon}</span>
+
           {/* Indicador de tier */}
           <div className="absolute -bottom-0.5 -right-0.5 text-xs bg-gray-900 text-white rounded-full w-5 h-5 flex items-center justify-center text-[10px] border border-white font-bold">
             {item.tier}
           </div>
-          
+
           {/* Barra de durabilidade */}
           {item.durability && (
             <div className="absolute bottom-0 left-0 w-full h-1 bg-gray-800/50">
@@ -936,15 +937,15 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
             <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent animate-pulse"></div>
           )}
         </div>
-        
+
         {/* Tooltip melhorado */}
-        <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-20 pointer-events-none">
-          <div className="bg-gray-900 text-white text-xs px-3 py-2 rounded-lg shadow-xl border border-gray-700 min-w-max max-w-xs">
-            <div className="font-bold text-center mb-1">{item.name}</div>
+        <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-20 pointer-events-none">
+          <div className="bg-gray-900 text-white text-xs px-2 py-1 rounded-lg shadow-xl border border-gray-700 min-w-max max-w-xs whitespace-normal">
+            <div className="font-bold text-center text-xs">{item.name}</div>
             {item.description && (
-              <div className="text-gray-300 text-center mb-2">{item.description}</div>
+              <div className="text-gray-300 text-center text-xs break-words">{item.description}</div>
             )}
-            
+
             {/* Stats */}
             {item.stats && (
               <div className="space-y-1 mb-2">
@@ -985,7 +986,7 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
             }`}>
               {item.rarity?.toUpperCase() || "COMUM"}
             </div>
-            
+
             {/* Botão de reparo para itens danificados */}
             {item.durability && durabilityPercentage < 100 && (
               <button
@@ -1084,7 +1085,7 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
               <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-10 pointer-events-none">
                 {slot.equipped.name} - Arraste para mover ou clique para desequipar
               </div>
-              
+
               {/* Indicador visual para desequipar */}
               <div className="absolute top-0 right-0 w-4 h-4 bg-red-500 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
                 <i className="fa-solid fa-times text-white text-xs"></i>
@@ -1115,7 +1116,7 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
     if (!item && draggedItem) {
       e.preventDefault();
       e.stopPropagation();
-      
+
       // Se o item vem de um slot de equipamento, desequipá-lo
       const equippedSlot = equipmentSlots.find(slot => slot.equipped?.id === draggedItem.id);
       if (equippedSlot) {
@@ -1130,7 +1131,7 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
       return (
         <div
           key={i}
-          className={`w-12 h-12 bg-white/20 border border-gray-300/50 rounded-lg flex items-center justify-center relative transition-all duration-200 hover:bg-white/40 hover:border-gray-400/70 ${
+          className={`w-10 h-10 bg-white/20 border border-gray-300/50 rounded-lg flex items-center justify-center relative transition-all duration-200 hover:bg-white/40 hover:border-gray-400/70 ${
             draggedItem && !item ? 'border-blue-300 bg-blue-50' : ''
           }`}
           onDragOver={(e) => {
@@ -1183,7 +1184,7 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
                                      target.closest('button') || 
                                      target.closest('input') || 
                                      target.closest('select');
-          
+
           if (!isInteractiveElement) {
             handleMouseDown(e);
           }
@@ -1322,12 +1323,14 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
                 Detalhes do Item
               </h3>
               <div className="flex items-start gap-4">
-                <div className={`w-16 h-16 bg-gradient-to-br ${getRarityColor(selectedItem.rarity)} rounded-xl border-2 ${getRarityBorder(selectedItem.rarity)} flex items-center justify-center shadow-lg relative`}>
-                  <span className="text-2xl">{selectedItem.icon}</span>
+                <div
+                  className={`w-10 h-10 bg-gradient-to-br ${getRarityColor(selectedItem.rarity)} rounded-xl border-2 ${getRarityBorder(selectedItem.rarity)} flex items-center justify-center shadow-lg relative`}
+                >
+                  <span className="text-lg">{selectedItem.icon}</span>
                   {selectedItem.durability && (
                     <div className="absolute bottom-0 left-0 w-full h-2 bg-gray-800/50 rounded-b-xl">
                       <div 
-                        className={`h-full rounded-b-xl transition-all duration-300 ${
+                        className={`h-2 rounded-full transition-all duration-300 ${
                           (selectedItem.durability.current / selectedItem.durability.max) > 0.75 ? 'bg-green-500' :
                           (selectedItem.durability.current / selectedItem.durability.max) > 0.5 ? 'bg-yellow-500' :
                           (selectedItem.durability.current / selectedItem.durability.max) > 0.25 ? 'bg-orange-500' : 'bg-red-500'
