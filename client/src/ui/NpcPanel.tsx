@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { NPC, useNpcStore } from "../game/stores/useNpcStore";
 import { useBuildingStore } from "../game/stores/useBuildingStore";
 import { useCombatStore } from "../game/stores/useCombatStore";
+import { useDummyStore } from "../game/stores/useDummyStore";
 import { npcTypes, workTypes } from "../game/constants/npcs";
 import { useGameStore } from "../game/stores/useGameStore";
 import { useDraggable } from "../hooks/useDraggable";
@@ -64,8 +65,8 @@ const NpcPanel: React.FC<NpcPanelProps> = ({ npc, onClose }) => {
   const handleCombatClick = (e: React.MouseEvent) => {
     e.stopPropagation();
 
-    // Encontrar o dummy mais próximo
-    const dummies = useBuildingStore.getState().buildings.filter(b => b.type === 'training_dummy');
+    // Encontrar o dummy mais próximo usando useDummyStore
+    const { dummies } = useDummyStore.getState();
 
     if (dummies.length === 0) {
       console.log("Nenhum dummy de treinamento encontrado!");
@@ -76,11 +77,11 @@ const NpcPanel: React.FC<NpcPanelProps> = ({ npc, onClose }) => {
     const nearestDummy = dummies.reduce((nearest, dummy) => {
       const distToNearest = Math.hypot(
         nearest.position[0] - npc.position[0],
-        nearest.position[1] - npc.position[2]
+        nearest.position[2] - npc.position[2]
       );
       const distToCurrent = Math.hypot(
         dummy.position[0] - npc.position[0],
-        dummy.position[1] - npc.position[2]
+        dummy.position[2] - npc.position[2]
       );
       return distToCurrent < distToNearest ? dummy : nearest;
     });
@@ -133,7 +134,7 @@ const NpcPanel: React.FC<NpcPanelProps> = ({ npc, onClose }) => {
     updateNpc(npc.id, {
       controlMode: "manual",
       isPlayerControlled: true,
-      targetPosition: [nearestDummy.position[0], 0, nearestDummy.position[1]],
+      targetPosition: [nearestDummy.position[0], 0, nearestDummy.position[2]],
       targetBuildingId: nearestDummy.id,
       state: "moving",
       combatTarget: nearestDummy.id

@@ -512,13 +512,22 @@ class NPCStateManager {
   }
 
   static handleAttacking(npc: NPC, context: StateContext): Partial<NPC> {
-    const { adjustedDeltaTime, buildings } = context;
+    const { adjustedDeltaTime } = context;
 
     if (!npc.combatTarget || !npc.targetBuildingId) {
       return { state: "idle" };
     }
 
-    const dummy = buildings.find(b => b.id === npc.targetBuildingId && b.type === 'training_dummy');
+    // Buscar dummy no DummyStore ao invés do BuildingStore
+    let dummy = null;
+    try {
+      import('./useDummyStore').then(({ useDummyStore }) => {
+        dummy = useDummyStore.getState().getDummy(npc.targetBuildingId!);
+      }).catch(console.error);
+    } catch (error) {
+      console.error('Erro ao acessar DummyStore:', error);
+    }
+
     if (!dummy) {
       return {
         state: "idle",
@@ -530,13 +539,13 @@ class NPCStateManager {
     // Verificar distância ao dummy
     const distanceToDummy = Math.hypot(
       dummy.position[0] - npc.position[0],
-      dummy.position[1] - npc.position[2]
+      dummy.position[2] - npc.position[2]
     );
 
     if (distanceToDummy > 1.5) {
       // Muito longe, mover para mais perto
       return {
-        targetPosition: [dummy.position[0], 0, dummy.position[1]],
+        targetPosition: [dummy.position[0], 0, dummy.position[2]],
         state: "moving"
       };
     }
