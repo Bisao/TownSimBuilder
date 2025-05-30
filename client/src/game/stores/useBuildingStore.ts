@@ -4,7 +4,7 @@ import { subscribeWithSelector } from 'zustand/middleware';
 import { buildingTypes, BuildingType } from '../constants/buildings';
 import { useResourceStore } from './useResourceStore';
 import { useNotificationStore } from '../../lib/stores/useNotificationStore';
-import { GAME_CONFIG } from '../../../shared/constants/game';
+import { GAME_CONFIG } from '../../../../shared/constants/game';
 
 // Types
 export interface Building {
