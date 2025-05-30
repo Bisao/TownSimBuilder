@@ -880,11 +880,11 @@ export const useNpcStore = create<NPCStoreState>()(
           // Atualizar métricas se estado mudou
           if (npc.state !== updatedNpc.state) {
             import('./useNpcMetrics').then(({ useNpcMetrics }) => {
-              Applying skill bonuses to resource gathering in the NPC store.              useNpcMetrics.getState().updateActivity(npc.id, updatedNpc.state);
+              useNpcMetrics.getState().updateActivity(npc.id, updatedNpc.state);
             }).catch(console.error);
           }
 
-          return updatedNpc;
+                    return updatedNpc;
         } catch (error) {
           console.error(`Erro ao atualizar NPC ${npc.id}:`, error);
           return npc;
