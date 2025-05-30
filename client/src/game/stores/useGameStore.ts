@@ -122,7 +122,7 @@ interface GameStore extends GameState {
 }
 
 import { useNotificationStore } from '../../lib/stores/useNotificationStore';
-import { GAME_CONFIG } from '../config/gameConfig';
+import { GAME_CONFIG } from '../../../../shared/constants/game';
 
 export const useGameStore = create<GameStore>()(
   subscribeWithSelector((set, get) => ({
