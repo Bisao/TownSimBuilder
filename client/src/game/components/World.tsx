@@ -236,7 +236,7 @@ const World: React.FC<WorldProps> = ({ onMarketSelect }) => {
         <Terrain />
 
         {/* Buildings */}
-        {buildings.map((building) => {
+        {buildings && Array.isArray(buildings) && buildings.map((building) => {
         try {
           return (
             <Building
@@ -252,7 +252,7 @@ const World: React.FC<WorldProps> = ({ onMarketSelect }) => {
       })}
 
         {/* NPCs */}
-        {npcs.map((npc) => (
+        {npcs && Array.isArray(npcs) && npcs.map((npc) => (
           <NPC key={npc.id} npc={npc} />
         ))}
 
@@ -263,7 +263,7 @@ const World: React.FC<WorldProps> = ({ onMarketSelect }) => {
         />
 
         {/* Natural Resources - renderiza apenas recursos não coletados */}
-        {naturalResources
+        {naturalResources && Array.isArray(naturalResources) && naturalResources
           .filter(resource => !resource.lastCollected)
           .map((resource, index) => (
             <Resource

@@ -59,41 +59,59 @@ const Game = memo(() => {
     setMarketBuilding(null);
   }, []);
 
-  return (
-    <>
-      <div className="fixed inset-0 bg-gradient-to-b from-blue-900 to-blue-600">
-        <KeyboardControls map={keyboardMap}>
-          <Canvas
-            camera={{
-              position: [10, 10, 10],
-              fov: 60,
-              near: 0.1,
-              far: 1000
-            }}
-            shadows
-            className="w-full h-full"
+  try {
+    return (
+      <>
+        <div className="fixed inset-0 bg-gradient-to-b from-blue-900 to-blue-600">
+          <KeyboardControls map={keyboardMap}>
+            <Canvas
+              camera={{
+                position: [10, 10, 10],
+                fov: 60,
+                near: 0.1,
+                far: 1000
+              }}
+              shadows
+              className="w-full h-full"
+            >
+              <Suspense fallback={<LoadingSpinner />}>
+                <World
+                  selectedBuildingType={selectedBuildingType}
+                  onMarketSelect={handleMarketSelect}
+                />
+                <Preload all />
+              </Suspense>
+            </Canvas>
+          </KeyboardControls>
+        </div>
+
+        <GameUI onBuildingSelect={handleBuildingSelect} />
+
+        {marketBuilding && (
+          <MarketWindow
+            building={marketBuilding}
+            onClose={handleMarketClose}
+          />
+        )}
+      </>
+    );
+  } catch (error) {
+    console.error('Error in Game component:', error);
+    return (
+      <div className="fixed inset-0 flex items-center justify-center bg-red-900 text-white">
+        <div className="text-center">
+          <h2 className="text-2xl font-bold mb-4">Erro no Jogo</h2>
+          <p>Ocorreu um erro ao carregar o jogo. Recarregue a página.</p>
+          <button 
+            onClick={() => window.location.reload()}
+            className="mt-4 px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
           >
-            <Suspense fallback={null}>
-              <World
-                selectedBuildingType={selectedBuildingType}
-                onMarketSelect={handleMarketSelect}
-              />
-              <Preload all />
-            </Suspense>
-          </Canvas>
-        </KeyboardControls>
+            Recarregar
+          </button>
+        </div>
       </div>
-
-      <GameUI onBuildingSelect={handleBuildingSelect} />
-
-      {marketBuilding && (
-        <MarketWindow
-          building={marketBuilding}
-          onClose={handleMarketClose}
-        />
-      )}
-    </>
-  );
+    );
+  }
 });
 
 Game.displayName = 'Game';
