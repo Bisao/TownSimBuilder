@@ -1,4 +1,3 @@
-
 import React from "react";
 import { useBuildingStore } from "../game/stores/useBuildingStore";
 import { useResourceStore } from "../game/stores/useResourceStore";
@@ -13,7 +12,7 @@ interface SeedSelectionPanelProps {
 const SeedSelectionPanel = ({ onSeedSelect, onClose }: SeedSelectionPanelProps) => {
   const buildings = useBuildingStore(state => state.buildings);
   const resources = useResourceStore(state => state.resources);
-  
+
   const { dragRef, position, isDragging, handleMouseDown } = useDraggable({
     initialPosition: { x: window.innerWidth / 2 - 200, y: window.innerHeight / 2 - 150 }
   });

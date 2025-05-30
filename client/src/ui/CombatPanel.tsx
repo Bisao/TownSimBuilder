@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useCombatStore } from '../game/stores/useCombatStore';
 import { CombatEntity, CombatAction, Weapon, Spell } from '../game/types/combat';
@@ -58,7 +57,7 @@ const CombatPanel: React.FC<CombatPanelProps> = ({ entityId, onClose }) => {
     };
 
     executeCombatAction(combat.id, entityId, action);
-    
+
     // Reset selections
     setSelectedAction(null);
     setSelectedTarget(null);
@@ -79,16 +78,8 @@ const CombatPanel: React.FC<CombatPanelProps> = ({ entityId, onClose }) => {
   };
 
   return (
-    <div 
-      ref={dragRef}
-      className="fixed bg-gray-900/95 backdrop-blur-sm border border-gray-700 rounded-lg shadow-2xl z-50 min-w-[600px]"
-      style={{ 
-        left: `${position.x}px`, 
-        top: `${position.y}px`,
-        transform: isDragging ? 'scale(1.02)' : 'scale(1)',
-        transition: isDragging ? 'none' : 'transform 0.2s ease'
-      }}
-    >
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-2 sm:p-4">
+      <div className="bg-white rounded-lg shadow-xl w-full max-w-xs sm:max-w-lg lg:max-w-xl h-full max-h-[95vh] sm:max-h-[90vh] overflow-hidden">
       {/* Header */}
       <div 
         className="bg-gradient-to-r from-red-800 to-red-600 p-4 rounded-t-lg cursor-move"
@@ -112,7 +103,7 @@ const CombatPanel: React.FC<CombatPanelProps> = ({ entityId, onClose }) => {
         {/* Status do Combatente */}
         <div className="bg-gray-800 rounded-lg p-4">
           <h3 className="text-lg font-semibold text-white mb-3">Status</h3>
-          
+
           {/* Vida */}
           <div className="mb-3">
             <div className="flex justify-between text-sm mb-1">
@@ -168,7 +159,7 @@ const CombatPanel: React.FC<CombatPanelProps> = ({ entityId, onClose }) => {
               {isMyTurn ? 'Seu Turno' : 'Aguardando'}
             </div>
           </div>
-          
+
           {combat.currentTurn && (
             <p className="text-gray-300 mt-2">
               Turno atual: {combatEntities.get(combat.currentTurn)?.name || 'Desconhecido'}
@@ -180,7 +171,7 @@ const CombatPanel: React.FC<CombatPanelProps> = ({ entityId, onClose }) => {
         {isMyTurn && (
           <div className="bg-gray-800 rounded-lg p-4">
             <h3 className="text-lg font-semibold text-white mb-4">Ações</h3>
-            
+
             {/* Botões de Ação */}
             <div className="grid grid-cols-2 gap-3 mb-4">
               <button

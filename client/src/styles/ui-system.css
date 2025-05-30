@@ -207,6 +207,7 @@
 
   .ui-panel-content {
     padding: 0.75rem;
+    max-height: calc(100vh - 160px);
   }
 
   .ui-panel-footer {
@@ -215,6 +216,64 @@
 
   .inventory-slot {
     min-height: 40px;
+  }
+
+  /* Mobile panel adjustments */
+  .ui-panel {
+    min-width: 280px;
+    max-width: calc(100vw - 16px);
+    max-height: calc(100vh - 16px);
+  }
+
+  /* Draggable panels on mobile */
+  .draggable-panel {
+    position: relative !important;
+    left: auto !important;
+    top: auto !important;
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+}
+
+/* Extra small screens */
+@media (max-width: 480px) {
+  .ui-panel-header {
+    padding: 0.5rem;
+    font-size: 0.875rem;
+  }
+
+  .ui-panel-content {
+    padding: 0.5rem;
+    max-height: calc(100vh - 120px);
+  }
+
+  .ui-panel-footer {
+    padding: 0.5rem;
+  }
+
+  .inventory-slot {
+    min-height: 36px;
+  }
+}
+
+/* Responsive modal overlays */
+@media (max-width: 640px) {
+  .modal-overlay {
+    padding: 8px;
+  }
+}
+
+/* Touch-friendly sizing */
+@media (hover: none) and (pointer: coarse) {
+  .fantasy-button {
+    min-height: 44px;
+    min-width: 44px;
+    padding: 12px 16px;
+  }
+
+  .inventory-slot {
+    min-height: 44px;
+    min-width: 44px;
   }
 }
 

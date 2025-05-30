@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useDummyStore } from '../game/stores/useDummyStore';
 import { useDraggable } from '../hooks/useDraggable';
@@ -10,7 +9,7 @@ interface DummyStatsPanelProps {
 
 const DummyStatsPanel: React.FC<DummyStatsPanelProps> = ({ isVisible, onClose }) => {
   const { dummies, resetDummyStats } = useDummyStore();
-  
+
   const { dragRef, position, isDragging, handleMouseDown } = useDraggable({
     initialPosition: { x: window.innerWidth - 320, y: 20 }
   });
@@ -23,22 +22,14 @@ const DummyStatsPanel: React.FC<DummyStatsPanelProps> = ({ isVisible, onClose })
     const diff = now - timestamp;
     const seconds = Math.floor(diff / 1000);
     const minutes = Math.floor(seconds / 60);
-    
+
     if (minutes > 0) return `${minutes}m ${seconds % 60}s atrás`;
     return `${seconds}s atrás`;
   };
 
   return (
-    <div
-      ref={dragRef}
-      className="fixed bg-slate-900/95 backdrop-blur-sm text-white rounded-xl border border-slate-700 shadow-2xl z-50"
-      style={{
-        left: `${position.x}px`,
-        top: `${position.y}px`,
-        width: '300px',
-        cursor: isDragging ? 'grabbing' : 'default'
-      }}
-    >
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-2 sm:p-4">
+      <div className="bg-white rounded-lg shadow-xl w-full max-w-xs sm:max-w-md lg:max-w-lg h-full max-h-[95vh] sm:max-h-[90vh] overflow-hidden">
       {/* Header */}
       <div 
         className="flex items-center justify-between p-4 border-b border-slate-700 cursor-grab active:cursor-grabbing"
@@ -138,3 +129,4 @@ const DummyStatsPanel: React.FC<DummyStatsPanelProps> = ({ isVisible, onClose })
 };
 
 export default DummyStatsPanel;
+`

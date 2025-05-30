@@ -1,4 +1,3 @@
-
 import React from "react";
 import { NPC, useNpcStore } from "../game/stores/useNpcStore";
 import { useDraggable } from "../hooks/useDraggable";
@@ -229,8 +228,7 @@ const TaskPanel: React.FC<TaskPanelProps> = ({ npc, onClose }) => {
   const tasks = getTasks();
 
   return (
-    <div 
-      className="fixed inset-0 bg-black/50 flex items-center justify-center z-[9999] pointer-events-auto"
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[9999] pointer-events-auto"
       onClick={(e) => {
         if (e.target === e.currentTarget) onClose();
         e.stopPropagation();
@@ -353,7 +351,7 @@ const TaskPanel: React.FC<TaskPanelProps> = ({ npc, onClose }) => {
             <i className="fa-solid fa-info-circle text-blue-500"></i>
             <span>Clique em uma tarefa para iniciar automaticamente</span>
           </div>
-          
+
           {npc.type === "villager" && (
             <div className="mt-2 p-2 bg-green-100 rounded-lg border border-green-200">
               <p className="text-xs text-green-700">
@@ -362,7 +360,7 @@ const TaskPanel: React.FC<TaskPanelProps> = ({ npc, onClose }) => {
               </p>
             </div>
           )}
-          
+
           {npc.controlMode === "manual" && (
             <div className="mt-2 p-2 bg-yellow-100 rounded-lg border border-yellow-200">
               <p className="text-xs text-yellow-700">

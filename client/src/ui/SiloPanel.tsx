@@ -22,7 +22,7 @@ const SiloPanel = ({ isOpen, onClose, siloId }: SiloPanelProps) => {
 
   return (
     <div 
-      className="fixed inset-0 bg-black/50 flex items-center justify-center z-[9999] pointer-events-auto"
+      className="fixed inset-0 bg-black/50 flex items-center justify-center z-[9999] pointer-events-auto p-2 sm:p-4"
       onClick={(e) => {
         if (e.target === e.currentTarget) onClose();
         e.stopPropagation();
@@ -30,7 +30,7 @@ const SiloPanel = ({ isOpen, onClose, siloId }: SiloPanelProps) => {
     >
       <div 
         ref={dragRef}
-        className="bg-white rounded-xl p-6 w-96 max-h-[90vh] overflow-y-auto relative"
+        className="bg-white rounded-xl p-6 w-full max-w-xs sm:max-w-lg lg:max-w-xl h-full max-h-[95vh] sm:max-h-[90vh] overflow-y-auto relative"
         style={{
           position: 'absolute',
           left: `${position.x}px`,

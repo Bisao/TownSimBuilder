@@ -7,7 +7,7 @@ export function cn(...inputs: ClassValue[]) {
 
 // Classes base para painéis de fantasia lowpoly
 export const getPanelClasses = (variant: 'primary' | 'secondary' | 'modal' = 'primary') => {
-  const base = "backdrop-blur-md border-2 shadow-2xl rounded-xl overflow-hidden";
+  const base = "backdrop-blur-md border-2 shadow-2xl rounded-xl overflow-hidden transition-all duration-200";
 
   switch (variant) {
     case 'primary':
