@@ -2,6 +2,7 @@
 import { create } from "zustand";
 import { subscribeWithSelector } from "zustand/middleware";
 import { BuildingType, buildingTypes } from "../constants/buildings";
+import { GRID_CONFIG, canPlaceBuildingAt } from "../constants/grid";
 
 // Building instance in the game world
 export interface Building {
@@ -112,14 +113,11 @@ export const useBuildingStore = create<BuildingState>()(
       const buildingType = buildingTypes[type];
       if (!buildingType) return false;
       
-      // Check if the building fits within the grid bounds (40x40)
+      // Check if the building fits within the grid bounds
       const [posX, posZ] = position;
       const [sizeX, sizeZ] = buildingType.size;
       
-      if (
-        posX < 0 || posX + sizeX > 40 ||
-        posZ < 0 || posZ + sizeZ > 40
-      ) {
+      if (!canPlaceBuildingAt(posX, posZ, sizeX, sizeZ, GRID_CONFIG.BUILDING_GRID_SIZE)) {
         return false;
       }
       

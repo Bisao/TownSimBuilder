@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { subscribeWithSelector } from "zustand/middleware";
+import { GRID_CONFIG } from "../constants/grid";
 
 export type EditorTool = "select" | "terrain_height" | "terrain_paint" | "water" | "road" | "eraser";
 export type TerrainType = "grass" | "dirt" | "sand" | "stone" | "water";
@@ -45,7 +46,7 @@ export const useMapEditorStore = create<MapEditorState>()(
     selectedTerrainType: "grass",
     brushSize: 1,
     brushStrength: 0.5,
-    gridSize: 50,
+    gridSize: GRID_CONFIG.DEFAULT_SIZE,
     maxHeight: 10,
     showGrid: true,
     terrain: {},
@@ -60,7 +61,7 @@ export const useMapEditorStore = create<MapEditorState>()(
 
     setBrushStrength: (strength) => set({ brushStrength: Math.max(0.01, Math.min(1, strength)) }),
 
-    setGridSize: (size) => set({ gridSize: Math.max(10, Math.min(200, size)) }),
+    setGridSize: (size) => set({ gridSize: Math.max(GRID_CONFIG.EDITOR_MIN_SIZE, Math.min(GRID_CONFIG.EDITOR_MAX_SIZE, size)) }),
 
     setMaxHeight: (height) => set({ maxHeight: Math.max(1, Math.min(50, height)) }),
 

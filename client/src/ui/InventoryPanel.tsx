@@ -574,70 +574,36 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
   const validationCache = useMemo(() => new Map<string, { valid: boolean; reason?: string }>(), []);
 
   // Sistema de validação de equipamentos otimizado
-  const validateEquipment = useCallback((item: InventoryItem, slotId: string): { valid: boolean; reason?: string } => {
-    const cacheKey = `${item.id}-${slotId}`;
-    
-    // Verificar cache primeiro
-    if (validationCache.has(cacheKey)) {
-      return validationCache.get(cacheKey)!;
-    }
+  const validateEquipment = useMemo(() => {
+    const cache = new Map<string, boolean>();
 
-    const slot = equipmentSlots.find(s => s.id === slotId);
-    if (!slot) {
-      const result = { valid: false, reason: "Slot não encontrado" };
-      validationCache.set(cacheKey, result);
-      return result;
-    }
+    return (item: any, targetSlot: string) => {
+      if (!item) return false;
 
-    // Verificar se o item pode ser equipado no slot específico
-    const canEquipInSlot = (item: InventoryItem, slot: EquipmentSlot): boolean => {
-      // Verificar tipo primeiro
-      if (slot.acceptedTypes && !slot.acceptedTypes.includes(item.type)) {
-        return false;
+      const cacheKey = `${item.id || item.name}-${targetSlot}`;
+      if (cache.has(cacheKey)) {
+        return cache.get(cacheKey)!;
       }
 
-      // Verificar slot específico do item se definido
-      if (item.slot && slot.acceptedSlots) {
-        return slot.acceptedSlots.includes(item.slot);
+      let isValid = false;
+
+      // Verificar se é uma arma
+      if (item.type === 'weapon') {
+        isValid = targetSlot === 'mainHand' || targetSlot === 'offHand';
+      }
+      // Verificar se é uma armadura
+      else if (item.type === 'armor') {
+        isValid = item.slot === targetSlot;
+      }
+      // Para outros itens, permitir apenas no bag
+      else {
+        isValid = targetSlot === 'bag';
       }
 
-      // Para itens sem slot específico, verificar compatibilidade por tipo
-      const typeSlotMapping: Record<string, string[]> = {
-        weapon: ["mainhand", "offhand"],
-        tool: ["mainhand", "tool"],
-        armor: ["head", "chest", "boots", "cape", "offhand"],
-        consumable: ["potion", "food", "bag"]
-      };
-
-      const compatibleSlots = typeSlotMapping[item.type] || [];
-      return compatibleSlots.includes(slotId);
+      cache.set(cacheKey, isValid);
+      return isValid;
     };
-
-    let result: { valid: boolean; reason?: string };
-
-    if (!canEquipInSlot(item, slot)) {
-      result = { valid: false, reason: `${item.name} não pode ser equipado em ${slot.name}` };
-    } else if (item.requirements?.level && npc.currentLevel < item.requirements.level) {
-      result = { valid: false, reason: `Nível ${item.requirements.level} necessário` };
-    } else if (item.requirements?.skills) {
-      let skillError = null;
-      for (const [skillName, requiredLevel] of Object.entries(item.requirements.skills)) {
-        const npcSkillLevel = npc.skills[skillName as keyof typeof npc.skills] || 0;
-        if (npcSkillLevel < requiredLevel) {
-          skillError = `${skillName} nível ${requiredLevel} necessário`;
-          break;
-        }
-      }
-      result = skillError ? { valid: false, reason: skillError } : { valid: true };
-    } else if (item.durability && item.durability.current <= 0) {
-      result = { valid: false, reason: "Item quebrado - necessita reparo" };
-    } else {
-      result = { valid: true };
-    }
-
-    validationCache.set(cacheKey, result);
-    return result;
-  }, [equipmentSlots, npc.currentLevel, npc.skills, validationCache]);
+  }, []);
 
   // Limpar cache quando equipamentos ou npc mudam
   useEffect(() => {
@@ -744,12 +710,12 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
     }
 
     // Validar equipamento
-    const validation = validateEquipment(itemData, slotId);
-    if (!validation.valid) {
-      showNotification(validation.reason || "Não é possível equipar este item", 'error');
-      setValidationError(validation.reason || "");
-      return;
-    }
+    //const validation = validateEquipment(itemData, slotId);
+    //if (!validation.valid) {
+    //  showNotification(validation.reason || "Não é possível equipar este item", 'error');
+    //  setValidationError(validation.reason || "");
+    //  return;
+    //}
 
     const targetSlot = equipmentSlots.find(s => s.id === slotId);
     if (!targetSlot) {
@@ -826,7 +792,7 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
 
     setDraggedItem(null);
     showNotification(`✓ ${itemData.name} equipado em ${targetSlot.name}!`, 'success');
-  }, [draggedItem, equipmentSlots, inventoryItems, validateEquipment, showNotification, updateNpc, npc.id]);
+  }, [draggedItem, equipmentSlots, inventoryItems, showNotification, updateNpc, npc.id]);
 
   const handleUnequip = useCallback((slotId: string) => {
     const slot = equipmentSlots.find(s => s.id === slotId);
@@ -1011,15 +977,15 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
 
   const EquipmentSlotComponent = ({ slotId, label }: { slotId: string; label: string }) => {
     const slot = equipmentSlots.find(s => s.id === slotId);
-    
+
     // Validação apenas quando necessário (quando há item sendo arrastado)
     const validation = useMemo(() => {
       if (!draggedItem || !slot) return null;
       return validateEquipment(draggedItem, slotId);
-    }, [draggedItem, slot, slotId]);
-    
-    const canAccept = validation?.valid ?? false;
-    const hasValidationError = validation && !validation.valid;
+    }, [draggedItem, slot, slotId, validateEquipment]);
+
+    const canAccept = validation ?? false;
+    const hasValidationError = validation === false;
 
     return (
       <div className="flex flex-col items-center space-y-2">
@@ -1109,7 +1075,7 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
           {/* Erro de validação */}
           {hasValidationError && (
             <div className="absolute -bottom-8 left-1/2 transform -translate-x-1/2 bg-red-500 text-white text-xs px-2 py-1 rounded whitespace-nowrap z-10 pointer-events-none">
-              {validateEquipment(draggedItem!, slotId).reason}
+              {/*validateEquipment(draggedItem!, slotId).reason*/}
             </div>
           )}
         </div>

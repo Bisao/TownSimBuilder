@@ -24,6 +24,7 @@ import { useDummyStore } from '../stores/useDummyStore';
 // Constants
 import { buildingTypes, BuildingType } from "../constants/buildings";
 import { resourceTypes } from "../constants/resources";
+import { GRID_CONFIG } from "../constants/grid";
 
 interface WorldProps {
   onMarketSelect?: (building: BuildingType) => void;
@@ -82,11 +83,11 @@ const World: React.FC<WorldProps> = ({ onMarketSelect }) => {
   // Generate natural resources on the map
   const generateNaturalResources = () => {
     const resources: NaturalResource[] = [];
-    const MAP_SIZE = 50;
+    const MAP_SIZE = GRID_CONFIG.DEFAULT_SIZE;
     const STONE_COUNT = 15;
     const WOOD_COUNT = 15;
-    const MIN_DISTANCE = 3; // Distância mínima entre recursos
-    const MARGIN = 8; // Margem das bordas
+    const MIN_DISTANCE = GRID_CONFIG.MIN_RESOURCE_DISTANCE;
+    const MARGIN = GRID_CONFIG.RESOURCE_MARGIN;
 
     // Helper function to check if position is valid (not too close to existing resources)
     const isValidPosition = (x: number, z: number, existingResources: NaturalResource[]): boolean => {
@@ -211,20 +212,23 @@ const World: React.FC<WorldProps> = ({ onMarketSelect }) => {
 
   // Create initial market building
   const createInitialMarket = () => {
-      const marketExists = buildings.some(b => b.type === 'market');
-      if (!marketExists) {
-        // Try different positions until we find a valid one
-        const positions = [[32, 9], [30, 9], [34, 9], [32, 7], [32, 11]];
-        for (const pos of positions) {
-          try {
-            useBuildingStore.getState().placeBuilding('market', pos as [number, number], 0);
-            break;
-          } catch (error) {
-            console.log(`Cannot place market at ${pos}, trying next position`);
-          }
+    const marketExists = buildings.some(b => b.type === 'market');
+    if (!marketExists) {
+      // Try different positions within the valid grid
+      const positions = [
+        [25, 25], [20, 20], [30, 30], [15, 25], [35, 25],
+        [25, 15], [25, 35], [20, 30], [30, 20], [10, 10]
+      ];
+      
+      for (const pos of positions) {
+        const success = useBuildingStore.getState().placeBuilding('market', pos as [number, number], 0, true);
+        if (success) {
+          console.log(`Market placed successfully at [${pos[0]}, ${pos[1]}]`);
+          break;
         }
       }
-    };
+    }
+  };
 
   // Update natural resources when NPCs collect them
   useFrame(() => {

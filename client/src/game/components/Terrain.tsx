@@ -4,8 +4,7 @@ import { useThree, useFrame } from "@react-three/fiber";
 import * as THREE from "three";
 import { useRef, useState, useEffect, useMemo } from "react";
 import { useMapEditorStore } from "../stores/useMapEditorStore";
-
-const GRID_SIZE = 50;
+import { GRID_CONFIG } from "../constants/grid";
 
 const Terrain = () => {
   const meshRef = useRef<THREE.Mesh>(null);
@@ -20,7 +19,7 @@ const Terrain = () => {
     terrain: terrainTiles 
   } = useMapEditorStore();
   
-  const currentGridSize = isEditorMode ? editorGridSize : GRID_SIZE;
+  const currentGridSize = isEditorMode ? editorGridSize : GRID_CONFIG.DEFAULT_SIZE;
   const shouldShowGrid = isEditorMode ? editorShowGrid : isGridVisible;
 
   useEffect(() => {
