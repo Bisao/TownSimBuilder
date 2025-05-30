@@ -37,9 +37,8 @@ const BuildingPanel = ({ isVisible }: { isVisible: boolean }) => {
       <h2 className="text-white text-center font-bold mb-2 sm:mb-3 responsive-text-lg">Estruturas</h2>
 
       <div className="flex-1 overflow-y-auto">
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2"></div>
-      </div>
-        {allowedBuildings.map((buildingType) => {
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+          {allowedBuildings.map((buildingType) => {
             const building = buildingTypes[buildingType];
             if (!building) return null;
 
@@ -83,6 +82,7 @@ const BuildingPanel = ({ isVisible }: { isVisible: boolean }) => {
               </button>
             );
           })}
+        </div>
       </div>
     </div>
   );
