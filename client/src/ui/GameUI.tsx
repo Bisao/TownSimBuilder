@@ -44,10 +44,10 @@ const GameUI: React.FC<GameUIProps> = ({ className = "", onBuildingSelect }) => 
 
   const buildingStore = useBuildingStore();
   const { buildings = [] } = buildingStore || {};
-  
+
   const resourceStore = useResourceStore();
   const { resources = {} } = resourceStore || {};
-  
+
   const npcStore = useNpcStore();
   const { npcs = [], updateNpc = () => {} } = npcStore || {};
   const { isMuted, toggleMute, initAudio } = useAudio();

@@ -291,6 +291,29 @@ export const DEFAULT_ACTIONS: GameAction[] = [
   },
 ];
 
+// Controls interface for keyboard mapping
+export interface Controls {
+  forward?: boolean;
+  backward?: boolean;
+  left?: boolean;
+  right?: boolean;
+  up?: boolean;
+  down?: boolean;
+  pause?: boolean;
+  resume?: boolean;
+  increaseSpeed?: boolean;
+  decreaseSpeed?: boolean;
+  toggleResources?: boolean;
+  toggleBuildings?: boolean;
+  toggleNpcMetrics?: boolean;
+  place?: boolean;
+  cancel?: boolean;
+  rotateCW?: boolean;
+  rotateCCW?: boolean;
+  zoomIn?: boolean;
+  zoomOut?: boolean;
+}
+
 // Utility functions
 export const createDefaultControls = (): ControlsState => ({
   input: {

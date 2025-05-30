@@ -204,3 +204,24 @@ const AppWrapper = () => {
 };
 
 export default AppWrapper;
+const keyMap = [
+  { name: 'forward', keys: ['KeyW', 'ArrowUp'] },
+  { name: 'backward', keys: ['KeyS', 'ArrowDown'] },
+  { name: 'left', keys: ['KeyA', 'ArrowLeft'] },
+  { name: 'right', keys: ['KeyD', 'ArrowRight'] },
+  { name: 'up', keys: ['KeyR'] },
+  { name: 'down', keys: ['KeyF'] },
+  { name: 'zoomIn', keys: ['Equal', 'NumpadAdd'] },
+  { name: 'zoomOut', keys: ['Minus', 'NumpadSubtract'] },
+  { name: 'rotateCW', keys: ['KeyE'] },
+  { name: 'rotateCCW', keys: ['KeyQ'] },
+  { name: 'place', keys: ['Space'] },
+  { name: 'cancel', keys: ['Escape'] },
+  { name: 'pause', keys: ['KeyP'] },
+  { name: 'resume', keys: ['KeyO'] },
+  { name: 'increaseSpeed', keys: ['Period'] },
+  { name: 'decreaseSpeed', keys: ['Comma'] },
+  { name: 'toggleResources', keys: ['KeyZ'] },
+  { name: 'toggleBuildings', keys: ['KeyX'] },
+  { name: 'toggleNpcMetrics', keys: ['KeyC'] },
+];
