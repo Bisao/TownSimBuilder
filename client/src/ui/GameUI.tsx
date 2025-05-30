@@ -22,6 +22,10 @@ import SiloPanel from "./SiloPanel";
 import MapEditorPanel from "./MapEditorPanel";
 import ResearchPanel from "./ResearchPanel";
 import EconomyPanel from "./EconomyPanel";
+import CombatPanel from "./CombatPanel";
+import EventPanel from "./EventPanel";
+import DummyStatsPanel from "./DummyStatsPanel";
+import { useDraggable } from "../hooks/useDraggable";
 
 const GameUI = () => {
   const {
@@ -55,6 +59,9 @@ const GameUI = () => {
   const [showSeedSelection, setShowSeedSelection] = useState(false);
   const [showSiloPanel, setShowSiloPanel] = useState(false);
   const [showNpcPanel, setShowNpcPanel] = useState(false);
+  const [showCombat, setShowCombat] = useState(false);
+  const [showEvents, setShowEvents] = useState(false);
+  const [showDummyStats, setShowDummyStats] = useState(false);
 
   // Selection state
   const [selectedNpc, setSelectedNpc] = useState<NPC | null>(null);
@@ -197,7 +204,7 @@ const GameUI = () => {
 
     const handleHouseClick = (e: CustomEvent<{building: Building, npc: NPC | null, hasNpc: boolean}>) => {
       const { building, npc, hasNpc } = e.detail;
-      
+
       if (hasNpc && npc) {
         // Se há NPC na casa, mostrar dados do NPC
         setSelectedNpc(npc);
@@ -243,7 +250,7 @@ const GameUI = () => {
         };
         setSelectedNpc(tempNpc);
       }
-      
+
       setShowNpcPanel(true); // Sempre abrir o painel
     };
 
@@ -426,6 +433,18 @@ const GameUI = () => {
           siloId={selectedSiloId}
         />
       )}
+
+      {/* Painel de Eventos */}
+      <EventPanel 
+        isVisible={showEvents}
+        onClose={() => setShowEvents(false)}
+      />
+
+      {/* Painel de Estatísticas do Dummy */}
+      <DummyStatsPanel 
+        isVisible={showDummyStats}
+        onClose={() => setShowDummyStats(false)}
+      />
     </>
   );
 };

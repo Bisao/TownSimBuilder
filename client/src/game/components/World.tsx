@@ -7,6 +7,7 @@ import Building from "./Building";
 import NPC from "./Npc";
 import Resource from "./Resource";
 import Terrain from "./Terrain";
+import TrainingDummy from './TrainingDummy';
 import Sky from "./Sky";
 import DayNightCycle from "./DayNightCycle";
 import CameraControls from "./CameraControls";
@@ -18,6 +19,8 @@ import { useGameStore } from "../stores/useGameStore";
 import { useBuildingStore } from "../stores/useBuildingStore";
 import { useNpcStore } from "../stores/useNpcStore";
 import { useResourceStore } from "../stores/useResourceStore";
+import { useBuildingStore } from '../stores/useBuildingStore';
+import { useDummyStore } from '../stores/useDummyStore';
 
 // Constants
 import { buildingTypes, BuildingType } from "../constants/buildings";
@@ -50,6 +53,10 @@ const World: React.FC<WorldProps> = ({ onMarketSelect }) => {
   const { buildings, placeBuilding } = useBuildingStore();
   const { npcs, spawnNPC } = useNpcStore();
   const { initResources, initializeResources } = useResourceStore();
+  const { naturalResources, setNaturalResources } = useResourceStore();
+  const { buildings } = useBuildingStore();
+  const { npcs, setInitialized } = useNpcStore();
+  const { addDummy } = useDummyStore();
 
   // Natural resources state
   const [naturalResources, setNaturalResources] = useState<NaturalResource[]>([]);
@@ -240,6 +247,11 @@ const World: React.FC<WorldProps> = ({ onMarketSelect }) => {
     }
   };
 
+  useEffect(() => {
+    // Adicionar dummy de treinamento ao store
+    addDummy([10, 0, 10]);
+  }, [addDummy]);
+
   if (!isWorldInitialized) {
     return null;
   }
@@ -293,6 +305,12 @@ const World: React.FC<WorldProps> = ({ onMarketSelect }) => {
         {npcs.map((npc) => (
           <NPC key={npc.id} npc={npc} />
         ))}
+
+        {/* Training Dummy para teste de combate */}
+        <TrainingDummy 
+          id="training_dummy_1"
+          position={[10, 0, 10]} 
+        />
 
         {/* Natural Resources - renderiza apenas recursos não coletados */}
         {naturalResources
