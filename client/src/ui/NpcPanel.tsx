@@ -9,6 +9,7 @@ import SkillTreePanel from "./SkillTreePanel";
 import InventoryPanel from "./InventoryPanel";
 import NpcCreationPanel from "./NpcCreationPanel";
 import TaskPanel from "./TaskPanel";
+import CombatPanel from "./CombatPanel";
 
 interface NpcPanelProps {
   npc: NPC | null;
@@ -28,6 +29,7 @@ const NpcPanel: React.FC<NpcPanelProps> = ({ npc, onClose }) => {
   const [showInventory, setShowInventory] = useState(false);
   const [showNpcCreation, setShowNpcCreation] = useState(false);
   const [showTasks, setShowTasks] = useState(false);
+  const [showCombat, setShowCombat] = useState(false);
 
   if (!npc) return null;
 
@@ -276,7 +278,7 @@ const NpcPanel: React.FC<NpcPanelProps> = ({ npc, onClose }) => {
               </div>
 
               {/* Action Buttons */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4 sm:mb-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 mb-4 sm:mb-6">
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
@@ -316,6 +318,17 @@ const NpcPanel: React.FC<NpcPanelProps> = ({ npc, onClose }) => {
                 >
                   <i className="fa-solid fa-hammer"></i>
                   Trabalhar
+                </button>
+
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setShowCombat(true);
+                  }}
+                  className="flex items-center justify-center gap-2 p-4 bg-gradient-to-r from-red-500 to-red-700 hover:from-red-600 hover:to-red-800 text-white rounded-lg font-medium transition-all shadow-lg hover:shadow-xl transform hover:scale-105"
+                >
+                  <i className="fa-solid fa-sword"></i>
+                  Combate
                 </button>
               </div>
 
@@ -465,6 +478,13 @@ const NpcPanel: React.FC<NpcPanelProps> = ({ npc, onClose }) => {
         <TaskPanel
           npc={npc}
           onClose={() => setShowTasks(false)}
+        />
+      )}
+
+      {showCombat && !isTemporaryNpc && (
+        <CombatPanel
+          entityId={npc.id}
+          onClose={() => setShowCombat(false)}
         />
       )}
 
