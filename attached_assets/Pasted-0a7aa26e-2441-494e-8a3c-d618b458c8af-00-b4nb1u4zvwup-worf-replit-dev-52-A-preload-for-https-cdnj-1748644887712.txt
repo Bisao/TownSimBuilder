@@ -1,0 +1,190 @@
+0a7aa26e-2441-494e-8a3c-d618b458c8af-00-b4nb1u4zvwup.worf.replit.dev/:52 A preload for 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css' is found, but is not used because the request credentials mode does not match. Consider taking a look at crossorigin attribute.
+chunk-LPPTHLN7.js?v=c7ce1f9e:21551 Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools
+main.tsx:143 🚀 Starting application in development mode
+main.tsx:146 📊 React DevTools available
+main.tsx:152 ✅ Application initialized successfully
+2App.tsx:158 Sistema de áudio inicializado com sucesso
+2App.tsx:229 Aplicação inicializada com sucesso
+2interface.tsx:19 Current game phase: login
+0a7aa26e-2441-494e-8a3c-d618b458c8af-00-b4nb1u4zvwup.worf.replit.dev/:1 The resource https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.
+2chunk-6CHFNV4N.js?v=c7ce1f9e:17705 Warning: React.jsx: type is invalid -- expected a string (for built-in components) or a class/function (for composite components) but got: null.
+
+Check your code at App.tsx:220.
+    at https://0a7aa26e-2441-494e-8a3c-d618b458c8af-00-b4nb1u4zvwup.worf.replit.dev/src/App.tsx?v=4xy49jKXKaZ5gUswakNX7:224:47
+    at HooksErrorBoundary (https://0a7aa26e-2441-494e-8a3c-d618b458c8af-00-b4nb1u4zvwup.worf.replit.dev/src/components/ui/hooks-error-boundary.tsx:7:5)
+    at ErrorBoundary (https://0a7aa26e-2441-494e-8a3c-d618b458c8af-00-b4nb1u4zvwup.worf.replit.dev/src/components/ui/error-boundary.tsx:10:5)
+    at App (https://0a7aa26e-2441-494e-8a3c-d618b458c8af-00-b4nb1u4zvwup.worf.replit.dev/src/App.tsx?v=4xy49jKXKaZ5gUswakNX7:295:37)
+    at QueryClientProvider (https://0a7aa26e-2441-494e-8a3c-d618b458c8af-00-b4nb1u4zvwup.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=37710502:2909:3)
+    at ErrorBoundary (https://0a7aa26e-2441-494e-8a3c-d618b458c8af-00-b4nb1u4zvwup.worf.replit.dev/src/components/ui/error-boundary.tsx:10:5)
+    at AppWrapper
+console.error @ chunk-6CHFNV4N.js?v=c7ce1f9e:17705
+chunk-6CHFNV4N.js?v=c7ce1f9e:17705 Global error: Error: Element type is invalid: expected a string (for built-in components) or a class/function (for composite components) but got: null.
+
+Check the render method of `Game`.
+    at createFiberFromTypeAndProps (chunk-LPPTHLN7.js?v=c7ce1f9e:20442:23)
+    at createFiberFromElement (chunk-LPPTHLN7.js?v=c7ce1f9e:20463:23)
+    at createChild (chunk-LPPTHLN7.js?v=c7ce1f9e:10089:34)
+    at reconcileChildrenArray (chunk-LPPTHLN7.js?v=c7ce1f9e:10282:33)
+    at reconcileChildFibers2 (chunk-LPPTHLN7.js?v=c7ce1f9e:10559:24)
+    at reconcileChildren (chunk-LPPTHLN7.js?v=c7ce1f9e:14290:37)
+    at updateContextProvider (chunk-LPPTHLN7.js?v=c7ce1f9e:15665:11)
+    at beginWork (chunk-LPPTHLN7.js?v=c7ce1f9e:15955:22)
+    at HTMLUnknownElement.callCallback2 (chunk-LPPTHLN7.js?v=c7ce1f9e:3674:22)
+    at Object.invokeGuardedCallbackDev (chunk-LPPTHLN7.js?v=c7ce1f9e:3699:24)
+console.error @ chunk-6CHFNV4N.js?v=c7ce1f9e:17705
+chunk-LPPTHLN7.js?v=c7ce1f9e:20442 Uncaught Error: Element type is invalid: expected a string (for built-in components) or a class/function (for composite components) but got: null.
+
+Check the render method of `Game`.
+    at createFiberFromTypeAndProps (chunk-LPPTHLN7.js?v=c7ce1f9e:20442:23)
+    at createFiberFromElement (chunk-LPPTHLN7.js?v=c7ce1f9e:20463:23)
+    at createChild (chunk-LPPTHLN7.js?v=c7ce1f9e:10089:34)
+    at reconcileChildrenArray (chunk-LPPTHLN7.js?v=c7ce1f9e:10282:33)
+    at reconcileChildFibers2 (chunk-LPPTHLN7.js?v=c7ce1f9e:10559:24)
+    at reconcileChildren (chunk-LPPTHLN7.js?v=c7ce1f9e:14290:37)
+    at updateContextProvider (chunk-LPPTHLN7.js?v=c7ce1f9e:15665:11)
+    at beginWork (chunk-LPPTHLN7.js?v=c7ce1f9e:15955:22)
+    at HTMLUnknownElement.callCallback2 (chunk-LPPTHLN7.js?v=c7ce1f9e:3674:22)
+    at Object.invokeGuardedCallbackDev (chunk-LPPTHLN7.js?v=c7ce1f9e:3699:24)
+2chunk-6CHFNV4N.js?v=c7ce1f9e:17705 Warning: React.jsx: type is invalid -- expected a string (for built-in components) or a class/function (for composite components) but got: null.
+
+Check your code at App.tsx:220.
+    at https://0a7aa26e-2441-494e-8a3c-d618b458c8af-00-b4nb1u4zvwup.worf.replit.dev/src/App.tsx?v=4xy49jKXKaZ5gUswakNX7:224:47
+    at HooksErrorBoundary (https://0a7aa26e-2441-494e-8a3c-d618b458c8af-00-b4nb1u4zvwup.worf.replit.dev/src/components/ui/hooks-error-boundary.tsx:7:5)
+    at ErrorBoundary (https://0a7aa26e-2441-494e-8a3c-d618b458c8af-00-b4nb1u4zvwup.worf.replit.dev/src/components/ui/error-boundary.tsx:10:5)
+    at App (https://0a7aa26e-2441-494e-8a3c-d618b458c8af-00-b4nb1u4zvwup.worf.replit.dev/src/App.tsx?v=4xy49jKXKaZ5gUswakNX7:295:37)
+    at QueryClientProvider (https://0a7aa26e-2441-494e-8a3c-d618b458c8af-00-b4nb1u4zvwup.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=37710502:2909:3)
+    at ErrorBoundary (https://0a7aa26e-2441-494e-8a3c-d618b458c8af-00-b4nb1u4zvwup.worf.replit.dev/src/components/ui/error-boundary.tsx:10:5)
+    at AppWrapper
+console.error @ chunk-6CHFNV4N.js?v=c7ce1f9e:17705
+chunk-6CHFNV4N.js?v=c7ce1f9e:17705 Global error: Error: Element type is invalid: expected a string (for built-in components) or a class/function (for composite components) but got: null.
+
+Check the render method of `Game`.
+    at createFiberFromTypeAndProps (chunk-LPPTHLN7.js?v=c7ce1f9e:20442:23)
+    at createFiberFromElement (chunk-LPPTHLN7.js?v=c7ce1f9e:20463:23)
+    at createChild (chunk-LPPTHLN7.js?v=c7ce1f9e:10089:34)
+    at reconcileChildrenArray (chunk-LPPTHLN7.js?v=c7ce1f9e:10282:33)
+    at reconcileChildFibers2 (chunk-LPPTHLN7.js?v=c7ce1f9e:10559:24)
+    at reconcileChildren (chunk-LPPTHLN7.js?v=c7ce1f9e:14290:37)
+    at updateContextProvider (chunk-LPPTHLN7.js?v=c7ce1f9e:15665:11)
+    at beginWork (chunk-LPPTHLN7.js?v=c7ce1f9e:15955:22)
+    at HTMLUnknownElement.callCallback2 (chunk-LPPTHLN7.js?v=c7ce1f9e:3674:22)
+    at Object.invokeGuardedCallbackDev (chunk-LPPTHLN7.js?v=c7ce1f9e:3699:24)
+console.error @ chunk-6CHFNV4N.js?v=c7ce1f9e:17705
+chunk-LPPTHLN7.js?v=c7ce1f9e:20442 Uncaught Error: Element type is invalid: expected a string (for built-in components) or a class/function (for composite components) but got: null.
+
+Check the render method of `Game`.
+    at createFiberFromTypeAndProps (chunk-LPPTHLN7.js?v=c7ce1f9e:20442:23)
+    at createFiberFromElement (chunk-LPPTHLN7.js?v=c7ce1f9e:20463:23)
+    at createChild (chunk-LPPTHLN7.js?v=c7ce1f9e:10089:34)
+    at reconcileChildrenArray (chunk-LPPTHLN7.js?v=c7ce1f9e:10282:33)
+    at reconcileChildFibers2 (chunk-LPPTHLN7.js?v=c7ce1f9e:10559:24)
+    at reconcileChildren (chunk-LPPTHLN7.js?v=c7ce1f9e:14290:37)
+    at updateContextProvider (chunk-LPPTHLN7.js?v=c7ce1f9e:15665:11)
+    at beginWork (chunk-LPPTHLN7.js?v=c7ce1f9e:15955:22)
+    at HTMLUnknownElement.callCallback2 (chunk-LPPTHLN7.js?v=c7ce1f9e:3674:22)
+    at Object.invokeGuardedCallbackDev (chunk-LPPTHLN7.js?v=c7ce1f9e:3699:24)
+2chunk-6CHFNV4N.js?v=c7ce1f9e:17705 Warning: React.jsx: type is invalid -- expected a string (for built-in components) or a class/function (for composite components) but got: null.
+
+Check your code at App.tsx:220.
+    at https://0a7aa26e-2441-494e-8a3c-d618b458c8af-00-b4nb1u4zvwup.worf.replit.dev/src/App.tsx?v=4xy49jKXKaZ5gUswakNX7:224:47
+    at HooksErrorBoundary (https://0a7aa26e-2441-494e-8a3c-d618b458c8af-00-b4nb1u4zvwup.worf.replit.dev/src/components/ui/hooks-error-boundary.tsx:7:5)
+    at ErrorBoundary (https://0a7aa26e-2441-494e-8a3c-d618b458c8af-00-b4nb1u4zvwup.worf.replit.dev/src/components/ui/error-boundary.tsx:10:5)
+    at App (https://0a7aa26e-2441-494e-8a3c-d618b458c8af-00-b4nb1u4zvwup.worf.replit.dev/src/App.tsx?v=4xy49jKXKaZ5gUswakNX7:295:37)
+    at QueryClientProvider (https://0a7aa26e-2441-494e-8a3c-d618b458c8af-00-b4nb1u4zvwup.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=37710502:2909:3)
+    at ErrorBoundary (https://0a7aa26e-2441-494e-8a3c-d618b458c8af-00-b4nb1u4zvwup.worf.replit.dev/src/components/ui/error-boundary.tsx:10:5)
+    at AppWrapper
+console.error @ chunk-6CHFNV4N.js?v=c7ce1f9e:17705
+chunk-6CHFNV4N.js?v=c7ce1f9e:17705 Global error: Error: Element type is invalid: expected a string (for built-in components) or a class/function (for composite components) but got: null.
+
+Check the render method of `Game`.
+    at createFiberFromTypeAndProps (chunk-LPPTHLN7.js?v=c7ce1f9e:20442:23)
+    at createFiberFromElement (chunk-LPPTHLN7.js?v=c7ce1f9e:20463:23)
+    at createChild (chunk-LPPTHLN7.js?v=c7ce1f9e:10089:34)
+    at reconcileChildrenArray (chunk-LPPTHLN7.js?v=c7ce1f9e:10282:33)
+    at reconcileChildFibers2 (chunk-LPPTHLN7.js?v=c7ce1f9e:10559:24)
+    at reconcileChildren (chunk-LPPTHLN7.js?v=c7ce1f9e:14290:37)
+    at updateContextProvider (chunk-LPPTHLN7.js?v=c7ce1f9e:15665:11)
+    at beginWork (chunk-LPPTHLN7.js?v=c7ce1f9e:15955:22)
+    at HTMLUnknownElement.callCallback2 (chunk-LPPTHLN7.js?v=c7ce1f9e:3674:22)
+    at Object.invokeGuardedCallbackDev (chunk-LPPTHLN7.js?v=c7ce1f9e:3699:24)
+console.error @ chunk-6CHFNV4N.js?v=c7ce1f9e:17705
+chunk-LPPTHLN7.js?v=c7ce1f9e:20442 Uncaught Error: Element type is invalid: expected a string (for built-in components) or a class/function (for composite components) but got: null.
+
+Check the render method of `Game`.
+    at createFiberFromTypeAndProps (chunk-LPPTHLN7.js?v=c7ce1f9e:20442:23)
+    at createFiberFromElement (chunk-LPPTHLN7.js?v=c7ce1f9e:20463:23)
+    at createChild (chunk-LPPTHLN7.js?v=c7ce1f9e:10089:34)
+    at reconcileChildrenArray (chunk-LPPTHLN7.js?v=c7ce1f9e:10282:33)
+    at reconcileChildFibers2 (chunk-LPPTHLN7.js?v=c7ce1f9e:10559:24)
+    at reconcileChildren (chunk-LPPTHLN7.js?v=c7ce1f9e:14290:37)
+    at updateContextProvider (chunk-LPPTHLN7.js?v=c7ce1f9e:15665:11)
+    at beginWork (chunk-LPPTHLN7.js?v=c7ce1f9e:15955:22)
+    at HTMLUnknownElement.callCallback2 (chunk-LPPTHLN7.js?v=c7ce1f9e:3674:22)
+    at Object.invokeGuardedCallbackDev (chunk-LPPTHLN7.js?v=c7ce1f9e:3699:24)
+2chunk-6CHFNV4N.js?v=c7ce1f9e:17705 Warning: React.jsx: type is invalid -- expected a string (for built-in components) or a class/function (for composite components) but got: null.
+
+Check your code at App.tsx:220.
+    at https://0a7aa26e-2441-494e-8a3c-d618b458c8af-00-b4nb1u4zvwup.worf.replit.dev/src/App.tsx?v=4xy49jKXKaZ5gUswakNX7:224:47
+    at HooksErrorBoundary (https://0a7aa26e-2441-494e-8a3c-d618b458c8af-00-b4nb1u4zvwup.worf.replit.dev/src/components/ui/hooks-error-boundary.tsx:7:5)
+    at ErrorBoundary (https://0a7aa26e-2441-494e-8a3c-d618b458c8af-00-b4nb1u4zvwup.worf.replit.dev/src/components/ui/error-boundary.tsx:10:5)
+    at App (https://0a7aa26e-2441-494e-8a3c-d618b458c8af-00-b4nb1u4zvwup.worf.replit.dev/src/App.tsx?v=4xy49jKXKaZ5gUswakNX7:295:37)
+    at QueryClientProvider (https://0a7aa26e-2441-494e-8a3c-d618b458c8af-00-b4nb1u4zvwup.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=37710502:2909:3)
+    at ErrorBoundary (https://0a7aa26e-2441-494e-8a3c-d618b458c8af-00-b4nb1u4zvwup.worf.replit.dev/src/components/ui/error-boundary.tsx:10:5)
+    at AppWrapper
+console.error @ chunk-6CHFNV4N.js?v=c7ce1f9e:17705
+chunk-6CHFNV4N.js?v=c7ce1f9e:17705 Global error: Error: Element type is invalid: expected a string (for built-in components) or a class/function (for composite components) but got: null.
+
+Check the render method of `Game`.
+    at createFiberFromTypeAndProps (chunk-LPPTHLN7.js?v=c7ce1f9e:20442:23)
+    at createFiberFromElement (chunk-LPPTHLN7.js?v=c7ce1f9e:20463:23)
+    at createChild (chunk-LPPTHLN7.js?v=c7ce1f9e:10089:34)
+    at reconcileChildrenArray (chunk-LPPTHLN7.js?v=c7ce1f9e:10282:33)
+    at reconcileChildFibers2 (chunk-LPPTHLN7.js?v=c7ce1f9e:10559:24)
+    at reconcileChildren (chunk-LPPTHLN7.js?v=c7ce1f9e:14290:37)
+    at updateContextProvider (chunk-LPPTHLN7.js?v=c7ce1f9e:15665:11)
+    at beginWork (chunk-LPPTHLN7.js?v=c7ce1f9e:15955:22)
+    at HTMLUnknownElement.callCallback2 (chunk-LPPTHLN7.js?v=c7ce1f9e:3674:22)
+    at Object.invokeGuardedCallbackDev (chunk-LPPTHLN7.js?v=c7ce1f9e:3699:24)
+console.error @ chunk-6CHFNV4N.js?v=c7ce1f9e:17705
+chunk-LPPTHLN7.js?v=c7ce1f9e:20442 Uncaught Error: Element type is invalid: expected a string (for built-in components) or a class/function (for composite components) but got: null.
+
+Check the render method of `Game`.
+    at createFiberFromTypeAndProps (chunk-LPPTHLN7.js?v=c7ce1f9e:20442:23)
+    at createFiberFromElement (chunk-LPPTHLN7.js?v=c7ce1f9e:20463:23)
+    at createChild (chunk-LPPTHLN7.js?v=c7ce1f9e:10089:34)
+    at reconcileChildrenArray (chunk-LPPTHLN7.js?v=c7ce1f9e:10282:33)
+    at reconcileChildFibers2 (chunk-LPPTHLN7.js?v=c7ce1f9e:10559:24)
+    at reconcileChildren (chunk-LPPTHLN7.js?v=c7ce1f9e:14290:37)
+    at updateContextProvider (chunk-LPPTHLN7.js?v=c7ce1f9e:15665:11)
+    at beginWork (chunk-LPPTHLN7.js?v=c7ce1f9e:15955:22)
+    at HTMLUnknownElement.callCallback2 (chunk-LPPTHLN7.js?v=c7ce1f9e:3674:22)
+    at Object.invokeGuardedCallbackDev (chunk-LPPTHLN7.js?v=c7ce1f9e:3699:24)
+chunk-6CHFNV4N.js?v=c7ce1f9e:17705 The above error occurred in the <Context.Provider> component:
+
+    at KeyboardControls (https://0a7aa26e-2441-494e-8a3c-d618b458c8af-00-b4nb1u4zvwup.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@react-three_drei.js?v=f540c955:9069:8)
+    at div
+    at https://0a7aa26e-2441-494e-8a3c-d618b458c8af-00-b4nb1u4zvwup.worf.replit.dev/src/App.tsx?v=4xy49jKXKaZ5gUswakNX7:224:47
+    at HooksErrorBoundary (https://0a7aa26e-2441-494e-8a3c-d618b458c8af-00-b4nb1u4zvwup.worf.replit.dev/src/components/ui/hooks-error-boundary.tsx:7:5)
+    at ErrorBoundary (https://0a7aa26e-2441-494e-8a3c-d618b458c8af-00-b4nb1u4zvwup.worf.replit.dev/src/components/ui/error-boundary.tsx:10:5)
+    at App (https://0a7aa26e-2441-494e-8a3c-d618b458c8af-00-b4nb1u4zvwup.worf.replit.dev/src/App.tsx?v=4xy49jKXKaZ5gUswakNX7:295:37)
+    at QueryClientProvider (https://0a7aa26e-2441-494e-8a3c-d618b458c8af-00-b4nb1u4zvwup.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=37710502:2909:3)
+    at ErrorBoundary (https://0a7aa26e-2441-494e-8a3c-d618b458c8af-00-b4nb1u4zvwup.worf.replit.dev/src/components/ui/error-boundary.tsx:10:5)
+    at AppWrapper
+
+React will try to recreate this component tree from scratch using the error boundary you provided, ErrorBoundary.
+console.error @ chunk-6CHFNV4N.js?v=c7ce1f9e:17705
+chunk-6CHFNV4N.js?v=c7ce1f9e:17705 ErrorBoundary caught an error: Error: Element type is invalid: expected a string (for built-in components) or a class/function (for composite components) but got: null.
+
+Check the render method of `Game`.
+    at createFiberFromTypeAndProps (chunk-LPPTHLN7.js?v=c7ce1f9e:20442:23)
+    at createFiberFromElement (chunk-LPPTHLN7.js?v=c7ce1f9e:20463:23)
+    at createChild (chunk-LPPTHLN7.js?v=c7ce1f9e:10089:34)
+    at reconcileChildrenArray (chunk-LPPTHLN7.js?v=c7ce1f9e:10282:33)
+    at reconcileChildFibers2 (chunk-LPPTHLN7.js?v=c7ce1f9e:10559:24)
+    at reconcileChildren (chunk-LPPTHLN7.js?v=c7ce1f9e:14290:37)
+    at updateContextProvider (chunk-LPPTHLN7.js?v=c7ce1f9e:15665:11)
+    at beginWork (chunk-LPPTHLN7.js?v=c7ce1f9e:15955:22)
+    at beginWork$1 (chunk-LPPTHLN7.js?v=c7ce1f9e:19753:22)
+    at performUnitOfWork (chunk-LPPTHLN7.js?v=c7ce1f9e:19198:20) Object
+console.error @ chunk-6CHFNV4N.js?v=c7ce1f9e:17705
+0a7aa26e-2441-494e-8a3c-d618b458c8af-00-b4nb1u4zvwup.worf.replit.dev/:1 The resource https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.
