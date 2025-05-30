@@ -73,7 +73,58 @@ export interface GameState {
   setIsManualControl: (manual: boolean) => void;
 }
 
-export const useGameStore = create<GameState>()(
+interface GameStore extends GameState {
+  // UI State
+  selectedBuildingType: string | null;
+  isPlacingBuilding: boolean;
+  selectedResource: string | null;
+  showGrid: boolean;
+
+  // Camera State
+  cameraPosition: [number, number, number];
+  cameraTarget: [number, number, number];
+
+  // Panel States
+  panels: {
+    building: boolean;
+    resource: boolean;
+    npc: boolean;
+    research: boolean;
+    inventory: boolean;
+    market: boolean;
+    skills: boolean;
+    combat: boolean;
+    economy: boolean;
+  };
+
+  // Methods
+  setPaused: (paused: boolean) => void;
+  setGameSpeed: (speed: number) => void;
+  togglePause: () => void;
+
+  setSelectedBuildingType: (type: string | null) => void;
+  setIsPlacingBuilding: (placing: boolean) => void;
+  setSelectedResource: (resource: string | null) => void;
+  setShowGrid: (show: boolean) => void;
+
+  setCameraPosition: (position: [number, number, number]) => void;
+  setCameraTarget: (target: [number, number, number]) => void;
+
+  // Panel methods
+  togglePanel: (panel: keyof GameStore['panels']) => void;
+  openPanel: (panel: keyof GameStore['panels']) => void;
+  closePanel: (panel: keyof GameStore['panels']) => void;
+  closeAllPanels: () => void;
+
+  // Game time methods
+  updateGameTime: (deltaTime: number) => void;
+  resetGame: () => void;
+}
+
+import { useNotificationStore } from './notificationStore'; // Certifique-se de que o caminho está correto
+import { GAME_CONFIG } from '../config/gameConfig';
+
+export const useGameStore = create<GameStore>()(
   subscribeWithSelector((set, get) => ({
     // Initial state
     phase: "login",
@@ -93,8 +144,8 @@ export const useGameStore = create<GameState>()(
     controlledNpcId: null,
 
     // Camera initial state
-    cameraPosition: [0, 10, 10],
-    cameraTarget: [0, 0, 0],
+    cameraPosition: [25, 30, 25],
+    cameraTarget: [25, 0, 25],
     cameraRotation: 0,
 
     // UI state
@@ -107,6 +158,35 @@ export const useGameStore = create<GameState>()(
     selectedNpc: null,
     selectedBuilding: null,
     selectedSilo: null,
+
+    // Game State
+    gameSpeed: 1,
+    currentTime: Date.now(),
+    dayNightCycle: {
+      timeOfDay: 0,
+      dayLength: GAME_CONFIG.DAY_LENGTH,
+    },
+    weather: {
+      type: 'sunny',
+      intensity: 0.5,
+    },
+
+    // UI State
+    selectedResource: null,
+    showGrid: false,
+
+    // Panel States
+    panels: {
+      building: false,
+      resource: false,
+      npc: false,
+      research: false,
+      inventory: false,
+      market: false,
+      skills: false,
+      combat: false,
+      economy: false,
+    },
 
     // Methods
     initialize: () => {
@@ -174,5 +254,138 @@ export const useGameStore = create<GameState>()(
     updateCameraPosition: (position) => set({ cameraPosition: position }),
     updateCameraTarget: (target) => set({ cameraTarget: target }),
     updateCameraRotation: (rotation: number) => set({ cameraRotation: rotation }),
+
+     // Game control methods
+    setPaused: (paused) => {
+      set({ isPaused: paused });
+      const { showInfo } = useNotificationStore.getState();
+      showInfo(paused ? 'Jogo pausado' : 'Jogo retomado');
+    },
+
+    setGameSpeed: (speed) => {
+      const clampedSpeed = Math.max(0.1, Math.min(speed, 5));
+      set({ gameSpeed: clampedSpeed });
+      const { showInfo } = useNotificationStore.getState();
+      showInfo(`Velocidade: ${clampedSpeed}x`);
+    },
+
+    togglePause: () => {
+      const { isPaused } = get();
+      get().setPaused(!isPaused);
+    },
+
+    // Building methods
+    setSelectedBuildingType: (type) => {
+      set({ 
+        selectedBuildingType: type,
+        isPlacingBuilding: type !== null 
+      });
+    },
+
+    setIsPlacingBuilding: (placing) => {
+      set({ 
+        isPlacingBuilding: placing,
+        selectedBuildingType: placing ? get().selectedBuildingType : null
+      });
+    },
+
+    setSelectedResource: (resource) => set({ selectedResource: resource }),
+    setShowGrid: (show) => set({ showGrid: show }),
+
+    // Panel methods
+    togglePanel: (panel) => {
+      set(state => ({
+        panels: {
+          ...state.panels,
+          [panel]: !state.panels[panel]
+        }
+      }));
+    },
+
+    openPanel: (panel) => {
+      set(state => ({
+        panels: {
+          ...state.panels,
+          [panel]: true
+        }
+      }));
+    },
+
+    closePanel: (panel) => {
+      set(state => ({
+        panels: {
+          ...state.panels,
+          [panel]: false
+        }
+      }));
+    },
+
+    closeAllPanels: () => {
+      set(state => ({
+        panels: Object.keys(state.panels).reduce((acc, key) => {
+          acc[key as keyof typeof state.panels] = false;
+          return acc;
+        }, {} as typeof state.panels)
+      }));
+    },
+
+    // Game time methods
+    updateGameTime: (deltaTime) => {
+      if (get().isPaused) return;
+
+      const { gameSpeed } = get();
+      const adjustedDelta = deltaTime * gameSpeed;
+
+      set(state => {
+        const newTime = state.currentTime + adjustedDelta;
+        const cycleLength = state.dayNightCycle.dayLength + GAME_CONFIG.NIGHT_LENGTH;
+        const timeOfDay = (newTime % cycleLength) / cycleLength;
+
+        return {
+          currentTime: newTime,
+          dayNightCycle: {
+            ...state.dayNightCycle,
+            timeOfDay
+          }
+        };
+      });
+    },
+
+    resetGame: () => {
+      set({
+        isPaused: false,
+        gameSpeed: 1,
+        currentTime: Date.now(),
+        selectedBuildingType: null,
+        isPlacingBuilding: false,
+        selectedResource: null,
+        dayNightCycle: {
+          timeOfDay: 0,
+          dayLength: GAME_CONFIG.DAY_LENGTH,
+        },
+        weather: {
+          type: 'sunny',
+          intensity: 0.5,
+        },
+        panels: {
+          building: false,
+          resource: false,
+          npc: false,
+          research: false,
+          inventory: false,
+          market: false,
+          skills: false,
+          combat: false,
+          economy: false,
+        }
+      });
+
+      const { showSuccess } = useNotificationStore.getState();
+      showSuccess('Jogo reiniciado');
+    },
+
+    // Camera methods
+    setCameraPosition: (position) => set({ cameraPosition: position }),
+    setCameraTarget: (target) => set({ cameraTarget: target }),
   }))
 );
