@@ -519,7 +519,7 @@ class NPCStateManager {
     }
 
     // Buscar dummy no DummyStore
-    const { useDummyStore } = require('./useDummyStore');
+    const { useDummyStore } = await import('./useDummyStore');
     const dummy = useDummyStore.getState().getDummy(npc.targetBuildingId);
 
     if (!dummy) {
@@ -555,7 +555,7 @@ class NPCStateManager {
       const critical = Math.random() < 0.15; // 15% chance de crítico
 
       // Aplicar dano ao dummy
-      const { useDummyStore } = require('./useDummyStore');
+      const { useDummyStore } = await import('./useDummyStore');
       useDummyStore.getState().hitDummy(npc.combatTarget!, damage, critical);
 
       console.log(`${npc.name} atacou o dummy causando ${damage} de dano${critical ? ' (CRÍTICO)' : ''}`);
@@ -662,7 +662,7 @@ class NPCStateManager {
     if (silo && npc.inventory.amount > 0) {
       // Atualizar recursos no store
       try {
-        const { useResourceStore } = require('./useResourceStore');
+        const { useResourceStore } = await import('./useResourceStore');
         const resourceStore = useResourceStore.getState();
         resourceStore.updateResource(npc.inventory.type, npc.inventory.amount);
       } catch (error) {
@@ -736,7 +736,7 @@ class NPCStateManager {
       // Dar XP para o trabalho atual (será feito pelo próprio store)
       // Atualizar métricas
       try {
-        const { useNpcMetrics } = require('./useNpcMetrics');
+        const { useNpcMetrics } = await import('./useNpcMetrics');
         const metricsStore = useNpcMetrics.getState();
         metricsStore.recordResourceCollection(npc.id, resourceType, 1);
         metricsStore.updateEfficiency(npc.id, npc.skills.efficiency + 0.1);
@@ -858,7 +858,7 @@ export const useNpcStore = create<NPCStoreState>()(
     npcIdCounter: 0,
     resourceReservations: [],
 
-    spawnNPC: (homeId, position, name) => {
+    spawnNPC: async (homeId, position, name) => {
       const id = `npc_${get().npcIdCounter}`;
       const npcName = name || `Aldeão ${get().npcIdCounter}`;
 
@@ -912,7 +912,7 @@ export const useNpcStore = create<NPCStoreState>()(
 
       // Inicializar métricas
       try {
-        const { useNpcMetrics } = require('./useNpcMetrics');
+        const { useNpcMetrics } = await import('./useNpcMetrics');
         useNpcMetrics.getState().initializeNPC(id);
       } catch (error) {
         console.error('Erro ao inicializar métricas:', error);
@@ -1003,7 +1003,7 @@ export const useNpcStore = create<NPCStoreState>()(
           // Atualizar métricas se estado mudou
           if (npc.state !== updatedNpc.state) {
             try {
-              const { useNpcMetrics } = require('./useNpcMetrics');
+              const { useNpcMetrics } = await import('./useNpcMetrics');
               useNpcMetrics.getState().updateActivity(npc.id, updatedNpc.state);
             } catch (error) {
               console.error('Erro ao atualizar atividade:', error);

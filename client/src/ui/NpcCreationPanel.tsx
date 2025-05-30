@@ -23,14 +23,14 @@ const NpcCreationPanel: React.FC<NpcCreationPanelProps> = ({
     initialPosition: { x: window.innerWidth / 2 - 300, y: window.innerHeight / 2 - 250 }
   });
 
-  const handleCreateNpc = () => {
+  const handleCreateNpc = async () => {
     if (!npcName.trim()) return;
 
     setIsCreating(true);
 
     // Simular delay para melhor UX
-    setTimeout(() => {
-      const newNpcId = spawnNPC(
+    setTimeout(async () => {
+      const newNpcId = await spawnNPC(
         houseId,
         [housePosition[0] + 0.5, 0, housePosition[1] + 0.5],
         npcName.trim()
