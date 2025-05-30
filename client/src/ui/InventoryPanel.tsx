@@ -1,4 +1,3 @@
-
 import React, { useState, useCallback, useMemo } from "react";
 import { NPC } from "../game/stores/useNpcStore";
 import { useDraggable } from "../hooks/useDraggable";
@@ -27,7 +26,7 @@ interface EquipmentSlot {
 
 const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
   const { dragRef, position, isDragging, handleMouseDown } = useDraggable({
-    initialPosition: { x: window.innerWidth / 2 - 200, y: window.innerHeight / 2 - 300 }
+    initialPosition: { x: window.innerWidth / 2 - 220, y: window.innerHeight / 2 - 300 }
   });
 
   // Itens iniciais baseados no NPC
@@ -36,11 +35,11 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
     { id: "pickaxe_t1", name: "Picareta T1", type: "tool", tier: 1, icon: "⛏️", skill: "mining" },
     { id: "axe_t1", name: "Machado T1", type: "tool", tier: 1, icon: "🪓", skill: "lumberjack" },
     { id: "sickle_t1", name: "Foice T1", type: "tool", tier: 1, icon: "🗡️", skill: "farming" },
-    
+
     // Armas T1
     { id: "sword_t1", name: "Espada T1", type: "weapon", tier: 1, icon: "⚔️", skill: "sword" },
     { id: "bow_t1", name: "Arco T1", type: "weapon", tier: 1, icon: "🏹", skill: "bow" },
-    
+
     // Recursos se o NPC tiver algum
     ...(npc.inventory.amount > 0 ? [{
       id: `resource_${npc.inventory.type}`,
@@ -68,15 +67,17 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
   const [gold, setGold] = useState(0);
   const [silver, setSilver] = useState(0);
 
-  const handleDragStart = useCallback((item: InventoryItem) => {
+  const handleDragStart = useCallback((item: InventoryItem, e: React.DragEvent) => {
     setDraggedItem(item);
+    e.dataTransfer.setData("text/plain", item.id);
   }, []);
 
   const handleDragEnd = useCallback(() => {
     setDraggedItem(null);
   }, []);
 
-  const handleDropOnSlot = useCallback((slotId: string) => {
+  const handleDropOnSlot = useCallback((e: React.DragEvent, slotId: string) => {
+    e.preventDefault();
     if (!draggedItem) return;
 
     const slot = equipmentSlots.find(s => s.id === slotId);
@@ -84,15 +85,15 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
 
     // Verificar se o item pode ser equipado no slot
     const canEquip = (
-      (slot.type === "weapon" && draggedItem.type === "weapon") ||
-      (slot.type === "tool" && draggedItem.type === "tool") ||
+      (slot.type === "weapon" && (draggedItem.type === "weapon" || draggedItem.type === "tool")) ||
       (slot.type === "head" && draggedItem.type === "armor") ||
       (slot.type === "chest" && draggedItem.type === "armor") ||
       (slot.type === "boots" && draggedItem.type === "armor") ||
       (slot.type === "cape" && draggedItem.type === "armor") ||
       (slot.type === "bag" && draggedItem.type === "armor") ||
       (slot.type === "food" && draggedItem.type === "consumable") ||
-      (slot.type === "potion" && draggedItem.type === "consumable")
+      (slot.type === "potion" && draggedItem.type === "consumable") ||
+      (slot.type === "offhand" && (draggedItem.type === "weapon" || draggedItem.type === "tool"))
     );
 
     if (!canEquip) return;
@@ -136,18 +137,21 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
       return (
         <div
           key={i}
-          className="w-10 h-10 bg-amber-800/30 border border-amber-700/50 flex items-center justify-center relative cursor-pointer hover:bg-amber-700/40 transition-colors"
-          draggable={!!item}
-          onDragStart={() => item && handleDragStart(item)}
-          onDragEnd={handleDragEnd}
+          className="w-10 h-10 bg-white/20 border border-gray-300/50 rounded-lg flex items-center justify-center relative cursor-pointer hover:bg-white/30 transition-colors backdrop-blur-sm"
+          onDragOver={(e) => e.preventDefault()}
         >
           {item && (
-            <div className="text-sm relative group">
+            <div 
+              className="text-lg relative group cursor-grab active:cursor-grabbing"
+              draggable
+              onDragStart={(e) => handleDragStart(item, e)}
+              onDragEnd={handleDragEnd}
+            >
               {item.icon}
-              <div className="absolute -bottom-1 -right-1 text-xs bg-yellow-600 text-white rounded-full w-3 h-3 flex items-center justify-center text-[10px]">
+              <div className="absolute -bottom-1 -right-1 text-xs bg-blue-500 text-white rounded-full w-4 h-4 flex items-center justify-center text-[10px] border border-white">
                 {item.tier}
               </div>
-              <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-black text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-10">
+              <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-10 pointer-events-none">
                 {item.name}
               </div>
             </div>
@@ -156,279 +160,178 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
       );
     }), [inventoryItems, handleDragStart, handleDragEnd]);
 
+  const EquipmentSlotComponent = ({ slotId, label }: { slotId: string; label: string }) => {
+    const slot = equipmentSlots.find(s => s.id === slotId);
+
+    return (
+      <div className="flex flex-col items-center">
+        <span className="text-xs text-gray-600 mb-1 font-medium">{label}</span>
+        <div
+          className="w-12 h-12 bg-white/30 border-2 border-gray-300/60 rounded-lg flex items-center justify-center cursor-pointer hover:bg-white/40 transition-colors backdrop-blur-sm shadow-sm"
+          onDragOver={(e) => e.preventDefault()}
+          onDrop={(e) => handleDropOnSlot(e, slotId)}
+          onClick={(e) => {
+            e.stopPropagation();
+            if (slot?.equipped) handleUnequip(slotId);
+          }}
+        >
+          {slot?.equipped ? (
+            <div className="text-lg relative group">
+              {slot.equipped.icon}
+              <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-10 pointer-events-none">
+                {slot.equipped.name}
+              </div>
+            </div>
+          ) : null}
+        </div>
+      </div>
+    );
+  };
+
   return (
     <div 
-      className="fixed inset-0 bg-black/50 z-[9999] pointer-events-auto"
+      className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[9999] pointer-events-auto"
       onClick={(e) => {
         if (e.target === e.currentTarget) onClose();
         e.stopPropagation();
       }}
     >
       <div 
-        className="bg-gradient-to-b from-amber-100 to-amber-200 rounded-lg border-2 border-amber-900 relative shadow-2xl"
+        className="bg-gradient-to-br from-white to-gray-50 rounded-2xl shadow-2xl w-[480px] max-h-[90vh] overflow-hidden relative border border-gray-200"
         style={{
           position: 'absolute',
           left: `${position.x}px`,
           top: `${position.y}px`,
-          width: '400px',
-          height: '600px',
           cursor: isDragging ? 'grabbing' : 'grab',
-          backgroundImage: 'linear-gradient(45deg, rgba(133, 77, 14, 0.1) 25%, transparent 25%), linear-gradient(-45deg, rgba(133, 77, 14, 0.1) 25%, transparent 25%)',
-          backgroundSize: '20px 20px'
         }}
         ref={dragRef}
         onMouseDown={handleMouseDown}
       >
-        {/* Header */}
-        <div className="flex justify-between items-center p-3 border-b-2 border-amber-800 bg-gradient-to-r from-amber-700 to-amber-800 text-white rounded-t-lg">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-amber-600 rounded-full border-2 border-amber-400 flex items-center justify-center">
-              <span className="text-sm">👤</span>
+        {/* Header com gradiente */}
+        <div className="bg-gradient-to-r from-amber-500 to-orange-600 p-6 text-white relative overflow-hidden">
+          <div className="absolute inset-0 bg-black/10"></div>
+          <div className="relative z-10">
+            <div className="flex justify-between items-center">
+              <div className="flex items-center gap-4">
+                <div className="w-16 h-16 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center border-2 border-white/30">
+                  <i className="fa-solid fa-backpack text-2xl text-white"></i>
+                </div>
+                <div>
+                  <h2 className="text-2xl font-bold text-white drop-shadow-md">Inventário</h2>
+                  <p className="text-white/90 font-medium">{npc.name}</p>
+                </div>
+              </div>
+              <button 
+                onClick={onClose}
+                className="w-10 h-10 bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-full flex items-center justify-center transition-all duration-200 border border-white/30"
+              >
+                <i className="fa-solid fa-times text-white"></i>
+              </button>
             </div>
-            <h2 className="text-lg font-bold">Inventory</h2>
           </div>
-          <button 
-            onClick={onClose}
-            className="w-6 h-6 bg-red-600 hover:bg-red-700 text-white rounded-full flex items-center justify-center text-sm font-bold"
-          >
-            ✕
-          </button>
         </div>
 
-        <div className="p-3">
+        {/* Content Area */}
+        <div className="p-6 space-y-6 max-h-[calc(90vh-140px)] overflow-y-auto custom-scrollbar">
+
           {/* Details Section */}
-          <div className="mb-4">
-            <h3 className="text-sm font-bold text-amber-900 mb-2">Details</h3>
-            
+          <div className="bg-gradient-to-br from-amber-50 to-orange-50 p-6 rounded-xl border-2 border-amber-200">
+            <h3 className="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
+              <i className="fa-solid fa-user-gear text-amber-600"></i>
+              Equipamentos
+            </h3>
+
             {/* Equipment Slots Grid */}
-            <div className="grid grid-cols-3 gap-2 mb-4">
+            <div className="grid grid-cols-3 gap-4 mb-6">
               {/* Row 1 */}
-              <div className="flex flex-col items-center">
-                <span className="text-xs text-amber-800 mb-1">Bag</span>
-                <div
-                  className="w-12 h-12 bg-amber-300/50 border-2 border-amber-600 flex items-center justify-center cursor-pointer hover:bg-amber-400/50 transition-colors"
-                  onDragOver={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                  }}
-                  onDrop={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    handleDropOnSlot('bag');
-                  }}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    const slot = equipmentSlots.find(s => s.id === 'bag');
-                    if (slot?.equipped) handleUnequip('bag');
-                  }}
-                >
-                  {(() => {
-                    const slot = equipmentSlots.find(s => s.id === 'bag');
-                    return slot?.equipped ? (
-                      <span className="text-lg">{slot.equipped.icon}</span>
-                    ) : null;
-                  })()}
-                </div>
-              </div>
-              
-              <div className="flex flex-col items-center">
-                <span className="text-xs text-amber-800 mb-1">Head Slot</span>
-                <div
-                  className="w-12 h-12 bg-amber-300/50 border-2 border-amber-600 flex items-center justify-center cursor-pointer hover:bg-amber-400/50 transition-colors"
-                  onDragOver={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                  }}
-                  onDrop={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    handleDropOnSlot('head');
-                  }}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    const slot = equipmentSlots.find(s => s.id === 'head');
-                    if (slot?.equipped) handleUnequip('head');
-                  }}
-                >
-                  {(() => {
-                    const slot = equipmentSlots.find(s => s.id === 'head');
-                    return slot?.equipped ? (
-                      <span className="text-lg">{slot.equipped.icon}</span>
-                    ) : null;
-                  })()}
-                </div>
-              </div>
-              
-              <div className="flex flex-col items-center">
-                <span className="text-xs text-amber-800 mb-1">Cape</span>
-                <div
-                  className="w-12 h-12 bg-amber-300/50 border-2 border-amber-600 flex items-center justify-center cursor-pointer hover:bg-amber-400/50 transition-colors"
-                  onDragOver={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                  }}
-                  onDrop={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    handleDropOnSlot('cape');
-                  }}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    const slot = equipmentSlots.find(s => s.id === 'cape');
-                    if (slot?.equipped) handleUnequip('cape');
-                  }}
-                >
-                  {(() => {
-                    const slot = equipmentSlots.find(s => s.id === 'cape');
-                    return slot?.equipped ? (
-                      <span className="text-lg">{slot.equipped.icon}</span>
-                    ) : null;
-                  })()}
-                </div>
-              </div>
+              <EquipmentSlotComponent slotId="bag" label="Bolsa" />
+              <EquipmentSlotComponent slotId="head" label="Cabeça" />
+              <EquipmentSlotComponent slotId="cape" label="Capa" />
 
               {/* Row 2 */}
-              <div className="flex flex-col items-center">
-                <span className="text-xs text-amber-800 mb-1">Main Hand</span>
-                <div
-                  className="w-12 h-12 bg-amber-300/50 border-2 border-amber-600 flex items-center justify-center cursor-pointer hover:bg-amber-400/50 transition-colors"
-                  onDragOver={(e) => e.preventDefault()}
-                  onDrop={() => handleDropOnSlot('mainhand')}
-                  onClick={() => equipmentSlots.find(s => s.id === 'mainhand')?.equipped && handleUnequip('mainhand')}
-                >
-                  {equipmentSlots.find(s => s.id === 'mainhand')?.equipped ? (
-                    <span className="text-lg">{equipmentSlots.find(s => s.id === 'mainhand')?.equipped?.icon}</span>
-                  ) : null}
-                </div>
-              </div>
-              
-              <div className="flex flex-col items-center">
-                <span className="text-xs text-amber-800 mb-1">Chest Slot</span>
-                <div
-                  className="w-12 h-12 bg-amber-300/50 border-2 border-amber-600 flex items-center justify-center cursor-pointer hover:bg-amber-400/50 transition-colors"
-                  onDragOver={(e) => e.preventDefault()}
-                  onDrop={() => handleDropOnSlot('chest')}
-                  onClick={() => equipmentSlots.find(s => s.id === 'chest')?.equipped && handleUnequip('chest')}
-                >
-                  {equipmentSlots.find(s => s.id === 'chest')?.equipped ? (
-                    <span className="text-lg">{equipmentSlots.find(s => s.id === 'chest')?.equipped?.icon}</span>
-                  ) : null}
-                </div>
-              </div>
-              
-              <div className="flex flex-col items-center">
-                <span className="text-xs text-amber-800 mb-1">Off-Hand</span>
-                <div
-                  className="w-12 h-12 bg-amber-300/50 border-2 border-amber-600 flex items-center justify-center cursor-pointer hover:bg-amber-400/50 transition-colors"
-                  onDragOver={(e) => e.preventDefault()}
-                  onDrop={() => handleDropOnSlot('offhand')}
-                  onClick={() => equipmentSlots.find(s => s.id === 'offhand')?.equipped && handleUnequip('offhand')}
-                >
-                  {equipmentSlots.find(s => s.id === 'offhand')?.equipped ? (
-                    <span className="text-lg">{equipmentSlots.find(s => s.id === 'offhand')?.equipped?.icon}</span>
-                  ) : null}
-                </div>
-              </div>
+              <EquipmentSlotComponent slotId="mainhand" label="Mão Principal" />
+              <EquipmentSlotComponent slotId="chest" label="Peito" />
+              <EquipmentSlotComponent slotId="offhand" label="Mão Secundária" />
 
               {/* Row 3 */}
-              <div className="flex flex-col items-center">
-                <span className="text-xs text-amber-800 mb-1">Potion</span>
-                <div
-                  className="w-12 h-12 bg-amber-300/50 border-2 border-amber-600 flex items-center justify-center cursor-pointer hover:bg-amber-400/50 transition-colors"
-                  onDragOver={(e) => e.preventDefault()}
-                  onDrop={() => handleDropOnSlot('potion')}
-                  onClick={() => equipmentSlots.find(s => s.id === 'potion')?.equipped && handleUnequip('potion')}
-                >
-                  {equipmentSlots.find(s => s.id === 'potion')?.equipped ? (
-                    <span className="text-lg">{equipmentSlots.find(s => s.id === 'potion')?.equipped?.icon}</span>
-                  ) : null}
-                </div>
-              </div>
-              
-              <div className="flex flex-col items-center">
-                <span className="text-xs text-amber-800 mb-1">Foot Slot</span>
-                <div
-                  className="w-12 h-12 bg-amber-300/50 border-2 border-amber-600 flex items-center justify-center cursor-pointer hover:bg-amber-400/50 transition-colors"
-                  onDragOver={(e) => e.preventDefault()}
-                  onDrop={() => handleDropOnSlot('boots')}
-                  onClick={() => equipmentSlots.find(s => s.id === 'boots')?.equipped && handleUnequip('boots')}
-                >
-                  {equipmentSlots.find(s => s.id === 'boots')?.equipped ? (
-                    <span className="text-lg">{equipmentSlots.find(s => s.id === 'boots')?.equipped?.icon}</span>
-                  ) : null}
-                </div>
-              </div>
-              
-              <div className="flex flex-col items-center">
-                <span className="text-xs text-amber-800 mb-1">Food</span>
-                <div
-                  className="w-12 h-12 bg-amber-300/50 border-2 border-amber-600 flex items-center justify-center cursor-pointer hover:bg-amber-400/50 transition-colors"
-                  onDragOver={(e) => e.preventDefault()}
-                  onDrop={() => handleDropOnSlot('food')}
-                  onClick={() => equipmentSlots.find(s => s.id === 'food')?.equipped && handleUnequip('food')}
-                >
-                  {equipmentSlots.find(s => s.id === 'food')?.equipped ? (
-                    <span className="text-lg">{equipmentSlots.find(s => s.id === 'food')?.equipped?.icon}</span>
-                  ) : null}
-                </div>
-              </div>
+              <EquipmentSlotComponent slotId="potion" label="Poção" />
+              <EquipmentSlotComponent slotId="boots" label="Botas" />
+              <EquipmentSlotComponent slotId="food" label="Comida" />
             </div>
 
             {/* Currency and Mount */}
-            <div className="flex justify-between items-center mb-2">
-              <div className="flex items-center gap-2">
-                <span className="text-sm text-amber-800">Gold</span>
-                <div className="w-4 h-4 bg-yellow-500 rounded-full"></div>
-                <div className="w-20 h-2 bg-amber-800 rounded"></div>
+            <div className="grid grid-cols-2 gap-4 mb-4">
+              <div className="bg-white/50 p-3 rounded-lg border border-yellow-200">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <div className="w-6 h-6 bg-yellow-500 rounded-full border border-yellow-600"></div>
+                    <span className="text-sm font-medium text-gray-700">Ouro</span>
+                  </div>
+                  <span className="font-bold text-yellow-600">{gold}</span>
+                </div>
               </div>
-              <div className="flex items-center gap-2">
-                <button className="px-2 py-1 bg-amber-600 text-white text-xs rounded hover:bg-amber-700">Stack</button>
-                <button className="px-2 py-1 bg-amber-600 text-white text-xs rounded hover:bg-amber-700">Sort</button>
-              </div>
-            </div>
-            
-            <div className="flex justify-between items-center mb-2">
-              <div className="flex items-center gap-2">
-                <span className="text-sm text-amber-800">Silver</span>
-                <div className="w-4 h-4 bg-gray-400 rounded-full"></div>
-                <div className="w-20 h-2 bg-amber-800 rounded"></div>
+
+              <div className="bg-white/50 p-3 rounded-lg border border-gray-300">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <div className="w-6 h-6 bg-gray-400 rounded-full border border-gray-500"></div>
+                    <span className="text-sm font-medium text-gray-700">Prata</span>
+                  </div>
+                  <span className="font-bold text-gray-600">{silver}</span>
+                </div>
               </div>
             </div>
 
             <div className="flex justify-between items-center mb-4">
-              <span className="text-sm text-amber-800">Mount</span>
-              <div
-                className="w-10 h-10 bg-amber-300/50 border-2 border-amber-600 flex items-center justify-center cursor-pointer hover:bg-amber-400/50 transition-colors"
-                onDragOver={(e) => e.preventDefault()}
-                onDrop={() => handleDropOnSlot('mount')}
-                onClick={() => equipmentSlots.find(s => s.id === 'mount')?.equipped && handleUnequip('mount')}
-              >
-                {equipmentSlots.find(s => s.id === 'mount')?.equipped ? (
-                  <span className="text-sm">{equipmentSlots.find(s => s.id === 'mount')?.equipped?.icon}</span>
-                ) : null}
-              </div>
+              <span className="text-sm font-medium text-gray-700">Montaria</span>
+              <EquipmentSlotComponent slotId="mount" label="" />
+            </div>
+
+            {/* Action Buttons */}
+            <div className="flex gap-2">
+              <button className="flex-1 px-4 py-2 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white rounded-lg font-medium transition-all text-sm">
+                <i className="fa-solid fa-layer-group mr-2"></i>
+                Organizar
+              </button>
+              <button className="flex-1 px-4 py-2 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white rounded-lg font-medium transition-all text-sm">
+                <i className="fa-solid fa-sort mr-2"></i>
+                Classificar
+              </button>
             </div>
 
             {/* Weight bar */}
-            <div className="mb-4">
-              <div className="w-full h-3 bg-amber-800 rounded relative">
-                <div className="w-1/4 h-full bg-amber-500 rounded"></div>
-                <span className="absolute inset-0 flex items-center justify-center text-xs text-white">0%</span>
+            <div className="mt-4">
+              <div className="flex justify-between items-center mb-2">
+                <span className="text-sm text-gray-600">Peso</span>
+                <span className="text-sm text-gray-600">0%</span>
+              </div>
+              <div className="w-full h-2 bg-gray-300 rounded-full overflow-hidden">
+                <div className="w-1/4 h-full bg-gradient-to-r from-green-400 to-green-500 rounded-full transition-all"></div>
               </div>
             </div>
           </div>
 
           {/* Inventory Slots */}
-          <div className="mb-2">
-            <h3 className="text-sm font-bold text-amber-900 mb-2">Inventory Slots (48)</h3>
-            <div className="grid grid-cols-6 gap-1 max-h-40 overflow-y-auto bg-amber-800/20 p-2 border border-amber-700">
+          <div className="bg-gradient-to-br from-gray-50 to-gray-100 p-6 rounded-xl border-2 border-gray-200">
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-lg font-bold text-gray-800 flex items-center gap-2">
+                <i className="fa-solid fa-boxes-stacked text-gray-600"></i>
+                Slots do Inventário (48)
+              </h3>
+              <div className="text-sm text-gray-600">
+                {inventoryItems.length}/48 itens
+              </div>
+            </div>
+
+            <div className="grid grid-cols-6 gap-2 p-4 bg-white/50 rounded-lg border border-gray-200 max-h-60 overflow-y-auto custom-scrollbar">
               {inventorySlots}
             </div>
           </div>
 
           {/* Market Value */}
-          <div className="text-xs text-amber-700 text-center">
-            Est. Market Value: ⏸ 0
+          <div className="text-center text-sm text-gray-600 bg-white/50 p-3 rounded-lg border border-gray-200">
+            <i className="fa-solid fa-coins mr-2 text-yellow-500"></i>
+            Valor Estimado de Mercado: 0 moedas
           </div>
         </div>
       </div>
