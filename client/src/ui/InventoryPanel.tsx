@@ -266,7 +266,9 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
   const handleDragStart = useCallback((item: InventoryItem, e: React.DragEvent) => {
     setDraggedItem(item);
     e.dataTransfer.setData("text/plain", item.id);
+    e.dataTransfer.setData("application/json", JSON.stringify(item));
     e.dataTransfer.effectAllowed = "move";
+    e.dataTransfer.dropEffect = "move";
   }, []);
 
   const handleDragEnd = useCallback(() => {
@@ -276,20 +278,39 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
   const handleDropOnSlot = useCallback((e: React.DragEvent, slotId: string) => {
     e.preventDefault();
     e.stopPropagation();
-    if (!draggedItem) return;
+    
+    const itemId = e.dataTransfer.getData("text/plain");
+    const itemData = draggedItem || inventoryItems.find(item => item.id === itemId);
+    
+    if (!itemData) {
+      console.log("Item não encontrado para drop");
+      return;
+    }
 
     const slot = equipmentSlots.find(s => s.id === slotId);
-    if (!slot) return;
+    if (!slot) {
+      console.log("Slot não encontrado:", slotId);
+      return;
+    }
 
-    const isCompatible = slot.acceptedTypes?.includes(draggedItem.type);
+    const isCompatible = slot.acceptedTypes?.includes(itemData.type);
+    console.log("Verificando compatibilidade:", {
+      itemType: itemData.type,
+      slotAcceptedTypes: slot.acceptedTypes,
+      isCompatible
+    });
 
     if (!isCompatible) {
       // Feedback visual de erro
       const notification = document.createElement('div');
       notification.className = 'fixed top-4 right-4 bg-red-500 text-white px-4 py-2 rounded-lg shadow-lg z-[10000] animate-bounce';
-      notification.textContent = `${draggedItem.name} não pode ser equipado em ${slot.name}`;
+      notification.textContent = `${itemData.name} não pode ser equipado em ${slot.name}`;
       document.body.appendChild(notification);
-      setTimeout(() => document.body.removeChild(notification), 3000);
+      setTimeout(() => {
+        if (document.body.contains(notification)) {
+          document.body.removeChild(notification);
+        }
+      }, 3000);
       return;
     }
 
@@ -299,13 +320,13 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
     }
 
     // Remover item do inventário
-    setInventoryItems(prev => prev.filter(item => item.id !== draggedItem.id));
+    setInventoryItems(prev => prev.filter(item => item.id !== itemData.id));
 
     // Equipar item no slot
     setEquipmentSlots(prev => 
       prev.map(s => 
         s.id === slotId 
-          ? { ...s, equipped: { ...draggedItem, equipped: true } }
+          ? { ...s, equipped: { ...itemData, equipped: true } }
           : s
       )
     );
@@ -315,10 +336,14 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
     // Feedback de sucesso
     const notification = document.createElement('div');
     notification.className = 'fixed top-4 right-4 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg z-[10000] animate-pulse';
-    notification.textContent = `✓ ${draggedItem.name} equipado!`;
+    notification.textContent = `✓ ${itemData.name} equipado!`;
     document.body.appendChild(notification);
-    setTimeout(() => document.body.removeChild(notification), 2000);
-  }, [draggedItem, equipmentSlots]);
+    setTimeout(() => {
+      if (document.body.contains(notification)) {
+        document.body.removeChild(notification);
+      }
+    }, 2000);
+  }, [draggedItem, equipmentSlots, inventoryItems]);
 
   const handleUnequip = useCallback((slotId: string) => {
     const slot = equipmentSlots.find(s => s.id === slotId);
@@ -395,14 +420,26 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
           } hover:bg-white/50`}
           onDragOver={(e) => {
             e.preventDefault();
+            e.stopPropagation();
             if (canAccept) {
+              e.dataTransfer.dropEffect = "move";
               e.currentTarget.classList.add('animate-pulse');
+            } else {
+              e.dataTransfer.dropEffect = "none";
             }
           }}
+          onDragEnter={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+          }}
           onDragLeave={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
             e.currentTarget.classList.remove('animate-pulse');
           }}
           onDrop={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
             e.currentTarget.classList.remove('animate-pulse');
             handleDropOnSlot(e, slotId);
           }}
