@@ -1,5 +1,6 @@
 import React from "react";
 import { useResourceStore } from "../game/stores/useResourceStore";
+import { resourceTypes } from "../game/constants/resources";
 import { useDraggable } from "../hooks/useDraggable";
 
 interface ResourcePanelProps {
