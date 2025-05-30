@@ -518,9 +518,16 @@ class NPCStateManager {
       return { state: "idle" };
     }
 
-    // Buscar dummy no DummyStore
-    const { useDummyStore } = await import('./useDummyStore');
-    const dummy = useDummyStore.getState().getDummy(npc.targetBuildingId);
+    // Buscar dummy diretamente usando import síncrono
+    let dummy: any = null;
+    try {
+      // Tentar acessar o store diretamente da janela global
+      if (window.dummyStore) {
+        dummy = window.dummyStore.getDummy(npc.targetBuildingId);
+      }
+    } catch (error) {
+      console.error('Erro ao acessar dummy store:', error);
+    }
 
     if (!dummy) {
       console.log(`Dummy ${npc.targetBuildingId} não encontrado para ${npc.name}`);
@@ -555,8 +562,13 @@ class NPCStateManager {
       const critical = Math.random() < 0.15; // 15% chance de crítico
 
       // Aplicar dano ao dummy
-      const { useDummyStore } = await import('./useDummyStore');
-      useDummyStore.getState().hitDummy(npc.combatTarget!, damage, critical);
+      // const { useDummyStore } = await import('./useDummyStore');  //Removido o import dinâmico
+      // useDummyStore.getState().hitDummy(npc.combatTarget!, damage, critical); //Acessando o store global
+
+      if (window.dummyStore) {
+           window.dummyStore.hitDummy(npc.combatTarget!, damage, critical);
+      }
+
 
       console.log(`${npc.name} atacou o dummy causando ${damage} de dano${critical ? ' (CRÍTICO)' : ''}`);
 
@@ -574,7 +586,7 @@ class NPCStateManager {
 
     // Progresso de ataque (animação)
     const attackProgress = Math.min(1, (currentTime - lastAttack) / attackSpeed);
-    
+
     return {
       workProgress: attackProgress,
       needs: {

@@ -97,3 +97,12 @@ export const useDummyStore = create<DummyState>()(
     }
   }))
 );
+
+// Configurar referência global
+if (typeof window !== 'undefined') {
+  window.dummyStore = {
+    getDummy: (id: string) => useDummyStore.getState().getDummy(id),
+    hitDummy: (id: string, damage: number, critical?: boolean) => 
+      useDummyStore.getState().hitDummy(id, damage, critical)
+  };
+}

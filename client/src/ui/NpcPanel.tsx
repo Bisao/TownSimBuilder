@@ -66,7 +66,8 @@ const NpcPanel: React.FC<NpcPanelProps> = ({ npc, onClose }) => {
     e.stopPropagation();
 
     // Encontrar o dummy mais próximo usando useDummyStore
-    const { dummies } = useDummyStore.getState();
+    const dummyStore = useDummyStore.getState();
+    const dummies = dummyStore.dummies;
 
     if (dummies.length === 0) {
       console.log("Nenhum dummy de treinamento encontrado!");
