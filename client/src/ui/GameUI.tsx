@@ -81,7 +81,7 @@ const GameUI = () => {
 
         isInitializedRef.current = true;
         console.log("Game systems initialized successfully");
-        
+
         // Initialize audio system
         initAudio();
       } catch (error) {
