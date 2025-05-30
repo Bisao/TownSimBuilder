@@ -234,6 +234,12 @@ const World: React.FC<WorldProps> = ({ onMarketSelect }) => {
     }
   });
 
+  const handleBuildingClick = (building: BuildingType) => {
+    if (onMarketSelect) {
+      onMarketSelect(building);
+    }
+  };
+
   if (!isWorldInitialized) {
     return null;
   }
@@ -268,13 +274,20 @@ const World: React.FC<WorldProps> = ({ onMarketSelect }) => {
         <Terrain />
 
         {/* Buildings */}
-        {buildings.map((building) => (
-          <Building
-            key={building.id}
-            building={building}
-            onMarketSelect={onMarketSelect}
-          />
-        ))}
+        {buildings.map((building) => {
+        try {
+          return (
+            <Building
+              key={building.id}
+              building={building}
+              onMarketSelect={onMarketSelect}
+            />
+          );
+        } catch (error) {
+          console.error(`Error rendering building ${building.id}:`, error);
+          return null;
+        }
+      })}
 
         {/* NPCs */}
         {npcs.map((npc) => (
