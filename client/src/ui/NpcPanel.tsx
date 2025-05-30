@@ -300,195 +300,74 @@ const NpcPanel: React.FC<NpcPanelProps> = ({ npc, onClose }) => {
 
           {/* Main NPC Info - Only show when NPC exists */}
           {!isTemporaryNpc && (
-            <div className={`p-4 rounded-xl border-2 ${getWorkBg(npc.assignedWork)}`}>
+            <div className="bg-white rounded-xl border border-gray-200 shadow-sm">
               {/* Header */}
-              <div className="flex items-center gap-3 mb-4">
-                <div className={`w-12 h-12 bg-gradient-to-br ${getWorkColor(npc.assignedWork)} rounded-full flex items-center justify-center shadow-lg`}>
-                  <i className={`fa-solid ${currentWork?.icon || 'fa-user'} text-white text-lg`}></i>
+              <div className="flex items-center gap-4 p-4 border-b border-gray-100">
+                <div className="w-12 h-12 bg-gray-600 rounded-full flex items-center justify-center">
+                  <i className="fa-solid fa-user text-white text-lg"></i>
                 </div>
                 <div className="flex-1">
-                  <h2 className="text-xl font-bold text-gray-800 mb-1">{npc.name}</h2>
-                  <div className="flex items-center gap-2 text-gray-600">
+                  <h2 className="text-xl font-bold text-gray-900">{npc.name}</h2>
+                  <div className="flex items-center gap-1 text-gray-600">
                     <i className="fa-solid fa-home text-xs"></i>
-                    <span className="text-xs">{npcType?.name || 'Aldeão'}</span>
-                    {currentWork && (
-                      <>
-                        <span className="text-gray-400">•</span>
-                        <span className="text-xs font-medium">{currentWork.name}</span>
-                      </>
-                    )}
+                    <span className="text-sm">{npcType?.name || 'Aldeão'}</span>
                   </div>
                 </div>
               </div>
-
-              {/* Stats Grid */}
-              <div className="grid grid-cols-2 gap-3 mb-4">
-                {/* Energy */}
-                <div className="bg-white/70 p-3 rounded-lg border border-blue-200">
-                  <div className="flex items-center gap-2 mb-2">
-                    <div className="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center">
-                      <i className="fa-solid fa-bolt text-white text-xs"></i>
-                    </div>
-                    <span className="font-semibold text-gray-700 text-sm">Energia</span>
-                  </div>
-                  <div className="text-lg font-bold text-blue-600 mb-1">{Math.round(npc.needs.energy)}%</div>
-                  <div className="w-full bg-gray-200 rounded-full h-1.5">
-                    <div 
-                      className="bg-gradient-to-r from-blue-400 to-blue-600 h-1.5 rounded-full transition-all duration-300"
-                      style={{ width: `${npc.needs.energy}%` }}
-                    ></div>
-                  </div>
-                </div>
-
-                {/* Satisfaction */}
-                <div className="bg-white/70 p-3 rounded-lg border border-orange-200">
-                  <div className="flex items-center gap-2 mb-2">
-                    <div className="w-6 h-6 bg-orange-500 rounded-full flex items-center justify-center">
-                      <i className="fa-solid fa-smile text-white text-xs"></i>
-                    </div>
-                    <span className="font-semibold text-gray-700 text-sm">Satisfação</span>
-                  </div>
-                  <div className="text-lg font-bold text-orange-600 mb-1">{Math.round(npc.needs.satisfaction)}%</div>
-                  <div className="w-full bg-gray-200 rounded-full h-1.5">
-                    <div 
-                      className="bg-gradient-to-r from-orange-400 to-orange-600 h-1.5 rounded-full transition-all duration-300"
-                      style={{ width: `${npc.needs.satisfaction}%` }}
-                    ></div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Action Buttons */}
-              <div className="grid grid-cols-2 lg:grid-cols-3 gap-2 mb-4">
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setShowTasks(true);
-                  }}
-                  className="flex items-center justify-center gap-1 p-3 bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700 text-white rounded-lg font-medium transition-all shadow-lg hover:shadow-xl transform hover:scale-105 text-sm"
-                >
-                  <i className="fa-solid fa-tasks text-xs"></i>
-                  Tarefas
-                </button>
-
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setShowSkillTree(true);
-                  }}
-                  className="flex items-center justify-center gap-1 p-3 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white rounded-lg font-medium transition-all shadow-lg hover:shadow-xl transform hover:scale-105 text-sm"
-                >
-                  <i className="fa-solid fa-tree text-xs"></i>
-                  Habilidades
-                </button>
-
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setShowInventory(true);
-                  }}
-                  className="flex items-center justify-center gap-1 p-3 bg-gradient-to-r from-orange-500 to-red-600 hover:from-orange-600 hover:to-red-700 text-white rounded-lg font-medium transition-all shadow-lg hover:shadow-xl transform hover:scale-105 text-sm"
-                >
-                  <i className="fa-solid fa-backpack text-xs"></i>
-                  Inventário
-                </button>
-
-                <button
-                  onClick={handleWorkClick}
-                  className="flex items-center justify-center gap-1 p-3 bg-gradient-to-r from-blue-500 to-cyan-600 hover:from-blue-600 hover:to-cyan-700 text-white rounded-lg font-medium transition-all shadow-lg hover:shadow-xl transform hover:scale-105 text-sm"
-                >
-                  <i className="fa-solid fa-hammer text-xs"></i>
-                  Trabalhar
-                </button>
-
-                <button
-                  onClick={handleCombatClick}
-                  className="flex items-center justify-center gap-1 p-3 bg-gradient-to-r from-red-500 to-red-700 hover:from-red-600 hover:to-red-800 text-white rounded-lg font-medium transition-all shadow-lg hover:shadow-xl transform hover:scale-105 text-sm"
-                >
-                  <i className="fa-solid fa-sword text-xs"></i>
-                  Combate
-                </button>
-              </div>
-
-              {/* Current Status */}
-              <div className="bg-white/50 p-3 rounded-lg border border-gray-200">
-                <h3 className="font-semibold text-gray-700 mb-2 flex items-center gap-2 text-sm">
-                  <i className="fa-solid fa-info-circle text-blue-500 text-xs"></i>
-                  Status Atual
-                </h3>
-                <div className="grid grid-cols-2 gap-2 text-xs">
-                  <div>
-                    <span className="text-gray-600">Estado:</span>
-                    <div className="font-medium text-gray-800">{stateTranslations[npc.state] || npc.state}</div>
-                  </div>
-                  <div>
-                    <span className="text-gray-600">Horário:</span>
-                    <div className="font-medium text-gray-800">{scheduleTranslations[npc.currentSchedule] || npc.currentSchedule}</div>
-                  </div>
-                  <div>
-                    <span className="text-gray-600">Nível:</span>
-                    <div className="font-medium text-purple-600">{npc.currentLevel || 1}</div>
-                  </div>
-                  <div>
-                    <span className="text-gray-600">Experiência:</span>
-                    <div className="font-medium text-green-600">{Math.round(npc.skills?.experience || 0)} XP</div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Inventory Display */}
-              <div className="bg-white/50 p-3 rounded-lg border border-gray-200">
-                <h3 className="font-semibold text-gray-700 mb-2 flex items-center gap-2 text-sm">
-                  <i className="fa-solid fa-box text-gray-600 text-xs"></i>
-                  Inventário Atual
-                </h3>
-                <div className="text-gray-600 text-xs">
-                  {npc.inventory.amount > 0 ? (
-                    <div className="flex items-center gap-2">
-                      <span className="font-medium text-gray-800">{npc.inventory.type}</span>
-                      <span className="text-gray-500">×</span>
-                      <span className="font-bold text-blue-600">{npc.inventory.amount}</span>
-                    </div>
-                  ) : (
-                    <span className="italic">Vazio</span>
-                  )}
-                </div>
-              </div>
-
-              {/* Control Mode */}
-              <div className="bg-white/50 p-3 rounded-lg border border-gray-200">
-                <h3 className="font-semibold text-gray-700 mb-2 flex items-center gap-2 text-sm">
-                  <i className="fa-solid fa-gamepad text-purple-500 text-xs"></i>
-                  Modo de Controle
-                </h3>
-                <div className="flex gap-2">
+              {/* Action Buttons Grid */}
+              <div className="p-4 space-y-3">
+                {/* Top Row - 3 buttons */}
+                <div className="grid grid-cols-3 gap-3">
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
-                      useNpcStore.getState().setNpcControlMode(npc.id, "autonomous");
+                      setShowTasks(true);
                     }}
-                    className={`flex-1 p-2 rounded-lg font-medium transition-all text-xs ${
-                      npc.controlMode === "autonomous"
-                        ? "bg-blue-500 text-white shadow-lg"
-                        : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-                    }`}
+                    className="px-4 py-3 bg-purple-500 hover:bg-purple-600 text-white rounded-lg font-semibold transition-all flex items-center justify-center gap-2"
                   >
-                    <i className="fa-solid fa-robot mr-1 text-xs"></i>
-                    Autônomo
+                    <i className="fa-solid fa-list-check"></i>
+                    Tarefas
                   </button>
+
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
-                      useNpcStore.getState().setNpcControlMode(npc.id, "manual");
+                      setShowSkillTree(true);
                     }}
-                    className={`flex-1 p-2 rounded-lg font-medium transition-all text-xs ${
-                      npc.controlMode === "manual"
-                        ? "bg-green-500 text-white shadow-lg"
-                        : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-                    }`}
+                    className="px-4 py-3 bg-green-500 hover:bg-green-600 text-white rounded-lg font-semibold transition-all flex items-center justify-center gap-2"
                   >
-                    <i className="fa-solid fa-hand text-xs mr-1"></i>
-                    Manual
+                    <i className="fa-solid fa-tree"></i>
+                    Habilidades
+                  </button>
+
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setShowInventory(true);
+                    }}
+                    className="px-4 py-3 bg-orange-500 hover:bg-orange-600 text-white rounded-lg font-semibold transition-all flex items-center justify-center gap-2"
+                  >
+                    <i className="fa-solid fa-backpack"></i>
+                    Inventário
+                  </button>
+                </div>
+
+                {/* Bottom Row - 2 buttons */}
+                <div className="grid grid-cols-2 gap-3">
+                  <button
+                    onClick={handleWorkClick}
+                    className="px-4 py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-lg font-semibold transition-all flex items-center justify-center gap-2"
+                  >
+                    <i className="fa-solid fa-hammer"></i>
+                    Trabalhar
+                  </button>
+
+                  <button
+                    onClick={handleCombatClick}
+                    className="px-4 py-3 bg-red-500 hover:bg-red-600 text-white rounded-lg font-semibold transition-all flex items-center justify-center gap-2"
+                  >
+                    <i className="fa-solid fa-sword"></i>
+                    Combate
                   </button>
                 </div>
               </div>
