@@ -1,13 +1,172 @@
+
 <!DOCTYPE html>
 <html lang="pt-BR">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Construtor de Cidade 3D - Um jogo de simulação e construção de cidades em 3D" />
+    <meta name="keywords" content="jogo, cidade, 3D, simulação, construção" />
+    <meta name="author" content="City Builder 3D Team" />
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    
+    <!-- Preload critical resources -->
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" as="style" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" />
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Construtor de Cidade 3D" />
+    <meta property="og:description" content="Um jogo de simulação e construção de cidades em 3D" />
+    <meta property="og:image" content="/og-image.jpg" />
+    <meta property="og:url" content="/" />
+    
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Construtor de Cidade 3D" />
+    <meta name="twitter:description" content="Um jogo de simulação e construção de cidades em 3D" />
+    <meta name="twitter:image" content="/twitter-image.jpg" />
+    
+    <!-- Theme -->
+    <meta name="theme-color" content="#B8860B" />
+    <meta name="color-scheme" content="dark light" />
+    
     <title>Construtor de Cidade 3D</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    
+    <!-- Performance optimizations -->
+    <script>
+      // Preload critical modules
+      const modulePreloadLink = document.createElement('link');
+      modulePreloadLink.rel = 'modulepreload';
+      modulePreloadLink.href = '/src/main.tsx';
+      document.head.appendChild(modulePreloadLink);
+    </script>
   </head>
+  
   <body>
-    <div id="root"></div>
+    <!-- Loading screen -->
+    <div id="loading-screen" style="
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, #2F1B14 0%, #8B4513 100%);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+      color: #F5DEB3;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    ">
+      <div style="
+        width: 60px;
+        height: 60px;
+        border: 4px solid #FFD700;
+        border-top: 4px solid transparent;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        margin-bottom: 20px;
+      "></div>
+      <h1 style="
+        font-size: 2rem;
+        font-weight: 600;
+        margin: 0 0 10px 0;
+        text-align: center;
+      ">Construtor de Cidade 3D</h1>
+      <p style="
+        font-size: 1rem;
+        margin: 0;
+        opacity: 0.8;
+        text-align: center;
+      ">Carregando...</p>
+    </div>
+    
+    <!-- Main application container -->
+    <div id="root" aria-label="Aplicação principal do jogo"></div>
+    
+    <!-- Fallback for users with JavaScript disabled -->
+    <noscript>
+      <div style="
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: #2F1B14;
+        color: #F5DEB3;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        text-align: center;
+        padding: 20px;
+      ">
+        <h1 style="font-size: 2rem; margin-bottom: 20px;">JavaScript Necessário</h1>
+        <p style="font-size: 1.2rem; max-width: 600px; line-height: 1.6;">
+          Este jogo requer JavaScript para funcionar. Por favor, habilite o JavaScript no seu navegador e recarregue a página.
+        </p>
+      </div>
+    </noscript>
+    
+    <!-- CSS animations -->
+    <style>
+      @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
+      
+      /* Hide loading screen after React loads */
+      .app-loaded #loading-screen {
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.3s ease-out;
+      }
+      
+      /* Ensure proper font loading */
+      body {
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+      }
+      
+      /* Performance optimizations */
+      * {
+        box-sizing: border-box;
+      }
+      
+      /* Prevent FOUC (Flash of Unstyled Content) */
+      html {
+        background-color: #2F1B14;
+      }
+    </style>
+    
+    <!-- Main application script -->
     <script type="module" src="/src/main.tsx"></script>
+    
+    <!-- Remove loading screen after app initialization -->
+    <script>
+      window.addEventListener('load', () => {
+        setTimeout(() => {
+          const loadingScreen = document.getElementById('loading-screen');
+          if (loadingScreen) {
+            document.body.classList.add('app-loaded');
+            setTimeout(() => {
+              loadingScreen.remove();
+            }, 300);
+          }
+        }, 500);
+      });
+    </script>
   </body>
 </html>
