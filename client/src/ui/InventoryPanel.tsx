@@ -740,18 +740,19 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
           return slot;
         });
 
-        // Salvar equipamentos no NPC
-        const equipment = newSlots.reduce((acc, slot) => {
+        return newSlots;
+      });
+
+      // Salvar equipamentos no NPC após a atualização do estado
+      setTimeout(() => {
+        const equipment = equipmentSlots.reduce((acc, slot) => {
           if (slot.equipped) {
             acc[slot.id] = slot.equipped;
           }
           return acc;
         }, {} as Record<string, InventoryItem>);
-
         updateNpc(npc.id, { equipment });
-
-        return newSlots;
-      });
+      }, 0);
     } else {
       // Item vem do inventário
       setInventoryItems(prev => {
@@ -776,18 +777,19 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
             : s
         );
 
-        // Salvar equipamentos no NPC
-        const equipment = newSlots.reduce((acc, slot) => {
+        return newSlots;
+      });
+
+      // Salvar equipamentos no NPC após a atualização do estado
+      setTimeout(() => {
+        const equipment = equipmentSlots.reduce((acc, slot) => {
           if (slot.equipped) {
             acc[slot.id] = slot.equipped;
           }
           return acc;
         }, {} as Record<string, InventoryItem>);
-
         updateNpc(npc.id, { equipment });
-
-        return newSlots;
-      });
+      }, 0);
     }
 
     setDraggedItem(null);
@@ -815,18 +817,19 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
         s.id === slotId ? { ...s, equipped: undefined } : s
       );
 
-      // Salvar equipamentos no NPC
-      const equipment = newSlots.reduce((acc, slot) => {
+      return newSlots;
+    });
+
+    // Salvar equipamentos no NPC após a atualização do estado
+    setTimeout(() => {
+      const equipment = equipmentSlots.reduce((acc, slot) => {
         if (slot.equipped) {
           acc[slot.id] = slot.equipped;
         }
         return acc;
       }, {} as Record<string, InventoryItem>);
-
       updateNpc(npc.id, { equipment });
-
-      return newSlots;
-    });
+    }, 0);
 
     showNotification(`✓ ${equippedItem.name} desequipado!`, 'success');
   }, [equipmentSlots, inventoryItems, showNotification, updateNpc, npc.id]);
