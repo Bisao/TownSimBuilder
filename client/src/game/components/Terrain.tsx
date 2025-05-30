@@ -13,11 +13,11 @@ const Terrain = () => {
   // Sistema de Editor de Mapas foi removido - modo editor sempre desabilitado
   const isEditorMode = false;
 
-  const [gridSize, setGridSize] = useState(GRID_CONFIG.DEFAULT_SIZE);
+  const [gridSize, setGridSize] = useState(GRID_CONFIG.SIZE);
   const [showGrid, setShowGrid] = useState(true);
   const [terrainTiles, setTerrainTiles] = useState({});
 
-  const currentGridSize = isEditorMode ? gridSize : GRID_CONFIG.DEFAULT_SIZE;
+  const currentGridSize = isEditorMode ? gridSize : GRID_CONFIG.SIZE;
   const shouldShowGrid = isEditorMode ? showGrid : isGridVisible;
 
   useEffect(() => {

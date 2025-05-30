@@ -4,6 +4,7 @@ import { GAME_CONFIG } from "../../../../shared/constants/game";
 // Grid configuration
 export const GRID_CONFIG = {
   SIZE: GAME_CONFIG.GRID_SIZE,
+  DEFAULT_SIZE: GAME_CONFIG.GRID_SIZE,
   TILE_SIZE: GAME_CONFIG.TILE_SIZE,
   TOTAL_TILES: GAME_CONFIG.GRID_SIZE * GAME_CONFIG.GRID_SIZE,
   
@@ -23,6 +24,10 @@ export const GRID_CONFIG = {
   // Subdivision settings
   CHUNK_SIZE: 10, // 10x10 chunks for optimization
   CHUNKS_PER_AXIS: Math.ceil(GAME_CONFIG.GRID_SIZE / 10),
+  
+  // Resource generation settings
+  MIN_RESOURCE_DISTANCE: 3,
+  RESOURCE_MARGIN: 5,
 } as const;
 
 // Grid utility functions
