@@ -392,10 +392,10 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
           </div>
         </div>
 
-        {/* Main Content */}
-        <div className="p-4 h-full overflow-y-auto">
+        {/* Equipment Section - Fixed */}
+        <div className="p-4 pb-0">
           {/* Equipment Grid */}
-          <div className="mb-6">
+          <div className="mb-4">
             <div className="flex justify-between items-start">
               {/* Left Side - Resources */}
               <div className="flex flex-col gap-2 w-16">
@@ -493,23 +493,28 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
               />
             </div>
           </div>
+        </div>
 
-          {/* Inventory Grid */}
-          <div className="mb-4">
-            <div className="grid grid-cols-5 gap-1 p-2 bg-amber-50/50 rounded-lg border border-amber-200">
-              {inventorySlots}
+        {/* Scrollable Inventory Section */}
+        <div className="flex-1 px-4 pb-4 overflow-hidden">
+          <div className="h-full flex">
+            {/* Inventory Grid - Scrollable */}
+            <div className="flex-1 overflow-y-auto pr-2">
+              <div className="grid grid-cols-5 gap-1 p-2 bg-amber-50/50 rounded-lg border border-amber-200">
+                {inventorySlots}
+              </div>
             </div>
-          </div>
 
-          {/* Scroll Indicator */}
-          <div className="flex justify-end mb-4">
-            <div className="w-2 h-20 bg-gray-300 rounded-full relative">
-              <div className="w-2 h-8 bg-gray-600 rounded-full absolute top-0"></div>
+            {/* Scroll Indicator */}
+            <div className="flex flex-col justify-center ml-2">
+              <div className="w-2 h-20 bg-gray-300 rounded-full relative">
+                <div className="w-2 h-8 bg-gray-600 rounded-full absolute top-0"></div>
+              </div>
             </div>
           </div>
 
           {/* Bottom Bar */}
-          <div className="flex items-center justify-between text-sm text-gray-600 pt-2 border-t border-amber-200">
+          <div className="flex items-center justify-between text-sm text-gray-600 pt-4 mt-4 border-t border-amber-200">
             <div className="flex items-center gap-4">
               <div className="w-6 h-6 bg-gray-400 rounded-full flex items-center justify-center">
                 <i className="fa-solid fa-cog text-white text-xs"></i>
