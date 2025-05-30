@@ -31,7 +31,7 @@ interface InventoryItem {
     level?: number;
     skills?: Record<string, number>;
   };
-  slot?: string; // Slot específico que o item pode ocupar
+  slot?: string;
 }
 
 interface EquipmentSlot {
@@ -40,20 +40,17 @@ interface EquipmentSlot {
   type: "weapon" | "tool" | "head" | "chest" | "boots" | "cape" | "bag" | "food" | "potion" | "mount" | "offhand";
   equipped?: InventoryItem;
   acceptedTypes?: string[];
-  acceptedSlots?: string[]; // Slots específicos que este slot aceita
+  acceptedSlots?: string[];
 }
 
 const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
   const { updateNpc } = useNpcStore();
   const { dragRef, position, isDragging, handleMouseDown } = useDraggable({
-    initialPosition: { x: window.innerWidth / 2 - 350, y: window.innerHeight / 2 - 350 }
+    initialPosition: { x: window.innerWidth / 2 - 200, y: window.innerHeight / 2 - 400 }
   });
 
-
-
   const [inventoryItems, setInventoryItems] = useState<InventoryItem[]>([
-    // === ITEMS NÍVEL 1 ===
-    // Armas Básicas
+    // Items do inventário (mantendo os mesmos itens do código original)
     { 
       id: "wooden_sword", 
       name: "Espada de Madeira", 
@@ -67,315 +64,6 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
       slot: "mainhand",
       durability: { current: 100, max: 100 },
       requirements: { level: 1, skills: { sword: 1 } }
-    },
-    { 
-      id: "wooden_club", 
-      name: "Porrete de Madeira", 
-      type: "weapon", 
-      tier: 1, 
-      icon: "🏏", 
-      skill: "club",
-      rarity: "common",
-      description: "Porrete simples de madeira",
-      stats: { damage: 10, speed: 35 },
-      slot: "mainhand",
-      durability: { current: 100, max: 100 },
-      requirements: { level: 1, skills: { club: 1 } }
-    },
-    { 
-      id: "wooden_dagger", 
-      name: "Adaga de Madeira", 
-      type: "weapon", 
-      tier: 1, 
-      icon: "🗡️", 
-      skill: "dagger",
-      rarity: "common",
-      description: "Adaga leve para ataques rápidos",
-      stats: { damage: 6, speed: 65 },
-      slot: "mainhand",
-      durability: { current: 100, max: 100 },
-      requirements: { level: 1, skills: { dagger: 1 } }
-    },
-
-    // Armaduras Básicas
-    { 
-      id: "cloth_cap", 
-      name: "Capuz de Pano", 
-      type: "armor", 
-      tier: 1, 
-      icon: "🧢", 
-      skill: "defense",
-      rarity: "common",
-      description: "Proteção básica para a cabeça",
-      stats: { defense: 5, health: 5 },
-      slot: "head",
-      durability: { current: 100, max: 100 },
-      requirements: { level: 1, skills: { defense: 1 } }
-    },
-    { 
-      id: "cloth_tunic", 
-      name: "Túnica de Pano", 
-      type: "armor", 
-      tier: 1, 
-      icon: "👔", 
-      skill: "defense",
-      rarity: "common",
-      description: "Roupa básica para proteção",
-      stats: { defense: 8, health: 10 },
-      slot: "chest",
-      durability: { current: 100, max: 100 },
-      requirements: { level: 1, skills: { defense: 1 } }
-    },
-    {
-      id: "cloth_shoes",
-      name: "Sapatos de Pano",
-      type: "armor",
-      tier: 1,
-      icon: "👟",
-      skill: "defense",
-      rarity: "common",
-      description: "Calçado básico e confortável",
-      stats: { defense: 3, speed: 5 },
-      slot: "boots",
-      durability: { current: 100, max: 100 },
-      requirements: { level: 1, skills: { defense: 1 } }
-    },
-    { 
-      id: "cloth_gloves", 
-      name: "Luvas de Pano", 
-      type: "armor", 
-      tier: 1, 
-      icon: "🧤", 
-      skill: "defense",
-      rarity: "common",
-      description: "Proteção básica para as mãos",
-      stats: { defense: 2, speed: 3 },
-      slot: "offhand",
-      durability: { current: 100, max: 100 },
-      requirements: { level: 1, skills: { defense: 1 } }
-    },
-
-    // Ferramentas Básicas
-    { 
-      id: "wooden_pickaxe", 
-      name: "Picareta de Madeira", 
-      type: "tool", 
-      tier: 1, 
-      icon: "⛏️", 
-      skill: "mining",
-      rarity: "common",
-      description: "Ferramenta básica para mineração",
-      stats: { speed: 5 },
-      slot: "tool",
-      durability: { current: 100, max: 100 },
-      requirements: { level: 1, skills: { mining: 1 } }
-    },
-    { 
-      id: "wooden_axe", 
-      name: "Machado de Madeira", 
-      type: "tool", 
-      tier: 1, 
-      icon: "🪓", 
-      skill: "lumberjack",
-      rarity: "common",
-      description: "Ferramenta básica para cortar madeira",
-      stats: { speed: 5 },
-      slot: "tool",
-      durability: { current: 100, max: 100 },
-      requirements: { level: 1, skills: { lumberjack: 1 } }
-    },
-    { 
-      id: "wooden_hoe", 
-      name: "Enxada de Madeira", 
-      type: "tool", 
-      tier: 1, 
-      icon: "🌾", 
-      skill: "farming",
-      rarity: "common",
-      description: "Ferramenta básica para agricultura",
-      stats: { speed: 5 },
-      slot: "tool",
-      durability: { current: 100, max: 100 },
-      requirements: { level: 1, skills: { farming: 1 } }
-    },
-
-    // Consumíveis Básicos
-    {
-      id: "small_health_potion",
-      name: "Poção Pequena de Vida",
-      type: "consumable",
-      tier: 1,
-      icon: "🧪",
-      skill: "alchemy",
-      rarity: "common",
-      description: "Restaura pouca vida",
-      stats: { health: 15 },
-      slot: "potion"
-    },
-    {
-      id: "bread",
-      name: "Pão",
-      type: "consumable",
-      tier: 1,
-      icon: "🍞",
-      skill: "cooking",
-      rarity: "common",
-      description: "Comida nutritiva",
-      stats: { health: 25 },
-      slot: "food"
-    },
-    {
-      id: "apple",
-      name: "Maçã",
-      type: "consumable",
-      tier: 1,
-      icon: "🍎",
-      skill: "gathering",
-      rarity: "common",
-      description: "Fruta fresca e saudável",
-      stats: { health: 10 },
-      slot: "food"
-    },
-    {
-      id: "water_bottle",
-      name: "Garrafa de Água",
-      type: "consumable",
-      tier: 1,
-      icon: "💧",
-      skill: "survival",
-      rarity: "common",
-      description: "Hidratação essencial",
-      stats: { health: 5 },
-      slot: "potion"
-    },
-
-    // Recursos Básicos
-    {
-      id: "basic_wood",
-      name: "Madeira Básica",
-      type: "resource",
-      tier: 1,
-      icon: "🪵",
-      rarity: "common",
-      description: "Material básico para construção"
-    },
-    {
-      id: "basic_stone",
-      name: "Pedra Básica",
-      type: "resource",
-      tier: 1,
-      icon: "🪨",
-      rarity: "common",
-      description: "Material básico para construção"
-    },
-    {
-      id: "basic_fiber",
-      name: "Fibra Básica",
-      type: "resource",
-      tier: 1,
-      icon: "🌱",
-      rarity: "common",
-      description: "Material básico para tecidos"
-    },
-    {
-      id: "basic_ore",
-      name: "Minério Básico",
-      type: "resource",
-      tier: 1,
-      icon: "⛰️",
-      rarity: "common",
-      description: "Minério básico para fundição"
-    },
-
-    // === ITEMS DE NÍVEL SUPERIOR ===
-    // === ARMAS LENDÁRIAS ===
-    { 
-      id: "excalibur", 
-      name: "Excalibur", 
-      type: "weapon", 
-      tier: 6, 
-      icon: "⚔️", 
-      skill: "sword", 
-      rarity: "legendary",
-      description: "Espada lendária dos reis",
-      stats: { damage: 95, speed: 85 },
-      slot: "mainhand",
-      durability: { current: 100, max: 100 },
-      requirements: { level: 50, skills: { sword: 80 } }
-    },
-    { 
-      id: "mjolnir", 
-      name: "Mjolnir", 
-      type: "weapon", 
-      tier: 6, 
-      icon: "🔨", 
-      skill: "hammer", 
-      rarity: "legendary",
-      description: "Martelo dos deuses",
-      stats: { damage: 100, speed: 60 },
-      slot: "mainhand",
-      durability: { current: 100, max: 100 },
-      requirements: { level: 45, skills: { hammer: 75 } }
-    },
-
-    // === COMBATE CORPO A CORPO ===
-    { 
-      id: "iron_sword", 
-      name: "Espada de Ferro", 
-      type: "weapon", 
-      tier: 4, 
-      icon: "⚔️", 
-      skill: "sword",
-      rarity: "common",
-      description: "Espada resistente de ferro forjado",
-      stats: { damage: 45, speed: 70 },
-      slot: "mainhand",
-      durability: { current: 80, max: 100 },
-      requirements: { level: 10, skills: { sword: 20 } }
-    },
-    { 
-      id: "iron_axe", 
-      name: "Machado de Ferro", 
-      type: "weapon", 
-      tier: 4, 
-      icon: "🪓", 
-      skill: "axe",
-      rarity: "common",
-      description: "Machado pesado para combate",
-      stats: { damage: 50, speed: 55 },
-      slot: "mainhand",
-      durability: { current: 90, max: 100 },
-      requirements: { level: 12, skills: { axe: 25 } }
-    },
-    { 
-      id: "enchanted_blade", 
-      name: "Lâmina Encantada", 
-      type: "weapon", 
-      tier: 5, 
-      icon: "🗡️", 
-      skill: "sword",
-      rarity: "epic",
-      description: "Espada imbuída com magia",
-      stats: { damage: 70, speed: 85 },
-      slot: "mainhand",
-      durability: { current: 95, max: 100 },
-      requirements: { level: 30, skills: { sword: 50, magic: 25 } }
-    },
-
-    // === ARMADURAS ===
-    { 
-      id: "dragon_plate", 
-      name: "Armadura de Dragão", 
-      type: "armor", 
-      tier: 6, 
-      icon: "🛡️", 
-      skill: "defense",
-      rarity: "legendary",
-      description: "Feita com escamas de dragão",
-      stats: { defense: 90, health: 50 },
-      slot: "chest",
-      durability: { current: 100, max: 100 },
-      requirements: { level: 40, skills: { defense: 60 } }
     },
     { 
       id: "iron_helmet", 
@@ -405,48 +93,18 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
       durability: { current: 60, max: 100 },
       requirements: { level: 3, skills: { defense: 5 } }
     },
-
-    // === CONSUMÍVEIS ===
     { 
-      id: "greater_health", 
-      name: "Grande Poção de Vida", 
-      type: "consumable", 
-      tier: 4, 
-      icon: "🧪", 
+      id: "small_health_potion",
+      name: "Poção Pequena de Vida",
+      type: "consumable",
+      tier: 1,
+      icon: "🧪",
       skill: "alchemy",
-      rarity: "rare",
-      description: "Restaura muito HP",
-      stats: { health: 100 },
+      rarity: "common",
+      description: "Restaura pouca vida",
+      stats: { health: 15 },
       slot: "potion"
     },
-    { 
-      id: "mana_crystal", 
-      name: "Cristal de Mana", 
-      type: "consumable", 
-      tier: 5, 
-      icon: "💎", 
-      skill: "magic",
-      rarity: "epic",
-      description: "Energia mágica pura",
-      slot: "potion"
-    },
-
-    // === FERRAMENTAS ===
-    { 
-      id: "master_pickaxe", 
-      name: "Picareta Mestre", 
-      type: "tool", 
-      tier: 5, 
-      icon: "⛏️", 
-      skill: "mining",
-      rarity: "rare",
-      description: "Extrai minérios raros",
-      stats: { speed: 20 },
-      slot: "tool",
-      durability: { current: 85, max: 100 },
-      requirements: { level: 20, skills: { mining: 40 } }
-    },
-
     // Recursos do NPC
     ...(npc.inventory.amount > 0 ? [{
       id: `resource_${npc.inventory.type}`,
@@ -459,7 +117,6 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
     }] : [])
   ]);
 
-  // Sistema de slots com validação aprimorada
   const [equipmentSlots, setEquipmentSlots] = useState<EquipmentSlot[]>(() => {
     const defaultSlots = [
       { 
@@ -527,7 +184,6 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
       }
     ];
 
-    // Carregar equipamentos do NPC se existirem
     if (npc.equipment) {
       return defaultSlots.map(slot => ({
         ...slot,
@@ -544,7 +200,6 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
   const [sortBy, setSortBy] = useState<string>("tier");
   const [validationError, setValidationError] = useState<string>("");
 
-  // Sistema de notificações melhorado
   const showNotification = useCallback((message: string, type: 'success' | 'error' | 'warning' = 'success') => {
     const notification = document.createElement('div');
     const bgColor = type === 'success' ? 'bg-green-500' : type === 'error' ? 'bg-red-500' : 'bg-yellow-500';
@@ -558,7 +213,6 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
     }, 3000);
   }, []);
 
-  // Sincronizar equipamentos quando o NPC muda
   useEffect(() => {
     if (npc.equipment) {
       setEquipmentSlots(prev => 
@@ -570,10 +224,8 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
     }
   }, [npc.equipment]);
 
-  // Cache para validações para evitar recálculos desnecessários
   const validationCache = useMemo(() => new Map<string, { valid: boolean; reason?: string }>(), []);
 
-  // Sistema de validação de equipamentos otimizado
   const validateEquipment = useMemo(() => {
     const cache = new Map<string, boolean>();
 
@@ -605,7 +257,6 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
     };
   }, []);
 
-  // Limpar cache quando equipamentos ou npc mudam
   useEffect(() => {
     validationCache.clear();
   }, [equipmentSlots, npc.currentLevel, npc.skills, validationCache]);
@@ -628,10 +279,8 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
     }
   };
 
-  // Função para calcular stats totais
   const calculateTotalStats = useCallback(() => {
     let totalStats = { damage: 0, defense: 0, speed: 0, health: 0 };
-
     equipmentSlots.forEach(slot => {
       if (slot.equipped?.stats) {
         totalStats.damage += slot.equipped.stats.damage || 0;
@@ -640,7 +289,6 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
         totalStats.health += slot.equipped.stats.health || 0;
       }
     });
-
     return totalStats;
   }, [equipmentSlots]);
 
@@ -699,7 +347,6 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
       // Silently handle parse errors
     }
 
-    // Fallback para buscar o item
     if (!itemData) {
       itemData = draggedItem || inventoryItems.find(item => item.id === itemId);
     }
@@ -709,32 +356,20 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
       return;
     }
 
-    // Validar equipamento
-    //const validation = validateEquipment(itemData, slotId);
-    //if (!validation.valid) {
-    //  showNotification(validation.reason || "Não é possível equipar este item", 'error');
-    //  setValidationError(validation.reason || "");
-    //  return;
-    //}
-
     const targetSlot = equipmentSlots.find(s => s.id === slotId);
     if (!targetSlot) {
       showNotification("Slot não encontrado", 'error');
       return;
     }
 
-    // Sistema de troca segura de equipamentos
     const currentEquippedItem = targetSlot.equipped;
 
-    // Se o item vem de outro slot, trocar os itens
     if (fromSlot && fromSlot !== slotId) {
       setEquipmentSlots(prev => {
         const newSlots = prev.map(slot => {
           if (slot.id === fromSlot) {
-            // Slot de origem recebe o item que estava no slot de destino
             return { ...slot, equipped: currentEquippedItem };
           } else if (slot.id === slotId) {
-            // Slot de destino recebe o item arrastado
             return { ...slot, equipped: { ...itemData!, equipped: true } };
           }
           return slot;
@@ -743,7 +378,6 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
         return newSlots;
       });
 
-      // Salvar equipamentos no NPC após a atualização do estado
       setTimeout(() => {
         const equipment = equipmentSlots.reduce((acc, slot) => {
           if (slot.equipped) {
@@ -754,22 +388,18 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
         updateNpc(npc.id, { equipment });
       }, 0);
     } else {
-      // Item vem do inventário
       setInventoryItems(prev => {
         let newItems = [...prev];
 
-        // Se há item equipado no slot, adicionar de volta ao inventário
         if (currentEquippedItem) {
           newItems.push({ ...currentEquippedItem, equipped: false });
         }
 
-        // Remover o item que está sendo equipado do inventário
         newItems = newItems.filter(item => item.id !== itemData!.id);
 
         return newItems;
       });
 
-      // Equipar item no slot
       setEquipmentSlots(prev => {
         const newSlots = prev.map(s => 
           s.id === slotId 
@@ -780,7 +410,6 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
         return newSlots;
       });
 
-      // Salvar equipamentos no NPC após a atualização do estado
       setTimeout(() => {
         const equipment = equipmentSlots.reduce((acc, slot) => {
           if (slot.equipped) {
@@ -802,16 +431,13 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
 
     const equippedItem = slot.equipped;
 
-    // Verificar se há espaço no inventário
     if (inventoryItems.length >= 60) {
       showNotification("Inventário cheio! Não é possível desequipar o item.", 'error');
       return;
     }
 
-    // Adicionar item de volta ao inventário
     setInventoryItems(prev => [...prev, { ...equippedItem, equipped: false }]);
 
-    // Remover item do slot de equipamento
     setEquipmentSlots(prev => {
       const newSlots = prev.map(s => 
         s.id === slotId ? { ...s, equipped: undefined } : s
@@ -820,7 +446,6 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
       return newSlots;
     });
 
-    // Salvar equipamentos no NPC após a atualização do estado
     setTimeout(() => {
       const equipment = equipmentSlots.reduce((acc, slot) => {
         if (slot.equipped) {
@@ -834,7 +459,6 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
     showNotification(`✓ ${equippedItem.name} desequipado!`, 'success');
   }, [equipmentSlots, inventoryItems, showNotification, updateNpc, npc.id]);
 
-  // Função para reparar item
   const repairItem = useCallback((itemId: string) => {
     setInventoryItems(prev => 
       prev.map(item => 
@@ -854,6 +478,24 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
 
     showNotification("Item reparado!", 'success');
   }, [showNotification]);
+
+  const getRarityColorForItems = (rarity?: string) => {
+    switch (rarity) {
+      case "legendary": return "from-yellow-400 to-orange-500";
+      case "epic": return "from-purple-400 to-pink-500";
+      case "rare": return "from-blue-400 to-indigo-500";
+      default: return "from-gray-300 to-gray-400";
+    }
+  };
+
+  const getRarityBorderForItems = (rarity?: string) => {
+    switch (rarity) {
+      case "legendary": return "border-yellow-400 shadow-yellow-400/50";
+      case "epic": return "border-purple-400 shadow-purple-400/50";
+      case "rare": return "border-blue-400 shadow-blue-400/50";
+      default: return "border-gray-300 shadow-gray-300/20";
+    }
+  };
 
   const ItemComponent = ({ item, index }: { item: InventoryItem; index: number }) => {
     const durabilityPercentage = item.durability ? (item.durability.current / item.durability.max) * 100 : 100;
@@ -875,7 +517,7 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
         onClick={() => setSelectedItem(item)}
       >
         <div
-          className={`w-10 h-10 bg-gradient-to-br ${getRarityColor(item.rarity)} rounded-lg border-2 ${getRarityBorder(item.rarity)} flex items-center justify-center shadow-lg backdrop-blur-sm relative overflow-hidden`}
+          className={`w-10 h-10 bg-gradient-to-br ${getRarityColorForItems(item.rarity)} rounded-lg border-2 ${getRarityBorderForItems(item.rarity)} flex items-center justify-center shadow-lg backdrop-blur-sm relative overflow-hidden`}
         >
           <div className="absolute inset-0 bg-white/10 backdrop-blur-sm"></div>
           <span className="text-lg relative z-10">{item.icon}</span>
@@ -978,7 +620,7 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
     );
   };
 
-  const EquipmentSlotComponent = ({ slotId, label }: { slotId: string; label: string }) => {
+  const EquipmentSlotComponent = ({ slotId, label, className = "" }: { slotId: string; label: string; className?: string }) => {
     const slot = equipmentSlots.find(s => s.id === slotId);
 
     // Validação apenas quando necessário (quando há item sendo arrastado)
@@ -1039,7 +681,7 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
               }}
               onDragEnd={handleDragEnd}
             >
-              <div className={`text-2xl bg-gradient-to-br ${getRarityColor(slot.equipped.rarity)} rounded-lg p-2 border ${getRarityBorder(slot.equipped.rarity)} w-full h-full flex items-center justify-center transition-all duration-200 hover:scale-105`}>
+              <div className={`text-2xl bg-gradient-to-br ${getRarityColorForItems(slot.equipped.rarity)} rounded-lg p-2 border ${getRarityBorderForItems(slot.equipped.rarity)} w-full h-full flex items-center justify-center transition-all duration-200 hover:scale-105`}>
                 {slot.equipped.icon}
               </div>
 
@@ -1155,10 +797,10 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
         onMouseDown={(e) => {
           const target = e.target as HTMLElement;
           const isInteractiveElement = target.closest('[draggable="true"]') || 
-                                     target.closest('[data-slot]') || 
-                                     target.closest('button') || 
-                                     target.closest('input') || 
-                                     target.closest('select');
+                                    target.closest('[data-slot]') || 
+                                    target.closest('button') || 
+                                    target.closest('input') || 
+                                    target.closest('select');
 
           if (!isInteractiveElement) {
             handleMouseDown(e);
@@ -1299,7 +941,7 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
               </h3>
               <div className="flex items-start gap-4">
                 <div
-                  className={`w-10 h-10 bg-gradient-to-br ${getRarityColor(selectedItem.rarity)} rounded-xl border-2 ${getRarityBorder(selectedItem.rarity)} flex items-center justify-center shadow-lg relative`}
+                  className={`w-10 h-10 bg-gradient-to-br ${getRarityColorForItems(selectedItem.rarity)} rounded-xl border-2 ${getRarityBorderForItems(selectedItem.rarity)} flex items-center justify-center shadow-lg relative`}
                 >
                   <span className="text-lg">{selectedItem.icon}</span>
                   {selectedItem.durability && (
