@@ -64,9 +64,6 @@ const World: React.FC<WorldProps> = ({ selectedBuildingType, onMarketSelect }) =
       // Initialize game store
       initialize();
 
-      // Initialize resources
-      initResources();
-
       // Generate natural resources
       generateNaturalResourcesLocal();
 
@@ -75,7 +72,7 @@ const World: React.FC<WorldProps> = ({ selectedBuildingType, onMarketSelect }) =
 
       setIsWorldInitialized(true);
     }
-  }, [isInitialized, initialize, initResources]);
+  }, [isInitialized, initialize]);
 
   // Natural resources generation disabled
   const generateNaturalResourcesLocal = () => {

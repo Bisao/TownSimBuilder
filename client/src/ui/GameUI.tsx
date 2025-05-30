@@ -75,18 +75,13 @@ const GameUI: React.FC<GameUIProps> = ({ className = "", onBuildingSelect }) => 
     combatEntityId: null as string | null,
   });
 
-  // Keyboard controls - with proper error handling
+  // Try to get keyboard controls, with fallback if not available
   let keyboardControls;
-  let get = () => ({} as Controls);
-  
   try {
-    keyboardControls = useKeyboardControls<Controls>();
-    if (Array.isArray(keyboardControls) && keyboardControls.length >= 2) {
-      [, get] = keyboardControls;
-    }
+    keyboardControls = useKeyboardControls();
   } catch (error) {
-    // KeyboardControls context not available, use fallback
-    console.warn('KeyboardControls context not available, using fallback');
+    // Silently handle missing keyboard controls context
+    keyboardControls = null;
   }
 
   // Refs
@@ -163,7 +158,7 @@ const GameUI: React.FC<GameUIProps> = ({ className = "", onBuildingSelect }) => 
 
   const handleKeyboardControls = useCallback(() => {
     try {
-      const controls = get();
+      const controls = keyboardControls?.();
       if (!controls) return;
 
       // Time controls
@@ -180,7 +175,7 @@ const GameUI: React.FC<GameUIProps> = ({ className = "", onBuildingSelect }) => 
       // Silently handle keyboard control errors
       console.warn('Error handling keyboard controls:', error);
     }
-  }, [get, pauseTime, resumeTime, increaseTimeSpeed, decreaseTimeSpeed, togglePanel]);
+  }, [keyboardControls, pauseTime, resumeTime, increaseTimeSpeed, decreaseTimeSpeed, togglePanel]);
 
   // Initialize audio and setup event listeners
   useEffect(() => {
