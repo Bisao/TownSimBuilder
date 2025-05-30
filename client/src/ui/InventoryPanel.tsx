@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useMemo, useEffect } from "react";
-import { NPC, useNpcStore } from "../game/stores/useNpcStore";
+import { NPC, NPCEquipment, useNpcStore } from "../game/stores/useNpcStore";
 import { useDraggable } from "../hooks/useDraggable";
 
 interface InventoryPanelProps {
@@ -51,6 +51,34 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
   const { dragRef, position, isDragging, handleMouseDown } = useDraggable({
     initialPosition: { x: window.innerWidth / 2 - 200, y: window.innerHeight / 2 - 400 }
   });
+
+  // Sincronizar equipamentos quando o componente é desmontado
+  useEffect(() => {
+    return () => {
+      // Garantir que equipamentos estejam salvos no NPC ao fechar
+      const finalEquipment: Record<string, NPCEquipment> = {};
+      equipmentSlots.forEach(slot => {
+        if (slot.equipped) {
+          finalEquipment[slot.id] = {
+            id: slot.equipped.id,
+            name: slot.equipped.name,
+            type: slot.equipped.type,
+            tier: slot.equipped.tier,
+            icon: slot.equipped.icon,
+            skill: slot.equipped.skill,
+            equipped: true,
+            rarity: slot.equipped.rarity,
+            description: slot.equipped.description,
+            stats: slot.equipped.stats,
+            durability: slot.equipped.durability,
+            requirements: slot.equipped.requirements,
+            slot: slot.equipped.slot
+          };
+        }
+      });
+      updateNpc(npc.id, { equipment: finalEquipment });
+    };
+  }, [equipmentSlots, updateNpc, npc.id]);
 
   const [inventoryItems, setInventoryItems] = useState<InventoryItem[]>([
     { 
@@ -255,6 +283,30 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
           }
           return slot;
         });
+        
+        // Sincronizar com o NPC store
+        const newEquipment: Record<string, NPCEquipment> = {};
+        newSlots.forEach(slot => {
+          if (slot.equipped) {
+            newEquipment[slot.id] = {
+              id: slot.equipped.id,
+              name: slot.equipped.name,
+              type: slot.equipped.type,
+              tier: slot.equipped.tier,
+              icon: slot.equipped.icon,
+              skill: slot.equipped.skill,
+              equipped: true,
+              rarity: slot.equipped.rarity,
+              description: slot.equipped.description,
+              stats: slot.equipped.stats,
+              durability: slot.equipped.durability,
+              requirements: slot.equipped.requirements,
+              slot: slot.equipped.slot
+            };
+          }
+        });
+        updateNpc(npc.id, { equipment: newEquipment });
+        
         return newSlots;
       });
     } else {
@@ -273,13 +325,37 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
             ? { ...s, equipped: { ...itemData!, equipped: true } }
             : s
         );
+        
+        // Sincronizar com o NPC store
+        const newEquipment: Record<string, NPCEquipment> = {};
+        newSlots.forEach(slot => {
+          if (slot.equipped) {
+            newEquipment[slot.id] = {
+              id: slot.equipped.id,
+              name: slot.equipped.name,
+              type: slot.equipped.type,
+              tier: slot.equipped.tier,
+              icon: slot.equipped.icon,
+              skill: slot.equipped.skill,
+              equipped: true,
+              rarity: slot.equipped.rarity,
+              description: slot.equipped.description,
+              stats: slot.equipped.stats,
+              durability: slot.equipped.durability,
+              requirements: slot.equipped.requirements,
+              slot: slot.equipped.slot
+            };
+          }
+        });
+        updateNpc(npc.id, { equipment: newEquipment });
+        
         return newSlots;
       });
     }
 
     setDraggedItem(null);
     showNotification(`✓ ${itemData.name} equipado!`, 'success');
-  }, [draggedItem, equipmentSlots, inventoryItems, showNotification]);
+  }, [draggedItem, equipmentSlots, inventoryItems, showNotification, updateNpc, npc.id]);
 
   const handleUnequip = useCallback((slotId: string) => {
     const slot = equipmentSlots.find(s => s.id === slotId);
@@ -292,11 +368,35 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
       const newSlots = prev.map(s => 
         s.id === slotId ? { ...s, equipped: undefined } : s
       );
+      
+      // Sincronizar com o NPC store
+      const newEquipment: Record<string, NPCEquipment> = {};
+      newSlots.forEach(slot => {
+        if (slot.equipped) {
+          newEquipment[slot.id] = {
+            id: slot.equipped.id,
+            name: slot.equipped.name,
+            type: slot.equipped.type,
+            tier: slot.equipped.tier,
+            icon: slot.equipped.icon,
+            skill: slot.equipped.skill,
+            equipped: true,
+            rarity: slot.equipped.rarity,
+            description: slot.equipped.description,
+            stats: slot.equipped.stats,
+            durability: slot.equipped.durability,
+            requirements: slot.equipped.requirements,
+            slot: slot.equipped.slot
+          };
+        }
+      });
+      updateNpc(npc.id, { equipment: newEquipment });
+      
       return newSlots;
     });
 
     showNotification(`✓ ${equippedItem.name} desequipado!`, 'success');
-  }, [equipmentSlots, showNotification]);
+  }, [equipmentSlots, showNotification, updateNpc, npc.id]);
 
   const totalWeight = calculateTotalWeight();
   const maxWeight = 100;
