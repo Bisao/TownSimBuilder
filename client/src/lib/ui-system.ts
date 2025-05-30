@@ -207,6 +207,16 @@ export function getProgressFillClasses(percentage: number): string {
   `);
 }
 
+// Slot Classes
+export function getSlotClasses(): string {
+  return cn(`
+    relative flex items-center justify-center
+    border-2 rounded-lg transition-all duration-${ANIMATIONS.FAST}
+    hover:scale-105 cursor-pointer bg-gradient-to-br
+    backdrop-blur-sm shadow-inner
+  `);
+}
+
 // Tooltip Classes
 export function getTooltipClasses(): string {
   return cn(`
