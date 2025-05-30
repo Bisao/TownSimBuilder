@@ -389,8 +389,104 @@ const GameUI = () => {
         </div>
       </div>
 
-      {/* Bottom HUD */}
-      <div className="absolute bottom-2 left-2 right-2 lg:bottom-4 lg:left-4 lg:right-4 z-10 pointer-events-none">
+      {/* Skills Bar */}
+      <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 z-10 pointer-events-none">
+        <div className="flex items-center gap-2 pointer-events-auto">
+          {/* Skill buttons with circular design similar to Albion Online */}
+          <div className="w-12 h-12 bg-gradient-to-b from-gray-600 to-gray-800 rounded-full border-2 border-gray-500 flex items-center justify-center cursor-pointer hover:border-yellow-400 transition-all group relative">
+            <i className="fa-solid fa-axe text-white text-lg"></i>
+            <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-gray-700 rounded-full border border-gray-400 flex items-center justify-center">
+              <span className="text-xs text-white font-bold">Q</span>
+            </div>
+            <div className="absolute top-full mt-1 left-1/2 transform -translate-x-1/2 bg-black/80 text-white text-xs px-2 py-1 rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity">
+              Machado de Lenhador
+            </div>
+          </div>
+
+          <div className="w-12 h-12 bg-gradient-to-b from-orange-500 to-red-600 rounded-full border-2 border-orange-400 flex items-center justify-center cursor-pointer hover:border-yellow-400 transition-all group relative">
+            <i className="fa-solid fa-fire text-white text-lg"></i>
+            <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-gray-700 rounded-full border border-gray-400 flex items-center justify-center">
+              <span className="text-xs text-white font-bold">W</span>
+            </div>
+            <div className="absolute top-full mt-1 left-1/2 transform -translate-x-1/2 bg-black/80 text-white text-xs px-2 py-1 rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity">
+              Bola de Fogo
+            </div>
+          </div>
+
+          <div className="w-12 h-12 bg-gradient-to-b from-gray-600 to-gray-800 rounded-full border-2 border-gray-500 flex items-center justify-center cursor-pointer hover:border-yellow-400 transition-all group relative">
+            <i className="fa-solid fa-sword text-white text-lg"></i>
+            <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-gray-700 rounded-full border border-gray-400 flex items-center justify-center">
+              <span className="text-xs text-white font-bold">E</span>
+            </div>
+            <div className="absolute top-full mt-1 left-1/2 transform -translate-x-1/2 bg-black/80 text-white text-xs px-2 py-1 rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity">
+              Espada
+            </div>
+          </div>
+
+          <div className="w-12 h-12 bg-gradient-to-b from-gray-600 to-gray-800 rounded-full border-2 border-gray-500 flex items-center justify-center cursor-pointer hover:border-yellow-400 transition-all group relative">
+            <i className="fa-solid fa-shield text-white text-lg"></i>
+            <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-gray-700 rounded-full border border-gray-400 flex items-center justify-center">
+              <span className="text-xs text-white font-bold">R</span>
+            </div>
+            <div className="absolute top-full mt-1 left-1/2 transform -translate-x-1/2 bg-black/80 text-white text-xs px-2 py-1 rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity">
+              Escudo
+            </div>
+          </div>
+
+          <div className="w-12 h-12 bg-gradient-to-b from-green-500 to-green-700 rounded-full border-2 border-green-400 flex items-center justify-center cursor-pointer hover:border-yellow-400 transition-all group relative">
+            <i className="fa-solid fa-leaf text-white text-lg"></i>
+            <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-gray-700 rounded-full border border-gray-400 flex items-center justify-center">
+              <span className="text-xs text-white font-bold">T</span>
+            </div>
+            <div className="absolute top-full mt-1 left-1/2 transform -translate-x-1/2 bg-black/80 text-white text-xs px-2 py-1 rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity">
+              Cura Natural
+            </div>
+          </div>
+
+          <div className="w-12 h-12 bg-gradient-to-b from-gray-600 to-gray-800 rounded-full border-2 border-gray-500 flex items-center justify-center cursor-pointer hover:border-yellow-400 transition-all group relative">
+            <i className="fa-solid fa-pickaxe text-white text-lg"></i>
+            <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-gray-700 rounded-full border border-gray-400 flex items-center justify-center">
+              <span className="text-xs text-white font-bold">Y</span>
+            </div>
+            <div className="absolute top-full mt-1 left-1/2 transform -translate-x-1/2 bg-black/80 text-white text-xs px-2 py-1 rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity">
+              Picareta de Mineração
+            </div>
+          </div>
+
+          <div className="w-12 h-12 bg-gradient-to-b from-blue-500 to-blue-700 rounded-full border-2 border-blue-400 flex items-center justify-center cursor-pointer hover:border-yellow-400 transition-all group relative">
+            <i className="fa-solid fa-wind text-white text-lg"></i>
+            <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-gray-700 rounded-full border border-gray-400 flex items-center justify-center">
+              <span className="text-xs text-white font-bold">U</span>
+            </div>
+            <div className="absolute top-full mt-1 left-1/2 transform -translate-x-1/2 bg-black/80 text-white text-xs px-2 py-1 rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity">
+              Velocidade do Vento
+            </div>
+          </div>
+
+          <div className="w-12 h-12 bg-gradient-to-b from-gray-600 to-gray-800 rounded-full border-2 border-gray-500 flex items-center justify-center cursor-pointer hover:border-yellow-400 transition-all group relative">
+            <i className="fa-solid fa-user text-white text-lg"></i>
+            <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-gray-700 rounded-full border border-gray-400 flex items-center justify-center">
+              <span className="text-xs text-white font-bold">I</span>
+            </div>
+            <div className="absolute top-full mt-1 left-1/2 transform -translate-x-1/2 bg-black/80 text-white text-xs px-2 py-1 rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity">
+              Personagem
+            </div>
+          </div>
+
+          <div className="w-12 h-12 bg-gradient-to-b from-gray-600 to-gray-800 rounded-full border-2 border-gray-500 flex items-center justify-center cursor-pointer hover:border-yellow-400 transition-all group relative">
+            <i className="fa-solid fa-tools text-white text-lg"></i>
+            <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-gray-700 rounded-full border border-gray-400 flex items-center justify-center">
+              <span className="text-xs text-white font-bold">O</span>
+            </div>
+            <div className="absolute top-full mt-1 left-1/2 transform -translate-x-1/2 bg-black/80 text-white text-xs px-2 py-1 rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity">
+              Ferramentas
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Control Panel - moved higher */}
+      <div className="absolute bottom-16 left-2 right-2 lg:bottom-20 lg:left-4 lg:right-4 z-10 pointer-events-none">
         <div className="flex justify-center">
           <div className="bg-black/50 text-white p-2 lg:p-3 rounded-lg backdrop-blur-sm pointer-events-auto max-w-full overflow-x-auto">
             <div className="grid grid-cols-3 lg:grid-cols-6 gap-1 lg:gap-2 text-xs min-w-max">
