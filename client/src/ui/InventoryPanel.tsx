@@ -570,12 +570,24 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
     }
   }, [npc.equipment]);
 
-  // Sistema de validação de equipamentos
-  const validateEquipment = useCallback((item: InventoryItem, slotId: string): { valid: boolean; reason?: string } => {
-    const slot = equipmentSlots.find(s => s.id === slotId);
-    if (!slot) return { valid: false, reason: "Slot não encontrado" };
+  // Cache para validações para evitar recálculos desnecessários
+  const validationCache = useMemo(() => new Map<string, { valid: boolean; reason?: string }>(), []);
 
-    console.log("Validating equipment:", item.name, "for slot:", slotId, "slot data:", slot);
+  // Sistema de validação de equipamentos otimizado
+  const validateEquipment = useCallback((item: InventoryItem, slotId: string): { valid: boolean; reason?: string } => {
+    const cacheKey = `${item.id}-${slotId}`;
+    
+    // Verificar cache primeiro
+    if (validationCache.has(cacheKey)) {
+      return validationCache.get(cacheKey)!;
+    }
+
+    const slot = equipmentSlots.find(s => s.id === slotId);
+    if (!slot) {
+      const result = { valid: false, reason: "Slot não encontrado" };
+      validationCache.set(cacheKey, result);
+      return result;
+    }
 
     // Verificar se o item pode ser equipado no slot específico
     const canEquipInSlot = (item: InventoryItem, slot: EquipmentSlot): boolean => {
@@ -601,33 +613,36 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
       return compatibleSlots.includes(slotId);
     };
 
+    let result: { valid: boolean; reason?: string };
+
     if (!canEquipInSlot(item, slot)) {
-      return { valid: false, reason: `${item.name} não pode ser equipado em ${slot.name}` };
-    }
-
-    // Verificar requisitos de nível
-    if (item.requirements?.level && npc.currentLevel < item.requirements.level) {
-      return { valid: false, reason: `Nível ${item.requirements.level} necessário` };
-    }
-
-    // Verificar requisitos de skill
-    if (item.requirements?.skills) {
+      result = { valid: false, reason: `${item.name} não pode ser equipado em ${slot.name}` };
+    } else if (item.requirements?.level && npc.currentLevel < item.requirements.level) {
+      result = { valid: false, reason: `Nível ${item.requirements.level} necessário` };
+    } else if (item.requirements?.skills) {
+      let skillError = null;
       for (const [skillName, requiredLevel] of Object.entries(item.requirements.skills)) {
         const npcSkillLevel = npc.skills[skillName as keyof typeof npc.skills] || 0;
         if (npcSkillLevel < requiredLevel) {
-          return { valid: false, reason: `${skillName} nível ${requiredLevel} necessário` };
+          skillError = `${skillName} nível ${requiredLevel} necessário`;
+          break;
         }
       }
+      result = skillError ? { valid: false, reason: skillError } : { valid: true };
+    } else if (item.durability && item.durability.current <= 0) {
+      result = { valid: false, reason: "Item quebrado - necessita reparo" };
+    } else {
+      result = { valid: true };
     }
 
-    // Verificar durabilidade
-    if (item.durability && item.durability.current <= 0) {
-      return { valid: false, reason: "Item quebrado - necessita reparo" };
-    }
+    validationCache.set(cacheKey, result);
+    return result;
+  }, [equipmentSlots, npc.currentLevel, npc.skills, validationCache]);
 
-    console.log("Validation passed for:", item.name, "in slot:", slotId);
-    return { valid: true };
-  }, [equipmentSlots, npc.currentLevel, npc.skills]);
+  // Limpar cache quando equipamentos ou npc mudam
+  useEffect(() => {
+    validationCache.clear();
+  }, [equipmentSlots, npc.currentLevel, npc.skills, validationCache]);
 
   const getRarityColor = (rarity?: string) => {
     switch (rarity) {
@@ -684,7 +699,6 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
   }, [inventoryItems, filter, sortBy]);
 
   const handleDragStart = useCallback((item: InventoryItem, e: React.DragEvent, fromSlot?: string) => {
-    console.log("Drag started:", item.name, "from slot:", fromSlot);
     setDraggedItem(item);
     e.dataTransfer.setData("text/plain", item.id);
     e.dataTransfer.setData("application/json", JSON.stringify({ ...item, fromSlot }));
@@ -694,7 +708,6 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
   }, []);
 
   const handleDragEnd = useCallback(() => {
-    console.log("Drag ended");
     setTimeout(() => {
       setDraggedItem(null);
       setValidationError("");
@@ -704,8 +717,6 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
   const handleDropOnSlot = useCallback((e: React.DragEvent, slotId: string) => {
     e.preventDefault();
     e.stopPropagation();
-
-    console.log("Drop on slot:", slotId);
 
     const itemId = e.dataTransfer.getData("text/plain");
     let itemData: InventoryItem | null = null;
@@ -719,7 +730,7 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
         fromSlot = parsedData.fromSlot;
       }
     } catch (error) {
-      console.warn("Failed to parse drag data:", error);
+      // Silently handle parse errors
     }
 
     // Fallback para buscar o item
@@ -728,17 +739,13 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
     }
 
     if (!itemData) {
-      console.error("Item não encontrado:", itemId);
       showNotification("Item não encontrado", 'error');
       return;
     }
 
-    console.log("Item data:", itemData, "from slot:", fromSlot);
-
     // Validar equipamento
     const validation = validateEquipment(itemData, slotId);
     if (!validation.valid) {
-      console.warn("Validation failed:", validation.reason);
       showNotification(validation.reason || "Não é possível equipar este item", 'error');
       setValidationError(validation.reason || "");
       return;
@@ -749,8 +756,6 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
       showNotification("Slot não encontrado", 'error');
       return;
     }
-
-    console.log("Equipando item:", itemData.name, "no slot:", slotId);
 
     // Sistema de troca segura de equipamentos
     const currentEquippedItem = targetSlot.equipped;
@@ -894,7 +899,6 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
         draggable={!isBroken}
         onDragStart={(e) => {
           if (!isBroken) {
-            console.log("Starting drag for inventory item:", item.name);
             handleDragStart(item, e);
           }
         }}
@@ -1007,8 +1011,15 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
 
   const EquipmentSlotComponent = ({ slotId, label }: { slotId: string; label: string }) => {
     const slot = equipmentSlots.find(s => s.id === slotId);
-    const canAccept = draggedItem && slot && validateEquipment(draggedItem, slotId).valid;
-    const hasValidationError = draggedItem && slot && !validateEquipment(draggedItem, slotId).valid;
+    
+    // Validação apenas quando necessário (quando há item sendo arrastado)
+    const validation = useMemo(() => {
+      if (!draggedItem || !slot) return null;
+      return validateEquipment(draggedItem, slotId);
+    }, [draggedItem, slot, slotId]);
+    
+    const canAccept = validation?.valid ?? false;
+    const hasValidationError = validation && !validation.valid;
 
     return (
       <div className="flex flex-col items-center space-y-2">
@@ -1027,10 +1038,8 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
           onDragOver={(e) => {
             e.preventDefault();
             e.stopPropagation();
-            if (draggedItem && canAccept) {
-              e.dataTransfer.dropEffect = "move";
-            } else if (draggedItem) {
-              e.dataTransfer.dropEffect = "none";
+            if (draggedItem) {
+              e.dataTransfer.dropEffect = canAccept ? "move" : "none";
             }
           }}
           onDragEnter={(e) => {
@@ -1042,13 +1051,11 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
             e.stopPropagation();
           }}
           onDrop={(e) => {
-            console.log("Drop triggered on slot:", slotId);
             handleDropOnSlot(e, slotId);
           }}
           onClick={(e) => {
             e.stopPropagation();
             if (slot?.equipped) {
-              console.log("Unequipping item:", slot.equipped.name);
               handleUnequip(slotId);
             }
           }}
@@ -1059,7 +1066,6 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
               className="relative group w-full h-full flex items-center justify-center cursor-grab active:cursor-grabbing"
               draggable
               onDragStart={(e) => {
-                console.log("Starting drag from slot:", slotId, "item:", slot.equipped!.name);
                 handleDragStart(slot.equipped!, e, slotId);
               }}
               onDragEnd={handleDragEnd}
