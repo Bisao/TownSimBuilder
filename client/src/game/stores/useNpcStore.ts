@@ -32,6 +32,33 @@ export interface NPCMemory {
 export type NPCSchedule = "home" | "working" | "lunch" | "traveling";
 export type NPCState = "idle" | "moving" | "working" | "gathering" | "resting" | "searching" | "planting" | "harvesting";
 
+export interface NPCEquipment {
+  id: string;
+  name: string;
+  type: "tool" | "weapon" | "resource" | "armor" | "consumable";
+  tier: number;
+  icon: string;
+  skill?: string;
+  equipped?: boolean;
+  rarity?: "common" | "rare" | "epic" | "legendary";
+  description?: string;
+  stats?: {
+    damage?: number;
+    defense?: number;
+    speed?: number;
+    health?: number;
+  };
+  durability?: {
+    current: number;
+    max: number;
+  };
+  requirements?: {
+    level?: number;
+    skills?: Record<string, number>;
+  };
+  slot?: string;
+}
+
 export interface NPC {
   id: string;
   type: string; // Sempre "villager"
@@ -53,7 +80,7 @@ export interface NPC {
     type: string;
     amount: number;
   };
-  equipment?: Record<string, any>; // Equipamentos do NPC
+  equipment?: Record<string, NPCEquipment>; // Equipamentos do NPC com interface tipada
   needs: NPCNeeds;
   memory: NPCMemory;
   currentSchedule: NPCSchedule;

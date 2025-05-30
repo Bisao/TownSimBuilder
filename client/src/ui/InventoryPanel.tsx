@@ -22,7 +22,17 @@ interface InventoryItem {
     damage?: number;
     defense?: number;
     speed?: number;
+    health?: number;
   };
+  durability?: {
+    current: number;
+    max: number;
+  };
+  requirements?: {
+    level?: number;
+    skills?: Record<string, number>;
+  };
+  slot?: string; // Slot específico que o item pode ocupar
 }
 
 interface EquipmentSlot {
@@ -31,6 +41,7 @@ interface EquipmentSlot {
   type: "weapon" | "tool" | "head" | "chest" | "boots" | "cape" | "bag" | "food" | "potion" | "mount" | "offhand";
   equipped?: InventoryItem;
   acceptedTypes?: string[];
+  acceptedSlots?: string[]; // Slots específicos que este slot aceita
 }
 
 const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
@@ -38,6 +49,44 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
   const { dragRef, position, isDragging, handleMouseDown } = useDraggable({
     initialPosition: { x: window.innerWidth / 2 - 350, y: window.innerHeight / 2 - 350 }
   });
+
+  // Sistema de validação de equipamentos
+  const validateEquipment = useCallback((item: InventoryItem, slotId: string): { valid: boolean; reason?: string } => {
+    const slot = equipmentSlots.find(s => s.id === slotId);
+    if (!slot) return { valid: false, reason: "Slot não encontrado" };
+
+    // Verificar tipo
+    if (slot.acceptedTypes && !slot.acceptedTypes.includes(item.type)) {
+      return { valid: false, reason: `Este slot não aceita itens do tipo ${item.type}` };
+    }
+
+    // Verificar slot específico do item
+    if (item.slot && slot.acceptedSlots && !slot.acceptedSlots.includes(item.slot)) {
+      return { valid: false, reason: `Este item não pode ser equipado neste slot` };
+    }
+
+    // Verificar requisitos de nível
+    if (item.requirements?.level && npc.currentLevel < item.requirements.level) {
+      return { valid: false, reason: `Nível necessário: ${item.requirements.level}` };
+    }
+
+    // Verificar requisitos de skill
+    if (item.requirements?.skills) {
+      for (const [skillName, requiredLevel] of Object.entries(item.requirements.skills)) {
+        const npcSkillLevel = npc.skills[skillName as keyof typeof npc.skills] || 0;
+        if (npcSkillLevel < requiredLevel) {
+          return { valid: false, reason: `${skillName} nível ${requiredLevel} necessário` };
+        }
+      }
+    }
+
+    // Verificar durabilidade
+    if (item.durability && item.durability.current <= 0) {
+      return { valid: false, reason: "Item quebrado - necessita reparo" };
+    }
+
+    return { valid: true };
+  }, [npc.currentLevel, npc.skills]);
 
   const [inventoryItems, setInventoryItems] = useState<InventoryItem[]>([
     // === ARMAS LENDÁRIAS ===
@@ -50,7 +99,10 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
       skill: "sword", 
       rarity: "legendary",
       description: "Espada lendária dos reis",
-      stats: { damage: 95, speed: 85 }
+      stats: { damage: 95, speed: 85 },
+      slot: "mainhand",
+      durability: { current: 100, max: 100 },
+      requirements: { level: 50, skills: { sword: 80 } }
     },
     { 
       id: "mjolnir", 
@@ -61,7 +113,10 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
       skill: "hammer", 
       rarity: "legendary",
       description: "Martelo dos deuses",
-      stats: { damage: 100, speed: 60 }
+      stats: { damage: 100, speed: 60 },
+      slot: "mainhand",
+      durability: { current: 100, max: 100 },
+      requirements: { level: 45, skills: { hammer: 75 } }
     },
 
     // === COMBATE CORPO A CORPO ===
@@ -74,7 +129,10 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
       skill: "sword",
       rarity: "common",
       description: "Espada resistente de ferro forjado",
-      stats: { damage: 45, speed: 70 }
+      stats: { damage: 45, speed: 70 },
+      slot: "mainhand",
+      durability: { current: 80, max: 100 },
+      requirements: { level: 10, skills: { sword: 20 } }
     },
     { 
       id: "iron_axe", 
@@ -85,7 +143,10 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
       skill: "axe",
       rarity: "common",
       description: "Machado pesado para combate",
-      stats: { damage: 50, speed: 55 }
+      stats: { damage: 50, speed: 55 },
+      slot: "mainhand",
+      durability: { current: 90, max: 100 },
+      requirements: { level: 12, skills: { axe: 25 } }
     },
     { 
       id: "enchanted_blade", 
@@ -96,7 +157,10 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
       skill: "sword",
       rarity: "epic",
       description: "Espada imbuída com magia",
-      stats: { damage: 70, speed: 85 }
+      stats: { damage: 70, speed: 85 },
+      slot: "mainhand",
+      durability: { current: 95, max: 100 },
+      requirements: { level: 30, skills: { sword: 50, magic: 25 } }
     },
 
     // === ARMADURAS ===
@@ -109,7 +173,10 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
       skill: "defense",
       rarity: "legendary",
       description: "Feita com escamas de dragão",
-      stats: { defense: 90 }
+      stats: { defense: 90, health: 50 },
+      slot: "chest",
+      durability: { current: 100, max: 100 },
+      requirements: { level: 40, skills: { defense: 60 } }
     },
     { 
       id: "iron_helmet", 
@@ -120,7 +187,24 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
       skill: "defense",
       rarity: "common",
       description: "Proteção sólida para a cabeça",
-      stats: { defense: 35 }
+      stats: { defense: 35, health: 20 },
+      slot: "head",
+      durability: { current: 75, max: 100 },
+      requirements: { level: 8, skills: { defense: 15 } }
+    },
+    {
+      id: "leather_boots",
+      name: "Botas de Couro",
+      type: "armor",
+      tier: 2,
+      icon: "👢",
+      skill: "defense",
+      rarity: "common",
+      description: "Botas resistentes de couro",
+      stats: { defense: 15, speed: 10 },
+      slot: "boots",
+      durability: { current: 60, max: 100 },
+      requirements: { level: 3, skills: { defense: 5 } }
     },
 
     // === CONSUMÍVEIS ===
@@ -133,6 +217,8 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
       skill: "alchemy",
       rarity: "rare",
       description: "Restaura muito HP",
+      stats: { health: 100 },
+      slot: "potion"
     },
     { 
       id: "mana_crystal", 
@@ -143,6 +229,19 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
       skill: "magic",
       rarity: "epic",
       description: "Energia mágica pura",
+      slot: "potion"
+    },
+    {
+      id: "bread",
+      name: "Pão",
+      type: "consumable",
+      tier: 1,
+      icon: "🍞",
+      skill: "cooking",
+      rarity: "common",
+      description: "Comida nutritiva",
+      stats: { health: 25 },
+      slot: "food"
     },
 
     // === FERRAMENTAS ===
@@ -155,6 +254,10 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
       skill: "mining",
       rarity: "rare",
       description: "Extrai minérios raros",
+      stats: { speed: 20 },
+      slot: "tool",
+      durability: { current: 85, max: 100 },
+      requirements: { level: 20, skills: { mining: 40 } }
     },
 
     // Recursos do NPC
@@ -169,62 +272,71 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
     }] : [])
   ]);
 
-  // Inicializar equipamentos a partir do NPC ou valores padrão
+  // Sistema de slots com validação aprimorada
   const [equipmentSlots, setEquipmentSlots] = useState<EquipmentSlot[]>(() => {
     const defaultSlots = [
       { 
         id: "head", 
         name: "Capacete", 
         type: "head" as const,
-        acceptedTypes: ["armor"]
+        acceptedTypes: ["armor"],
+        acceptedSlots: ["head"]
       },
       { 
         id: "cape", 
         name: "Capa", 
         type: "cape" as const,
-        acceptedTypes: ["armor"]
+        acceptedTypes: ["armor"],
+        acceptedSlots: ["cape"]
       },
       { 
         id: "bag", 
         name: "Bolsa", 
         type: "bag" as const,
-        acceptedTypes: ["consumable"]
+        acceptedTypes: ["consumable"],
+        acceptedSlots: ["bag"]
       },
       { 
         id: "mainhand", 
         name: "Mão Principal", 
         type: "weapon" as const,
-        acceptedTypes: ["weapon", "tool"]
+        acceptedTypes: ["weapon", "tool"],
+        acceptedSlots: ["mainhand", "tool"]
       },
       { 
         id: "chest", 
         name: "Peitoral", 
         type: "chest" as const,
-        acceptedTypes: ["armor"]
+        acceptedTypes: ["armor"],
+        acceptedSlots: ["chest"]
       },
       { 
         id: "offhand", 
         name: "Mão Secundária", 
         type: "offhand" as const,
-        acceptedTypes: ["weapon", "armor", "tool"]
+        acceptedTypes: ["weapon", "armor"],
+        acceptedSlots: ["offhand", "shield"]
       },
       { 
         id: "potion", 
         name: "Poção", 
         type: "potion" as const,
-        acceptedTypes: ["consumable"]
+        acceptedTypes: ["consumable"],
+        acceptedSlots: ["potion"]
       },
       { 
         id: "boots", 
         name: "Botas", 
         type: "boots" as const,
-        acceptedTypes: ["armor"]
+        acceptedTypes: ["armor"],
+        acceptedSlots: ["boots"]
       },
       { 
         id: "food", 
         name: "Comida", 
         type: "food" as const,
-        acceptedTypes: ["consumable"]
+        acceptedTypes: ["consumable"],
+        acceptedSlots: ["food"]
       }
     ];
 
@@ -243,6 +355,21 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
   const [selectedItem, setSelectedItem] = useState<InventoryItem | null>(null);
   const [filter, setFilter] = useState<string>("all");
   const [sortBy, setSortBy] = useState<string>("tier");
+  const [validationError, setValidationError] = useState<string>("");
+
+  // Sistema de notificações melhorado
+  const showNotification = useCallback((message: string, type: 'success' | 'error' | 'warning' = 'success') => {
+    const notification = document.createElement('div');
+    const bgColor = type === 'success' ? 'bg-green-500' : type === 'error' ? 'bg-red-500' : 'bg-yellow-500';
+    notification.className = `fixed top-4 right-4 ${bgColor} text-white px-4 py-2 rounded-lg shadow-lg z-[10000] animate-bounce`;
+    notification.textContent = message;
+    document.body.appendChild(notification);
+    setTimeout(() => {
+      if (document.body.contains(notification)) {
+        document.body.removeChild(notification);
+      }
+    }, 3000);
+  }, []);
 
   // Sincronizar equipamentos quando o NPC muda
   useEffect(() => {
@@ -274,6 +401,22 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
     }
   };
 
+  // Função para calcular stats totais
+  const calculateTotalStats = useCallback(() => {
+    let totalStats = { damage: 0, defense: 0, speed: 0, health: 0 };
+    
+    equipmentSlots.forEach(slot => {
+      if (slot.equipped?.stats) {
+        totalStats.damage += slot.equipped.stats.damage || 0;
+        totalStats.defense += slot.equipped.stats.defense || 0;
+        totalStats.speed += slot.equipped.stats.speed || 0;
+        totalStats.health += slot.equipped.stats.health || 0;
+      }
+    });
+
+    return totalStats;
+  }, [equipmentSlots]);
+
   const filteredItems = useMemo(() => {
     let filtered = inventoryItems;
     
@@ -285,6 +428,11 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
       if (sortBy === "tier") return b.tier - a.tier;
       if (sortBy === "name") return a.name.localeCompare(b.name);
       if (sortBy === "type") return a.type.localeCompare(b.type);
+      if (sortBy === "durability") {
+        const aDurability = a.durability ? (a.durability.current / a.durability.max) : 1;
+        const bDurability = b.durability ? (b.durability.current / b.durability.max) : 1;
+        return bDurability - aDurability;
+      }
       return 0;
     });
   }, [inventoryItems, filter, sortBy]);
@@ -295,10 +443,14 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
     e.dataTransfer.setData("application/json", JSON.stringify({ ...item, fromSlot }));
     e.dataTransfer.effectAllowed = "move";
     e.dataTransfer.dropEffect = "move";
+    setValidationError("");
   }, []);
 
   const handleDragEnd = useCallback(() => {
-    setTimeout(() => setDraggedItem(null), 100);
+    setTimeout(() => {
+      setDraggedItem(null);
+      setValidationError("");
+    }, 100);
   }, []);
 
   const handleDropOnSlot = useCallback((e: React.DragEvent, slotId: string) => {
@@ -308,41 +460,26 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
     const itemId = e.dataTransfer.getData("text/plain");
     const itemData = draggedItem || inventoryItems.find(item => item.id === itemId);
     
-    console.log("Tentando equipar item:", { itemId, itemData, slotId });
-    
     if (!itemData) {
-      console.log("Item não encontrado para drop");
+      showNotification("Item não encontrado", 'error');
+      return;
+    }
+
+    // Validar equipamento
+    const validation = validateEquipment(itemData, slotId);
+    if (!validation.valid) {
+      showNotification(validation.reason || "Não é possível equipar este item", 'error');
+      setValidationError(validation.reason || "");
       return;
     }
 
     const slot = equipmentSlots.find(s => s.id === slotId);
     if (!slot) {
-      console.log("Slot não encontrado:", slotId);
+      showNotification("Slot não encontrado", 'error');
       return;
     }
 
-    const isCompatible = slot.acceptedTypes?.includes(itemData.type);
-    console.log("Verificando compatibilidade:", {
-      itemType: itemData.type,
-      slotAcceptedTypes: slot.acceptedTypes,
-      isCompatible
-    });
-
-    if (!isCompatible) {
-      // Feedback visual de erro
-      const notification = document.createElement('div');
-      notification.className = 'fixed top-4 right-4 bg-red-500 text-white px-4 py-2 rounded-lg shadow-lg z-[10000] animate-bounce';
-      notification.textContent = `${itemData.name} não pode ser equipado em ${slot.name}`;
-      document.body.appendChild(notification);
-      setTimeout(() => {
-        if (document.body.contains(notification)) {
-          document.body.removeChild(notification);
-        }
-      }, 3000);
-      return;
-    }
-
-    // Atualizar estados simultaneamente para evitar problemas de sincronização
+    // Sistema de troca segura de equipamentos
     const currentEquippedItem = slot.equipped;
     
     setInventoryItems(prev => {
@@ -356,13 +493,6 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
       // Remover o item que está sendo equipado do inventário
       newItems = newItems.filter(item => item.id !== itemData.id);
       
-      console.log("Inventário atualizado:", {
-        antes: prev.length,
-        depois: newItems.length,
-        itemRemovidoId: itemData.id,
-        itemAdicionadoId: currentEquippedItem?.id
-      });
-      
       return newItems;
     });
 
@@ -373,8 +503,6 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
           ? { ...s, equipped: { ...itemData, equipped: true } }
           : s
       );
-      
-      console.log("Slot equipado:", { slotId, item: itemData.name });
       
       // Salvar equipamentos no NPC
       const equipment = newSlots.reduce((acc, slot) => {
@@ -390,18 +518,8 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
     });
 
     setDraggedItem(null);
-
-    // Feedback de sucesso
-    const notification = document.createElement('div');
-    notification.className = 'fixed top-4 right-4 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg z-[10000] animate-pulse';
-    notification.textContent = `✓ ${itemData.name} equipado!`;
-    document.body.appendChild(notification);
-    setTimeout(() => {
-      if (document.body.contains(notification)) {
-        document.body.removeChild(notification);
-      }
-    }, 2000);
-  }, [draggedItem, equipmentSlots, inventoryItems]);
+    showNotification(`✓ ${itemData.name} equipado!`, 'success');
+  }, [draggedItem, equipmentSlots, inventoryItems, validateEquipment, showNotification, updateNpc, npc.id]);
 
   const handleUnequip = useCallback((slotId: string) => {
     const slot = equipmentSlots.find(s => s.id === slotId);
@@ -411,15 +529,7 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
 
     // Verificar se há espaço no inventário
     if (inventoryItems.length >= 60) {
-      const notification = document.createElement('div');
-      notification.className = 'fixed top-4 right-4 bg-red-500 text-white px-4 py-2 rounded-lg shadow-lg z-[10000] animate-bounce';
-      notification.textContent = 'Inventário cheio! Não é possível desequipar o item.';
-      document.body.appendChild(notification);
-      setTimeout(() => {
-        if (document.body.contains(notification)) {
-          document.body.removeChild(notification);
-        }
-      }, 3000);
+      showNotification("Inventário cheio! Não é possível desequipar o item.", 'error');
       return;
     }
 
@@ -445,68 +555,151 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
       return newSlots;
     });
 
-    // Feedback de sucesso
-    const notification = document.createElement('div');
-    notification.className = 'fixed top-4 right-4 bg-blue-500 text-white px-4 py-2 rounded-lg shadow-lg z-[10000] animate-pulse';
-    notification.textContent = `✓ ${equippedItem.name} desequipado!`;
-    document.body.appendChild(notification);
-    setTimeout(() => {
-      if (document.body.contains(notification)) {
-        document.body.removeChild(notification);
-      }
-    }, 2000);
-  }, [equipmentSlots, inventoryItems]);
+    showNotification(`✓ ${equippedItem.name} desequipado!`, 'success');
+  }, [equipmentSlots, inventoryItems, showNotification, updateNpc, npc.id]);
 
-  const ItemComponent = ({ item, index }: { item: InventoryItem; index: number }) => (
-    <div
-      className={`relative group cursor-grab active:cursor-grabbing transition-all duration-200 hover:scale-105 hover:z-10 ${
-        selectedItem?.id === item.id ? 'ring-2 ring-blue-400' : ''
-      } ${draggedItem?.id === item.id ? 'opacity-50' : ''}`}
-      draggable
-      onDragStart={(e) => handleDragStart(item, e)}
-      onDragEnd={handleDragEnd}
-      onClick={() => setSelectedItem(item)}
-    >
-      <div className={`w-12 h-12 bg-gradient-to-br ${getRarityColor(item.rarity)} rounded-lg border-2 ${getRarityBorder(item.rarity)} flex items-center justify-center shadow-lg backdrop-blur-sm relative overflow-hidden`}>
-        <div className="absolute inset-0 bg-white/10 backdrop-blur-sm"></div>
-        <span className="text-xl relative z-10">{item.icon}</span>
-        <div className="absolute -bottom-0.5 -right-0.5 text-xs bg-gray-900 text-white rounded-full w-5 h-5 flex items-center justify-center text-[10px] border border-white font-bold">
-          {item.tier}
-        </div>
-        {item.rarity === "legendary" && (
-          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent animate-pulse"></div>
-        )}
-      </div>
-      
-      {/* Tooltip melhorado */}
-      <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-20 pointer-events-none">
-        <div className="bg-gray-900 text-white text-xs px-3 py-2 rounded-lg shadow-xl border border-gray-700 min-w-max max-w-xs">
-          <div className="font-bold text-center mb-1">{item.name}</div>
-          {item.description && (
-            <div className="text-gray-300 text-center mb-2">{item.description}</div>
-          )}
-          {item.stats && (
-            <div className="space-y-1">
-              {item.stats.damage && <div className="text-red-400">⚔️ Dano: {item.stats.damage}</div>}
-              {item.stats.defense && <div className="text-blue-400">🛡️ Defesa: {item.stats.defense}</div>}
-              {item.stats.speed && <div className="text-green-400">⚡ Velocidade: {item.stats.speed}</div>}
+  // Função para reparar item
+  const repairItem = useCallback((itemId: string) => {
+    setInventoryItems(prev => 
+      prev.map(item => 
+        item.id === itemId && item.durability
+          ? { ...item, durability: { ...item.durability, current: item.durability.max } }
+          : item
+      )
+    );
+    
+    setEquipmentSlots(prev =>
+      prev.map(slot =>
+        slot.equipped?.id === itemId && slot.equipped.durability
+          ? { ...slot, equipped: { ...slot.equipped, durability: { ...slot.equipped.durability, current: slot.equipped.durability.max } } }
+          : slot
+      )
+    );
+
+    showNotification("Item reparado!", 'success');
+  }, [showNotification]);
+
+  const ItemComponent = ({ item, index }: { item: InventoryItem; index: number }) => {
+    const durabilityPercentage = item.durability ? (item.durability.current / item.durability.max) * 100 : 100;
+    const isDamaged = durabilityPercentage < 50;
+    const isBroken = durabilityPercentage <= 0;
+
+    return (
+      <div
+        className={`relative group cursor-grab active:cursor-grabbing transition-all duration-200 hover:scale-105 hover:z-10 ${
+          selectedItem?.id === item.id ? 'ring-2 ring-blue-400' : ''
+        } ${draggedItem?.id === item.id ? 'opacity-50' : ''} ${isBroken ? 'opacity-50 grayscale' : ''}`}
+        draggable={!isBroken}
+        onDragStart={(e) => !isBroken && handleDragStart(item, e)}
+        onDragEnd={handleDragEnd}
+        onClick={() => setSelectedItem(item)}
+      >
+        <div className={`w-12 h-12 bg-gradient-to-br ${getRarityColor(item.rarity)} rounded-lg border-2 ${getRarityBorder(item.rarity)} flex items-center justify-center shadow-lg backdrop-blur-sm relative overflow-hidden`}>
+          <div className="absolute inset-0 bg-white/10 backdrop-blur-sm"></div>
+          <span className="text-xl relative z-10">{item.icon}</span>
+          
+          {/* Indicador de tier */}
+          <div className="absolute -bottom-0.5 -right-0.5 text-xs bg-gray-900 text-white rounded-full w-5 h-5 flex items-center justify-center text-[10px] border border-white font-bold">
+            {item.tier}
+          </div>
+          
+          {/* Barra de durabilidade */}
+          {item.durability && (
+            <div className="absolute bottom-0 left-0 w-full h-1 bg-gray-800/50">
+              <div 
+                className={`h-full transition-all duration-300 ${
+                  durabilityPercentage > 75 ? 'bg-green-500' :
+                  durabilityPercentage > 50 ? 'bg-yellow-500' :
+                  durabilityPercentage > 25 ? 'bg-orange-500' : 'bg-red-500'
+                }`}
+                style={{ width: `${durabilityPercentage}%` }}
+              />
             </div>
           )}
-          <div className={`text-center mt-2 font-semibold ${
-            item.rarity === "legendary" ? "text-yellow-400" :
-            item.rarity === "epic" ? "text-purple-400" :
-            item.rarity === "rare" ? "text-blue-400" : "text-gray-400"
-          }`}>
-            {item.rarity?.toUpperCase() || "COMUM"}
+
+          {/* Indicador de item quebrado */}
+          {isBroken && (
+            <div className="absolute inset-0 bg-red-500/20 flex items-center justify-center">
+              <i className="fa-solid fa-times text-red-500 text-lg"></i>
+            </div>
+          )}
+
+          {item.rarity === "legendary" && !isBroken && (
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent animate-pulse"></div>
+          )}
+        </div>
+        
+        {/* Tooltip melhorado */}
+        <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-20 pointer-events-none">
+          <div className="bg-gray-900 text-white text-xs px-3 py-2 rounded-lg shadow-xl border border-gray-700 min-w-max max-w-xs">
+            <div className="font-bold text-center mb-1">{item.name}</div>
+            {item.description && (
+              <div className="text-gray-300 text-center mb-2">{item.description}</div>
+            )}
+            
+            {/* Stats */}
+            {item.stats && (
+              <div className="space-y-1 mb-2">
+                {item.stats.damage && <div className="text-red-400">⚔️ Dano: {item.stats.damage}</div>}
+                {item.stats.defense && <div className="text-blue-400">🛡️ Defesa: {item.stats.defense}</div>}
+                {item.stats.speed && <div className="text-green-400">⚡ Velocidade: {item.stats.speed}</div>}
+                {item.stats.health && <div className="text-pink-400">❤️ Vida: {item.stats.health}</div>}
+              </div>
+            )}
+
+            {/* Durabilidade */}
+            {item.durability && (
+              <div className="mb-2">
+                <div className={`text-center ${isDamaged ? 'text-orange-400' : 'text-gray-300'}`}>
+                  🔧 Durabilidade: {item.durability.current}/{item.durability.max}
+                </div>
+                {isBroken && (
+                  <div className="text-red-400 text-center font-bold">QUEBRADO</div>
+                )}
+              </div>
+            )}
+
+            {/* Requisitos */}
+            {item.requirements && (
+              <div className="mb-2 text-yellow-400">
+                <div className="text-center font-semibold">Requisitos:</div>
+                {item.requirements.level && <div>Nível: {item.requirements.level}</div>}
+                {item.requirements.skills && Object.entries(item.requirements.skills).map(([skill, level]) => (
+                  <div key={skill}>{skill}: {level}</div>
+                ))}
+              </div>
+            )}
+
+            <div className={`text-center mt-2 font-semibold ${
+              item.rarity === "legendary" ? "text-yellow-400" :
+              item.rarity === "epic" ? "text-purple-400" :
+              item.rarity === "rare" ? "text-blue-400" : "text-gray-400"
+            }`}>
+              {item.rarity?.toUpperCase() || "COMUM"}
+            </div>
+            
+            {/* Botão de reparo para itens danificados */}
+            {item.durability && durabilityPercentage < 100 && (
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  repairItem(item.id);
+                }}
+                className="w-full mt-2 bg-blue-600 hover:bg-blue-700 text-white px-2 py-1 rounded text-xs pointer-events-auto"
+              >
+                Reparar
+              </button>
+            )}
           </div>
         </div>
       </div>
-    </div>
-  );
+    );
+  };
 
   const EquipmentSlotComponent = ({ slotId, label }: { slotId: string; label: string }) => {
     const slot = equipmentSlots.find(s => s.id === slotId);
-    const canAccept = draggedItem && slot?.acceptedTypes?.includes(draggedItem.type);
+    const canAccept = draggedItem && slot && validateEquipment(draggedItem, slotId).valid;
+    const hasValidationError = draggedItem && slot && !validateEquipment(draggedItem, slotId).valid;
 
     return (
       <div className="flex flex-col items-center space-y-2">
@@ -543,58 +736,7 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
             e.preventDefault();
             e.stopPropagation();
             e.currentTarget.classList.remove('animate-pulse');
-            
-            // Se há um item equipado e estamos arrastando outro item, troque-os
-            if (slot?.equipped && draggedItem && draggedItem.id !== slot.equipped.id) {
-              // Trocar itens entre slot e inventário
-              const currentEquippedItem = slot.equipped;
-              const isCompatible = slot.acceptedTypes?.includes(draggedItem.type);
-              
-              if (isCompatible) {
-                // Adicionar item equipado de volta ao inventário
-                setInventoryItems(prev => {
-                  const newItems = [...prev];
-                  newItems.push({ ...currentEquippedItem, equipped: false });
-                  return newItems.filter(item => item.id !== draggedItem.id);
-                });
-                
-                // Equipar novo item
-                setEquipmentSlots(prev => {
-                  const newSlots = prev.map(s => 
-                    s.id === slotId 
-                      ? { ...s, equipped: { ...draggedItem, equipped: true } }
-                      : s
-                  );
-                  
-                  // Salvar equipamentos no NPC
-                  const equipment = newSlots.reduce((acc, slot) => {
-                    if (slot.equipped) {
-                      acc[slot.id] = slot.equipped;
-                    }
-                    return acc;
-                  }, {} as Record<string, InventoryItem>);
-                  
-                  updateNpc(npc.id, { equipment });
-                  
-                  return newSlots;
-                });
-                
-                setDraggedItem(null);
-                
-                // Feedback de sucesso
-                const notification = document.createElement('div');
-                notification.className = 'fixed top-4 right-4 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg z-[10000] animate-pulse';
-                notification.textContent = `✓ ${draggedItem.name} equipado! ${currentEquippedItem.name} retornou ao inventário.`;
-                document.body.appendChild(notification);
-                setTimeout(() => {
-                  if (document.body.contains(notification)) {
-                    document.body.removeChild(notification);
-                  }
-                }, 3000);
-              }
-            } else {
-              handleDropOnSlot(e, slotId);
-            }
+            handleDropOnSlot(e, slotId);
           }}
           onClick={(e) => {
             e.stopPropagation();
@@ -614,9 +756,25 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
               <div className={`text-2xl bg-gradient-to-br ${getRarityColor(slot.equipped.rarity)} rounded-lg p-2 border ${getRarityBorder(slot.equipped.rarity)} w-full h-full flex items-center justify-center transition-all duration-200 hover:scale-105`}>
                 {slot.equipped.icon}
               </div>
+
+              {/* Durabilidade do item equipado */}
+              {slot.equipped.durability && (
+                <div className="absolute bottom-0 left-0 w-full h-1 bg-gray-800/50">
+                  <div 
+                    className={`h-full transition-all duration-300 ${
+                      (slot.equipped.durability.current / slot.equipped.durability.max) > 0.75 ? 'bg-green-500' :
+                      (slot.equipped.durability.current / slot.equipped.durability.max) > 0.5 ? 'bg-yellow-500' :
+                      (slot.equipped.durability.current / slot.equipped.durability.max) > 0.25 ? 'bg-orange-500' : 'bg-red-500'
+                    }`}
+                    style={{ width: `${(slot.equipped.durability.current / slot.equipped.durability.max) * 100}%` }}
+                  />
+                </div>
+              )}
+
               <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-10 pointer-events-none">
                 {slot.equipped.name} - Arraste para mover ou clique para desequipar
               </div>
+              
               {/* Indicador visual para desequipar */}
               <div className="absolute top-0 right-0 w-4 h-4 bg-red-500 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
                 <i className="fa-solid fa-times text-white text-xs"></i>
@@ -624,6 +782,13 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
             </div>
           ) : (
             <div className="text-gray-400 text-2xl">+</div>
+          )}
+
+          {/* Erro de validação */}
+          {hasValidationError && (
+            <div className="absolute -bottom-8 left-1/2 transform -translate-x-1/2 bg-red-500 text-white text-xs px-2 py-1 rounded whitespace-nowrap z-10">
+              {validateEquipment(draggedItem!, slotId).reason}
+            </div>
           )}
         </div>
       </div>
@@ -677,6 +842,8 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
       );
     }), [filteredItems, draggedItem, handleDropOnInventory]);
 
+  const totalStats = calculateTotalStats();
+
   return (
     <div 
       className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[9999] pointer-events-auto"
@@ -686,7 +853,7 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
       }}
     >
       <div 
-        className="bg-gradient-to-br from-white via-gray-50 to-gray-100 rounded-3xl shadow-2xl w-[700px] h-[720px] overflow-hidden relative border border-gray-200"
+        className="bg-gradient-to-br from-white via-gray-50 to-gray-100 rounded-3xl shadow-2xl w-[800px] h-[750px] overflow-hidden relative border border-gray-200"
         style={{
           position: 'absolute',
           left: `${position.x}px`,
@@ -695,7 +862,6 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
         }}
         ref={dragRef}
         onMouseDown={(e) => {
-          // Não arrastar o painel se estamos clicando em itens ou slots
           const target = e.target as HTMLElement;
           const isInteractiveElement = target.closest('[draggable="true"]') || 
                                      target.closest('[data-slot]') || 
@@ -723,7 +889,7 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
                 </div>
                 <div>
                   <h2 className="text-3xl font-bold text-white drop-shadow-lg">Inventário</h2>
-                  <p className="text-white/90 font-medium">{npc.name}</p>
+                  <p className="text-white/90 font-medium">{npc.name} - Nível {npc.currentLevel}</p>
                 </div>
               </div>
               <button 
@@ -764,10 +930,41 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
                   <option value="tier">Por Tier</option>
                   <option value="name">Por Nome</option>
                   <option value="type">Por Tipo</option>
+                  <option value="durability">Por Durabilidade</option>
                 </select>
               </div>
               <div className="text-sm text-gray-600 font-medium">
                 {filteredItems.length} / 60 itens
+              </div>
+            </div>
+          </div>
+
+          {/* Stats Totais */}
+          <div className="bg-gradient-to-br from-green-50 to-emerald-50 p-4 rounded-2xl border-2 border-green-200 shadow-lg">
+            <h3 className="text-lg font-bold text-gray-800 mb-3 flex items-center gap-2">
+              <i className="fa-solid fa-chart-line text-green-600"></i>
+              Status do Equipamento
+            </h3>
+            <div className="grid grid-cols-4 gap-4 text-center">
+              <div className="bg-white/50 rounded-lg p-2">
+                <div className="text-red-500 text-xl">⚔️</div>
+                <div className="font-bold text-gray-700">{totalStats.damage}</div>
+                <div className="text-xs text-gray-500">Dano</div>
+              </div>
+              <div className="bg-white/50 rounded-lg p-2">
+                <div className="text-blue-500 text-xl">🛡️</div>
+                <div className="font-bold text-gray-700">{totalStats.defense}</div>
+                <div className="text-xs text-gray-500">Defesa</div>
+              </div>
+              <div className="bg-white/50 rounded-lg p-2">
+                <div className="text-green-500 text-xl">⚡</div>
+                <div className="font-bold text-gray-700">{totalStats.speed}</div>
+                <div className="text-xs text-gray-500">Velocidade</div>
+              </div>
+              <div className="bg-white/50 rounded-lg p-2">
+                <div className="text-pink-500 text-xl">❤️</div>
+                <div className="font-bold text-gray-700">{totalStats.health}</div>
+                <div className="text-xs text-gray-500">Vida</div>
               </div>
             </div>
           </div>
@@ -810,13 +1007,25 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
                 Detalhes do Item
               </h3>
               <div className="flex items-start gap-4">
-                <div className={`w-16 h-16 bg-gradient-to-br ${getRarityColor(selectedItem.rarity)} rounded-xl border-2 ${getRarityBorder(selectedItem.rarity)} flex items-center justify-center shadow-lg`}>
+                <div className={`w-16 h-16 bg-gradient-to-br ${getRarityColor(selectedItem.rarity)} rounded-xl border-2 ${getRarityBorder(selectedItem.rarity)} flex items-center justify-center shadow-lg relative`}>
                   <span className="text-2xl">{selectedItem.icon}</span>
+                  {selectedItem.durability && (
+                    <div className="absolute bottom-0 left-0 w-full h-2 bg-gray-800/50 rounded-b-xl">
+                      <div 
+                        className={`h-full rounded-b-xl transition-all duration-300 ${
+                          (selectedItem.durability.current / selectedItem.durability.max) > 0.75 ? 'bg-green-500' :
+                          (selectedItem.durability.current / selectedItem.durability.max) > 0.5 ? 'bg-yellow-500' :
+                          (selectedItem.durability.current / selectedItem.durability.max) > 0.25 ? 'bg-orange-500' : 'bg-red-500'
+                        }`}
+                        style={{ width: `${(selectedItem.durability.current / selectedItem.durability.max) * 100}%` }}
+                      />
+                    </div>
+                  )}
                 </div>
                 <div className="flex-1">
                   <h4 className="text-xl font-bold text-gray-800">{selectedItem.name}</h4>
                   <p className="text-gray-600 mb-2">{selectedItem.description}</p>
-                  <div className="flex items-center gap-4 text-sm">
+                  <div className="flex items-center gap-4 text-sm mb-3">
                     <span className="px-2 py-1 bg-gray-200 rounded-lg font-medium">Tier {selectedItem.tier}</span>
                     <span className={`px-2 py-1 rounded-lg font-medium ${
                       selectedItem.rarity === "legendary" ? "bg-yellow-200 text-yellow-800" :
@@ -825,27 +1034,82 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
                     }`}>
                       {selectedItem.rarity?.toUpperCase() || "COMUM"}
                     </span>
+                    {selectedItem.slot && (
+                      <span className="px-2 py-1 bg-indigo-200 text-indigo-800 rounded-lg font-medium">
+                        {selectedItem.slot}
+                      </span>
+                    )}
                   </div>
+
+                  {/* Stats detalhados */}
                   {selectedItem.stats && (
-                    <div className="mt-3 grid grid-cols-3 gap-2">
+                    <div className="mb-3 grid grid-cols-2 gap-2">
                       {selectedItem.stats.damage && (
-                        <div className="flex items-center gap-1 text-red-600">
+                        <div className="flex items-center gap-1 text-red-600 bg-red-50 rounded px-2 py-1">
                           <i className="fa-solid fa-sword"></i>
-                          <span className="font-medium">{selectedItem.stats.damage}</span>
+                          <span className="font-medium">{selectedItem.stats.damage} Dano</span>
                         </div>
                       )}
                       {selectedItem.stats.defense && (
-                        <div className="flex items-center gap-1 text-blue-600">
+                        <div className="flex items-center gap-1 text-blue-600 bg-blue-50 rounded px-2 py-1">
                           <i className="fa-solid fa-shield"></i>
-                          <span className="font-medium">{selectedItem.stats.defense}</span>
+                          <span className="font-medium">{selectedItem.stats.defense} Defesa</span>
                         </div>
                       )}
                       {selectedItem.stats.speed && (
-                        <div className="flex items-center gap-1 text-green-600">
+                        <div className="flex items-center gap-1 text-green-600 bg-green-50 rounded px-2 py-1">
                           <i className="fa-solid fa-bolt"></i>
-                          <span className="font-medium">{selectedItem.stats.speed}</span>
+                          <span className="font-medium">{selectedItem.stats.speed} Velocidade</span>
                         </div>
                       )}
+                      {selectedItem.stats.health && (
+                        <div className="flex items-center gap-1 text-pink-600 bg-pink-50 rounded px-2 py-1">
+                          <i className="fa-solid fa-heart"></i>
+                          <span className="font-medium">{selectedItem.stats.health} Vida</span>
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  {/* Durabilidade detalhada */}
+                  {selectedItem.durability && (
+                    <div className="mb-3 bg-gray-50 rounded-lg p-2">
+                      <div className="flex justify-between items-center mb-1">
+                        <span className="text-sm font-medium text-gray-700">Durabilidade</span>
+                        <span className="text-sm text-gray-600">
+                          {selectedItem.durability.current}/{selectedItem.durability.max}
+                        </span>
+                      </div>
+                      <div className="w-full bg-gray-200 rounded-full h-2">
+                        <div 
+                          className={`h-2 rounded-full transition-all duration-300 ${
+                            (selectedItem.durability.current / selectedItem.durability.max) > 0.75 ? 'bg-green-500' :
+                            (selectedItem.durability.current / selectedItem.durability.max) > 0.5 ? 'bg-yellow-500' :
+                            (selectedItem.durability.current / selectedItem.durability.max) > 0.25 ? 'bg-orange-500' : 'bg-red-500'
+                          }`}
+                          style={{ width: `${(selectedItem.durability.current / selectedItem.durability.max) * 100}%` }}
+                        />
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Requisitos */}
+                  {selectedItem.requirements && (
+                    <div className="bg-yellow-50 rounded-lg p-2 border border-yellow-200">
+                      <div className="text-sm font-medium text-yellow-800 mb-1">Requisitos:</div>
+                      {selectedItem.requirements.level && (
+                        <div className={`text-sm ${npc.currentLevel >= selectedItem.requirements.level ? 'text-green-600' : 'text-red-600'}`}>
+                          Nível: {selectedItem.requirements.level} {npc.currentLevel >= selectedItem.requirements.level ? '✓' : '✗'}
+                        </div>
+                      )}
+                      {selectedItem.requirements.skills && Object.entries(selectedItem.requirements.skills).map(([skill, level]) => {
+                        const npcSkillLevel = npc.skills[skill as keyof typeof npc.skills] || 0;
+                        return (
+                          <div key={skill} className={`text-sm ${npcSkillLevel >= level ? 'text-green-600' : 'text-red-600'}`}>
+                            {skill}: {level} {npcSkillLevel >= level ? '✓' : '✗'}
+                          </div>
+                        );
+                      })}
                     </div>
                   )}
                 </div>
