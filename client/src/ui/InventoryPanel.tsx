@@ -8,9 +8,6 @@ interface InventoryPanelProps {
 }
 
 const InventoryPanel: React.FC<InventoryPanelProps> = ({ npc, onClose }) => {
-  const { dragRef, position, isDragging, handleMouseDown } = useDraggable({
-    initialPosition: { x: window.innerWidth / 2 - 220, y: window.innerHeight / 2 - 300 }
-  });
 
   // Equipment slots configuration
   const equipmentSlots = [
@@ -34,26 +31,18 @@ const InventoryPanel: React.FC<InventoryPanelProps> = ({ npc, onClose }) => {
 
   return (
     <div 
-      className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[9999] pointer-events-auto"
+      className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[9999] pointer-events-auto"
       onClick={(e) => {
         if (e.target === e.currentTarget) onClose();
         e.stopPropagation();
       }}
     >
       <div 
-        className="bg-gradient-to-br from-amber-50 to-yellow-50 rounded-2xl shadow-2xl border-2 border-amber-200 responsive-panel-large overflow-hidden"
-        style={{
-          position: 'absolute',
-          left: `${position.x}px`,
-          top: `${position.y}px`,
-          cursor: isDragging ? 'grabbing' : 'grab',
-        }}
-        ref={dragRef}
-        onMouseDown={handleMouseDown}
+        className="bg-gradient-to-br from-amber-50 to-yellow-50 shadow-2xl border-l-2 border-amber-200 overflow-hidden fixed right-0 top-0 h-full w-80 sm:w-96 transform transition-transform duration-300 ease-in-out"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="bg-gradient-to-r from-amber-600 to-yellow-600 p-3 sm:p-4 text-white relative overflow-hidden">
+        <div className="bg-gradient-to-r from-amber-600 to-yellow-600 p-3 sm:p-4 text-white relative overflow-hidden flex-shrink-0">
           <div className="absolute inset-0 bg-black/10"></div>
           <div className="relative z-10 flex justify-between items-center">
             <div className="flex items-center gap-2 sm:gap-3">
@@ -87,92 +76,95 @@ const InventoryPanel: React.FC<InventoryPanelProps> = ({ npc, onClose }) => {
           </div>
         </div>
 
-        {/* Equipment Section - Fixed */}
-        <div className="p-2 sm:p-4 pb-0">
-          {/* Equipment Grid */}
-          <div className="mb-2 sm:mb-4">
-            <div className="flex justify-between items-start">
-              {/* Left Side - Resources */}
-              <div className="flex flex-col gap-1 sm:gap-2 w-12 sm:w-16">
-                <div className="responsive-equipment-slot bg-yellow-100 border-2 border-yellow-300 rounded-lg flex items-center justify-center">
-                  <i className="fa-solid fa-coins text-yellow-600 text-xs sm:text-sm"></i>
+        {/* Container principal com flex para ocupar toda altura restante */}
+        <div className="flex flex-col flex-1 overflow-hidden">
+          {/* Equipment Section - Fixed */}
+          <div className="p-2 sm:p-4 pb-0 flex-shrink-0">
+            {/* Equipment Grid */}
+            <div className="mb-2 sm:mb-4">
+              <div className="flex justify-between items-start">
+                {/* Left Side - Resources */}
+                <div className="flex flex-col gap-1 sm:gap-2 w-12 sm:w-16">
+                  <div className="responsive-equipment-slot bg-yellow-100 border-2 border-yellow-300 rounded-lg flex items-center justify-center">
+                    <i className="fa-solid fa-coins text-yellow-600 text-xs sm:text-sm"></i>
+                  </div>
+                  <div className="responsive-equipment-slot bg-purple-100 border-2 border-purple-300 rounded-lg flex items-center justify-center">
+                    <i className="fa-solid fa-gem text-purple-600 text-xs sm:text-sm"></i>
+                  </div>
                 </div>
-                <div className="responsive-equipment-slot bg-purple-100 border-2 border-purple-300 rounded-lg flex items-center justify-center">
-                  <i className="fa-solid fa-gem text-purple-600 text-xs sm:text-sm"></i>
+
+                {/* Center - Equipment Grid */}
+                <div className="flex-1 mx-2 sm:mx-4">
+                  <div className="grid grid-cols-3 gap-1 sm:gap-2 max-w-[180px] sm:max-w-[240px] mx-auto">
+                    {Array.from({ length: 12 }, (_, index) => {
+                      const row = Math.floor(index / 3);
+                      const col = index % 3;
+                      const slot = equipmentSlots.find(s => s.position.row === row && s.position.col === col);
+
+                      return (
+                        <div
+                          key={`equipment-${index}`}
+                          className={`responsive-equipment-slot rounded-lg border-2 flex items-center justify-center transition-colors ${
+                            slot 
+                              ? 'bg-blue-100 border-blue-300 hover:bg-blue-200 cursor-pointer' 
+                              : 'bg-transparent border-transparent'
+                          }`}
+                          title={slot?.name}
+                        >
+                          {slot && (
+                            <i className={`fa-solid ${slot.icon} text-blue-600 text-xs sm:text-sm`}></i>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* Right Side - Actions */}
+                <div className="flex flex-col gap-1 sm:gap-2 w-12 sm:w-16">
+                  <button className="responsive-equipment-slot bg-green-100 border-2 border-green-300 rounded-lg hover:bg-green-200 transition-colors flex items-center justify-center">
+                    <i className="fa-solid fa-tshirt text-green-600 text-xs sm:text-sm"></i>
+                  </button>
+                  <button className="responsive-equipment-slot bg-purple-100 border-2 border-purple-300 rounded-lg hover:bg-purple-200 transition-colors flex items-center justify-center">
+                    <i className="fa-solid fa-star text-purple-600 text-xs sm:text-sm"></i>
+                  </button>
                 </div>
               </div>
+            </div>
 
-              {/* Center - Equipment Grid */}
-              <div className="flex-1 mx-2 sm:mx-4">
-                <div className="grid grid-cols-3 gap-1 sm:gap-2 max-w-[180px] sm:max-w-[240px] mx-auto">
-                  {Array.from({ length: 12 }, (_, index) => {
-                    const row = Math.floor(index / 3);
-                    const col = index % 3;
-                    const slot = equipmentSlots.find(s => s.position.row === row && s.position.col === col);
-
-                    return (
-                      <div
-                        key={`equipment-${index}`}
-                        className={`responsive-equipment-slot rounded-lg border-2 flex items-center justify-center transition-colors ${
-                          slot 
-                            ? 'bg-blue-100 border-blue-300 hover:bg-blue-200 cursor-pointer' 
-                            : 'bg-transparent border-transparent'
-                        }`}
-                        title={slot?.name}
-                      >
-                        {slot && (
-                          <i className={`fa-solid ${slot.icon} text-blue-600 text-xs sm:text-sm`}></i>
-                        )}
-                      </div>
-                    );
-                  })}
+            {/* Weight Bar */}
+            <div className="mb-2 sm:mb-4">
+              <div className="flex items-center gap-2 text-xs sm:text-sm text-gray-600">
+                <i className="fa-solid fa-weight-hanging"></i>
+                <span>Peso: 15/50 kg</span>
+                <div className="flex-1 bg-gray-200 rounded-full h-2">
+                  <div className="bg-blue-500 h-2 rounded-full" style={{width: '30%'}}></div>
                 </div>
-              </div>
-
-              {/* Right Side - Actions */}
-              <div className="flex flex-col gap-1 sm:gap-2 w-12 sm:w-16">
-                <button className="responsive-equipment-slot bg-green-100 border-2 border-green-300 rounded-lg hover:bg-green-200 transition-colors flex items-center justify-center">
-                  <i className="fa-solid fa-tshirt text-green-600 text-xs sm:text-sm"></i>
-                </button>
-                <button className="responsive-equipment-slot bg-purple-100 border-2 border-purple-300 rounded-lg hover:bg-purple-200 transition-colors flex items-center justify-center">
-                  <i className="fa-solid fa-star text-purple-600 text-xs sm:text-sm"></i>
-                </button>
               </div>
             </div>
           </div>
 
-          {/* Weight Bar */}
-          <div className="mb-2 sm:mb-4">
-            <div className="flex items-center gap-2 text-xs sm:text-sm text-gray-600">
-              <i className="fa-solid fa-weight-hanging"></i>
-              <span>Peso: 15/50 kg</span>
-              <div className="flex-1 bg-gray-200 rounded-full h-2">
-                <div className="bg-blue-500 h-2 rounded-full" style={{width: '30%'}}></div>
+          {/* Scrollable Inventory Section - flex-1 para ocupar espaço restante */}
+          <div className="flex-1 px-2 sm:px-4 pb-2 sm:pb-4 overflow-hidden min-h-0">
+            <div className="h-full flex">
+              {/* Inventory Grid - Scrollable */}
+              <div className="flex-1 overflow-y-auto pr-1 sm:pr-2">
+                <div className="responsive-grid-inventory p-1 sm:p-2 bg-amber-50/50 rounded-lg border border-amber-200">
+                  {inventorySlotsGenerated}
+                </div>
               </div>
-            </div>
-          </div>
-        </div>
 
-        {/* Scrollable Inventory Section */}
-        <div className="flex-1 px-2 sm:px-4 pb-2 sm:pb-4 overflow-hidden">
-          <div className="h-full flex">
-            {/* Inventory Grid - Scrollable */}
-            <div className="flex-1 overflow-y-auto pr-1 sm:pr-2">
-              <div className="responsive-grid-inventory p-1 sm:p-2 bg-amber-50/50 rounded-lg border border-amber-200">
-                {inventorySlotsGenerated}
-              </div>
-            </div>
-
-            {/* Scroll Indicator */}
-            <div className="flex flex-col justify-center ml-1 sm:ml-2">
-              <div className="w-1 sm:w-2 h-16 sm:h-20 bg-gray-300 rounded-full relative">
-                <div className="w-1 sm:w-2 h-6 sm:h-8 bg-gray-600 rounded-full absolute top-0"></div>
+              {/* Scroll Indicator */}
+              <div className="flex flex-col justify-center ml-1 sm:ml-2">
+                <div className="w-1 sm:w-2 h-16 sm:h-20 bg-gray-300 rounded-full relative">
+                  <div className="w-1 sm:w-2 h-6 sm:h-8 bg-gray-600 rounded-full absolute top-0"></div>
+                </div>
               </div>
             </div>
           </div>
 
-          {/* Bottom Bar */}
-          <div className="flex items-center justify-between responsive-text text-gray-600 pt-2 sm:pt-4 mt-2 sm:mt-4 border-t border-amber-200">
+          {/* Bottom Bar - Fixed */}
+          <div className="flex items-center justify-between responsive-text text-gray-600 p-2 sm:p-4 border-t border-amber-200 flex-shrink-0">
             <div className="flex items-center gap-2 sm:gap-4">
               <div className="w-4 h-4 sm:w-6 sm:h-6 bg-gray-400 rounded-full flex items-center justify-center">
                 <i className="fa-solid fa-cog text-white text-xs"></i>
