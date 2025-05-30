@@ -79,7 +79,7 @@ const World: React.FC<WorldProps> = ({ selectedBuildingType, onMarketSelect }) =
 
       setIsWorldInitialized(true);
     }
-  }, [isInitialized, initialize, initResources, initializeResources]);
+  }, [isInitialized, initialize, initResources]);
 
   // Generate natural resources on the map
   const generateNaturalResources = () => {
