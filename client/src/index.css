@@ -115,7 +115,7 @@
 }
 
 /* Responsive utilities for viewport constraints */
-@screen max-sm {
+@media (max-width: 639px) {
   .responsive-panel, .responsive-panel-large {
     @apply fixed inset-4;
     @apply w-auto h-auto;
@@ -124,7 +124,7 @@
 }
 
 /* Touch-friendly sizing on mobile */
-@screen max-sm {
+@media (max-width: 639px) {
   .responsive-button {
     @apply min-h-[44px] min-w-[44px];
   }
