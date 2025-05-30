@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="pt-BR">
   <head>
@@ -7,38 +6,38 @@
     <meta name="description" content="Construtor de Cidade 3D - Um jogo de simulação e construção de cidades em 3D" />
     <meta name="keywords" content="jogo, cidade, 3D, simulação, construção" />
     <meta name="author" content="City Builder 3D Team" />
-    
+
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="/favicon.ico" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-    
+
     <!-- Preload critical resources -->
-    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" as="style" />
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" as="style" crossorigin="anonymous" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    
+
     <!-- Stylesheets -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" />
-    
+
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website" />
     <meta property="og:title" content="Construtor de Cidade 3D" />
     <meta property="og:description" content="Um jogo de simulação e construção de cidades em 3D" />
     <meta property="og:image" content="/og-image.jpg" />
     <meta property="og:url" content="/" />
-    
+
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="Construtor de Cidade 3D" />
     <meta name="twitter:description" content="Um jogo de simulação e construção de cidades em 3D" />
     <meta name="twitter:image" content="/twitter-image.jpg" />
-    
+
     <!-- Theme -->
     <meta name="theme-color" content="#B8860B" />
     <meta name="color-scheme" content="dark light" />
-    
+
     <title>Construtor de Cidade 3D</title>
-    
+
     <!-- Performance optimizations -->
     <script>
       // Preload critical modules
@@ -48,7 +47,7 @@
       document.head.appendChild(modulePreloadLink);
     </script>
   </head>
-  
+
   <body>
     <!-- Loading screen -->
     <div id="loading-screen" style="
@@ -88,10 +87,10 @@
         text-align: center;
       ">Carregando...</p>
     </div>
-    
+
     <!-- Main application container -->
     <div id="root" aria-label="Aplicação principal do jogo"></div>
-    
+
     <!-- Fallback for users with JavaScript disabled -->
     <noscript>
       <div style="
@@ -116,21 +115,21 @@
         </p>
       </div>
     </noscript>
-    
+
     <!-- CSS animations -->
     <style>
       @keyframes spin {
         0% { transform: rotate(0deg); }
         100% { transform: rotate(360deg); }
       }
-      
+
       /* Hide loading screen after React loads */
       .app-loaded #loading-screen {
         opacity: 0;
         pointer-events: none;
         transition: opacity 0.3s ease-out;
       }
-      
+
       /* Ensure proper font loading */
       body {
         font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
@@ -139,21 +138,21 @@
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale;
       }
-      
+
       /* Performance optimizations */
       * {
         box-sizing: border-box;
       }
-      
+
       /* Prevent FOUC (Flash of Unstyled Content) */
       html {
         background-color: #2F1B14;
       }
     </style>
-    
+
     <!-- Main application script -->
     <script type="module" src="/src/main.tsx"></script>
-    
+
     <!-- Remove loading screen after app initialization -->
     <script>
       window.addEventListener('load', () => {

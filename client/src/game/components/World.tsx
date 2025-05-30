@@ -54,7 +54,7 @@ const World: React.FC<WorldProps> = ({ selectedBuildingType, onMarketSelect }) =
   const { isInitialized, initialize, gameMode, isManualControl, controlledNpcId } = useGameStore();
   const { buildings, placeBuilding } = useBuildingStore();
   const { npcs, spawnNPC } = useNpcStore();
-  const { initResources, initializeResources } = useResourceStore();
+  const { initResources } = useResourceStore();
   const { addDummy } = useDummyStore();
 
   // Natural resources state
@@ -162,7 +162,7 @@ const World: React.FC<WorldProps> = ({ selectedBuildingType, onMarketSelect }) =
 
   // Create initial market building
   const createInitialMarket = () => {
-    const marketExists = buildings.some(b => b.type === 'market');
+    const marketExists = Array.isArray(buildings) && buildings.some(b => b.type === 'market');
     if (!marketExists) {
       // Try different positions within the valid grid
       const positions = [
@@ -236,25 +236,27 @@ const World: React.FC<WorldProps> = ({ selectedBuildingType, onMarketSelect }) =
         <Terrain />
 
         {/* Buildings */}
-        {buildings && Array.isArray(buildings) && buildings.map((building) => {
-        try {
-          return (
-            <Building
-              key={building.id}
-              building={building}
-              onMarketSelect={onMarketSelect}
-            />
-          );
-        } catch (error) {
-          console.error(`Error rendering building ${building.id}:`, error);
-          return null;
-        }
-      })}
+        {Array.isArray(buildings) && buildings.map((building) => {
+          if (!building || !building.id) return null;
+          try {
+            return (
+              <Building
+                key={building.id}
+                building={building}
+                onMarketSelect={onMarketSelect}
+              />
+            );
+          } catch (error) {
+            console.error(`Error rendering building ${building.id}:`, error);
+            return null;
+          }
+        })}
 
         {/* NPCs */}
-        {npcs && Array.isArray(npcs) && npcs.map((npc) => (
-          <NPC key={npc.id} npc={npc} />
-        ))}
+        {Array.isArray(npcs) && npcs.map((npc) => {
+          if (!npc || !npc.id) return null;
+          return <NPC key={npc.id} npc={npc} />;
+        })}
 
         {/* Training Dummy para teste de combate */}
         <TrainingDummy 
@@ -263,17 +265,20 @@ const World: React.FC<WorldProps> = ({ selectedBuildingType, onMarketSelect }) =
         />
 
         {/* Natural Resources - renderiza apenas recursos não coletados */}
-        {naturalResources && Array.isArray(naturalResources) && naturalResources
-          .filter(resource => !resource.lastCollected)
-          .map((resource, index) => (
-            <Resource
-              key={`resource-${resource.type}-${resource.position[0]}-${resource.position[1]}-${index}`}
-              type={resource.type}
-              position={[resource.position[0] - MAP_SIZE/2, 0, resource.position[1] - MAP_SIZE/2]}
-              color={resourceTypes[resource.type]?.color || "#ffffff"}
-              scale={0.8}
-            />
-          ))}
+        {Array.isArray(naturalResources) && naturalResources
+          .filter(resource => resource && !resource.lastCollected)
+          .map((resource, index) => {
+            if (!resource || !resource.type || !resource.position) return null;
+            return (
+              <Resource
+                key={`resource-${resource.type}-${resource.position[0]}-${resource.position[1]}-${index}`}
+                type={resource.type}
+                position={[resource.position[0] - MAP_SIZE/2, 0, resource.position[1] - MAP_SIZE/2]}
+                color={resourceTypes[resource.type]?.color || "#ffffff"}
+                scale={0.8}
+              />
+            );
+          })}
 
         {/* Building placement indicator */}
         {gameMode === "build" && <PlacementIndicator />}

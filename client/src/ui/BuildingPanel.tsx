@@ -22,6 +22,9 @@ const BuildingPanel: React.FC<BuildingPanelProps> = ({ isVisible, onClose }) => 
     setSelectedBuildingType = () => {} 
   } = buildingStore || {};
 
+  // Ensure buildings is always an array
+  const safeBuildings = Array.isArray(buildings) ? buildings : [];
+
   const resourceStore = useResourceStore();
   const { resources = {} } = resourceStore || {};
 
@@ -29,17 +32,15 @@ const BuildingPanel: React.FC<BuildingPanelProps> = ({ isVisible, onClose }) => 
   const buildingsByType = useMemo(() => {
     const grouped: Record<string, any[]> = {};
 
-    if (Array.isArray(buildings)) {
-      buildings.filter(b => b && b.type).forEach(building => {
-        if (!grouped[building.type]) {
-          grouped[building.type] = [];
-        }
-        grouped[building.type].push(building);
-      });
-    }
+    safeBuildings.filter(b => b && b.type).forEach(building => {
+      if (!grouped[building.type]) {
+        grouped[building.type] = [];
+      }
+      grouped[building.type].push(building);
+    });
 
     return grouped;
-  }, [buildings]);
+  }, [safeBuildings]);
 
   if (!isVisible) return null;
 
