@@ -19,7 +19,6 @@ import { useGameStore } from "../stores/useGameStore";
 import { useBuildingStore } from "../stores/useBuildingStore";
 import { useNpcStore } from "../stores/useNpcStore";
 import { useResourceStore } from "../stores/useResourceStore";
-import { useBuildingStore } from '../stores/useBuildingStore';
 import { useDummyStore } from '../stores/useDummyStore';
 
 // Constants
@@ -53,9 +52,6 @@ const World: React.FC<WorldProps> = ({ onMarketSelect }) => {
   const { buildings, placeBuilding } = useBuildingStore();
   const { npcs, spawnNPC } = useNpcStore();
   const { initResources, initializeResources } = useResourceStore();
-  const { naturalResources, setNaturalResources } = useResourceStore();
-  const { buildings } = useBuildingStore();
-  const { npcs, setInitialized } = useNpcStore();
   const { addDummy } = useDummyStore();
 
   // Natural resources state
