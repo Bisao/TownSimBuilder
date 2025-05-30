@@ -1,3 +1,4 @@
+
 import React, { useState, useMemo } from 'react';
 import { useBuildingStore } from '../game/stores/useBuildingStore';
 import { useResourceStore } from '../game/stores/useResourceStore';
@@ -24,7 +25,7 @@ const BuildingPanel: React.FC<BuildingPanelProps> = ({ isVisible, onClose }) => 
   const resourceStore = useResourceStore();
   const { resources = {} } = resourceStore || {};
 
-// Group buildings by type for display
+  // Group buildings by type for display
   const buildingsByType = useMemo(() => {
     const grouped: Record<string, any[]> = {};
 
@@ -40,61 +41,67 @@ const BuildingPanel: React.FC<BuildingPanelProps> = ({ isVisible, onClose }) => 
     return grouped;
   }, [buildings]);
 
+  if (!isVisible) return null;
+
   return (
-    
-      
+    <div className="fixed z-50 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-md bg-white border border-gray-200 rounded-lg shadow-md">
+      <Card>
+        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <CardTitle className="text-lg font-semibold flex items-center">
+            <Building className="h-4 w-4 mr-2" />
+            Construções
+          </CardTitle>
+          <Button variant="ghost" size="sm" onClick={onClose}>
+            <X className="h-4 w-4" />
+          </Button>
+        </CardHeader>
         
-          
-            
-              <Building className="h-4 w-4 mr-2" />
-              Construções
-            
-            
-              <Button variant="ghost" size="sm" onClick={onClose}>
-                <X className="h-4 w-4" />
-              </Button>
-            
-          
-          
+        <CardContent>
+          <div className="mb-4">
             <Badge variant="secondary">
               <Hammer className="h-4 w-4 mr-2" />
               Modo Construção
             </Badge>
-          
-        
+          </div>
 
-        
-          
+          <div className="space-y-4">
             {Object.entries(buildingTypes).map(([buildingType, building]) => (
-              
+              <div key={buildingType} className="p-3 border rounded-lg bg-gray-50">
+                <div className="flex items-center justify-between mb-2">
+                  <div className="flex items-center">
+                    <Building className="h-4 w-4 mr-2" />
+                    <span className="font-medium">{building.name}</span>
+                  </div>
+                  <div className="flex gap-2">
+                    <Badge variant="outline">
+                      <Coins className="h-4 w-4 mr-1" />
+                      {building.cost.coins}
+                    </Badge>
+                    <Badge variant="outline">
+                      <Zap className="h-4 w-4 mr-1" />
+                      {building.cost.energy}
+                    </Badge>
+                  </div>
+                </div>
                 
-                  <Building className="h-4 w-4 mr-2" />
-                  {building.name}
-                
-                
-                  <Badge variant="outline">
-                    <Coins className="h-4 w-4 mr-2" />
-                    {building.cost.coins}
-                  </Badge>
-                  <Badge variant="outline">
-                    <Zap className="h-4 w-4 mr-2" />
-                    {building.cost.energy}
-                  </Badge>
-                
-                
-                  {buildingsByType[buildingType]?.length || 0}
-                
-                
-                  <Button variant="secondary" onClick={() => placeBuilding(buildingType)}>
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-gray-600">
+                    Construídas: {buildingsByType[buildingType]?.length || 0}
+                  </span>
+                  <Button 
+                    variant="secondary" 
+                    size="sm"
+                    onClick={() => placeBuilding(buildingType)}
+                  >
                     Construir
                   </Button>
-                
-              
+                </div>
+              </div>
             ))}
-          
-        
-      
-    
+          </div>
+        </CardContent>
+      </Card>
+    </div>
   );
 };
 

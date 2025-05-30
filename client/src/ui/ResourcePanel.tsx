@@ -3,6 +3,7 @@ import { useResourceStore } from '../game/stores/useResourceStore';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 import { Progress } from '../components/ui/progress';
 import { X, Coins, TreePine, Hammer, Wheat } from 'lucide-react';
+import { useIsMobile, useDraggable } from '../hooks';
 
 interface ResourcePanelProps {
   isVisible: boolean;

@@ -70,7 +70,6 @@ const World: React.FC<WorldProps> = ({ selectedBuildingType, onMarketSelect }) =
 
       // Initialize resources
       initResources();
-      initializeResources();
 
       // Generate natural resources
       generateNaturalResources();
