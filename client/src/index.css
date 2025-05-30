@@ -1,4 +1,9 @@
-/* Main CSS file - imports all style modules */
+
+/* ==========================================================================
+   MAIN CSS FILE
+   ========================================================================== */
+
+/* Import order: base → components → game → animations → responsive → utilities */
 @import './styles/base.css';
 @import './styles/components.css';
 @import './styles/game.css';
@@ -6,76 +11,176 @@
 @import './styles/responsive.css';
 @import './styles/utilities.css';
 
-/* Tailwind directives */
+/* ==========================================================================
+   TAILWIND DIRECTIVES
+   ========================================================================== */
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* Legacy shimmer animation for backwards compatibility */
-@keyframes shimmer {
-  0% {
-    transform: translateX(-100%);
-  }
-  100% {
-    transform: translateX(100%);
-  }
+/* ==========================================================================
+   ENHANCED CSS VARIABLES
+   ========================================================================== */
+
+:root {
+  /* Extended color palette */
+  --color-background-primary: #ffffff;
+  --color-background-secondary: #f8fafc;
+  --color-background-tertiary: #f1f5f9;
+  
+  /* Text color hierarchy */
+  --color-text-primary: #0f172a;
+  --color-text-secondary: #475569;
+  --color-text-tertiary: #64748b;
+  --color-text-quaternary: #94a3b8;
+  
+  /* Interactive states */
+  --color-interactive-primary: #3b82f6;
+  --color-interactive-primary-hover: #2563eb;
+  --color-interactive-primary-active: #1d4ed8;
+  
+  /* Enhanced shadows */
+  --shadow-xs: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-outline: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  --shadow-colored-primary: 0 4px 16px rgba(59, 130, 246, 0.25);
+  --shadow-colored-secondary: 0 4px 16px rgba(240, 147, 251, 0.25);
+  --shadow-colored-success: 0 4px 16px rgba(79, 172, 254, 0.25);
+  --shadow-colored-warning: 0 4px 16px rgba(250, 217, 97, 0.25);
+  
+  /* Animation timings */
+  --duration-instant: 0ms;
+  --duration-fast: 150ms;
+  --duration-normal: 300ms;
+  --duration-slow: 500ms;
+  --duration-slower: 750ms;
+  --duration-slowest: 1000ms;
+  
+  /* Easing functions */
+  --ease-linear: linear;
+  --ease-in: cubic-bezier(0.4, 0, 1, 1);
+  --ease-out: cubic-bezier(0, 0, 0.2, 1);
+  --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  
+  /* Game-specific variables */
+  --game-ui-padding: 1rem;
+  --game-panel-width: 320px;
+  --game-panel-width-large: 450px;
+  --game-header-height: 60px;
+  --game-footer-height: 40px;
 }
 
-.animate-shimmer {
-  animation: shimmer 1.5s infinite;
+/* ==========================================================================
+   ENHANCED BASE STYLES
+   ========================================================================== */
+
+/* Improved focus management */
+:focus-visible {
+  outline: 2px solid var(--color-interactive-primary);
+  outline-offset: 2px;
+  border-radius: var(--radius-md);
 }
 
-/* Component layer customizations */
+/* Enhanced selection */
+::selection {
+  background-color: var(--color-interactive-primary);
+  color: white;
+  text-shadow: none;
+}
+
+::-moz-selection {
+  background-color: var(--color-interactive-primary);
+  color: white;
+  text-shadow: none;
+}
+
+/* ==========================================================================
+   COMPONENT LAYER ENHANCEMENTS
+   ========================================================================== */
+
 @layer components {
-  /* Enhanced button components */
+  /* Enhanced button system */
   .btn {
     @apply btn-base btn-md;
+    position: relative;
+    overflow: hidden;
+    transition: all var(--duration-normal) var(--ease-out);
   }
 
   .btn-primary {
-    @apply gradient-primary text-white shadow-colored-primary;
+    @apply gradient-primary text-white;
+    box-shadow: var(--shadow-colored-primary);
+  }
+
+  .btn-primary:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-colored-primary), var(--shadow-lg);
   }
 
   .btn-secondary {
-    @apply gradient-secondary text-white shadow-colored-secondary;
+    @apply gradient-secondary text-white;
+    box-shadow: var(--shadow-colored-secondary);
   }
 
   .btn-success {
-    @apply gradient-success text-white shadow-colored-success;
+    @apply gradient-success text-white;
+    box-shadow: var(--shadow-colored-success);
   }
 
   .btn-warning {
-    @apply gradient-warning text-white shadow-colored-warning;
+    @apply gradient-warning text-white;
+    box-shadow: var(--shadow-colored-warning);
   }
 
-  /* Enhanced panel components */
+  /* Enhanced panel system */
   .panel {
-    @apply panel-base responsive-panel;
+    @apply panel-base;
+    width: var(--game-panel-width);
+    max-height: calc(100vh - 2 * var(--game-ui-padding));
   }
 
-  .panel-lg {
-    @apply panel-base responsive-panel-large;
+  .panel-large {
+    @apply panel-base;
+    width: var(--game-panel-width-large);
+    max-height: calc(100vh - 2 * var(--game-ui-padding));
   }
 
-  /* Enhanced card components */
+  /* Enhanced card system */
   .card {
     @apply card-base;
+    transition: all var(--duration-normal) var(--ease-out);
   }
 
-  /* Enhanced input components */
+  .card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+  }
+
+  /* Enhanced input system */
   .input {
     @apply input-base;
+    transition: all var(--duration-fast) var(--ease-out);
   }
 
-  /* Fantasy-themed components */
+  .input:focus {
+    box-shadow: var(--shadow-outline);
+    transform: scale(1.02);
+  }
+
+  /* Fantasy-themed enhancements */
   .fantasy-panel {
-    @apply panel-base fantasy-border fantasy-glow;
+    @apply panel-base;
     background: linear-gradient(135deg, 
-      rgba(184, 134, 11, 0.9), 
-      rgba(139, 69, 19, 0.8)
+      rgba(184, 134, 11, 0.95), 
+      rgba(139, 69, 19, 0.85)
     );
-    border-bottom: 2px solid rgba(255, 215, 0, 0.3);
-    backdrop-filter: blur(8px);
+    border: 2px solid rgba(255, 215, 0, 0.4);
+    border-bottom: 3px solid rgba(255, 215, 0, 0.6);
+    backdrop-filter: blur(12px);
+    box-shadow: 
+      0 8px 32px rgba(0, 0, 0, 0.3),
+      inset 0 1px 0 rgba(255, 215, 0, 0.2);
   }
 
   .fantasy-button {
@@ -88,6 +193,8 @@
     color: #F5DEB3;
     font-weight: 600;
     text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
+    position: relative;
+    overflow: hidden;
   }
 
   .fantasy-button:hover {
@@ -98,101 +205,223 @@
     box-shadow: 0 0 20px rgba(255, 215, 0, 0.4);
     transform: translateY(-2px);
   }
+
+  .fantasy-button::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, 
+      transparent, 
+      rgba(255, 255, 255, 0.3), 
+      transparent
+    );
+    transition: left 0.6s ease;
+  }
+
+  .fantasy-button:hover::before {
+    left: 100%;
+  }
+
+  /* Loading states */
+  .loading-skeleton {
+    @apply skeleton;
+    animation: skeleton-pulse 1.5s ease-in-out infinite;
+  }
+
+  .loading-shimmer {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .loading-shimmer::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    transform: translateX(-100%);
+    background: linear-gradient(90deg, 
+      transparent, 
+      rgba(255, 255, 255, 0.6), 
+      transparent
+    );
+    animation: shimmer 2s infinite;
+  }
 }
 
-/* Utility layer customizations */
+/* ==========================================================================
+   UTILITY LAYER ENHANCEMENTS
+   ========================================================================== */
+
 @layer utilities {
-  /* Custom responsive utilities */
-  .responsive-text {
-    font-size: clamp(0.75rem, 1.5vw, 1rem);
+  /* Enhanced responsive text */
+  .text-responsive-xs {
+    font-size: clamp(0.625rem, 1vw, 0.75rem);
   }
 
-  .responsive-text-lg {
-    font-size: clamp(1rem, 2vw, 1.25rem);
+  .text-responsive-sm {
+    font-size: clamp(0.75rem, 1.2vw, 0.875rem);
   }
 
-  .responsive-text-xl {
-    font-size: clamp(1.25rem, 2.5vw, 1.5rem);
+  .text-responsive-base {
+    font-size: clamp(0.875rem, 1.5vw, 1rem);
+  }
+
+  .text-responsive-lg {
+    font-size: clamp(1rem, 2vw, 1.125rem);
+  }
+
+  .text-responsive-xl {
+    font-size: clamp(1.125rem, 2.5vw, 1.25rem);
+  }
+
+  .text-responsive-2xl {
+    font-size: clamp(1.25rem, 3vw, 1.5rem);
   }
 
   /* Enhanced glass effects */
-  .glass {
-    @apply glass-effect;
+  .glass-effect {
+    background: var(--glass-bg);
+    backdrop-filter: blur(20px);
+    border: 1px solid var(--glass-border);
   }
 
-  .glass-dark {
-    @apply glass-effect-dark;
+  .glass-effect-dark {
+    background: var(--glass-bg-dark);
+    backdrop-filter: blur(16px);
+    border: 1px solid var(--glass-border-dark);
   }
 
-  .glass-bright {
-    @apply glass-effect-bright;
+  .glass-effect-bright {
+    background: var(--glass-bg-bright);
+    backdrop-filter: blur(24px);
+    border: 1px solid var(--glass-border);
   }
 
-  /* Custom gradient utilities */
-  .bg-gradient-primary {
-    @apply gradient-primary;
+  /* Enhanced gradients */
+  .gradient-primary {
+    background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
   }
 
-  .bg-gradient-secondary {
-    @apply gradient-secondary;
+  .gradient-secondary {
+    background: linear-gradient(135deg, var(--color-secondary), var(--color-secondary-dark));
   }
 
-  .bg-gradient-fantasy {
-    @apply gradient-fantasy;
+  .gradient-success {
+    background: linear-gradient(135deg, var(--color-success), var(--color-success-dark));
   }
 
-  /* Enhanced shadow utilities */
-  .shadow-glow {
-    box-shadow: 0 0 20px rgba(102, 126, 234, 0.3);
+  .gradient-warning {
+    background: linear-gradient(135deg, var(--color-warning), var(--color-warning-dark));
   }
 
-  .shadow-fantasy {
-    box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
+  .gradient-fantasy {
+    background: linear-gradient(135deg, var(--fantasy-primary), var(--fantasy-secondary));
   }
 
-  /* Text effect utilities */
+  /* Text effects */
+  .text-glow {
+    text-shadow: 0 0 10px rgba(255, 215, 0, 0.6);
+  }
+
   .text-glow-primary {
-    text-shadow: 0 0 10px rgba(102, 126, 234, 0.5);
+    text-shadow: 0 0 10px rgba(59, 130, 246, 0.5);
   }
 
-  .text-glow-fantasy {
-    @apply text-glow;
+  .text-glow-success {
+    text-shadow: 0 0 10px rgba(16, 185, 129, 0.5);
   }
 
-  /* Interaction utilities */
+  /* Interactive utilities */
+  .hover-lift:hover {
+    transform: translateY(-2px);
+  }
+
   .hover-lift-strong:hover {
-    transform: translateY(-4px) scale(1.05);
+    transform: translateY(-4px) scale(1.02);
+  }
+
+  .hover-glow:hover {
+    box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
   }
 
   .hover-glow-strong:hover {
-    box-shadow: 0 0 30px rgba(102, 126, 234, 0.5);
+    box-shadow: 0 0 30px rgba(59, 130, 246, 0.5);
+  }
+
+  /* Layout utilities */
+  .container-game {
+    width: 100%;
+    max-width: 1920px;
+    margin: 0 auto;
+    padding: 0 var(--game-ui-padding);
+  }
+
+  .flex-center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .absolute-center {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  /* Responsive utilities */
+  .responsive-panel {
+    width: clamp(280px, 25vw, var(--game-panel-width));
+  }
+
+  .responsive-panel-large {
+    width: clamp(320px, 30vw, var(--game-panel-width-large));
   }
 }
 
-/* Global overrides for specific components */
-.ui-panel {
-  @apply glass-effect transition-all duration-300 ease-in-out;
-  animation: slideIn 0.3s ease-out;
+/* ==========================================================================
+   ENHANCED ANIMATIONS
+   ========================================================================== */
+
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
 }
 
-.ui-panel-header {
-  @apply gradient-primary;
-  border-radius: var(--radius-2xl) var(--radius-2xl) 0 0;
-  padding: var(--space-4);
-  color: white;
-  font-weight: 600;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+@keyframes pulse-glow {
+  0%, 100% {
+    box-shadow: 0 0 5px rgba(59, 130, 246, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(59, 130, 246, 0.6);
+  }
 }
 
-.ui-panel-content {
-  padding: var(--space-4);
-  animation: fadeInScale 0.4s ease-out 0.1s both;
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
 }
 
-/* Enhanced scrollbar for all elements */
+/* ==========================================================================
+   ENHANCED SCROLLBAR
+   ========================================================================== */
+
 * {
   scrollbar-width: thin;
-  scrollbar-color: var(--color-gray-300) var(--color-gray-100);
+  scrollbar-color: var(--color-gray-300) transparent;
 }
 
 *::-webkit-scrollbar {
@@ -201,41 +430,57 @@
 }
 
 *::-webkit-scrollbar-track {
-  background: var(--color-gray-100);
+  background: transparent;
   border-radius: var(--radius-full);
 }
 
 *::-webkit-scrollbar-thumb {
   background: var(--color-gray-300);
   border-radius: var(--radius-full);
-  transition: background var(--transition-fast);
+  border: 2px solid transparent;
+  background-clip: content-box;
+  transition: background var(--duration-fast);
 }
 
 *::-webkit-scrollbar-thumb:hover {
   background: var(--color-gray-400);
+  background-clip: content-box;
 }
 
-/* Enhanced focus styles */
-*:focus-visible {
-  outline: 2px solid var(--color-primary);
-  outline-offset: 2px;
-  border-radius: var(--radius-md);
+*::-webkit-scrollbar-corner {
+  background: transparent;
 }
 
-/* Selection styles */
-::selection {
-  background-color: var(--color-primary);
-  color: white;
+/* ==========================================================================
+   GLOBAL ACCESSIBILITY ENHANCEMENTS
+   ========================================================================== */
+
+/* Reduce motion for users who prefer it */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
 
-::-moz-selection {
-  background-color: var(--color-primary);
-  color: white;
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  :root {
+    --glass-bg: rgba(255, 255, 255, 0.95);
+    --glass-border: rgba(0, 0, 0, 0.8);
+    --shadow-primary: 0 4px 16px rgba(0, 0, 0, 0.5);
+  }
 }
 
 /* Print styles */
 @media print {
-  * {
+  *,
+  *::before,
+  *::after {
     background: transparent !important;
     color: black !important;
     box-shadow: none !important;
@@ -245,4 +490,47 @@
   .no-print {
     display: none !important;
   }
+
+  .print-break {
+    page-break-before: always;
+  }
+}
+
+/* ==========================================================================
+   DARK MODE ENHANCEMENTS
+   ========================================================================== */
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-background-primary: #0f172a;
+    --color-background-secondary: #1e293b;
+    --color-background-tertiary: #334155;
+    
+    --color-text-primary: #f8fafc;
+    --color-text-secondary: #e2e8f0;
+    --color-text-tertiary: #cbd5e1;
+    --color-text-quaternary: #94a3b8;
+  }
+}
+
+/* ==========================================================================
+   LEGACY SUPPORT
+   ========================================================================== */
+
+/* Backwards compatibility for existing shimmer animation */
+.animate-shimmer {
+  animation: shimmer 1.5s infinite;
+}
+
+/* Legacy class support */
+.ui-panel {
+  @apply panel;
+}
+
+.ui-panel-header {
+  @apply panel-header;
+}
+
+.ui-panel-content {
+  @apply panel-content;
 }
