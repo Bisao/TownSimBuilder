@@ -87,10 +87,11 @@ const World: React.FC<WorldProps> = ({ selectedBuildingType, onMarketSelect }) =
 
   // Update natural resources when NPCs collect them
   useFrame(() => {
-    if (window.naturalResources) {
+    if (window.naturalResources && naturalResources && Array.isArray(naturalResources)) {
       // Update natural resources state if changes occurred
       const updatedResources = window.naturalResources.filter(r => !r.lastCollected);
-      if (updatedResources.length !== naturalResources.filter(r => !r.lastCollected).length) {
+      const currentFilteredResources = naturalResources.filter(r => !r.lastCollected);
+      if (updatedResources.length !== currentFilteredResources.length) {
         // Natural resources are managed by the store
       }
     }
