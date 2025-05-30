@@ -282,6 +282,8 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
     const itemId = e.dataTransfer.getData("text/plain");
     const itemData = draggedItem || inventoryItems.find(item => item.id === itemId);
     
+    console.log("Tentando equipar item:", { itemId, itemData, slotId });
+    
     if (!itemData) {
       console.log("Item não encontrado para drop");
       return;
@@ -314,22 +316,40 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
       return;
     }
 
+    // Executar todas as atualizações de estado em uma única operação
     // Se já há um item equipado, retorná-lo ao inventário
-    if (slot.equipped) {
-      setInventoryItems(prev => [...prev, { ...slot.equipped!, equipped: false }]);
-    }
-
-    // Remover item do inventário
-    setInventoryItems(prev => prev.filter(item => item.id !== itemData.id));
+    setInventoryItems(prev => {
+      let newItems = [...prev];
+      
+      // Se há item equipado no slot, adicionar de volta ao inventário
+      if (slot.equipped) {
+        newItems.push({ ...slot.equipped, equipped: false });
+      }
+      
+      // Remover o item que está sendo equipado
+      newItems = newItems.filter(item => item.id !== itemData.id);
+      
+      console.log("Inventário atualizado:", {
+        antes: prev.length,
+        depois: newItems.length,
+        itemRemovidoId: itemData.id,
+        itemAdicionadoId: slot.equipped?.id
+      });
+      
+      return newItems;
+    });
 
     // Equipar item no slot
-    setEquipmentSlots(prev => 
-      prev.map(s => 
+    setEquipmentSlots(prev => {
+      const newSlots = prev.map(s => 
         s.id === slotId 
           ? { ...s, equipped: { ...itemData, equipped: true } }
           : s
-      )
-    );
+      );
+      
+      console.log("Slot equipado:", { slotId, item: itemData.name });
+      return newSlots;
+    });
 
     setDraggedItem(null);
 
