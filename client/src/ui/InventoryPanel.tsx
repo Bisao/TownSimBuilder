@@ -50,64 +50,7 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
     initialPosition: { x: window.innerWidth / 2 - 350, y: window.innerHeight / 2 - 350 }
   });
 
-  // Sistema de validação de equipamentos
-  const validateEquipment = useCallback((item: InventoryItem, slotId: string): { valid: boolean; reason?: string } => {
-    const slot = equipmentSlots.find(s => s.id === slotId);
-    if (!slot) return { valid: false, reason: "Slot não encontrado" };
-
-    console.log("Validating equipment:", item.name, "for slot:", slotId, "slot data:", slot);
-
-    // Verificar se o item pode ser equipado no slot específico
-    const canEquipInSlot = (item: InventoryItem, slot: EquipmentSlot): boolean => {
-      // Verificar tipo primeiro
-      if (slot.acceptedTypes && !slot.acceptedTypes.includes(item.type)) {
-        return false;
-      }
-
-      // Verificar slot específico do item se definido
-      if (item.slot && slot.acceptedSlots) {
-        return slot.acceptedSlots.includes(item.slot);
-      }
-
-      // Para itens sem slot específico, verificar compatibilidade por tipo
-      const typeSlotMapping: Record<string, string[]> = {
-        weapon: ["mainhand", "offhand"],
-        tool: ["mainhand", "tool"],
-        armor: ["head", "chest", "boots", "cape", "offhand"],
-        consumable: ["potion", "food", "bag"]
-      };
-
-      const compatibleSlots = typeSlotMapping[item.type] || [];
-      return compatibleSlots.includes(slotId);
-    };
-
-    if (!canEquipInSlot(item, slot)) {
-      return { valid: false, reason: `${item.name} não pode ser equipado em ${slot.name}` };
-    }
-
-    // Verificar requisitos de nível
-    if (item.requirements?.level && npc.currentLevel < item.requirements.level) {
-      return { valid: false, reason: `Nível ${item.requirements.level} necessário` };
-    }
-
-    // Verificar requisitos de skill
-    if (item.requirements?.skills) {
-      for (const [skillName, requiredLevel] of Object.entries(item.requirements.skills)) {
-        const npcSkillLevel = npc.skills[skillName as keyof typeof npc.skills] || 0;
-        if (npcSkillLevel < requiredLevel) {
-          return { valid: false, reason: `${skillName} nível ${requiredLevel} necessário` };
-        }
-      }
-    }
-
-    // Verificar durabilidade
-    if (item.durability && item.durability.current <= 0) {
-      return { valid: false, reason: "Item quebrado - necessita reparo" };
-    }
-
-    console.log("Validation passed for:", item.name, "in slot:", slotId);
-    return { valid: true };
-  }, [equipmentSlots, npc.currentLevel, npc.skills]);
+  
 
   const [inventoryItems, setInventoryItems] = useState<InventoryItem[]>([
     // === ARMAS LENDÁRIAS ===
@@ -403,6 +346,65 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
       );
     }
   }, [npc.equipment]);
+
+  // Sistema de validação de equipamentos
+  const validateEquipment = useCallback((item: InventoryItem, slotId: string): { valid: boolean; reason?: string } => {
+    const slot = equipmentSlots.find(s => s.id === slotId);
+    if (!slot) return { valid: false, reason: "Slot não encontrado" };
+
+    console.log("Validating equipment:", item.name, "for slot:", slotId, "slot data:", slot);
+
+    // Verificar se o item pode ser equipado no slot específico
+    const canEquipInSlot = (item: InventoryItem, slot: EquipmentSlot): boolean => {
+      // Verificar tipo primeiro
+      if (slot.acceptedTypes && !slot.acceptedTypes.includes(item.type)) {
+        return false;
+      }
+
+      // Verificar slot específico do item se definido
+      if (item.slot && slot.acceptedSlots) {
+        return slot.acceptedSlots.includes(item.slot);
+      }
+
+      // Para itens sem slot específico, verificar compatibilidade por tipo
+      const typeSlotMapping: Record<string, string[]> = {
+        weapon: ["mainhand", "offhand"],
+        tool: ["mainhand", "tool"],
+        armor: ["head", "chest", "boots", "cape", "offhand"],
+        consumable: ["potion", "food", "bag"]
+      };
+
+      const compatibleSlots = typeSlotMapping[item.type] || [];
+      return compatibleSlots.includes(slotId);
+    };
+
+    if (!canEquipInSlot(item, slot)) {
+      return { valid: false, reason: `${item.name} não pode ser equipado em ${slot.name}` };
+    }
+
+    // Verificar requisitos de nível
+    if (item.requirements?.level && npc.currentLevel < item.requirements.level) {
+      return { valid: false, reason: `Nível ${item.requirements.level} necessário` };
+    }
+
+    // Verificar requisitos de skill
+    if (item.requirements?.skills) {
+      for (const [skillName, requiredLevel] of Object.entries(item.requirements.skills)) {
+        const npcSkillLevel = npc.skills[skillName as keyof typeof npc.skills] || 0;
+        if (npcSkillLevel < requiredLevel) {
+          return { valid: false, reason: `${skillName} nível ${requiredLevel} necessário` };
+        }
+      }
+    }
+
+    // Verificar durabilidade
+    if (item.durability && item.durability.current <= 0) {
+      return { valid: false, reason: "Item quebrado - necessita reparo" };
+    }
+
+    console.log("Validation passed for:", item.name, "in slot:", slotId);
+    return { valid: true };
+  }, [equipmentSlots, npc.currentLevel, npc.skills]);
 
   const getRarityColor = (rarity?: string) => {
     switch (rarity) {
