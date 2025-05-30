@@ -4,13 +4,14 @@ import { Text } from "@react-three/drei";
 import * as THREE from "three";
 import { NPC } from "../stores/useNpcStore";
 import { npcTypes } from "../constants/npcs";
+import CharacterModel from "./CharacterModel";
 
 interface NpcProps {
   npc: NPC;
 }
 
 const Npc: React.FC<NpcProps> = ({ npc }) => {
-  const meshRef = useRef<THREE.Mesh>(null);
+  const groupRef = useRef<THREE.Group>(null);
   const textRef = useRef<THREE.Group>(null);
 
   // Sempre executar todos os hooks primeiro, independente de condições
@@ -44,11 +45,11 @@ const Npc: React.FC<NpcProps> = ({ npc }) => {
   }, [npc.assignedWork]);
 
   useFrame(() => {
-    if (meshRef.current) {
-      meshRef.current.position.set(npc.position[0], npc.position[1], npc.position[2]);
+    if (groupRef.current) {
+      groupRef.current.position.set(npc.position[0], npc.position[1], npc.position[2]);
     }
     if (textRef.current) {
-      textRef.current.position.set(npc.position[0], npc.position[1] + 1.5, npc.position[2]);
+      textRef.current.position.set(npc.position[0], npc.position[1] + 2.5, npc.position[2]);
     }
   });
 
@@ -76,9 +77,8 @@ const Npc: React.FC<NpcProps> = ({ npc }) => {
   return (
     <group>
       {/* NPC Body */}
-      <mesh
-        ref={meshRef}
-        position={npc.position}
+      <group
+        ref={groupRef}
         onClick={handleClick}
         onPointerOver={(e) => {
           e.stopPropagation();
@@ -89,9 +89,13 @@ const Npc: React.FC<NpcProps> = ({ npc }) => {
           document.body.style.cursor = 'default';
         }}
       >
-        <cylinderGeometry args={[0.3, 0.3, 1.5, 8]} />
-        <meshStandardMaterial color={color} />
-      </mesh>
+        <CharacterModel
+          position={npc.position}
+          color={color}
+          scale={0.8}
+          rotation={[0, 0, 0]}
+        />
+      </group>
 
       {/* Status Indicator */}
       {npc.controlMode === "manual" && (
