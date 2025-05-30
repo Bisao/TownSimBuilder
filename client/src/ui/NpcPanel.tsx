@@ -61,6 +61,49 @@ const NpcPanel: React.FC<NpcPanelProps> = ({ npc, onClose }) => {
     useNpcStore.getState().startNpcWork(npc.id);
   };
 
+  const handleCombatClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    
+    // Verificar se a entidade de combate já existe
+    const { combatEntities, addCombatEntity } = useCombatStore.getState();
+    
+    if (!combatEntities.has(npc.id)) {
+      // Criar entidade de combate para o NPC
+      const combatEntity = {
+        id: npc.id,
+        name: npc.name,
+        position: npc.position,
+        stats: {
+          health: 100,
+          maxHealth: 100,
+          mana: 50,
+          maxMana: 50,
+          stamina: 100,
+          maxStamina: 100,
+          physicalDamage: 10,
+          magicalDamage: 5,
+          physicalDefense: 5,
+          magicalDefense: 3,
+          accuracy: 0.85,
+          evasion: 0.1,
+          criticalChance: 0.05,
+          criticalDamage: 1.5,
+          speed: 1.0
+        },
+        equipment: {
+          armor: {}
+        },
+        activeEffects: [],
+        combatState: 'idle' as const,
+        specialization: 'warrior' as const
+      };
+      
+      addCombatEntity(combatEntity);
+    }
+    
+    setShowCombat(true);
+  };
+
   const handleCreateNpc = () => {
     if (isTemporaryNpc && building) {
       const newNpcId = spawnNPC(
@@ -322,10 +365,7 @@ const NpcPanel: React.FC<NpcPanelProps> = ({ npc, onClose }) => {
                 </button>
 
                 <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setShowCombat(true);
-                  }}
+                  onClick={handleCombatClick}
                   className="flex items-center justify-center gap-2 p-4 bg-gradient-to-r from-red-500 to-red-700 hover:from-red-600 hover:to-red-800 text-white rounded-lg font-medium transition-all shadow-lg hover:shadow-xl transform hover:scale-105"
                 >
                   <i className="fa-solid fa-sword"></i>
