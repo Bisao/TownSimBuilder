@@ -1,0 +1,62 @@
+Warning: Cannot update a component (&#x60;NotificationContainer&#x60;) while rendering a different component (&#x60;NpcMetricsPanel&#x60;). To locate the bad setState() call inside &#x60;NpcMetricsPanel&#x60;, follow the stack trace as described in https://reactjs.org/link/setstate-in-render
+    at NpcMetricsPanel (https://00200b03-ece0-4d29-8523-a4b61c0a328c-00-30xkuviv1516y.spock.replit.dev/src/ui/NpcMetricsPanel.tsx:23:28)
+    at div
+    at GameUI (https://00200b03-ece0-4d29-8523-a4b61c0a328c-00-30xkuviv1516y.spock.replit.dev/src/ui/GameUI.tsx:35:19)
+    at https://00200b03-ece0-4d29-8523-a4b61c0a328c-00-30xkuviv1516y.spock.replit.dev/src/App.tsx?v=Kx4u9HbY5zGcdZHxgl2kf:68:59
+    at div
+    at HooksErrorBoundary (https://00200b03-ece0-4d29-8523-a4b61c0a328c-00-30xkuviv1516y.spock.replit.dev/src/components/ui/hooks-error-boundary.tsx:7:5)
+    at ErrorBoundary (https://00200b03-ece0-4d29-8523-a4b61c0a328c-00-30xkuviv1516y.spock.replit.dev/src/components/ui/error-boundary.tsx:10:5)
+    at App (https://00200b03-ece0-4d29-8523-a4b61c0a328c-00-30xkuviv1516y.spock.replit.dev/src/App.tsx?v=Kx4u9HbY5zGcdZHxgl2kf:209:21)
+    at ErrorBoundary (https://00200b03-ece0-4d29-8523-a4b61c0a328c-00-30xkuviv1516y.spock.replit.dev/src/components/ui/error-boundary.tsx:10:5)
+    at AppWrapper
+    at QueryClientProvider (https://00200b03-ece0-4d29-8523-a4b61c0a328c-00-30xkuviv1516y.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=31832269:2909:3)
+    at ErrorBoundary (https://00200b03-ece0-4d29-8523-a4b61c0a328c-00-30xkuviv1516y.spock.replit.dev/src/components/ui/error-boundary.tsx:10:5)
+    at AppWrapper
+KeyboardControls context not available, using fallback
+Cannot convert undefined or null to object
+Global error: 
+TypeError {}
+
+Global error: 
+TypeError {}
+KeyboardControls context not available, using fallback
+The above error occurred in the <NpcMetricsPanel> component:
+
+    at NpcMetricsPanel (https://00200b03-ece0-4d29-8523-a4b61c0a328c-00-30xkuviv1516y.spock.replit.dev/src/ui/NpcMetricsPanel.tsx:23:28)
+    at div
+    at GameUI (https://00200b03-ece0-4d29-8523-a4b61c0a328c-00-30xkuviv1516y.spock.replit.dev/src/ui/GameUI.tsx:35:19)
+    at https://00200b03-ece0-4d29-8523-a4b61c0a328c-00-30xkuviv1516y.spock.replit.dev/src/App.tsx?v=Kx4u9HbY5zGcdZHxgl2kf:68:59
+    at div
+    at HooksErrorBoundary (https://00200b03-ece0-4d29-8523-a4b61c0a328c-00-30xkuviv1516y.spock.replit.dev/src/components/ui/hooks-error-boundary.tsx:7:5)
+    at ErrorBoundary (https://00200b03-ece0-4d29-8523-a4b61c0a328c-00-30xkuviv1516y.spock.replit.dev/src/components/ui/error-boundary.tsx:10:5)
+    at App (https://00200b03-ece0-4d29-8523-a4b61c0a328c-00-30xkuviv1516y.spock.replit.dev/src/App.tsx?v=Kx4u9HbY5zGcdZHxgl2kf:209:21)
+    at ErrorBoundary (https://00200b03-ece0-4d29-8523-a4b61c0a328c-00-30xkuviv1516y.spock.replit.dev/src/components/ui/error-boundary.tsx:10:5)
+    at AppWrapper
+    at QueryClientProvider (https://00200b03-ece0-4d29-8523-a4b61c0a328c-00-30xkuviv1516y.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=31832269:2909:3)
+    at ErrorBoundary (https://00200b03-ece0-4d29-8523-a4b61c0a328c-00-30xkuviv1516y.spock.replit.dev/src/components/ui/error-boundary.tsx:10:5)
+    at AppWrapper
+
+React will try to recreate this component tree from scratch using the error boundary you provided, HooksErrorBoundary.
+
+at NpcMetricsPanel (https://00200b03-ece0-4d29-8523-a4b61c0a328c-00-30xkuviv1516y.spock.replit.dev/src/ui/NpcMetricsPanel.tsx:23:28)
+at div
+at GameUI (https://00200b03-ece0-4d29-8523-a4b61c0a328c-00-30xkuviv1516y.spock.replit.dev/src/ui/GameUI.tsx:35:19)
+at https://00200b03-ece0-4d29-8523-a4b61c0a328c-00-30xkuviv1516y.spock.replit.dev/src/App.tsx?v=Kx4u9HbY5zGcdZHxgl2kf:68:59
+at div
+at HooksErrorBoundary (https://00200b03-ece0-4d29-8523-a4b61c0a328c-00-30xkuviv1516y.spock.replit.dev/src/components/ui/hooks-error-boundary.tsx:7:5)
+at ErrorBoundary (https://00200b03-ece0-4d29-8523-a4b61c0a328c-00-30xkuviv1516y.spock.replit.dev/src/components/ui/error-boundary.tsx:10:5)
+at App (https://00200b03-ece0-4d29-8523-a4b61c0a328c-00-30xkuviv1516y.spock.replit.dev/src/App.tsx?v=Kx4u9HbY5zGcdZHxgl2kf:209:21)
+at ErrorBoundary (https://00200b03-ece0-4d29-8523-a4b61c0a328c-00-30xkuviv1516y.spock.replit.dev/src/components/ui/error-boundary.tsx:10:5)
+at AppWrapper
+at QueryClientProvider (https://00200b03-ece0-4d29-8523-a4b61c0a328c-00-30xkuviv1516y.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=31832269:2909:3)
+at ErrorBoundary (https://00200b03-ece0-4d29-8523-a4b61c0a328c-00-30xkuviv1516y.spock.replit.dev/src/components/ui/error-boundary.tsx:10:5)
+at AppWrapper
+
+React will try to recreate this component tree from scratch using the error boundary you provided, HooksErrorBoundary.
+at t.value (https://00200b03-ece0-4d29-8523-a4b61c0a328c-00-30xkuviv1516y.spock.replit.dev/__replco/static/devtools/eruda/3.2.3/eruda.js:2:17465)
+at new t (https://00200b03-ece0-4d29-8523-a4b61c0a328c-00-30xkuviv1516y.spock.replit.dev/__replco/static/devtools/eruda/3.2.3/eruda.js:2:12630)
+at t.value (https://00200b03-ece0-4d29-8523-a4b61c0a328c-00-30xkuviv1516y.spock.replit.dev/__replco/static/devtools/eruda/3.2.3/eruda.js:2:32766)
+at https://00200b03-ece0-4d29-8523-a4b61c0a328c-00-30xkuviv1516y.spock.replit.dev/__replco/static/devtools/eruda/3.2.3/eruda.js:2:34400
+KeyboardControls context not available, using fallback
+Dummy de treinamento criado: dummy_1748646111798_t2o7obrig na posição [10, 0, 10]
+THREE.WebGLRenderer: Context Lost.
