@@ -1,4 +1,3 @@
-
 import { BuildingType } from "../../shared/types";
 
 export interface BuildingDefinition {
@@ -195,3 +194,4 @@ export const BUILDING_LIMITS = {
 
 // Legacy export for compatibility
 export const buildingTypes = BUILDING_DEFINITIONS;
+import { GAME_CONFIG } from '../../../../shared/constants/game';

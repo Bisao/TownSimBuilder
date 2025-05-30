@@ -1,4 +1,3 @@
-
 export type SpecializationType = 'farming' | 'mining' | 'lumberjacking' | 'building' | 'crafting' | 'combat' | 'trading' | 'research';
 
 export interface SpecializationDefinition {

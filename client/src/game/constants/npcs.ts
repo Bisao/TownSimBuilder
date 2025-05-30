@@ -1,4 +1,3 @@
-
 export type NPCType = 'villager' | 'worker' | 'guard' | 'merchant' | 'specialist';
 export type NPCSpecialization = 'farmer' | 'miner' | 'lumberjack' | 'builder' | 'crafter' | 'hunter' | 'researcher';
 

@@ -1,5 +1,5 @@
 
-import { GAME_CONFIG } from "../../../shared/constants/game";
+import { GAME_CONFIG } from "../../../../shared/constants/game";
 
 // Grid configuration
 export const GRID_CONFIG = {

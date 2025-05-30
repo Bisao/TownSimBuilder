@@ -1,4 +1,3 @@
-
 export type ResourceType = 'wood' | 'stone' | 'iron' | 'food' | 'water' | 'seeds' | 'tools' | 'coal' | 'gold' | 'gems';
 
 export interface ResourceDefinition {

@@ -1,4 +1,3 @@
-
 // Market system was removed during refactoring
 // This file is kept for compatibility but contains no definitions
 

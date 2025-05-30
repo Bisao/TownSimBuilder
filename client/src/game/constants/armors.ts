@@ -1,9 +1,8 @@
-
 import { Armor, ArmorType } from "../types/combat";
 
 export const ARMORS_DATABASE: Record<string, Armor> = {
   // === ARMADURAS DE TECIDO (Magos) ===
-  
+
   cloth_robe: {
     id: 'cloth_robe',
     name: 'Túnica de Tecido',
@@ -44,7 +43,7 @@ export const ARMORS_DATABASE: Record<string, Armor> = {
   },
 
   // === ARMADURAS DE COURO (Hunters/Archers) ===
-  
+
   leather_armor: {
     id: 'leather_armor',
     name: 'Armadura de Couro',
@@ -85,7 +84,7 @@ export const ARMORS_DATABASE: Record<string, Armor> = {
   },
 
   // === ARMADURAS DE PLACA (Warriors/Tanks) ===
-  
+
   iron_plate: {
     id: 'iron_plate',
     name: 'Armadura de Placas de Ferro',
@@ -126,7 +125,7 @@ export const ARMORS_DATABASE: Record<string, Armor> = {
   },
 
   // === CAPACETES ===
-  
+
   leather_helmet: {
     id: 'leather_helmet',
     name: 'Capacete de Couro',
@@ -167,7 +166,7 @@ export const ARMORS_DATABASE: Record<string, Armor> = {
   },
 
   // === BOTAS ===
-  
+
   leather_boots: {
     id: 'leather_boots',
     name: 'Botas de Couro',
@@ -208,7 +207,7 @@ export const ARMORS_DATABASE: Record<string, Armor> = {
   },
 
   // === LUVAS ===
-  
+
   leather_gloves: {
     id: 'leather_gloves',
     name: 'Luvas de Couro',
@@ -263,7 +262,7 @@ export const getArmorsBySpecialization = (specialization: string): Armor[] => {
         armor.name.includes('Placas') ||
         armor.name.includes('Guardião')
       );
-        
+
     case 'hunter':
     case 'archer':
       return Object.values(ARMORS_DATABASE).filter(armor => 
@@ -271,7 +270,7 @@ export const getArmorsBySpecialization = (specialization: string): Armor[] => {
         armor.name.includes('Caçador') ||
         armor.name.includes('Perseguidor')
       );
-        
+
     case 'fire_mage':
     case 'ice_mage':
     case 'lightning_mage':
@@ -283,7 +282,7 @@ export const getArmorsBySpecialization = (specialization: string): Armor[] => {
         armor.name.includes('Capuz') ||
         armor.name.includes('Sandálias')
       );
-        
+
     case 'battle_mage':
     case 'spellsword':
       // Combinação de armaduras médias
@@ -291,7 +290,7 @@ export const getArmorsBySpecialization = (specialization: string): Armor[] => {
         armor.type === 'leather' || 
         (armor.type === 'cloth' && armor.tier >= 4)
       );
-        
+
     default:
       return [];
   }
