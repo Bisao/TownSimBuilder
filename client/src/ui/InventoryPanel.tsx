@@ -939,10 +939,10 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
         
         {/* Tooltip melhorado */}
         <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-20 pointer-events-none">
-          <div className="bg-gray-900 text-white text-xs px-3 py-2 rounded-lg shadow-xl border border-gray-700 min-w-max max-w-xs">
+          <div className="bg-gray-900 text-white text-xs px-3 py-2 rounded-lg shadow-xl border border-gray-700 min-w-max max-w-sm whitespace-normal"></div>
             <div className="font-bold text-center mb-1">{item.name}</div>
             {item.description && (
-              <div className="text-gray-300 text-center mb-2">{item.description}</div>
+              <div className="text-gray-300 text-center mb-2 break-words">{item.description}</div>
             )}
             
             {/* Stats */}
