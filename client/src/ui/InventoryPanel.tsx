@@ -237,7 +237,7 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
       return (
         <div
           key={i}
-          className="w-10 h-10 bg-white/20 border border-gray-300/50 rounded-lg flex items-center justify-center relative cursor-pointer hover:bg-white/30 transition-colors backdrop-blur-sm"
+          className="w-8 h-8 bg-white/20 border border-gray-300/50 rounded-md flex items-center justify-center relative cursor-pointer hover:bg-white/30 transition-colors backdrop-blur-sm"
           onDragOver={(e) => e.preventDefault()}
           onDrop={(e) => handleDropOnInventory(e, i)}
         >
@@ -272,7 +272,7 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
       <div className="flex flex-col items-center">
         <span className="text-xs text-gray-600 mb-1 font-medium">{label}</span>
         <div
-          className={`w-12 h-12 bg-white/30 border-2 ${
+          className={`w-10 h-10 bg-white/30 border-2 ${
             draggedItem ? 'border-blue-400 bg-blue-50/50' : 'border-gray-300/60'
           } rounded-lg flex items-center justify-center cursor-pointer hover:bg-white/40 transition-colors backdrop-blur-sm shadow-sm`}
           onDragOver={(e) => {
@@ -323,7 +323,7 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
       }}
     >
       <div 
-        className="bg-gradient-to-br from-white to-gray-50 rounded-2xl shadow-2xl w-[480px] max-h-[90vh] overflow-hidden relative border border-gray-200"
+        className="bg-gradient-to-br from-white to-gray-50 rounded-2xl shadow-2xl w-[520px] h-[600px] overflow-hidden relative border border-gray-200"
         style={{
           position: 'absolute',
           left: `${position.x}px`,
@@ -358,17 +358,17 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
         </div>
 
         {/* Content Area */}
-        <div className="p-6 space-y-6 max-h-[calc(90vh-140px)] overflow-y-auto custom-scrollbar">
+        <div className="p-4 space-y-4">
 
           {/* Details Section */}
-          <div className="bg-gradient-to-br from-amber-50 to-orange-50 p-6 rounded-xl border-2 border-amber-200">
-            <h3 className="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
+          <div className="bg-gradient-to-br from-amber-50 to-orange-50 p-4 rounded-xl border-2 border-amber-200">
+            <h3 className="text-base font-bold text-gray-800 mb-3 flex items-center gap-2">
               <i className="fa-solid fa-user-gear text-amber-600"></i>
               Equipamentos
             </h3>
 
             {/* Equipment Slots Grid */}
-            <div className="grid grid-cols-3 gap-4 mb-6">
+            <div className="grid grid-cols-3 gap-3 mb-4">
               {/* Row 1 */}
               <EquipmentSlotComponent slotId="bag" label="Bolsa" />
               <EquipmentSlotComponent slotId="head" label="Cabeça" />
@@ -385,46 +385,6 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
               <EquipmentSlotComponent slotId="food" label="Comida" />
             </div>
 
-            {/* Currency and Mount */}
-            <div className="grid grid-cols-2 gap-4 mb-4">
-              <div className="bg-white/50 p-3 rounded-lg border border-yellow-200">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <div className="w-6 h-6 bg-yellow-500 rounded-full border border-yellow-600"></div>
-                    <span className="text-sm font-medium text-gray-700">Ouro</span>
-                  </div>
-                  <span className="font-bold text-yellow-600">{gold}</span>
-                </div>
-              </div>
-
-              <div className="bg-white/50 p-3 rounded-lg border border-gray-300">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <div className="w-6 h-6 bg-gray-400 rounded-full border border-gray-500"></div>
-                    <span className="text-sm font-medium text-gray-700">Prata</span>
-                  </div>
-                  <span className="font-bold text-gray-600">{silver}</span>
-                </div>
-              </div>
-            </div>
-
-            <div className="flex justify-between items-center mb-4">
-              <span className="text-sm font-medium text-gray-700">Montaria</span>
-              <EquipmentSlotComponent slotId="mount" label="" />
-            </div>
-
-            {/* Action Buttons */}
-            <div className="flex gap-2">
-              <button className="flex-1 px-4 py-2 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white rounded-lg font-medium transition-all text-sm">
-                <i className="fa-solid fa-layer-group mr-2"></i>
-                Organizar
-              </button>
-              <button className="flex-1 px-4 py-2 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white rounded-lg font-medium transition-all text-sm">
-                <i className="fa-solid fa-sort mr-2"></i>
-                Classificar
-              </button>
-            </div>
-
             {/* Weight bar */}
             <div className="mt-4">
               <div className="flex justify-between items-center mb-2">
@@ -438,9 +398,9 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
           </div>
 
           {/* Inventory Slots */}
-          <div className="bg-gradient-to-br from-gray-50 to-gray-100 p-6 rounded-xl border-2 border-gray-200">
-            <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-bold text-gray-800 flex items-center gap-2">
+          <div className="bg-gradient-to-br from-gray-50 to-gray-100 p-4 rounded-xl border-2 border-gray-200">
+            <div className="flex justify-between items-center mb-3">
+              <h3 className="text-base font-bold text-gray-800 flex items-center gap-2">
                 <i className="fa-solid fa-boxes-stacked text-gray-600"></i>
                 Slots do Inventário (48)
               </h3>
@@ -449,16 +409,12 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
               </div>
             </div>
 
-            <div className="grid grid-cols-6 gap-2 p-4 bg-white/50 rounded-lg border border-gray-200 max-h-60 overflow-y-auto custom-scrollbar">
+            <div className="grid grid-cols-8 gap-1 p-3 bg-white/50 rounded-lg border border-gray-200 max-h-48 overflow-y-auto custom-scrollbar">
               {inventorySlots}
             </div>
           </div>
 
-          {/* Market Value */}
-          <div className="text-center text-sm text-gray-600 bg-white/50 p-3 rounded-lg border border-gray-200">
-            <i className="fa-solid fa-coins mr-2 text-yellow-500"></i>
-            Valor Estimado de Mercado: 0 moedas
-          </div>
+          
         </div>
       </div>
     </div>
