@@ -1,40 +1,39 @@
-
 // Game Configuration
 export const GAME_CONFIG = {
   GRID_SIZE: 50,
   TILE_SIZE: 1,
   UPDATE_INTERVAL: 16, // ~60 FPS
   SAVE_INTERVAL: 30000, // 30 seconds
-  
+
   // Time Settings
   DAY_LENGTH: 600000, // 10 minutes in milliseconds
   NIGHT_LENGTH: 300000, // 5 minutes in milliseconds
-  
+
   // Camera Settings
   CAMERA_MOVE_SPEED: 10,
   CAMERA_ZOOM_SPEED: 2,
   CAMERA_MIN_DISTANCE: 5,
   CAMERA_MAX_DISTANCE: 50,
-  
+
   // NPC Settings
   NPC_MOVE_SPEED: 2,
   NPC_VISION_RANGE: 5,
   NPC_WORK_RANGE: 2,
-  
+
   // Building Settings
   MAX_BUILDINGS_PER_TYPE: 50,
   BUILDING_HEALTH_REGEN: 1,
-  
+
   // Resource Settings
   RESOURCE_SPAWN_RATE: 0.1,
   MAX_RESOURCES_PER_TILE: 5,
   RESOURCE_RESPAWN_TIME: 120000, // 2 minutes
-  
+
   // Combat Settings
   COMBAT_TURN_TIME: 30000, // 30 seconds per turn
   BASE_ATTACK_DAMAGE: 10,
   BASE_DEFENSE: 5,
-  
+
   // UI Settings
   PANEL_ANIMATION_DURATION: 200,
   NOTIFICATION_DURATION: 3000,

@@ -1,2 +1,3 @@
-// Este arquivo foi removido - Sistema de Pesquisa desabilitado
+
+// Sistema de Pesquisa removido
 export const useResearchStore = null;

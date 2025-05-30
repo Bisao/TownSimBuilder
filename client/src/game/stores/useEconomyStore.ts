@@ -1,3 +1,3 @@
 
-// Este arquivo foi removido - Sistema Econômico desabilitado
+// Sistema de Economia removido
 export const useEconomyStore = null;

@@ -19,6 +19,8 @@ import CombatPanel from "./CombatPanel";
 import DummyStatsPanel from "./DummyStatsPanel";
 import { useDraggable } from "../hooks/useDraggable";
 
+// Economy and Research systems removed
+
 const GameUI = () => {
   // Game stores
   const {
@@ -575,6 +577,7 @@ const GameUI = () => {
               >
                 Dummy Stats
               </button>
+              {/* Economy, Research and Market systems removed */}
             </div>
           </div>
         </div>
@@ -619,6 +622,7 @@ const GameUI = () => {
           onClose={() => setShowDummyStats(false)}
         />
       )}
+      {/* Economy, Research and Market panels removed */}
     </>
   );
 };

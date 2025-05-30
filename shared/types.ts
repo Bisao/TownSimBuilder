@@ -185,24 +185,4 @@ export interface DragState {
   startPosition: Position;
 }
 
-// Market Types
-export interface MarketItem {
-  id: string;
-  resourceType: string;
-  quantity: number;
-  pricePerUnit: number;
-  sellerId?: string;
-  listedAt: number;
-  expiresAt?: number;
-}
-
-export interface MarketOrder {
-  id: string;
-  type: 'buy' | 'sell';
-  resourceType: string;
-  quantity: number;
-  pricePerUnit: number;
-  playerId: string;
-  status: 'active' | 'completed' | 'cancelled';
-  createdAt: number;
-}
+// Market system removed

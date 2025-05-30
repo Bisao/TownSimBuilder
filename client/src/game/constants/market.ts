@@ -1,2 +1,3 @@
-// Este arquivo foi removido - Sistema Econômico desabilitado
+
+// Sistema de Mercado removido
 export const MARKET_CONFIG = null;
