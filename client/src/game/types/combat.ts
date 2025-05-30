@@ -1,192 +1,184 @@
 
+export type DamageType = 'physical' | 'magical' | 'piercing' | 'slashing' | 'blunt' | 'fire' | 'ice' | 'poison';
+export type CombatPhase = 'preparation' | 'active' | 'resolution' | 'ended';
+export type CombatAction = 'attack' | 'defend' | 'skill' | 'item' | 'flee';
+
+export interface DamageInfo {
+  amount: number;
+  type: DamageType;
+  isCritical: boolean;
+  source: string;
+  target: string;
+}
+
 export interface CombatStats {
   health: number;
   maxHealth: number;
-  mana: number;
-  maxMana: number;
-  stamina: number;
-  maxStamina: number;
-  
-  // Atributos base
-  strength: number;
-  dexterity: number;
-  intelligence: number;
-  constitution: number;
-  
-  // Atributos de combate
-  physicalDamage: number;
-  magicalDamage: number;
-  physicalDefense: number;
-  magicalDefense: number;
+  energy: number;
+  maxEnergy: number;
+  attack: number;
+  defense: number;
+  speed: number;
   accuracy: number;
   evasion: number;
   criticalChance: number;
-  criticalDamage: number;
-  
-  // Resistências
-  fireResistance: number;
-  iceResistance: number;
-  lightningResistance: number;
-  physicalResistance: number;
-}
-
-export interface Weapon {
-  id: string;
-  name: string;
-  type: WeaponType;
-  tier: number;
-  damage: number;
-  speed: number;
-  range: number;
-  durability: number;
-  maxDurability: number;
-  requirements: {
-    strength?: number;
-    dexterity?: number;
-    intelligence?: number;
-    level?: number;
-  };
-  enchantments?: Enchantment[];
-  specialAbilities?: SpecialAbility[];
-}
-
-export type WeaponType = 
-  // Corpo a Corpo
-  | 'sword' | 'axe' | 'mace' | 'dagger' | 'spear'
-  // À Distância
-  | 'bow' | 'crossbow' | 'throwing_knife'
-  // Mágico
-  | 'fire_staff' | 'ice_staff' | 'lightning_staff' | 'holy_staff'
-  // Híbrido
-  | 'enchanted_sword' | 'battle_mage_staff';
-
-export interface Armor {
-  id: string;
-  name: string;
-  type: ArmorType;
-  tier: number;
-  physicalDefense: number;
-  magicalDefense: number;
-  durability: number;
-  maxDurability: number;
-  weight: number;
-  requirements: {
-    strength?: number;
-    level?: number;
-  };
-}
-
-export type ArmorType = 'cloth' | 'leather' | 'plate' | 'helmet' | 'boots' | 'gloves';
-
-export interface Enchantment {
-  id: string;
-  name: string;
-  type: 'damage' | 'defense' | 'utility';
-  effect: {
-    attribute: string;
-    value: number;
-    percentage?: boolean;
-  };
-  duration?: number; // Em segundos, undefined para permanente
-}
-
-export interface SpecialAbility {
-  id: string;
-  name: string;
-  description: string;
-  type: 'active' | 'passive';
-  cooldown?: number;
-  manaCost?: number;
-  staminaCost?: number;
-  damage?: number;
-  effect?: string;
-  range?: number;
-  areaOfEffect?: number;
-}
-
-export interface CombatAction {
-  id: string;
-  type: 'attack' | 'defend' | 'spell' | 'ability' | 'item';
-  targetId?: string;
-  targetPosition?: { x: number; y: number; z: number };
-  weaponId?: string;
-  spellId?: string;
-  abilityId?: string;
-  itemId?: string;
-}
-
-export interface DamageResult {
-  totalDamage: number;
-  physicalDamage: number;
-  magicalDamage: number;
-  critical: boolean;
-  blocked: boolean;
-  evaded: boolean;
-  damageType: 'physical' | 'fire' | 'ice' | 'lightning' | 'holy';
-}
-
-export interface CombatEntity {
-  id: string;
-  name: string;
-  position: { x: number; y: number; z: number };
-  stats: CombatStats;
-  equipment: {
-    weapon?: Weapon;
-    armor: Partial<Record<ArmorType, Armor>>;
-  };
-  activeEffects: StatusEffect[];
-  combatState: 'idle' | 'attacking' | 'defending' | 'casting' | 'stunned' | 'dead';
-  currentTarget?: string;
-  specialization: CombatSpecialization;
+  criticalMultiplier: number;
 }
 
 export interface StatusEffect {
   id: string;
   name: string;
-  type: 'buff' | 'debuff' | 'damage_over_time' | 'heal_over_time';
+  type: 'buff' | 'debuff';
   duration: number;
-  effect: {
-    attribute?: string;
-    value?: number;
-    damagePerTick?: number;
-    healPerTick?: number;
-  };
+  maxDuration: number;
   stackable: boolean;
-  stacks: number;
+  currentStacks: number;
+  maxStacks: number;
+  effects: {
+    healthRegen?: number;
+    energyRegen?: number;
+    attackModifier?: number;
+    defenseModifier?: number;
+    speedModifier?: number;
+    damageOverTime?: number;
+    damageType?: DamageType;
+  };
+  description: string;
 }
 
-export type CombatSpecialization = 
-  | 'warrior' | 'plate_fighter' 
-  | 'hunter' | 'archer'
-  | 'fire_mage' | 'ice_mage' | 'lightning_mage' | 'holy_mage'
-  | 'battle_mage' | 'spellsword';
+export interface CombatParticipant {
+  id: string;
+  name: string;
+  type: 'player' | 'npc' | 'enemy';
+  stats: CombatStats;
+  statusEffects: StatusEffect[];
+  equipment?: {
+    weapon?: string;
+    armor?: string;
+    accessories?: string[];
+  };
+  position: {
+    x: number;
+    y: number;
+  };
+  isAlive: boolean;
+  isActive: boolean;
+}
 
-export interface Spell {
+export interface CombatAction {
+  id: string;
+  type: CombatAction;
+  participantId: string;
+  targetId?: string;
+  skillId?: string;
+  itemId?: string;
+  timestamp: number;
+  result?: {
+    success: boolean;
+    damage?: DamageInfo[];
+    statusEffects?: StatusEffect[];
+    message: string;
+  };
+}
+
+export interface CombatTurn {
+  turnNumber: number;
+  activeParticipantId: string;
+  actions: CombatAction[];
+  startTime: number;
+  endTime?: number;
+  timeLimit: number;
+}
+
+export interface CombatState {
+  id: string;
+  phase: CombatPhase;
+  participants: CombatParticipant[];
+  currentTurn: CombatTurn | null;
+  turnOrder: string[];
+  currentTurnIndex: number;
+  totalTurns: number;
+  startTime: number;
+  endTime?: number;
+  winner?: string;
+  rewards?: {
+    experience: number;
+    gold: number;
+    items: string[];
+  };
+  environment?: {
+    terrain: string;
+    weather: string;
+    timeOfDay: 'day' | 'night';
+    modifiers?: {
+      visibility: number;
+      movementPenalty: number;
+      damageModifiers: Record<DamageType, number>;
+    };
+  };
+}
+
+export interface CombatSkill {
   id: string;
   name: string;
   description: string;
-  school: 'fire' | 'ice' | 'lightning' | 'holy' | 'arcane';
-  tier: number;
-  manaCost: number;
-  castTime: number;
+  type: 'offensive' | 'defensive' | 'utility';
+  energyCost: number;
   cooldown: number;
   range: number;
-  areaOfEffect?: number;
-  damage?: number;
-  healing?: number;
-  effects?: StatusEffect[];
-  requirements: {
-    intelligence: number;
-    level: number;
-    skillId?: string;
+  targetType: 'self' | 'ally' | 'enemy' | 'area' | 'all';
+  effects: {
+    damage?: {
+      min: number;
+      max: number;
+      type: DamageType;
+    };
+    healing?: number;
+    statusEffects?: Omit<StatusEffect, 'id' | 'duration'>[];
+    specialEffects?: {
+      knockback?: number;
+      stun?: number;
+      disarm?: number;
+    };
+  };
+  requirements?: {
+    level?: number;
+    weapon?: string[];
+    stance?: string;
+  };
+  animation?: {
+    duration: number;
+    frames: string[];
   };
 }
 
-export interface CombatResult {
-  winner: string;
-  loser: string;
-  duration: number;
-  damageDealt: Record<string, number>;
-  experienceGained: Record<string, number>;
-  lootDropped?: string[];
+export interface CombatEvent {
+  type: 'combat_start' | 'combat_end' | 'turn_start' | 'turn_end' | 'action_performed' | 'damage_dealt' | 'status_applied';
+  timestamp: number;
+  data: any;
+  participants: string[];
 }
+
+// Utility types
+export type CombatModifier = {
+  type: 'attack' | 'defense' | 'speed' | 'accuracy' | 'damage';
+  value: number;
+  isPercentage: boolean;
+  source: string;
+};
+
+export type CombatResult = {
+  winner: 'player' | 'enemy' | 'draw';
+  duration: number;
+  totalDamageDealt: number;
+  totalDamageReceived: number;
+  actionsPerformed: number;
+  experience: number;
+  rewards: {
+    gold: number;
+    items: string[];
+  };
+};
+
+// Legacy compatibility
+export type { CombatState as Combat };
