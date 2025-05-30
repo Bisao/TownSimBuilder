@@ -1,4 +1,3 @@
-
 import { useEffect, useState, useRef, useCallback } from "react";
 import { useGameStore } from "../game/stores/useGameStore";
 import { Controls } from "../game/types/controls";
@@ -71,7 +70,7 @@ const GameUI = () => {
     const initializeSystems = async () => {
       try {
         console.log("Initializing game systems...");
-        
+
         // Initialize resource store with error handling
         const resourceStore = useResourceStore.getState();
         if (resourceStore && typeof resourceStore.initResources === 'function') {

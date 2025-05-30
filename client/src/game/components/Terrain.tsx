@@ -10,15 +10,15 @@ const Terrain = () => {
   const { camera } = useThree();
   const [isGridVisible, setIsGridVisible] = useState(true);
 
-  const { 
-    isEditorMode, 
-    gridSize: editorGridSize, 
-    showGrid: editorShowGrid,
-    terrain: terrainTiles 
-  } = useMapEditorStore();
+  // Sistema de Editor de Mapas foi removido - modo editor sempre desabilitado
+  const isEditorMode = false;
 
-  const currentGridSize = isEditorMode ? editorGridSize : GRID_CONFIG.DEFAULT_SIZE;
-  const shouldShowGrid = isEditorMode ? editorShowGrid : isGridVisible;
+  const [gridSize, setGridSize] = useState(GRID_CONFIG.DEFAULT_SIZE);
+  const [showGrid, setShowGrid] = useState(true);
+  const [terrainTiles, setTerrainTiles] = useState({});
+
+  const currentGridSize = isEditorMode ? gridSize : GRID_CONFIG.DEFAULT_SIZE;
+  const shouldShowGrid = isEditorMode ? showGrid : isGridVisible;
 
   useEffect(() => {
     const handleKeyPress = (event: KeyboardEvent) => {
