@@ -146,7 +146,8 @@ const Npc: React.FC<NpcProps> = ({ npc }) => {
            npc.state === "working" ? "Trabalhando" :
            npc.state === "gathering" ? "Coletando" :
            npc.state === "resting" ? "Descansando" :
-           npc.state === "searching" ? "Procurando" : "Parado"}
+           npc.state === "searching" ? "Procurando" :
+           npc.state === "attacking" ? "Atacando" : "Parado"}
         </Text>
       </group>
 

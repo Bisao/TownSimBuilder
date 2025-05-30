@@ -30,7 +30,7 @@ export interface NPCMemory {
 }
 
 export type NPCSchedule = "home" | "working" | "lunch" | "traveling";
-export type NPCState = "idle" | "moving" | "working" | "gathering" | "resting" | "searching" | "planting" | "harvesting";
+export type NPCState = "idle" | "moving" | "working" | "gathering" | "resting" | "searching" | "planting" | "harvesting" | "attacking";
 
 export interface NPCEquipment {
   id: string;
@@ -76,6 +76,8 @@ export interface NPC {
   isWorkingManually?: boolean;
   isPlayerControlled?: boolean;
   controlMode: "autonomous" | "manual";
+  combatTarget?: string | null; // ID do alvo de combate (dummy)
+  lastAttackTime?: number; // Último tempo de ataque
   inventory: {
     type: string;
     amount: number;
@@ -315,6 +317,17 @@ class NPCStateManager {
       if (npc.targetResource) {
         updates.state = "gathering";
         updates.workProgress = 0;
+      } else if (npc.combatTarget && npc.targetBuildingId) {
+        // Chegou ao dummy para combate
+        const dummy = buildings.find(b => b.id === npc.targetBuildingId && b.type === 'training_dummy');
+        if (dummy) {
+          updates.state = "attacking";
+          updates.workProgress = 0;
+          updates.lastAttackTime = Date.now();
+        } else {
+          updates.state = "idle";
+          updates.combatTarget = null;
+        }
       } else if (npc.inventory.amount > 0 && npc.targetBuildingId) {
         return this.handleSiloDeposit(npc, buildings, updates);
       } else if (npc.targetBuildingId) {
@@ -496,6 +509,78 @@ class NPCStateManager {
     }
 
     return { state: "idle" };
+  }
+
+  static handleAttacking(npc: NPC, context: StateContext): Partial<NPC> {
+    const { adjustedDeltaTime, buildings } = context;
+
+    if (!npc.combatTarget || !npc.targetBuildingId) {
+      return { state: "idle" };
+    }
+
+    const dummy = buildings.find(b => b.id === npc.targetBuildingId && b.type === 'training_dummy');
+    if (!dummy) {
+      return {
+        state: "idle",
+        combatTarget: null,
+        targetBuildingId: null
+      };
+    }
+
+    // Verificar distância ao dummy
+    const distanceToDummy = Math.hypot(
+      dummy.position[0] - npc.position[0],
+      dummy.position[1] - npc.position[2]
+    );
+
+    if (distanceToDummy > 1.5) {
+      // Muito longe, mover para mais perto
+      return {
+        targetPosition: [dummy.position[0], 0, dummy.position[1]],
+        state: "moving"
+      };
+    }
+
+    const currentTime = Date.now();
+    const attackSpeed = 1500; // Ataque a cada 1.5 segundos
+    const lastAttack = npc.lastAttackTime || 0;
+
+    if (currentTime - lastAttack >= attackSpeed) {
+      // Executar ataque
+      const damage = Math.floor(Math.random() * 20) + 10; // 10-30 dano
+      const critical = Math.random() < 0.15; // 15% chance de crítico
+
+      // Importar e usar o dummy store
+      import('./useDummyStore').then(({ useDummyStore }) => {
+        useDummyStore.getState().hitDummy(npc.combatTarget!, damage, critical);
+      }).catch(console.error);
+
+      console.log(`${npc.name} atacou o dummy causando ${damage} de dano${critical ? ' (CRÍTICO)' : ''}`);
+
+      return {
+        lastAttackTime: currentTime,
+        workProgress: 0,
+        needs: {
+          energy: Math.max(0, npc.needs.energy - 2),
+          satisfaction: Math.max(0, npc.needs.satisfaction - 1),
+          health: npc.needs.health,
+          hunger: npc.needs.hunger
+        }
+      };
+    }
+
+    // Progresso de ataque (animação)
+    const attackProgress = Math.min(1, (currentTime - lastAttack) / attackSpeed);
+    
+    return {
+      workProgress: attackProgress,
+      needs: {
+        energy: Math.max(0, npc.needs.energy - adjustedDeltaTime * 0.5),
+        satisfaction: Math.max(0, npc.needs.satisfaction - adjustedDeltaTime * 0.3),
+        health: npc.needs.health,
+        hunger: npc.needs.hunger
+      }
+    };
   }
 
   // Métodos auxiliares
@@ -895,6 +980,9 @@ export const useNpcStore = create<NPCStoreState>()(
               break;
             case "searching":
               Object.assign(updates, NPCStateManager.handleSearching(npc, context));
+              break;
+            case "attacking":
+              Object.assign(updates, NPCStateManager.handleAttacking(npc, context));
               break;
             case "planting":
               break;

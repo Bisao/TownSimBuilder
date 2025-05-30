@@ -17,70 +17,70 @@ export interface BuildingType {
   };
 }
 
-export const buildingTypes: Record<string, BuildingType> = {
+export const buildingTypes = {
   house: {
     id: "house",
     name: "Casa",
-    description: "Uma casa simples para abrigar NPCs",
-    size: [1, 1],
-    height: 1,
-    cost: {
-      wood: 10,
-      stone: 5,
-    },
-    model: {
-      shape: "box",
-      color: "#8B4513",
-    },
+    size: [2, 2] as [number, number],
+    cost: { wood: 50, stone: 30 },
+    color: "#8B4513",
+    maxOccupants: 1,
+    description: "Uma casa simples para abrigar um NPC."
   },
   farm: {
     id: "farm",
     name: "Fazenda",
-    description: "Produz alimentos quando plantada",
-    size: [1, 1],
-    height: 0.2,
-    cost: {
-      wood: 5,
-      stone: 2,
-    },
-    model: {
-      shape: "box",
-      color: "#8B4513",
-    },
+    size: [3, 3] as [number, number],
+    cost: { wood: 80, stone: 20 },
+    color: "#228B22",
+    description: "Permite plantar e colher culturas."
   },
-  waterWell: {
-    id: "waterWell",
-    name: "Poço",
-    description: "Fornece água para a comunidade",
-    size: [1, 1],
-    height: 1.5,
-    cost: {
-      stone: 15,
-      wood: 8,
-    },
-    produces: {
-      resourceType: "water",
-      amount: 5,
-      interval: 8,
-    },
-    model: {
-      shape: "cylinder",
-      color: "#4682B4",
-    },
+  market: {
+    id: "market",
+    name: "Mercado",
+    size: [4, 4] as [number, number],
+    cost: { wood: 150, stone: 100, gold: 50 },
+    color: "#DAA520",
+    description: "Centro de comércio para comprar e vender recursos."
+  },
+  bakery: {
+    id: "bakery",
+    name: "Padaria",
+    size: [3, 2] as [number, number],
+    cost: { wood: 60, stone: 40 },
+    color: "#D2691E",
+    description: "Produz pão a partir de trigo."
+  },
+  mine: {
+    id: "mine",
+    name: "Mina",
+    size: [2, 2] as [number, number],
+    cost: { wood: 40, stone: 80 },
+    color: "#696969",
+    description: "Extrai pedra do solo."
+  },
+  lumberyard: {
+    id: "lumberyard",
+    name: "Serraria",
+    size: [3, 2] as [number, number],
+    cost: { wood: 100, stone: 20 },
+    color: "#8B4513",
+    description: "Processa madeira de forma eficiente."
   },
   silo: {
     id: "silo",
     name: "Silo",
-    description: "Armazena grandes quantidades de recursos",
-    size: [1, 1],
-    height: 2,
-    cost: {
-      stone: 20,
-      wood: 15,
-    },
-    model: {
-      shape: "cylinder",
-      color: "#C0C0C0",
-    },
+    size: [2, 2] as [number, number],
+    cost: { wood: 60, stone: 60 },
+    color: "#A0A0A0",
+    description: "Armazena recursos coletados pelos NPCs."
   },
-};
+  training_dummy: {
+    id: "training_dummy",
+    name: "Dummy de Treinamento",
+    size: [1, 1] as [number, number],
+    cost: { wood: 30, stone: 10 },
+    color: "#DEB887",
+    description: "Dummy para treino de combate."
+  }
+} as const;

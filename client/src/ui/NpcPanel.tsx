@@ -64,6 +64,27 @@ const NpcPanel: React.FC<NpcPanelProps> = ({ npc, onClose }) => {
   const handleCombatClick = (e: React.MouseEvent) => {
     e.stopPropagation();
     
+    // Encontrar o dummy mais próximo
+    const dummies = useBuildingStore.getState().buildings.filter(b => b.type === 'training_dummy');
+    
+    if (dummies.length === 0) {
+      console.log("Nenhum dummy de treinamento encontrado!");
+      return;
+    }
+    
+    // Calcular distância para cada dummy e encontrar o mais próximo
+    const nearestDummy = dummies.reduce((nearest, dummy) => {
+      const distToNearest = Math.hypot(
+        nearest.position[0] - npc.position[0],
+        nearest.position[1] - npc.position[2]
+      );
+      const distToCurrent = Math.hypot(
+        dummy.position[0] - npc.position[0],
+        dummy.position[1] - npc.position[2]
+      );
+      return distToCurrent < distToNearest ? dummy : nearest;
+    });
+    
     // Verificar se a entidade de combate já existe
     const { combatEntities, addCombatEntity } = useCombatStore.getState();
     
@@ -91,6 +112,13 @@ const NpcPanel: React.FC<NpcPanelProps> = ({ npc, onClose }) => {
           speed: 1.0
         },
         equipment: {
+          weapon: {
+            id: 'basic_sword',
+            name: 'Espada Básica',
+            type: 'sword',
+            damage: 15,
+            requirements: { level: 1 }
+          },
           armor: {}
         },
         activeEffects: [],
@@ -101,7 +129,17 @@ const NpcPanel: React.FC<NpcPanelProps> = ({ npc, onClose }) => {
       addCombatEntity(combatEntity);
     }
     
-    setShowCombat(true);
+    // Atualizar NPC para ir até o dummy e entrar em modo de combate
+    updateNpc(npc.id, {
+      controlMode: "manual",
+      isPlayerControlled: true,
+      targetPosition: [nearestDummy.position[0], 0, nearestDummy.position[1]],
+      targetBuildingId: nearestDummy.id,
+      state: "moving",
+      combatTarget: nearestDummy.id
+    });
+    
+    console.log(`${npc.name} está se movendo para atacar o dummy em [${nearestDummy.position.join(', ')}]`);
   };
 
   const handleCreateNpc = () => {
