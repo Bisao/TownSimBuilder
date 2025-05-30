@@ -337,6 +337,7 @@ const CombatPanel: React.FC<CombatPanelProps> = ({ entityId, onClose }) => {
         </div>
       </div>
     </div>
+    </div>
   );
 };
 
