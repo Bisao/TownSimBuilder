@@ -1,7 +1,7 @@
 
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
-import { COLORS, Z_INDEX, ANIMATIONS } from '../../shared/constants/game';
+import { COLORS, Z_INDEX, ANIMATIONS } from '../../../shared/constants/game';
 
 // Utility function for class names
 export function cn(...inputs: ClassValue[]): string {

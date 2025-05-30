@@ -1,5 +1,6 @@
-import { create } from "zustand";
-import { subscribeWithSelector } from "zustand/middleware";
+import { create } from 'zustand';
+import { subscribeWithSelector } from 'zustand/middleware';
+import { GAME_CONFIG } from '../../../../shared/constants/game';
 import { getLocalStorage, setLocalStorage } from "@/lib/utils";
 
 export type GamePhase = "login" | "playing" | "ended";
@@ -12,7 +13,7 @@ interface PlayerData {
 interface GameState {
   phase: GamePhase;
   playerData: PlayerData | null;
-  
+
   // Actions
   login: (nickname: string) => void;
   start: () => void;
@@ -30,32 +31,32 @@ export const useGame = create<GameState>()(
     return {
       phase: initialPhase,
       playerData: initialPlayerData,
-      
+
       login: (nickname: string) => {
         const playerData: PlayerData = {
           nickname,
           loginTime: new Date().toISOString()
         };
-        
+
         setLocalStorage("currentPlayer", playerData);
-        
+
         set(() => ({
           phase: "playing",
           playerData
         }));
       },
-      
+
       start: () => {
         set(() => ({ phase: "playing" }));
       },
-      
+
       restart: () => {
         set((state) => ({ 
           phase: "playing",
           playerData: state.playerData 
         }));
       },
-      
+
       end: () => {
         set((state) => {
           // Only transition from playing to ended
@@ -65,7 +66,7 @@ export const useGame = create<GameState>()(
           return {};
         });
       },
-      
+
       logout: () => {
         setLocalStorage("currentPlayer", null);
         setLocalStorage("autoLogin", false);
