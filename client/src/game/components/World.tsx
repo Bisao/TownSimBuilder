@@ -52,7 +52,7 @@ const World: React.FC<WorldProps> = ({ selectedBuildingType, onMarketSelect }) =
 
   // Store states
   const { isInitialized, initialize, gameMode, isManualControl, controlledNpcId } = useGameStore();
-  const { buildings, placeBuilding, selectedBuildingType, setSelectedBuildingType, clearAllBuildings } = useBuildingStore();
+  const { buildings, placeBuilding, selectedBuildingType: storeBuildingType, setSelectedBuildingType, clearAllBuildings } = useBuildingStore();
   const { naturalResources, generateNaturalResources, clearAllNaturalResources } = useResourceStore();
   const { addDummy } = useDummyStore();
 
@@ -114,7 +114,7 @@ const World: React.FC<WorldProps> = ({ selectedBuildingType, onMarketSelect }) =
 
     const success = placeBuilding(selectedBuildingType, [gridX, gridZ]);
     if (success) {
-      setSelectedBuildingType(null);
+      // Clear the selected building type - note: this should be handled by parent component
     }
   };
 
