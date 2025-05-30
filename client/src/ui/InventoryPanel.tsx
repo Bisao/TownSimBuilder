@@ -263,10 +263,10 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
     });
   }, [inventoryItems, filter, sortBy]);
 
-  const handleDragStart = useCallback((item: InventoryItem, e: React.DragEvent) => {
+  const handleDragStart = useCallback((item: InventoryItem, e: React.DragEvent, fromSlot?: string) => {
     setDraggedItem(item);
     e.dataTransfer.setData("text/plain", item.id);
-    e.dataTransfer.setData("application/json", JSON.stringify(item));
+    e.dataTransfer.setData("application/json", JSON.stringify({ ...item, fromSlot }));
     e.dataTransfer.effectAllowed = "move";
     e.dataTransfer.dropEffect = "move";
   }, []);
@@ -492,7 +492,44 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
             e.preventDefault();
             e.stopPropagation();
             e.currentTarget.classList.remove('animate-pulse');
-            handleDropOnSlot(e, slotId);
+            
+            // Se há um item equipado e estamos arrastando outro item, troque-os
+            if (slot?.equipped && draggedItem && draggedItem.id !== slot.equipped.id) {
+              // Trocar itens entre slot e inventário
+              const currentEquippedItem = slot.equipped;
+              const isCompatible = slot.acceptedTypes?.includes(draggedItem.type);
+              
+              if (isCompatible) {
+                // Adicionar item equipado de volta ao inventário
+                setInventoryItems(prev => {
+                  const newItems = [...prev];
+                  newItems.push({ ...currentEquippedItem, equipped: false });
+                  return newItems.filter(item => item.id !== draggedItem.id);
+                });
+                
+                // Equipar novo item
+                setEquipmentSlots(prev => prev.map(s => 
+                  s.id === slotId 
+                    ? { ...s, equipped: { ...draggedItem, equipped: true } }
+                    : s
+                ));
+                
+                setDraggedItem(null);
+                
+                // Feedback de sucesso
+                const notification = document.createElement('div');
+                notification.className = 'fixed top-4 right-4 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg z-[10000] animate-pulse';
+                notification.textContent = `✓ ${draggedItem.name} equipado! ${currentEquippedItem.name} retornou ao inventário.`;
+                document.body.appendChild(notification);
+                setTimeout(() => {
+                  if (document.body.contains(notification)) {
+                    document.body.removeChild(notification);
+                  }
+                }, 3000);
+              }
+            } else {
+              handleDropOnSlot(e, slotId);
+            }
           }}
           onClick={(e) => {
             e.stopPropagation();
@@ -503,15 +540,20 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
           title={slot?.equipped ? `Clique para desequipar ${slot.equipped.name}` : `Arraste um item para equipar em ${label}`}
         >
           {slot?.equipped ? (
-            <div className="relative group w-full h-full flex items-center justify-center">
-              <div className={`text-2xl bg-gradient-to-br ${getRarityColor(slot.equipped.rarity)} rounded-lg p-2 border ${getRarityBorder(slot.equipped.rarity)} w-full h-full flex items-center justify-center`}>
+            <div 
+              className="relative group w-full h-full flex items-center justify-center cursor-grab active:cursor-grabbing"
+              draggable
+              onDragStart={(e) => handleDragStart(slot.equipped!, e, slotId)}
+              onDragEnd={handleDragEnd}
+            >
+              <div className={`text-2xl bg-gradient-to-br ${getRarityColor(slot.equipped.rarity)} rounded-lg p-2 border ${getRarityBorder(slot.equipped.rarity)} w-full h-full flex items-center justify-center transition-all duration-200 hover:scale-105`}>
                 {slot.equipped.icon}
               </div>
               <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-10 pointer-events-none">
-                {slot.equipped.name} - Clique para desequipar
+                {slot.equipped.name} - Arraste para mover ou clique para desequipar
               </div>
               {/* Indicador visual para desequipar */}
-              <div className="absolute top-0 right-0 w-4 h-4 bg-red-500 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+              <div className="absolute top-0 right-0 w-4 h-4 bg-red-500 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
                 <i className="fa-solid fa-times text-white text-xs"></i>
               </div>
             </div>
@@ -522,6 +564,20 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
       </div>
     );
   };
+
+  const handleDropOnInventory = useCallback((e: React.DragEvent, slotIndex: number) => {
+    const item = filteredItems[slotIndex];
+    if (!item && draggedItem) {
+      e.preventDefault();
+      e.stopPropagation();
+      
+      // Se o item vem de um slot de equipamento, desequipá-lo
+      const equippedSlot = equipmentSlots.find(slot => slot.equipped?.id === draggedItem.id);
+      if (equippedSlot) {
+        handleUnequip(equippedSlot.id);
+      }
+    }
+  }, [filteredItems, draggedItem, equipmentSlots, handleUnequip]);
 
   const inventorySlots = useMemo(() => 
     Array.from({ length: 60 }, (_, i) => {
@@ -539,23 +595,22 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
               e.dataTransfer.dropEffect = "move";
             }
           }}
-          onDrop={(e) => {
-            if (!item && draggedItem) {
+          onDragEnter={(e) => {
+            if (!item) {
               e.preventDefault();
               e.stopPropagation();
-              
-              // Se o item vem de um slot de equipamento, desequipá-lo
-              const equippedSlot = equipmentSlots.find(slot => slot.equipped?.id === draggedItem.id);
-              if (equippedSlot) {
-                handleUnequip(equippedSlot.id);
-              }
             }
           }}
+          onDragLeave={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+          }}
+          onDrop={(e) => handleDropOnInventory(e, i)}
         >
           {item && <ItemComponent item={item} index={i} />}
         </div>
       );
-    }), [filteredItems, draggedItem, equipmentSlots, handleUnequip]);
+    }), [filteredItems, draggedItem, handleDropOnInventory]);
 
   return (
     <div 
