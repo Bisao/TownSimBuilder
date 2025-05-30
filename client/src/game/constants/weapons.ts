@@ -1,30 +1,78 @@
+export type WeaponType = 'sword' | 'axe' | 'bow' | 'staff' | 'dagger' | 'mace' | 'spear' | 'crossbow';
+export type DamageType = 'physical' | 'magical' | 'piercing' | 'slashing' | 'blunt';
 
-import { Weapon, WeaponType } from "../types/combat";
+export interface WeaponDefinition {
+  id: string;
+  name: string;
+  type: WeaponType;
+  tier: number;
+  damage: {
+    min: number;
+    max: number;
+    type: DamageType;
+  };
+  durability: number;
+  maxDurability: number;
+  weight: number;
+  range: number;
+  attackSpeed: number; // attacks per second
+  criticalChance: number; // 0-1
+  criticalMultiplier: number;
+  requirements: {
+    level?: number;
+    strength?: number;
+    dexterity?: number;
+    intelligence?: number;
+  };
+  specialEffects?: {
+    lifesteal?: number;
+    poison?: number;
+    burn?: number;
+    freeze?: number;
+  };
+  description: string;
+  rarity: 'common' | 'uncommon' | 'rare' | 'epic' | 'legendary';
+  craftingMaterials?: Record<string, number>;
+}
 
-export const WEAPONS_DATABASE: Record<string, Weapon> = {
-  // === COMBATE CORPO A CORPO ===
-  
-  // Espadas
+export const WEAPON_DEFINITIONS: Record<string, WeaponDefinition> = {
+  // ===== ESPADAS =====
+  wooden_sword: {
+    id: 'wooden_sword',
+    name: 'Espada de Madeira',
+    type: 'sword',
+    tier: 1,
+    damage: { min: 3, max: 6, type: 'slashing' },
+    durability: 25,
+    maxDurability: 25,
+    weight: 2,
+    range: 1.2,
+    attackSpeed: 1.0,
+    criticalChance: 0.05,
+    criticalMultiplier: 1.5,
+    requirements: { level: 1 },
+    description: 'Espada básica de madeira para iniciantes',
+    rarity: 'common',
+    craftingMaterials: { wood: 8, iron: 2 },
+  },
+
   iron_sword: {
     id: 'iron_sword',
     name: 'Espada de Ferro',
     type: 'sword',
-    tier: 4,
-    damage: 45,
-    speed: 1.2,
-    range: 2,
-    durability: 100,
-    maxDurability: 100,
-    requirements: { strength: 15, level: 10 },
-    specialAbilities: [{
-      id: 'slash_combo',
-      name: 'Combo de Corte',
-      description: 'Executa 3 ataques rápidos consecutivos',
-      type: 'active',
-      cooldown: 8,
-      staminaCost: 30,
-      damage: 35
-    }]
+    tier: 3,
+    damage: { min: 8, max: 14, type: 'slashing' },
+    durability: 60,
+    maxDurability: 60,
+    weight: 4,
+    range: 1.3,
+    attackSpeed: 1.1,
+    criticalChance: 0.08,
+    criticalMultiplier: 1.6,
+    requirements: { level: 5, strength: 12 },
+    description: 'Espada confiável feita de ferro temperado',
+    rarity: 'uncommon',
+    craftingMaterials: { iron: 15, wood: 5, coal: 3 },
   },
 
   steel_sword: {
@@ -32,332 +80,219 @@ export const WEAPONS_DATABASE: Record<string, Weapon> = {
     name: 'Espada de Aço',
     type: 'sword',
     tier: 5,
-    damage: 65,
-    speed: 1.3,
-    range: 2,
-    durability: 150,
-    maxDurability: 150,
-    requirements: { strength: 25, level: 20 },
-    specialAbilities: [{
-      id: 'piercing_thrust',
-      name: 'Estocada Perfurante',
-      description: 'Ignora 50% da armadura',
-      type: 'active',
-      cooldown: 12,
-      staminaCost: 40,
-      damage: 80
-    }]
+    damage: { min: 15, max: 22, type: 'slashing' },
+    durability: 100,
+    maxDurability: 100,
+    weight: 5,
+    range: 1.4,
+    attackSpeed: 1.2,
+    criticalChance: 0.12,
+    criticalMultiplier: 1.8,
+    requirements: { level: 15, strength: 18 },
+    description: 'Espada de aço forjada com maestria',
+    rarity: 'rare',
+    craftingMaterials: { iron: 25, coal: 10, gems: 2 },
   },
 
-  // Machados
-  iron_axe: {
-    id: 'iron_axe',
-    name: 'Machado de Ferro',
+  // ===== MACHADOS =====
+  stone_axe: {
+    id: 'stone_axe',
+    name: 'Machado de Pedra',
+    type: 'axe',
+    tier: 1,
+    damage: { min: 4, max: 8, type: 'slashing' },
+    durability: 30,
+    maxDurability: 30,
+    weight: 3,
+    range: 1.1,
+    attackSpeed: 0.8,
+    criticalChance: 0.06,
+    criticalMultiplier: 2.0,
+    requirements: { level: 1 },
+    description: 'Machado primitivo de pedra lascada',
+    rarity: 'common',
+    craftingMaterials: { stone: 10, wood: 5 },
+  },
+
+  battle_axe: {
+    id: 'battle_axe',
+    name: 'Machado de Guerra',
     type: 'axe',
     tier: 4,
-    damage: 55,
-    speed: 1.0,
-    range: 2.2,
-    durability: 120,
-    maxDurability: 120,
-    requirements: { strength: 20, level: 12 },
-    specialAbilities: [{
-      id: 'heavy_swing',
-      name: 'Golpe Pesado',
-      description: 'Ataque lento mas devastador',
-      type: 'active',
-      cooldown: 10,
-      staminaCost: 50,
-      damage: 90
-    }]
+    damage: { min: 12, max: 20, type: 'slashing' },
+    durability: 80,
+    maxDurability: 80,
+    weight: 7,
+    range: 1.5,
+    attackSpeed: 0.7,
+    criticalChance: 0.15,
+    criticalMultiplier: 2.2,
+    requirements: { level: 10, strength: 20 },
+    description: 'Machado pesado projetado para combate',
+    rarity: 'rare',
+    craftingMaterials: { iron: 20, wood: 8, coal: 5 },
   },
 
-  // Maças
-  iron_mace: {
-    id: 'iron_mace',
-    name: 'Maça de Ferro',
-    type: 'mace',
-    tier: 4,
-    damage: 50,
-    speed: 1.1,
-    range: 1.8,
-    durability: 140,
-    maxDurability: 140,
-    requirements: { strength: 18, level: 11 },
-    specialAbilities: [{
-      id: 'stunning_blow',
-      name: 'Golpe Atordoante',
-      description: 'Pode atordoar o inimigo por 3 segundos',
-      type: 'active',
-      cooldown: 15,
-      staminaCost: 35,
-      damage: 45
-    }]
-  },
-
-  // === COMBATE À DISTÂNCIA ===
-  
-  // Arcos
+  // ===== ARCOS =====
   hunting_bow: {
     id: 'hunting_bow',
     name: 'Arco de Caça',
     type: 'bow',
-    tier: 3,
-    damage: 35,
-    speed: 1.5,
-    range: 15,
-    durability: 80,
-    maxDurability: 80,
-    requirements: { dexterity: 15, level: 8 },
-    specialAbilities: [{
-      id: 'aimed_shot',
-      name: 'Tiro Certeiro',
-      description: 'Aumenta precisão e dano crítico',
-      type: 'active',
-      cooldown: 6,
-      staminaCost: 25,
-      damage: 50
-    }]
+    tier: 2,
+    damage: { min: 5, max: 9, type: 'piercing' },
+    durability: 40,
+    maxDurability: 40,
+    weight: 2,
+    range: 8.0,
+    attackSpeed: 1.5,
+    criticalChance: 0.18,
+    criticalMultiplier: 2.0,
+    requirements: { level: 3, dexterity: 10 },
+    description: 'Arco versátil para caça e combate à distância',
+    rarity: 'common',
+    craftingMaterials: { wood: 12, string: 3 },
   },
 
-  warbow: {
-    id: 'warbow',
-    name: 'Arco de Guerra',
+  elven_bow: {
+    id: 'elven_bow',
+    name: 'Arco Élfico',
     type: 'bow',
-    tier: 5,
-    damage: 60,
-    speed: 1.4,
-    range: 20,
+    tier: 6,
+    damage: { min: 18, max: 25, type: 'piercing' },
     durability: 120,
     maxDurability: 120,
-    requirements: { dexterity: 30, level: 25 },
-    specialAbilities: [{
-      id: 'rain_of_arrows',
-      name: 'Chuva de Flechas',
-      description: 'Dispara múltiplas flechas em área',
-      type: 'active',
-      cooldown: 20,
-      staminaCost: 60,
-      damage: 40,
-      range: 18,
-      areaOfEffect: 5
-    }]
+    weight: 1,
+    range: 12.0,
+    attackSpeed: 2.0,
+    criticalChance: 0.25,
+    criticalMultiplier: 2.5,
+    requirements: { level: 20, dexterity: 25 },
+    description: 'Arco élfico de precisão incomparável',
+    rarity: 'epic',
+    craftingMaterials: { wood: 30, gems: 5, gold: 10 },
   },
 
-  // Bestas
-  crossbow: {
-    id: 'crossbow',
-    name: 'Besta',
-    type: 'crossbow',
-    tier: 4,
-    damage: 70,
-    speed: 0.8,
-    range: 18,
-    durability: 100,
-    maxDurability: 100,
-    requirements: { dexterity: 20, level: 15 },
-    specialAbilities: [{
-      id: 'explosive_bolt',
-      name: 'Virote Explosivo',
-      description: 'Causa dano em área no impacto',
-      type: 'active',
-      cooldown: 12,
-      staminaCost: 40,
-      damage: 80,
-      areaOfEffect: 3
-    }]
+  // ===== CAJADOS =====
+  wooden_staff: {
+    id: 'wooden_staff',
+    name: 'Cajado de Madeira',
+    type: 'staff',
+    tier: 1,
+    damage: { min: 2, max: 5, type: 'magical' },
+    durability: 35,
+    maxDurability: 35,
+    weight: 2,
+    range: 1.8,
+    attackSpeed: 1.2,
+    criticalChance: 0.10,
+    criticalMultiplier: 1.8,
+    requirements: { level: 1, intelligence: 8 },
+    description: 'Cajado básico para iniciantes em magia',
+    rarity: 'common',
+    craftingMaterials: { wood: 10, gems: 1 },
   },
 
-  // === COMBATE MÁGICO ===
-  
-  // Cajados de Fogo
-  fire_staff: {
-    id: 'fire_staff',
-    name: 'Cajado de Fogo',
-    type: 'fire_staff',
-    tier: 4,
-    damage: 40,
-    speed: 1.0,
-    range: 12,
+  crystal_staff: {
+    id: 'crystal_staff',
+    name: 'Cajado de Cristal',
+    type: 'staff',
+    tier: 5,
+    damage: { min: 12, max: 18, type: 'magical' },
     durability: 90,
     maxDurability: 90,
-    requirements: { intelligence: 25, level: 15 },
-    specialAbilities: [{
-      id: 'fireball',
-      name: 'Bola de Fogo',
-      description: 'Lança uma bola de fogo explosiva',
-      type: 'active',
-      cooldown: 8,
-      manaCost: 30,
-      damage: 60,
-      range: 15,
-      areaOfEffect: 3
-    }]
+    weight: 3,
+    range: 2.5,
+    attackSpeed: 1.0,
+    criticalChance: 0.20,
+    criticalMultiplier: 2.2,
+    requirements: { level: 15, intelligence: 20 },
+    description: 'Cajado ornamentado com cristais mágicos',
+    rarity: 'rare',
+    craftingMaterials: { wood: 15, gems: 8, gold: 5 },
   },
 
-  // Cajados de Gelo
-  ice_staff: {
-    id: 'ice_staff',
-    name: 'Cajado de Gelo',
-    type: 'ice_staff',
+  // ===== ADAGAS =====
+  iron_dagger: {
+    id: 'iron_dagger',
+    name: 'Adaga de Ferro',
+    type: 'dagger',
+    tier: 2,
+    damage: { min: 3, max: 7, type: 'piercing' },
+    durability: 45,
+    maxDurability: 45,
+    weight: 1,
+    range: 0.8,
+    attackSpeed: 2.0,
+    criticalChance: 0.25,
+    criticalMultiplier: 2.0,
+    requirements: { level: 3, dexterity: 8 },
+    description: 'Adaga rápida e precisa',
+    rarity: 'common',
+    craftingMaterials: { iron: 8, wood: 3 },
+  },
+
+  poisoned_dagger: {
+    id: 'poisoned_dagger',
+    name: 'Adaga Envenenada',
+    type: 'dagger',
     tier: 4,
-    damage: 35,
-    speed: 1.1,
-    range: 14,
-    durability: 90,
-    maxDurability: 90,
-    requirements: { intelligence: 22, level: 13 },
-    specialAbilities: [{
-      id: 'frost_wave',
-      name: 'Onda Glacial',
-      description: 'Cria uma onda que congela inimigos',
-      type: 'active',
-      cooldown: 10,
-      manaCost: 35,
-      damage: 45,
-      range: 10,
-      areaOfEffect: 6
-    }]
+    damage: { min: 6, max: 11, type: 'piercing' },
+    durability: 60,
+    maxDurability: 60,
+    weight: 1,
+    range: 0.8,
+    attackSpeed: 2.2,
+    criticalChance: 0.30,
+    criticalMultiplier: 2.2,
+    requirements: { level: 12, dexterity: 16 },
+    specialEffects: { poison: 3 },
+    description: 'Adaga com lâmina impregnada de veneno',
+    rarity: 'uncommon',
+    craftingMaterials: { iron: 12, poison_sac: 5, wood: 3 },
   },
-
-  // Cajados de Raio
-  lightning_staff: {
-    id: 'lightning_staff',
-    name: 'Cajado de Raio',
-    type: 'lightning_staff',
-    tier: 4,
-    damage: 50,
-    speed: 1.3,
-    range: 16,
-    durability: 85,
-    maxDurability: 85,
-    requirements: { intelligence: 28, level: 18 },
-    specialAbilities: [{
-      id: 'chain_lightning',
-      name: 'Raio em Corrente',
-      description: 'Salta entre múltiplos inimigos',
-      type: 'active',
-      cooldown: 12,
-      manaCost: 40,
-      damage: 55
-    }]
-  },
-
-  // Cajados Sagrados
-  holy_staff: {
-    id: 'holy_staff',
-    name: 'Cajado Sagrado',
-    type: 'holy_staff',
-    tier: 4,
-    damage: 30,
-    speed: 1.2,
-    range: 12,
-    durability: 100,
-    maxDurability: 100,
-    requirements: { intelligence: 20, level: 12 },
-    specialAbilities: [{
-      id: 'divine_healing',
-      name: 'Cura Divina',
-      description: 'Cura aliados em área',
-      type: 'active',
-      cooldown: 8,
-      manaCost: 25,
-      range: 10,
-      areaOfEffect: 4
-    }]
-  },
-
-  // === COMBATE HÍBRIDO ===
-  
-  // Espadas Encantadas
-  enchanted_sword: {
-    id: 'enchanted_sword',
-    name: 'Espada Encantada',
-    type: 'enchanted_sword',
-    tier: 5,
-    damage: 55,
-    speed: 1.3,
-    range: 2.2,
-    durability: 130,
-    maxDurability: 130,
-    requirements: { strength: 20, intelligence: 15, level: 22 },
-    enchantments: [{
-      id: 'flame_enchant',
-      name: 'Encantamento Flamejante',
-      type: 'damage',
-      effect: { attribute: 'fireDamage', value: 15 }
-    }],
-    specialAbilities: [{
-      id: 'elemental_slash',
-      name: 'Corte Elemental',
-      description: 'Combina dano físico e mágico',
-      type: 'active',
-      cooldown: 10,
-      staminaCost: 25,
-      manaCost: 15,
-      damage: 70
-    }]
-  },
-
-  // Cajado de Batalha
-  battle_mage_staff: {
-    id: 'battle_mage_staff',
-    name: 'Cajado de Mago de Batalha',
-    type: 'battle_mage_staff',
-    tier: 5,
-    damage: 45,
-    speed: 1.1,
-    range: 8,
-    durability: 110,
-    maxDurability: 110,
-    requirements: { strength: 15, intelligence: 25, level: 25 },
-    specialAbilities: [{
-      id: 'mana_strike',
-      name: 'Golpe de Mana',
-      description: 'Ataque corpo a corpo que consome mana',
-      type: 'active',
-      cooldown: 6,
-      manaCost: 20,
-      damage: 65
-    }]
-  }
 };
 
-export const getWeaponsByType = (type: WeaponType): Weapon[] => {
-  return Object.values(WEAPONS_DATABASE).filter(weapon => weapon.type === type);
+// Utility functions
+export const getWeaponDefinition = (weaponId: string): WeaponDefinition | undefined => {
+  return WEAPON_DEFINITIONS[weaponId];
 };
 
-export const getWeaponsBySpecialization = (specialization: string): Weapon[] => {
-  switch (specialization) {
-    case 'warrior':
-    case 'plate_fighter':
-      return getWeaponsByType('sword')
-        .concat(getWeaponsByType('axe'))
-        .concat(getWeaponsByType('mace'));
-        
-    case 'hunter':
-    case 'archer':
-      return getWeaponsByType('bow')
-        .concat(getWeaponsByType('crossbow'));
-        
-    case 'fire_mage':
-      return getWeaponsByType('fire_staff');
-      
-    case 'ice_mage':
-      return getWeaponsByType('ice_staff');
-      
-    case 'lightning_mage':
-      return getWeaponsByType('lightning_staff');
-      
-    case 'holy_mage':
-      return getWeaponsByType('holy_staff');
-      
-    case 'battle_mage':
-    case 'spellsword':
-      return getWeaponsByType('enchanted_sword')
-        .concat(getWeaponsByType('battle_mage_staff'));
-        
-    default:
-      return [];
-  }
+export const getWeaponsByType = (type: WeaponType): WeaponDefinition[] => {
+  return Object.values(WEAPON_DEFINITIONS).filter(weapon => weapon.type === type);
 };
+
+export const getWeaponsByTier = (tier: number): WeaponDefinition[] => {
+  return Object.values(WEAPON_DEFINITIONS).filter(weapon => weapon.tier === tier);
+};
+
+export const canEquipWeapon = (weaponId: string, character: any): boolean => {
+  const weapon = getWeaponDefinition(weaponId);
+  if (!weapon) return false;
+
+  const { level, strength, dexterity, intelligence } = weapon.requirements;
+
+  if (level && character.level < level) return false;
+  if (strength && character.strength < strength) return false;
+  if (dexterity && character.dexterity < dexterity) return false;
+  if (intelligence && character.intelligence < intelligence) return false;
+
+  return true;
+};
+
+export const calculateWeaponDamage = (weaponId: string): number => {
+  const weapon = getWeaponDefinition(weaponId);
+  if (!weapon) return 0;
+
+  const { min, max } = weapon.damage;
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+};
+
+// Weapon categories for UI organization
+export const WEAPON_CATEGORIES = {
+  MELEE: ['sword', 'axe', 'dagger', 'mace', 'spear'],
+  RANGED: ['bow', 'crossbow'],
+  MAGIC: ['staff'],
+} as const;
+
+// Legacy exports for compatibility
+export const weaponsDatabase = WEAPON_DEFINITIONS;
