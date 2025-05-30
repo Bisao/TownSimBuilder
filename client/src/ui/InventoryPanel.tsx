@@ -166,7 +166,7 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
 
     setDraggedItem(null);
     console.log(`✅ ${draggedItem.name} equipado em ${slot.name}`);
-    
+
     // Feedback visual opcional
     const notification = document.createElement('div');
     notification.className = 'fixed top-4 right-4 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg z-[10000]';
@@ -274,22 +274,38 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
         <div
           className={`w-10 h-10 bg-white/30 border-2 ${
             draggedItem ? 'border-blue-400 bg-blue-50/50' : 'border-gray-300/60'
-          } rounded-lg flex items-center justify-center cursor-pointer hover:bg-white/40 transition-colors backdrop-blur-sm shadow-sm`}
+          } rounded-lg flex items-center justify-center cursor-pointer hover:bg-white/40 transition-all duration-200 backdrop-blur-sm shadow-sm`}
           onDragOver={(e) => {
             e.preventDefault();
             e.stopPropagation();
-            e.currentTarget.classList.add('border-green-400', 'bg-green-50/50');
+            // Adicionar feedback visual mais forte
+            e.currentTarget.classList.add('border-green-400', 'bg-green-100/80', 'scale-105', 'shadow-lg');
+            e.currentTarget.classList.remove('border-gray-300/60', 'border-blue-400');
           }}
           onDragLeave={(e) => {
-            e.currentTarget.classList.remove('border-green-400', 'bg-green-50/50');
+            // Só remover se realmente saiu do elemento
+            const rect = e.currentTarget.getBoundingClientRect();
+            const x = e.clientX;
+            const y = e.clientY;
+
+            if (x < rect.left || x > rect.right || y < rect.top || y > rect.bottom) {
+              e.currentTarget.classList.remove('border-green-400', 'bg-green-100/80', 'scale-105', 'shadow-lg');
+              e.currentTarget.classList.add(draggedItem ? 'border-blue-400' : 'border-gray-300/60');
+            }
           }}
           onDrop={(e) => {
-            e.currentTarget.classList.remove('border-green-400', 'bg-green-50/50');
+            // Remover todos os estilos de hover
+            e.currentTarget.classList.remove('border-green-400', 'bg-green-100/80', 'scale-105', 'shadow-lg');
+            e.currentTarget.classList.add('border-gray-300/60');
+            console.log(`Drop evento acionado no slot ${slotId}`);
             handleDropOnSlot(e, slotId);
           }}
           onClick={(e) => {
             e.stopPropagation();
-            if (slot?.equipped) handleUnequip(slotId);
+            if (slot?.equipped) {
+              console.log(`Desequipando item: ${slot.equipped.name}`);
+              handleUnequip(slotId);
+            }
           }}
         >
           {slot?.equipped ? (
@@ -414,7 +430,7 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
             </div>
           </div>
 
-          
+
         </div>
       </div>
     </div>
