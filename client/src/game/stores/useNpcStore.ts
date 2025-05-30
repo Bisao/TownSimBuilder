@@ -518,17 +518,12 @@ class NPCStateManager {
       return { state: "idle" };
     }
 
-    // Buscar dummy no DummyStore ao invés do BuildingStore
-    let dummy = null;
-    try {
-      import('./useDummyStore').then(({ useDummyStore }) => {
-        dummy = useDummyStore.getState().getDummy(npc.targetBuildingId!);
-      }).catch(console.error);
-    } catch (error) {
-      console.error('Erro ao acessar DummyStore:', error);
-    }
+    // Buscar dummy no DummyStore
+    const { useDummyStore } = require('./useDummyStore');
+    const dummy = useDummyStore.getState().getDummy(npc.targetBuildingId);
 
     if (!dummy) {
+      console.log(`Dummy ${npc.targetBuildingId} não encontrado para ${npc.name}`);
       return {
         state: "idle",
         combatTarget: null,
@@ -559,10 +554,9 @@ class NPCStateManager {
       const damage = Math.floor(Math.random() * 20) + 10; // 10-30 dano
       const critical = Math.random() < 0.15; // 15% chance de crítico
 
-      // Importar e usar o dummy store
-      import('./useDummyStore').then(({ useDummyStore }) => {
-        useDummyStore.getState().hitDummy(npc.combatTarget!, damage, critical);
-      }).catch(console.error);
+      // Aplicar dano ao dummy
+      const { useDummyStore } = require('./useDummyStore');
+      useDummyStore.getState().hitDummy(npc.combatTarget!, damage, critical);
 
       console.log(`${npc.name} atacou o dummy causando ${damage} de dano${critical ? ' (CRÍTICO)' : ''}`);
 
@@ -666,11 +660,14 @@ class NPCStateManager {
     const silo = buildings.find(b => b.id === npc.targetBuildingId && b.type === 'silo');
 
     if (silo && npc.inventory.amount > 0) {
-      // Importar e usar resource store
-      import('./useResourceStore').then(({ useResourceStore }) => {
+      // Atualizar recursos no store
+      try {
+        const { useResourceStore } = require('./useResourceStore');
         const resourceStore = useResourceStore.getState();
         resourceStore.updateResource(npc.inventory.type, npc.inventory.amount);
-      }).catch(console.error);
+      } catch (error) {
+        console.error('Erro ao atualizar recursos:', error);
+      }
 
       return {
         ...updates,
@@ -736,19 +733,16 @@ class NPCStateManager {
         }
       }
 
-      // Dar XP para o trabalho atual
-      if (npc.assignedWork) {
-        import('./useNpcStore').then(({ useNpcStore }) => {
-          useNpcStore.getState().addWorkExperience(npc.id, npc.assignedWork!, 5);
-        }).catch(console.error);
-      }
-
+      // Dar XP para o trabalho atual (será feito pelo próprio store)
       // Atualizar métricas
-      import('./useNpcMetrics').then(({ useNpcMetrics }) => {
+      try {
+        const { useNpcMetrics } = require('./useNpcMetrics');
         const metricsStore = useNpcMetrics.getState();
         metricsStore.recordResourceCollection(npc.id, resourceType, 1);
         metricsStore.updateEfficiency(npc.id, npc.skills.efficiency + 0.1);
-      }).catch(console.error);
+      } catch (error) {
+        console.error('Erro ao atualizar métricas:', error);
+      }
 
       return {
         inventory: {
@@ -917,9 +911,12 @@ export const useNpcStore = create<NPCStoreState>()(
       }));
 
       // Inicializar métricas
-      import('./useNpcMetrics').then(({ useNpcMetrics }) => {
+      try {
+        const { useNpcMetrics } = require('./useNpcMetrics');
         useNpcMetrics.getState().initializeNPC(id);
-      }).catch(console.error);
+      } catch (error) {
+        console.error('Erro ao inicializar métricas:', error);
+      }
 
       console.log(`NPC aldeão criado com ID ${id} em ${position}`);
       return id;
@@ -1005,9 +1002,12 @@ export const useNpcStore = create<NPCStoreState>()(
 
           // Atualizar métricas se estado mudou
           if (npc.state !== updatedNpc.state) {
-            import('./useNpcMetrics').then(({ useNpcMetrics }) => {
+            try {
+              const { useNpcMetrics } = require('./useNpcMetrics');
               useNpcMetrics.getState().updateActivity(npc.id, updatedNpc.state);
-            }).catch(console.error);
+            } catch (error) {
+              console.error('Erro ao atualizar atividade:', error);
+            }
           }
 
                     return updatedNpc;
