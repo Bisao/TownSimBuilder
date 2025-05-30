@@ -1,0 +1,58 @@
+Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools
+App.tsx:58 Sistema de áudio inicializado
+interface.tsx:19 Current game phase: login
+GameUI.tsx:72 Initializing game systems...
+useResourceStore.ts:39 Resources initialized: Object
+GameUI.tsx:83 Game systems initialized successfully
+useAudio.tsx:33 Inicializando sistema de áudio
+useAudio.tsx:54 Sistema de áudio inicializado
+World.tsx:64 Initializing game world and resources
+useGameStore.ts:113 Initializing game store
+useResourceStore.ts:39 Resources initialized: Object
+useResourceStore.ts:140 Generated 30 map resources with cluster distribution
+World.tsx:210 Generated 30 natural resources
+useBuildingStore.ts:49 Cannot place building market at position [25, 25]
+placeBuilding @ useBuildingStore.ts:49
+World.tsx:226 Market placed successfully at [25, 25]
+useDummyStore.ts:46 Dummy de treinamento criado: dummy_1748628067619_vp9wk4qrq na posição [10, 0, 10]
+CameraControls.tsx:36 Camera initialized: Object
+PlacementIndicator.tsx:79 Building house placed at 3,1
+useBuildingStore.ts:101 Building house placed at [3, 1]
+useNpcStore.ts:830 NPC aldeão criado com ID npc_0 em 3.5,0,1.5
+2InventoryPanel.tsx:81 Uncaught ReferenceError: Cannot access 'equipmentSlots' before initialization
+    at InventoryPanel (InventoryPanel.tsx:81:7)
+    at renderWithHooks (chunk-LPPTHLN7.js?v=31832269:11548:26)
+    at mountIndeterminateComponent (chunk-LPPTHLN7.js?v=31832269:14926:21)
+    at beginWork (chunk-LPPTHLN7.js?v=31832269:15914:22)
+    at HTMLUnknownElement.callCallback2 (chunk-LPPTHLN7.js?v=31832269:3674:22)
+    at Object.invokeGuardedCallbackDev (chunk-LPPTHLN7.js?v=31832269:3699:24)
+    at invokeGuardedCallback (chunk-LPPTHLN7.js?v=31832269:3733:39)
+    at beginWork$1 (chunk-LPPTHLN7.js?v=31832269:19765:15)
+    at performUnitOfWork (chunk-LPPTHLN7.js?v=31832269:19198:20)
+    at workLoopSync (chunk-LPPTHLN7.js?v=31832269:19137:13)
+chunk-6CHFNV4N.js?v=31832269:17705 The above error occurred in the <InventoryPanel> component:
+
+    at InventoryPanel (https://289c9bf3-ac4c-4f0b-93a2-95762cbee8c1-00-1duowirj3o9p7.kirk.replit.dev/src/ui/InventoryPanel.tsx:21:27)
+    at div
+    at NpcPanel (https://289c9bf3-ac4c-4f0b-93a2-95762cbee8c1-00-1duowirj3o9p7.kirk.replit.dev/src/ui/NpcPanel.tsx:28:21)
+    at GameUI (https://289c9bf3-ac4c-4f0b-93a2-95762cbee8c1-00-1duowirj3o9p7.kirk.replit.dev/src/ui/GameUI.tsx:46:7)
+    at KeyboardControls (https://289c9bf3-ac4c-4f0b-93a2-95762cbee8c1-00-1duowirj3o9p7.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@react-three_drei.js?v=31832269:9069:8)
+    at div
+    at App (https://289c9bf3-ac4c-4f0b-93a2-95762cbee8c1-00-1duowirj3o9p7.kirk.replit.dev/src/App.tsx?v=EzG3MQ4mEc9jpyAu2QhXS:31:39)
+    at QueryClientProvider (https://289c9bf3-ac4c-4f0b-93a2-95762cbee8c1-00-1duowirj3o9p7.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=31832269:2909:3)
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+console.error @ chunk-6CHFNV4N.js?v=31832269:17705
+chunk-LPPTHLN7.js?v=31832269:9129 Uncaught ReferenceError: Cannot access 'equipmentSlots' before initialization
+    at InventoryPanel (InventoryPanel.tsx:81:7)
+    at renderWithHooks (chunk-LPPTHLN7.js?v=31832269:11548:26)
+    at mountIndeterminateComponent (chunk-LPPTHLN7.js?v=31832269:14926:21)
+    at beginWork (chunk-LPPTHLN7.js?v=31832269:15914:22)
+    at beginWork$1 (chunk-LPPTHLN7.js?v=31832269:19753:22)
+    at performUnitOfWork (chunk-LPPTHLN7.js?v=31832269:19198:20)
+    at workLoopSync (chunk-LPPTHLN7.js?v=31832269:19137:13)
+    at renderRootSync (chunk-LPPTHLN7.js?v=31832269:19116:15)
+    at recoverFromConcurrentError (chunk-LPPTHLN7.js?v=31832269:18736:28)
+    at performSyncWorkOnRoot (chunk-LPPTHLN7.js?v=31832269:18879:28)
+chunk-664ZIH6C.js?v=31832269:17835 THREE.WebGLRenderer: Context Lost.
