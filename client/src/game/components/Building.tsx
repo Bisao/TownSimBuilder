@@ -634,8 +634,7 @@ const Building = ({ building, onMarketSelect }: BuildingProps) => {
             <meshStandardMaterial color="#A0A0A0" metalness={0.8} flatShading />
           </mesh>
           <mesh position={[0.15, 0.02, 0]}>
-            <boxGeometry args={[```text
-0.02, 0.02, 1]} />
+            <boxGeometry args={[0.02, 0.02, 1]} />
             <meshStandardMaterial color="#A0A0A0" metalness={0.8} flatShading />
           </mesh>
 
