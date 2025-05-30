@@ -312,16 +312,6 @@ const NpcPanel: React.FC<NpcPanelProps> = ({ npc, onClose }) => {
                     <i className="fa-solid fa-home text-xs"></i>
                     <span className="text-sm">{npcType?.name || 'Aldeão'}</span>
                   </div>
-                  <div className="flex items-center gap-2 mt-1">
-                    <div className={`w-2 h-2 rounded-full ${
-                      npc.state === "working" ? "bg-green-400" :
-                      npc.state === "moving" ? "bg-yellow-400" :
-                      npc.state === "gathering" ? "bg-blue-400" :
-                      npc.state === "resting" ? "bg-purple-400" :
-                      npc.state === "attacking" ? "bg-red-400" : "bg-gray-400"
-                    }`}></div>
-                    <span className="text-xs text-gray-600">{stateTranslations[npc.state]}</span>
-                  </div>
                 </div>
               </div>
               {/* Control Mode Section */}
