@@ -389,6 +389,55 @@ const GameUI = () => {
         </div>
       </div>
 
+      {/* Player Info Panel - Above Skills */}
+      {selectedNpc && (
+        <div className="absolute bottom-20 left-1/2 transform -translate-x-1/2 z-10 pointer-events-none">
+          <div className="bg-black/80 backdrop-blur-sm rounded-lg px-4 py-2 border border-gray-600 pointer-events-auto">
+            <div className="flex items-center gap-4 text-white text-sm">
+              {/* NPC Avatar and Name */}
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 bg-gradient-to-br from-blue-400 to-purple-500 rounded-full flex items-center justify-center border-2 border-white/30">
+                  <i className="fa-solid fa-user text-white text-xs"></i>
+                </div>
+                <span className="font-semibold">{selectedNpc.name}</span>
+              </div>
+
+              {/* Level */}
+              <div className="flex items-center gap-1">
+                <i className="fa-solid fa-star text-yellow-400"></i>
+                <span>Nv. {selectedNpc.currentLevel}</span>
+              </div>
+
+              {/* Health */}
+              <div className="flex items-center gap-1">
+                <i className="fa-solid fa-heart text-red-400"></i>
+                <span>{selectedNpc.currentHealth}/{selectedNpc.maxHealth}</span>
+              </div>
+
+              {/* Energy */}
+              <div className="flex items-center gap-1">
+                <i className="fa-solid fa-bolt text-blue-400"></i>
+                <span>{selectedNpc.currentEnergy}/{selectedNpc.maxEnergy}</span>
+              </div>
+
+              {/* Fame Points */}
+              <div className="flex items-center gap-1">
+                <i className="fa-solid fa-trophy text-yellow-400"></i>
+                <span>{selectedNpc.famePoints || 0}</span>
+              </div>
+
+              {/* Current Activity */}
+              {selectedNpc.currentActivity && (
+                <div className="flex items-center gap-1">
+                  <i className="fa-solid fa-cog text-green-400 animate-spin"></i>
+                  <span className="text-green-300">{selectedNpc.currentActivity}</span>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Skills Bar */}
       <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 z-10 pointer-events-none">
         <div className="flex items-center gap-2 pointer-events-auto">
