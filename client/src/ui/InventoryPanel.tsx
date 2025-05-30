@@ -55,19 +55,39 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
     const slot = equipmentSlots.find(s => s.id === slotId);
     if (!slot) return { valid: false, reason: "Slot não encontrado" };
 
-    // Verificar tipo
-    if (slot.acceptedTypes && !slot.acceptedTypes.includes(item.type)) {
-      return { valid: false, reason: `Este slot não aceita itens do tipo ${item.type}` };
-    }
+    console.log("Validating equipment:", item.name, "for slot:", slotId, "slot data:", slot);
 
-    // Verificar slot específico do item
-    if (item.slot && slot.acceptedSlots && !slot.acceptedSlots.includes(item.slot)) {
-      return { valid: false, reason: `Este item não pode ser equipado neste slot` };
+    // Verificar se o item pode ser equipado no slot específico
+    const canEquipInSlot = (item: InventoryItem, slot: EquipmentSlot): boolean => {
+      // Verificar tipo primeiro
+      if (slot.acceptedTypes && !slot.acceptedTypes.includes(item.type)) {
+        return false;
+      }
+
+      // Verificar slot específico do item se definido
+      if (item.slot && slot.acceptedSlots) {
+        return slot.acceptedSlots.includes(item.slot);
+      }
+
+      // Para itens sem slot específico, verificar compatibilidade por tipo
+      const typeSlotMapping: Record<string, string[]> = {
+        weapon: ["mainhand", "offhand"],
+        tool: ["mainhand", "tool"],
+        armor: ["head", "chest", "boots", "cape", "offhand"],
+        consumable: ["potion", "food", "bag"]
+      };
+
+      const compatibleSlots = typeSlotMapping[item.type] || [];
+      return compatibleSlots.includes(slotId);
+    };
+
+    if (!canEquipInSlot(item, slot)) {
+      return { valid: false, reason: `${item.name} não pode ser equipado em ${slot.name}` };
     }
 
     // Verificar requisitos de nível
     if (item.requirements?.level && npc.currentLevel < item.requirements.level) {
-      return { valid: false, reason: `Nível necessário: ${item.requirements.level}` };
+      return { valid: false, reason: `Nível ${item.requirements.level} necessário` };
     }
 
     // Verificar requisitos de skill
@@ -85,8 +105,9 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
       return { valid: false, reason: "Item quebrado - necessita reparo" };
     }
 
+    console.log("Validation passed for:", item.name, "in slot:", slotId);
     return { valid: true };
-  }, [npc.currentLevel, npc.skills]);
+  }, [equipmentSlots, npc.currentLevel, npc.skills]);
 
   const [inventoryItems, setInventoryItems] = useState<InventoryItem[]>([
     // === ARMAS LENDÁRIAS ===
@@ -438,6 +459,7 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
   }, [inventoryItems, filter, sortBy]);
 
   const handleDragStart = useCallback((item: InventoryItem, e: React.DragEvent, fromSlot?: string) => {
+    console.log("Drag started:", item.name, "from slot:", fromSlot);
     setDraggedItem(item);
     e.dataTransfer.setData("text/plain", item.id);
     e.dataTransfer.setData("application/json", JSON.stringify({ ...item, fromSlot }));
@@ -447,78 +469,133 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
   }, []);
 
   const handleDragEnd = useCallback(() => {
+    console.log("Drag ended");
     setTimeout(() => {
       setDraggedItem(null);
       setValidationError("");
-    }, 100);
+    }, 50);
   }, []);
 
   const handleDropOnSlot = useCallback((e: React.DragEvent, slotId: string) => {
     e.preventDefault();
     e.stopPropagation();
     
+    console.log("Drop on slot:", slotId);
+    
     const itemId = e.dataTransfer.getData("text/plain");
-    const itemData = draggedItem || inventoryItems.find(item => item.id === itemId);
+    let itemData: InventoryItem | null = null;
+    let fromSlot: string | null = null;
+    
+    try {
+      const jsonData = e.dataTransfer.getData("application/json");
+      if (jsonData) {
+        const parsedData = JSON.parse(jsonData);
+        itemData = parsedData;
+        fromSlot = parsedData.fromSlot;
+      }
+    } catch (error) {
+      console.warn("Failed to parse drag data:", error);
+    }
+    
+    // Fallback para buscar o item
+    if (!itemData) {
+      itemData = draggedItem || inventoryItems.find(item => item.id === itemId);
+    }
     
     if (!itemData) {
+      console.error("Item não encontrado:", itemId);
       showNotification("Item não encontrado", 'error');
       return;
     }
 
+    console.log("Item data:", itemData, "from slot:", fromSlot);
+
     // Validar equipamento
     const validation = validateEquipment(itemData, slotId);
     if (!validation.valid) {
+      console.warn("Validation failed:", validation.reason);
       showNotification(validation.reason || "Não é possível equipar este item", 'error');
       setValidationError(validation.reason || "");
       return;
     }
 
-    const slot = equipmentSlots.find(s => s.id === slotId);
-    if (!slot) {
+    const targetSlot = equipmentSlots.find(s => s.id === slotId);
+    if (!targetSlot) {
       showNotification("Slot não encontrado", 'error');
       return;
     }
 
-    // Sistema de troca segura de equipamentos
-    const currentEquippedItem = slot.equipped;
-    
-    setInventoryItems(prev => {
-      let newItems = [...prev];
-      
-      // Se há item equipado no slot, adicionar de volta ao inventário
-      if (currentEquippedItem) {
-        newItems.push({ ...currentEquippedItem, equipped: false });
-      }
-      
-      // Remover o item que está sendo equipado do inventário
-      newItems = newItems.filter(item => item.id !== itemData.id);
-      
-      return newItems;
-    });
+    console.log("Equipando item:", itemData.name, "no slot:", slotId);
 
-    // Equipar item no slot
-    setEquipmentSlots(prev => {
-      const newSlots = prev.map(s => 
-        s.id === slotId 
-          ? { ...s, equipped: { ...itemData, equipped: true } }
-          : s
-      );
-      
-      // Salvar equipamentos no NPC
-      const equipment = newSlots.reduce((acc, slot) => {
-        if (slot.equipped) {
-          acc[slot.id] = slot.equipped;
+    // Sistema de troca segura de equipamentos
+    const currentEquippedItem = targetSlot.equipped;
+    
+    // Se o item vem de outro slot, trocar os itens
+    if (fromSlot && fromSlot !== slotId) {
+      setEquipmentSlots(prev => {
+        const newSlots = prev.map(slot => {
+          if (slot.id === fromSlot) {
+            // Slot de origem recebe o item que estava no slot de destino
+            return { ...slot, equipped: currentEquippedItem };
+          } else if (slot.id === slotId) {
+            // Slot de destino recebe o item arrastado
+            return { ...slot, equipped: { ...itemData!, equipped: true } };
+          }
+          return slot;
+        });
+        
+        // Salvar equipamentos no NPC
+        const equipment = newSlots.reduce((acc, slot) => {
+          if (slot.equipped) {
+            acc[slot.id] = slot.equipped;
+          }
+          return acc;
+        }, {} as Record<string, InventoryItem>);
+        
+        updateNpc(npc.id, { equipment });
+        
+        return newSlots;
+      });
+    } else {
+      // Item vem do inventário
+      setInventoryItems(prev => {
+        let newItems = [...prev];
+        
+        // Se há item equipado no slot, adicionar de volta ao inventário
+        if (currentEquippedItem) {
+          newItems.push({ ...currentEquippedItem, equipped: false });
         }
-        return acc;
-      }, {} as Record<string, InventoryItem>);
-      
-      updateNpc(npc.id, { equipment });
-      
-      return newSlots;
-    });
+        
+        // Remover o item que está sendo equipado do inventário
+        newItems = newItems.filter(item => item.id !== itemData!.id);
+        
+        return newItems;
+      });
+
+      // Equipar item no slot
+      setEquipmentSlots(prev => {
+        const newSlots = prev.map(s => 
+          s.id === slotId 
+            ? { ...s, equipped: { ...itemData!, equipped: true } }
+            : s
+        );
+        
+        // Salvar equipamentos no NPC
+        const equipment = newSlots.reduce((acc, slot) => {
+          if (slot.equipped) {
+            acc[slot.id] = slot.equipped;
+          }
+          return acc;
+        }, {} as Record<string, InventoryItem>);
+        
+        updateNpc(npc.id, { equipment });
+        
+        return newSlots;
+      });
+    }
 
     setDraggedItem(null);
-    showNotification(`✓ ${itemData.name} equipado!`, 'success');
+    showNotification(`✓ ${itemData.name} equipado em ${targetSlot.name}!`, 'success');
   }, [draggedItem, equipmentSlots, inventoryItems, validateEquipment, showNotification, updateNpc, npc.id]);
 
   const handleUnequip = useCallback((slotId: string) => {
@@ -590,7 +667,12 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
           selectedItem?.id === item.id ? 'ring-2 ring-blue-400' : ''
         } ${draggedItem?.id === item.id ? 'opacity-50' : ''} ${isBroken ? 'opacity-50 grayscale' : ''}`}
         draggable={!isBroken}
-        onDragStart={(e) => !isBroken && handleDragStart(item, e)}
+        onDragStart={(e) => {
+          if (!isBroken) {
+            console.log("Starting drag for inventory item:", item.name);
+            handleDragStart(item, e);
+          }
+        }}
         onDragEnd={handleDragEnd}
         onClick={() => setSelectedItem(item)}
       >
@@ -706,20 +788,21 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
         <span className="text-xs text-gray-600 font-medium">{label}</span>
         <div
           data-slot={slotId}
-          className={`w-14 h-14 rounded-xl border-2 border-dashed transition-all duration-200 flex items-center justify-center relative overflow-hidden cursor-pointer ${
+          className={`w-14 h-14 rounded-xl border-2 transition-all duration-200 flex items-center justify-center relative overflow-hidden cursor-pointer ${
             draggedItem 
               ? canAccept 
-                ? 'border-green-400 bg-green-50 shadow-lg scale-105' 
-                : 'border-red-300 bg-red-50'
-              : 'border-gray-300 bg-white/30'
+                ? 'border-green-400 bg-green-50 shadow-lg scale-105 border-solid' 
+                : 'border-red-400 bg-red-50 border-solid'
+              : slot?.equipped 
+                ? 'border-blue-300 bg-blue-50 border-solid'
+                : 'border-gray-300 bg-white/30 border-dashed'
           } hover:bg-white/50 ${slot?.equipped ? 'hover:border-red-400 hover:bg-red-50' : ''}`}
           onDragOver={(e) => {
             e.preventDefault();
             e.stopPropagation();
-            if (canAccept) {
+            if (draggedItem && canAccept) {
               e.dataTransfer.dropEffect = "move";
-              e.currentTarget.classList.add('animate-pulse');
-            } else {
+            } else if (draggedItem) {
               e.dataTransfer.dropEffect = "none";
             }
           }}
@@ -730,17 +813,15 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
           onDragLeave={(e) => {
             e.preventDefault();
             e.stopPropagation();
-            e.currentTarget.classList.remove('animate-pulse');
           }}
           onDrop={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            e.currentTarget.classList.remove('animate-pulse');
+            console.log("Drop triggered on slot:", slotId);
             handleDropOnSlot(e, slotId);
           }}
           onClick={(e) => {
             e.stopPropagation();
             if (slot?.equipped) {
+              console.log("Unequipping item:", slot.equipped.name);
               handleUnequip(slotId);
             }
           }}
@@ -750,7 +831,10 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
             <div 
               className="relative group w-full h-full flex items-center justify-center cursor-grab active:cursor-grabbing"
               draggable
-              onDragStart={(e) => handleDragStart(slot.equipped!, e, slotId)}
+              onDragStart={(e) => {
+                console.log("Starting drag from slot:", slotId, "item:", slot.equipped!.name);
+                handleDragStart(slot.equipped!, e, slotId);
+              }}
               onDragEnd={handleDragEnd}
             >
               <div className={`text-2xl bg-gradient-to-br ${getRarityColor(slot.equipped.rarity)} rounded-lg p-2 border ${getRarityBorder(slot.equipped.rarity)} w-full h-full flex items-center justify-center transition-all duration-200 hover:scale-105`}>
@@ -784,9 +868,14 @@ const InventoryPanel = ({ npc, onClose }: InventoryPanelProps) => {
             <div className="text-gray-400 text-2xl">+</div>
           )}
 
+          {/* Indicador de aceitação de drop */}
+          {draggedItem && canAccept && (
+            <div className="absolute inset-0 bg-green-500/20 border-2 border-green-500 rounded-xl animate-pulse"></div>
+          )}
+
           {/* Erro de validação */}
           {hasValidationError && (
-            <div className="absolute -bottom-8 left-1/2 transform -translate-x-1/2 bg-red-500 text-white text-xs px-2 py-1 rounded whitespace-nowrap z-10">
+            <div className="absolute -bottom-8 left-1/2 transform -translate-x-1/2 bg-red-500 text-white text-xs px-2 py-1 rounded whitespace-nowrap z-10 pointer-events-none">
               {validateEquipment(draggedItem!, slotId).reason}
             </div>
           )}
